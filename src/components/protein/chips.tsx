@@ -19,6 +19,7 @@ export function FilterChips<T extends string>({
   selected,
   onChange,
   multiple = false,
+  wrap = false,
   className,
 }: {
   label: string;
@@ -26,6 +27,8 @@ export function FilterChips<T extends string>({
   selected: readonly T[];
   onChange: (selected: T[]) => void;
   multiple?: boolean;
+  /** Em várias linhas em vez de scroll horizontal (listas compridas) */
+  wrap?: boolean;
   className?: string;
 }) {
   const toggle = (value: T) => {
@@ -37,9 +40,9 @@ export function FilterChips<T extends string>({
     <div
       role="group"
       aria-label={label}
-      className={cn("-mx-4 [scrollbar-width:none] overflow-x-auto px-4", className)}
+      className={cn(!wrap && "-mx-4 [scrollbar-width:none] overflow-x-auto px-4", className)}
     >
-      <ul className="flex w-max gap-2 py-1">
+      <ul className={cn("flex gap-2 py-1", wrap ? "flex-wrap" : "w-max")}>
         {options.map((o) => {
           const on = selected.includes(o.value);
           return (

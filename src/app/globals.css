@@ -52,6 +52,22 @@
   color-scheme: dark;
 }
 
+/* Força o claro dentro de uma página em modo escuro (/dev/ui) */
+.light {
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --text: #1f1b16;
+  --text-muted: #6b6258;
+  --primary: #2f6b3a;
+  --on-primary: #ffffff;
+  --accent: #f2b33d;
+  --track: #eae3d8;
+  --danger: #b3261e;
+  --border: #e3d9cb;
+  --primary-soft: #e3efe2;
+  color-scheme: light;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -110,6 +126,11 @@
 
   p {
     text-wrap: pretty;
+  }
+
+  /* Um fieldset cresce até ao min-content por defeito (as filas de chips alargavam a página) */
+  fieldset {
+    min-width: 0;
   }
 
   /* Foco sempre visível (teclado) */
