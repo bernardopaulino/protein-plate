@@ -29,6 +29,11 @@ export const guestStateSchema = z
       isExample: z.boolean().default(false),
     }),
     updatedAt: z.number().int().nonnegative(),
+    /**
+     * Conta a que este dia pertence (null para convidados). Com conta, o browser guarda uma cópia
+     * e sincroniza com a D1; o servidor usa sempre o utilizador da sessão, nunca este valor.
+     */
+    owner: z.string().min(1).max(64).nullable().default(null),
   })
   .refine((s) => s.postWorkoutMeal === null || s.meals.includes(s.postWorkoutMeal), {
     message: "a refeição pós-treino tem de ser uma das escolhidas",
