@@ -1,0 +1,169 @@
+alimento,categoria,papel,processamento,porcao_tipica
+Peito de frango,Carne,Proteína,Natural,1 peito (cru)
+Coxa de frango sem pele,Carne,Proteína,Natural,2 coxas (cruas)
+Peito de peru,Carne,Proteína,Natural,1 bife (cru)
+Carne picada de peru,Carne,Proteína,Natural,1 dose (crua)
+Bife de vaca (alcatra ou pojadouro),Carne,Proteína,Natural,1 bife (cru)
+Carne picada de vaca magra,Carne,Proteína,Natural,1 dose (crua)
+Bife de vitela,Carne,Proteína,Natural,1 bife (cru)
+Lombo de porco,Carne,Proteína,Natural,2 fatias (cruas)
+Febras de porco,Carne,Proteína,Natural,2 febras (cruas)
+Coelho,Carne,Proteína,Natural,1 dose (cru)
+Perna de borrego,Carne,Proteína,Natural,1 dose (crua)
+Fígado de vaca,Carne,Proteína,Natural,1 bife (cru)
+Peito de pato,Carne,Proteína,Natural,1 peito (cru)
+Presunto curado,Carne,Proteína,Processado simples,3 fatias finas
+Salmão,Peixe,Proteína,Natural,1 posta (crua)
+Pescada,Peixe,Proteína,Natural,1 posta (crua)
+Bacalhau demolhado,Peixe,Proteína,Natural,1 posta (demolhada)
+Atum fresco,Peixe,Proteína,Natural,1 posta (crua)
+Sardinha,Peixe,Proteína,Natural,3 sardinhas (cruas)
+Carapau,Peixe,Proteína,Natural,2 carapaus (crus)
+Cavala,Peixe,Proteína,Natural,1 cavala (crua)
+Dourada,Peixe,Proteína,Natural,1 dourada (crua)
+Robalo,Peixe,Proteína,Natural,1 robalo (cru)
+Peixe-espada preto,Peixe,Proteína,Natural,1 filete (cru)
+Tamboril,Peixe,Proteína,Natural,1 dose (cru)
+Linguado,Peixe,Proteína,Natural,1 filete (cru)
+Truta,Peixe,Proteína,Natural,1 truta (crua)
+Polvo,Marisco,Proteína,Natural,1 dose (cozido)
+Lulas,Marisco,Proteína,Natural,1 dose (cruas)
+Choco,Marisco,Proteína,Natural,1 dose (cru)
+Camarão,Marisco,Proteína,Natural,1 dose (descascado)
+Mexilhão,Marisco,Proteína,Natural,1 dose (miolo)
+Amêijoas,Marisco,Proteína,Natural,1 dose (miolo)
+Atum em lata ao natural,Conservas,Proteína,Processado simples,1 lata (escorrida)
+Atum em lata em azeite,Conservas,Proteína,Processado simples,1 lata (escorrida)
+Sardinhas em lata,Conservas,Proteína,Processado simples,1 lata (escorrida)
+Cavala em lata,Conservas,Proteína,Processado simples,1 lata (escorrida)
+Mexilhão em conserva,Conservas,Proteína,Processado simples,1 lata (escorrida)
+Salmão fumado,Conservas,Proteína,Processado simples,3 fatias
+Ovo,Ovos,Proteína,Natural,1 ovo médio
+Claras de ovo,Ovos,Proteína,Natural,3 claras
+Ovos de codorniz,Ovos,Proteína,Natural,5 ovos
+Leite meio-gordo,Laticínios,Proteína,Natural,1 copo
+Leite magro,Laticínios,Proteína,Natural,1 copo
+Iogurte natural,Laticínios,Proteína,Natural,1 iogurte
+Iogurte grego natural,Laticínios,Proteína,Natural,1 iogurte
+Skyr natural,Laticínios,Proteína,Natural,1 iogurte
+Quark natural,Laticínios,Proteína,Natural,1 embalagem pequena
+Kefir natural,Laticínios,Proteína,Natural,1 copo
+Queijo fresco,Laticínios,Proteína,Processado simples,1 queijo pequeno
+Requeijão,Laticínios,Proteína,Processado simples,Meio requeijão
+Queijo cottage,Laticínios,Proteína,Processado simples,Meia embalagem
+Ricota,Laticínios,Proteína,Processado simples,2 colheres de sopa
+Mozzarella fresca,Laticínios,Proteína,Processado simples,Meia bola
+Queijo flamengo,Laticínios,Proteína,Processado simples,2 fatias
+Queijo da Ilha (São Jorge),Laticínios,Proteína,Processado simples,1 fatia grossa
+Parmesão ou Grana Padano,Laticínios,Proteína,Processado simples,1 colher de sopa ralado
+Queijo de cabra curado,Laticínios,Proteína,Processado simples,2 fatias
+Proteína whey sem sabor,Suplementos,Proteína,Ultraprocessado (exceção),1 dose (scoop)
+Tofu firme,Soja,Proteína,Processado simples,Meio bloco
+Tempeh,Soja,Proteína,Processado simples,Meio bloco
+Edamame,Soja,Proteína,Natural,1 chávena (sem casca)
+Soja em grão,Soja,Proteína,Natural,1 chávena (cozida)
+Grão-de-bico,Leguminosas,Proteína,Natural,1 chávena (cozido)
+Feijão-preto,Leguminosas,Proteína,Natural,1 chávena (cozido)
+Feijão-encarnado,Leguminosas,Proteína,Natural,1 chávena (cozido)
+Feijão-branco,Leguminosas,Proteína,Natural,1 chávena (cozido)
+Feijão-frade,Leguminosas,Proteína,Natural,1 chávena (cozido)
+Lentilhas castanhas,Leguminosas,Proteína,Natural,1 chávena (cozidas)
+Lentilhas vermelhas,Leguminosas,Proteína,Natural,1 chávena (cozidas)
+Ervilhas,Leguminosas,Proteína,Natural,1 chávena
+Favas,Leguminosas,Proteína,Natural,1 chávena
+Massa de lentilhas,Leguminosas,Proteína,Natural,1 dose (crua)
+Tremoços,Leguminosas,Proteína,Processado simples,1 punhado
+Grão-de-bico em lata,Leguminosas,Proteína,Processado simples,1 lata (escorrida)
+Feijão em lata,Leguminosas,Proteína,Processado simples,1 lata (escorrida)
+Aveia em flocos,Cereais,Hidratos,Natural,4 colheres de sopa
+Arroz branco,Cereais,Hidratos,Natural,1 dose (cru)
+Arroz integral,Cereais,Hidratos,Natural,1 dose (cru)
+Massa de trigo,Cereais,Hidratos,Natural,1 dose (crua)
+Massa integral,Cereais,Hidratos,Natural,1 dose (crua)
+Quinoa,Cereais,Hidratos,Natural,1 dose (crua)
+Cuscuz,Cereais,Hidratos,Natural,1 dose (cru)
+Bulgur,Cereais,Hidratos,Natural,1 dose (cru)
+Trigo-sarraceno,Cereais,Hidratos,Natural,1 dose (cru)
+Pão de mistura,Cereais,Hidratos,Processado simples,1 pão
+Pão integral,Cereais,Hidratos,Processado simples,2 fatias
+Pão de centeio,Cereais,Hidratos,Processado simples,2 fatias
+Broa de milho,Cereais,Hidratos,Processado simples,1 fatia
+Batata,Tubérculos,Hidratos,Natural,2 batatas médias
+Batata-doce,Tubérculos,Hidratos,Natural,1 batata-doce média
+Mandioca,Tubérculos,Hidratos,Natural,1 dose
+Amêndoa,Frutos secos,Gordura,Natural,1 punhado
+Noz,Frutos secos,Gordura,Natural,1 punhado
+Amendoim torrado sem sal,Frutos secos,Gordura,Natural,1 punhado
+Manteiga de amendoim 100%,Frutos secos,Gordura,Natural,1 colher de sopa
+Caju,Frutos secos,Gordura,Natural,1 punhado
+Avelã,Frutos secos,Gordura,Natural,1 punhado
+Pistácio,Frutos secos,Gordura,Natural,1 punhado
+Sementes de abóbora,Sementes,Gordura,Natural,1 colher de sopa
+Sementes de girassol,Sementes,Gordura,Natural,1 colher de sopa
+Sementes de chia,Sementes,Gordura,Natural,1 colher de sopa
+Sementes de linhaça,Sementes,Gordura,Natural,1 colher de sopa
+Sementes de cânhamo,Sementes,Gordura,Natural,1 colher de sopa
+Sésamo,Sementes,Gordura,Natural,1 colher de sopa
+Tahini,Sementes,Gordura,Natural,1 colher de sopa
+Banana,Fruta,Hidratos,Natural,1 banana
+Maçã,Fruta,Hidratos,Natural,1 maçã
+Pera,Fruta,Hidratos,Natural,1 pera
+Laranja,Fruta,Hidratos,Natural,1 laranja
+Tangerina,Fruta,Hidratos,Natural,2 tangerinas
+Kiwi,Fruta,Hidratos,Natural,2 kiwis
+Morangos,Fruta,Hidratos,Natural,1 taça
+Mirtilos,Fruta,Hidratos,Natural,1 taça
+Framboesas,Fruta,Hidratos,Natural,1 taça
+Uvas,Fruta,Hidratos,Natural,1 cacho pequeno
+Manga,Fruta,Hidratos,Natural,Meia manga
+Ananás,Fruta,Hidratos,Natural,2 rodelas
+Pêssego,Fruta,Hidratos,Natural,1 pêssego
+Melão,Fruta,Hidratos,Natural,1 fatia
+Melancia,Fruta,Hidratos,Natural,1 fatia
+Figos,Fruta,Hidratos,Natural,2 figos
+Cerejas,Fruta,Hidratos,Natural,1 taça
+Ameixas,Fruta,Hidratos,Natural,2 ameixas
+Romã,Fruta,Hidratos,Natural,Meia romã
+Tâmaras,Fruta,Hidratos,Natural,3 tâmaras
+Abacate,Fruta,Gordura,Natural,Meio abacate
+Brócolos,Legumes,Legumes,Natural,1 chávena
+Espinafres,Legumes,Legumes,Natural,1 punhado grande
+Couve-flor,Legumes,Legumes,Natural,1 chávena
+Couve-portuguesa,Legumes,Legumes,Natural,1 dose
+Couve kale,Legumes,Legumes,Natural,1 punhado
+Couve-de-bruxelas,Legumes,Legumes,Natural,1 chávena
+Cenoura,Legumes,Legumes,Natural,1 cenoura
+Tomate,Legumes,Legumes,Natural,1 tomate
+Pepino,Legumes,Legumes,Natural,Meio pepino
+Alface,Legumes,Legumes,Natural,1 taça
+Rúcula,Legumes,Legumes,Natural,1 punhado
+Pimento,Legumes,Legumes,Natural,Meio pimento
+Cebola,Legumes,Legumes,Natural,Meia cebola
+Courgette,Legumes,Legumes,Natural,Meia courgette
+Beringela,Legumes,Legumes,Natural,Meia beringela
+Cogumelos,Legumes,Legumes,Natural,1 chávena
+Feijão-verde,Legumes,Legumes,Natural,1 chávena
+Espargos,Legumes,Legumes,Natural,6 espargos
+Abóbora,Legumes,Legumes,Natural,1 fatia
+Beterraba,Legumes,Legumes,Natural,1 beterraba
+Azeite,Despensa,Despensa,Culinário,1 colher de sopa
+Manteiga,Despensa,Despensa,Culinário,1 colher de chá
+Sal,Despensa,Despensa,Culinário,1 pitada
+Vinagre,Despensa,Despensa,Culinário,1 colher de sopa
+Mel,Despensa,Despensa,Culinário,1 colher de chá
+Alho,Despensa,Despensa,Natural,2 dentes
+Limão,Despensa,Despensa,Natural,Meio limão
+Pimenta preta,Despensa,Despensa,Natural,1 pitada
+Colorau,Despensa,Despensa,Natural,1 colher de chá
+Cominhos,Despensa,Despensa,Natural,1 colher de chá
+Caril em pó,Despensa,Despensa,Natural,1 colher de chá
+Orégãos,Despensa,Despensa,Natural,1 colher de chá
+Salsa,Despensa,Despensa,Natural,1 punhado
+Coentros,Despensa,Despensa,Natural,1 punhado
+Manjericão,Despensa,Despensa,Natural,1 punhado
+Gengibre,Despensa,Despensa,Natural,1 pedaço
+Canela,Despensa,Despensa,Natural,1 colher de chá
+Cacau em pó 100%,Despensa,Despensa,Natural,1 colher de sopa
+Polpa de tomate,Despensa,Despensa,Processado simples,3 colheres de sopa
+Leite de coco,Despensa,Despensa,Processado simples,Um quarto de lata
+Mostarda,Despensa,Despensa,Processado simples,1 colher de chá
