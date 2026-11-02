@@ -1,0 +1,25 @@
+# Atualizações semanais agrupadas (o .npmrc só instala versões com mais de 1 dia)
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Lisbon
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # O AI SDK fica na 6 (CLAUDE.md); o TypeScript fica abaixo de 6.1 (typescript-eslint)
+      - dependency-name: ai
+        update-types: [version-update:semver-major]
+      - dependency-name: "@ai-sdk/*"
+        update-types: [version-update:semver-major]
+      - dependency-name: typescript
+        versions: [">=6.1.0"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
