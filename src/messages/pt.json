@@ -1,0 +1,364 @@
+{
+  "meta": {
+    "title": "Protein Plate — proteína sem dieta",
+    "titleTemplate": "%s · Protein Plate",
+    "description": "Calcula a tua meta de proteína e vê um dia completo com comida de verdade que já lá chega. Sem dieta, sem contar calorias.",
+    "ogAlt": "Protein Plate: proteína sem dieta"
+  },
+  "nav": {
+    "label": "Navegação principal",
+    "today": "Hoje",
+    "foods": "Alimentos",
+    "recipes": "Receitas",
+    "account": "Conta",
+    "skip": "Saltar para o conteúdo",
+    "home": "Protein Plate, página inicial"
+  },
+  "footer": {
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "source": "Valores nutricionais: TCA, INSA.",
+    "tagline": "Proteína sem dieta."
+  },
+  "common": {
+    "grams": "{value} g",
+    "gramsProtein": "{value} g de proteína",
+    "perPortion": "por porção",
+    "per100g": "por 100 g",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "retry": "Tentar outra vez",
+    "loading": "A carregar…",
+    "saving": "A guardar…",
+    "saved": "Guardado",
+    "add": "Adicionar",
+    "remove": "Tirar",
+    "source": "Fonte: TCA, INSA",
+    "provisional": "Valores provisórios, a confirmar na TCA.",
+    "technicalError": "Algo correu mal do nosso lado. Tenta outra vez daqui a pouco.",
+    "whey": "Ultraprocessado (exceção)"
+  },
+  "meals": {
+    "pequeno-almoco": "Pequeno-almoço",
+    "meio-da-manha": "Meio da manhã",
+    "almoco": "Almoço",
+    "lanche": "Lanche",
+    "jantar": "Jantar",
+    "ceia": "Ceia",
+    "postWorkout": "Pós-treino"
+  },
+  "intensity": {
+    "base": { "label": "Para começar", "detail": "1,6 g por kg" },
+    "moderada": { "label": "Treino regular", "detail": "1,8 g por kg" },
+    "alta": { "label": "Treino intenso", "detail": "2,0 g por kg" },
+    "maxima": { "label": "Ganhar massa", "detail": "2,2 g por kg" }
+  },
+  "categories": {
+    "carne": "Carne",
+    "peixe": "Peixe",
+    "marisco": "Marisco",
+    "conservas": "Conservas",
+    "ovos": "Ovos",
+    "laticinios": "Laticínios",
+    "suplementos": "Suplementos",
+    "soja": "Soja",
+    "leguminosas": "Leguminosas",
+    "cereais": "Cereais",
+    "tuberculos": "Tubérculos",
+    "frutos-secos": "Frutos secos",
+    "sementes": "Sementes",
+    "fruta": "Fruta",
+    "legumes": "Legumes",
+    "despensa": "Despensa"
+  },
+  "ease": {
+    "1": "Sem preparação",
+    "2": "Rápido",
+    "3": "Cozinhar"
+  },
+  "weightBasis": {
+    "raw": "Peso em cru",
+    "cooked": "Peso cozinhado",
+    "as_sold": "Peso como se compra"
+  },
+  "disclaimer": {
+    "health": "Informação geral, não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína.",
+    "recipe": "Gerada por IA. A proteína é calculada a partir da TCA. Confirma alergénios e intolerâncias."
+  },
+  "landing": {
+    "eyebrow": "Protein without the diet",
+    "title": "Proteína sem dieta.",
+    "lead": "Chegar à tua meta de proteína é mais fácil do que parece. Com comida de verdade, em porções que reconheces, sem contar calorias.",
+    "cta": "Calcular a minha meta",
+    "secondary": "Ver os alimentos",
+    "stepsTitle": "Três passos, menos de dois minutos",
+    "steps": {
+      "goal": {
+        "title": "Calcula a meta",
+        "body": "O teu peso e o quanto treinas dão a meta do dia. O peso fica só no teu browser."
+      },
+      "day": {
+        "title": "Vê um dia que já chega lá",
+        "body": "Um dia completo com as tuas refeições e os alimentos mais fáceis."
+      },
+      "adjust": {
+        "title": "Ajusta ao teu gosto",
+        "body": "Troca alimentos, mexe nas porções e gera receitas com o que escolheste."
+      }
+    },
+    "exampleTitle": "Um dia de 160 g, assim",
+    "exampleCaption": "Exemplo para 80 kg, treino intenso, 4 refeições.",
+    "exampleTotal": "Total do dia",
+    "faqTitle": "Perguntas frequentes",
+    "faq": {
+      "diet": {
+        "q": "Isto é uma dieta?",
+        "a": "Não. A app só acrescenta: não há alimentos proibidos, nem calorias, nem registos diários."
+      },
+      "numbers": {
+        "q": "De onde vêm os números?",
+        "a": "Da Tabela da Composição de Alimentos do INSA. A proteína é sempre calculada pela app, nunca pela IA."
+      },
+      "account": {
+        "q": "Preciso de criar conta?",
+        "a": "Não. Tudo funciona sem conta. A conta só serve para guardar e sincronizar."
+      },
+      "supplements": {
+        "q": "Preciso de suplementos?",
+        "a": "Não. O dia exemplo usa só comida de verdade. A whey está no catálogo, assinalada, para quem já a usa."
+      }
+    }
+  },
+  "start": {
+    "title": "Calcular a minha meta",
+    "lead": "Quatro perguntas rápidas. Nada disto sai do teu browser sem criares conta, e o peso nunca sai.",
+    "weight": {
+      "legend": "Quanto pesas?",
+      "label": "Peso",
+      "unit": "kg",
+      "hint": "Fica só neste browser.",
+      "invalid": "Escreve um peso entre 20 e 400 kg.",
+      "confirm": "Sim, o peso está certo",
+      "confirmHint": "Este peso está fora do habitual (35 a 250 kg). Confirma que está certo.",
+      "manualToggle": "Prefiro escrever a meta",
+      "weightToggle": "Calcular pelo peso",
+      "manualLabel": "Meta diária",
+      "manualInvalid": "Escreve uma meta entre 40 e 300 g."
+    },
+    "intensity": { "legend": "Quanto treinas?" },
+    "meals": {
+      "legend": "Quantas refeições fazes por dia?",
+      "which": "Quais?",
+      "whichHint": "Pré-selecionámos as mais comuns. Podes trocar.",
+      "min": "Escolhe pelo menos duas refeições."
+    },
+    "postWorkout": {
+      "legend": "Que refeição fazes a seguir ao treino?",
+      "hint": "Opcional. Essa refeição fica com mais proteína e opções rápidas.",
+      "none": "Nenhuma / não treino"
+    },
+    "result": {
+      "title": "A tua meta",
+      "value": "{grams} g por dia",
+      "perMeal": "Cerca de {grams} g por refeição principal.",
+      "empty": "Responde às perguntas para veres a tua meta.",
+      "cta": "Vê como é fácil",
+      "save": "Guardar a meta"
+    }
+  },
+  "today": {
+    "title": "O meu dia",
+    "emptyTitle": "Ainda não tens uma meta",
+    "emptyBody": "Calcula a meta e vê um dia completo que já lá chega.",
+    "emptyCta": "Calcular a minha meta",
+    "progressLabel": "Proteína do dia",
+    "ofTarget": "de {target} g",
+    "missing": "Faltam {grams} g.",
+    "reached": "Meta atingida.",
+    "over": "Meta atingida, com {grams} g a mais.",
+    "mealTarget": "≈ {grams} g",
+    "mealEmpty": "Ainda nada aqui.",
+    "addFood": "Adicionar alimento",
+    "addTo": "Adicionar a {meal}",
+    "recipe": "Gerar receita com estes alimentos",
+    "recipeNeeds": "Junta dois alimentos para gerar uma receita.",
+    "closeTitle": "Para fechar a meta",
+    "closeLead": "Faltam {grams} g. Uma destas resolve:",
+    "closePartial": "Faltam {grams} g. Estas ajudam muito:",
+    "closeDone": "Meta atingida. O resto do dia é contigo.",
+    "suggestion": "{count} × {portion} de {food}: +{grams} g em {meal}",
+    "otherOptions": "Outras opções",
+    "otherOptionsHint": "Troca os alimentos do dia exemplo.",
+    "resetExample": "Recomeçar com um dia exemplo",
+    "resetConfirm": "Trocar o teu dia por um dia exemplo novo?",
+    "resetYes": "Sim, trocar",
+    "save": "Guardar o meu dia",
+    "saveHint": "Cria conta para guardar o dia e as receitas. É opcional.",
+    "editGoal": "Mudar meta ou refeições",
+    "syncError": "Não conseguimos guardar. Vamos tentar outra vez.",
+    "synced": "Guardado na tua conta.",
+    "item": {
+      "portions": "{count} × {portion}",
+      "decrease": "Menos meia porção de {food}",
+      "increase": "Mais meia porção de {food}",
+      "remove": "Tirar {food}",
+      "count": "{count} porções",
+      "unknown": "Alimento que já não está no catálogo"
+    }
+  },
+  "drawer": {
+    "title": "Adicionar a {meal}",
+    "search": "Procurar alimento",
+    "searchPlaceholder": "Ex.: atum, skyr, grão",
+    "easiest": "Os mais fáceis para esta refeição",
+    "results": "{count, plural, =0 {Nenhum alimento encontrado.} one {# alimento} other {# alimentos}}",
+    "add": "Adicionar {food}",
+    "added": "{food} adicionado."
+  },
+  "catalog": {
+    "title": "Alimentos",
+    "lead": "Proteína por porção real. Toca num alimento para ver porções, ideias e a fonte.",
+    "search": "Procurar",
+    "searchPlaceholder": "Procurar alimento",
+    "filters": "Filtros",
+    "category": "Categoria",
+    "meal": "Refeição",
+    "ease": "Facilidade",
+    "all": "Todos",
+    "sort": "Ordenar",
+    "sortProtein": "Mais proteína por porção",
+    "sortEase": "Mais fáceis primeiro",
+    "sortName": "A–Z",
+    "clear": "Limpar filtros",
+    "count": "{count, plural, =0 {Nenhum alimento com estes filtros.} one {# alimento} other {# alimentos}}",
+    "proteinOnly": "Só fontes de proteína"
+  },
+  "food": {
+    "portions": "Porções",
+    "per100": "Por 100 g",
+    "ideas": "Ideias rápidas",
+    "addToDay": "Adicionar ao meu dia",
+    "chooseMeal": "Em que refeição?",
+    "choosePortion": "Porção",
+    "addButton": "Adicionar",
+    "added": "Adicionado a {meal}.",
+    "seeDay": "Ver o meu dia",
+    "noGoal": "Calcula primeiro a tua meta para adicionares alimentos ao teu dia.",
+    "noGoalCta": "Calcular a minha meta",
+    "back": "Todos os alimentos",
+    "metaDescription": "{name}: {protein} g de proteína em {portion}. Porções, valor por 100 g e ideias rápidas."
+  },
+  "recipes": {
+    "title": "Receitas",
+    "lead": "Escolhe alimentos do teu dia e gera uma receita com eles. A proteína é sempre calculada pela app.",
+    "new": "Gerar uma receita",
+    "saved": "Receitas guardadas",
+    "savedEmpty": "Ainda não guardaste receitas.",
+    "guestSaved": "Cria conta para guardares receitas.",
+    "form": {
+      "title": "Nova receita",
+      "foods": "Alimentos",
+      "foodsHint": "Escolhe 2 a 6. Os condimentos básicos (azeite, alho, limão) podem entrar sempre.",
+      "foodsCount": "{count} de 6",
+      "addFoods": "Mais alimentos",
+      "meal": "Refeição",
+      "time": "Tempo máximo",
+      "minutes": "{minutes} min",
+      "servings": "Doses",
+      "submit": "Gerar receita",
+      "generating": "A cozinhar a tua receita…",
+      "generatingHint": "Demora uns segundos.",
+      "needsFoods": "Escolhe pelo menos 2 alimentos.",
+      "tooMany": "No máximo 6 alimentos.",
+      "turnstile": "Verificação anti-robô",
+      "mealTarget": "Meta desta refeição: ≈ {grams} g por dose."
+    },
+    "errors": {
+      "invalid_request": "Há algo no pedido que não percebemos. Revê as escolhas e tenta outra vez.",
+      "unknown_food": "Um dos alimentos já não está no catálogo.",
+      "turnstile_failed": "A verificação anti-robô falhou. Tenta outra vez.",
+      "rate_limited": "Muitos pedidos seguidos. Espera um minuto.",
+      "quota_exceeded": "Já geraste as receitas novas de hoje. Amanhã há mais (as receitas já geradas continuam a abrir).",
+      "quota_guest": "Cria conta para gerares mais receitas por dia.",
+      "generation_failed": "Não conseguimos uma receita boa com estes alimentos. Tenta trocar um ou mudar o tempo.",
+      "service_unavailable": "As receitas estão em pausa por hoje. As que já existem continuam a abrir."
+    },
+    "detail": {
+      "perServing": "por dose",
+      "covers": "Cobre {percent}% da meta de {meal} (≈ {target} g).",
+      "time": "{minutes} min",
+      "servings": "{count, plural, one {# dose} other {# doses}}",
+      "ingredients": "Ingredientes",
+      "steps": "Passos",
+      "save": "Guardar receita",
+      "saved": "Guardada",
+      "unsave": "Tirar das guardadas",
+      "share": "Partilhar",
+      "copied": "Link copiado.",
+      "another": "Gerar outra",
+      "postWorkout": "Pós-treino",
+      "loginToSave": "Cria conta para guardar"
+    }
+  },
+  "account": {
+    "title": "Conta",
+    "lead": "A conta é opcional: guarda a meta, o dia e as receitas, e sincroniza entre aparelhos.",
+    "signIn": "Entrar",
+    "signInWith": "Entrar com {provider}",
+    "noAccount": "Ainda não tens conta?",
+    "create": "Criar conta",
+    "providersMissing": "O login ainda não está configurado neste ambiente.",
+    "error": "Não conseguimos entrar. Se ainda não tens conta, cria uma primeiro.",
+    "hello": "Olá, {name}",
+    "helloAnon": "Olá",
+    "goal": "Meta e refeições",
+    "goalValue": "{grams} g por dia · {count} refeições",
+    "editGoal": "Mudar",
+    "export": "Exportar os meus dados",
+    "exportHint": "Um ficheiro JSON com a tua meta, o teu dia e as receitas guardadas.",
+    "signOut": "Sair",
+    "delete": {
+      "title": "Apagar conta",
+      "body": "Apaga a conta, a meta, o dia e as receitas guardadas. Não dá para desfazer.",
+      "reauth": "Por segurança, volta a entrar com {provider} antes de apagar.",
+      "reauthButton": "Entrar outra vez com {provider}",
+      "confirm": "Apagar a minha conta para sempre",
+      "done": "A tua conta foi apagada."
+    },
+    "createPage": {
+      "title": "Criar conta",
+      "lead": "Guarda a tua meta, o teu dia e as receitas. Usamos só o teu nome e email para a conta.",
+      "consent": "Tenho 16 anos ou mais e aceito os termos e a política de privacidade.",
+      "consentRequired": "Para criar conta, aceita os termos e a política de privacidade.",
+      "with": "Criar conta com {provider}",
+      "haveAccount": "Já tens conta?"
+    },
+    "welcome": {
+      "title": "Bem-vindo",
+      "importing": "A trazer o teu dia para a conta…",
+      "conflictTitle": "Já tens um dia guardado",
+      "conflictBody": "Qual queres manter?",
+      "keepGuest": "O deste aparelho",
+      "keepAccount": "O da conta",
+      "done": "Está tudo guardado na tua conta.",
+      "nothing": "A tua conta está pronta.",
+      "goToday": "Ir para o meu dia"
+    }
+  },
+  "legal": {
+    "privacyTitle": "Política de privacidade",
+    "termsTitle": "Termos de utilização",
+    "updated": "Última atualização: {date}"
+  },
+  "notFound": {
+    "title": "Esta página não existe",
+    "body": "Talvez o link esteja errado. O teu dia continua onde o deixaste.",
+    "cta": "Ir para o início"
+  },
+  "error": {
+    "title": "Algo correu mal",
+    "body": "Não é contigo, é connosco. Tenta outra vez.",
+    "retry": "Tentar outra vez"
+  }
+}

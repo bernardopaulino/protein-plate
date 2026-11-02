@@ -1,0 +1,105 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "protein-plate",
+  // Worker próprio: o fetch do OpenNext mais o cron de limpeza (worker/index.ts)
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-26",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  // Só os console.* (sem dados pessoais): os registos automáticos de cada pedido guardariam o IP
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+  // Limpeza de hora a hora: sessões expiradas e contadores de quotas com mais de 2 dias
+  "triggers": { "crons": ["17 * * * *"] },
+
+  // Local (next dev e preview): base só local, IA simulada
+  "vars": {
+    "APP_ENV": "local",
+    "BETTER_AUTH_URL": "http://localhost:3000",
+    "AI_MODE": "mock",
+    "AI_MODEL": "claude-haiku-5-5",
+    "AI_DAILY_LIMIT": "200",
+    "QUOTA_GUEST": "3",
+    "QUOTA_USER": "15",
+    // Chave de teste do Turnstile (passa sempre); a secreta de teste está no .dev.vars.example
+    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "protein-plate-local",
+      "database_id": "local",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "ratelimits": [
+    // Pedidos de receitas por chave (utilizador ou HMAC do IP), por minuto
+    { "name": "RECIPE_LIMITER", "namespace_id": "2001", "simple": { "limit": 5, "period": 60 } },
+  ],
+
+  "env": {
+    "staging": {
+      "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+      "triggers": { "crons": ["17 * * * *"] },
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": {
+        "APP_ENV": "staging",
+        "BETTER_AUTH_URL": "https://protein-plate-staging.bernardo-sobral7.workers.dev",
+        // Simulada até haver ANTHROPIC_API_KEY de staging (wrangler secret put ANTHROPIC_API_KEY --env staging)
+        "AI_MODE": "mock",
+        "AI_MODEL": "claude-haiku-5-5",
+        "AI_DAILY_LIMIT": "50",
+        "QUOTA_GUEST": "3",
+        "QUOTA_USER": "15",
+        "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "protein-plate-staging",
+          "database_id": "1962d9d9-fd77-40a7-bf7e-8f56124e28cb",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "ratelimits": [
+        {
+          "name": "RECIPE_LIMITER",
+          "namespace_id": "2002",
+          "simple": { "limit": 5, "period": 60 },
+        },
+      ],
+    },
+    "production": {
+      "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+      "triggers": { "crons": ["17 * * * *"] },
+      // Domínio próprio na sessão 13 (routes com custom_domain)
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": {
+        "APP_ENV": "production",
+        "BETTER_AUTH_URL": "https://protein-plate-production.bernardo-sobral7.workers.dev",
+        "AI_MODE": "live",
+        "AI_MODEL": "claude-haiku-5-5",
+        "AI_DAILY_LIMIT": "500",
+        "QUOTA_GUEST": "3",
+        "QUOTA_USER": "15",
+        "TURNSTILE_SITE_KEY": "",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "protein-plate-production",
+          "database_id": "562e6646-b033-458b-ae8b-e54952e68a81",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "ratelimits": [
+        {
+          "name": "RECIPE_LIMITER",
+          "namespace_id": "2003",
+          "simple": { "limit": 5, "period": 60 },
+        },
+      ],
+    },
+  },
+}

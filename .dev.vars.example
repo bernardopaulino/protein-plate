@@ -1,0 +1,17 @@
+# Copia para .dev.vars (nunca vai para o Git). Em staging e produção: wrangler secret put <NOME> --env <ambiente>
+# node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+BETTER_AUTH_SECRET=
+# Cliente OAuth Web do Google (vazio desliga o Google)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+# Sign in with Apple (vazio desliga a Apple; não funciona em localhost)
+APPLE_CLIENT_ID=
+APPLE_TEAM_ID=
+APPLE_KEY_ID=
+APPLE_PRIVATE_KEY=
+# Só com AI_MODE=live
+ANTHROPIC_API_KEY=
+# Chave secreta de teste do Turnstile (passa sempre)
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+# Chave diária do HMAC do IP (deriva deste valor e da data)
+IP_HASH_SECRET=
