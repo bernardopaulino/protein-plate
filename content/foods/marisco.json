@@ -1,0 +1,44 @@
+[
+  {
+    "id": "camarao",
+    "name": {
+      "pt": "Camarão",
+      "en": "Prawns"
+    },
+    "category": "marisco",
+    "role": "protein",
+    "proteinPer100g": 18,
+    "kcalPer100g": 77,
+    "carbsPer100g": 0,
+    "fatPer100g": 0.6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "camarao:dose",
+        "label": {
+          "pt": "1 dose (descascado)",
+          "en": "1 serving (peeled)"
+        },
+        "grams": 120,
+        "default": true
+      },
+      {
+        "id": "camarao:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salteado com alho em 5 minutos", "Com massa e limão"],
+      "en": ["Sautéed with garlic in 5 minutes", "With pasta and lemon"]
+    }
+  }
+]

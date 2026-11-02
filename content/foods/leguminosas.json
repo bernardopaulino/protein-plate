@@ -1,0 +1,120 @@
+[
+  {
+    "id": "grao-bico-lata",
+    "name": {
+      "pt": "Grão-de-bico em lata",
+      "en": "Canned chickpeas"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 7.2,
+    "kcalPer100g": 125,
+    "carbsPer100g": 17,
+    "fatPer100g": 2.5,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "grao-bico-lata:meia-lata",
+        "label": {
+          "pt": "Meia lata (escorrida)",
+          "en": "Half a can (drained)"
+        },
+        "grams": 120,
+        "default": true
+      },
+      {
+        "id": "grao-bico-lata:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 240
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salada com atum e cebola", "Húmus caseiro"],
+      "en": ["Salad with tuna and onion", "Homemade hummus"]
+    }
+  },
+  {
+    "id": "feijao-lata",
+    "name": {
+      "pt": "Feijão em lata",
+      "en": "Canned beans"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 6.5,
+    "kcalPer100g": 100,
+    "carbsPer100g": 15,
+    "fatPer100g": 0.5,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "feijao-lata:meia-lata",
+        "label": {
+          "pt": "Meia lata (escorrida)",
+          "en": "Half a can (drained)"
+        },
+        "grams": 120,
+        "default": true
+      },
+      {
+        "id": "feijao-lata:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 240
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com arroz e ovo", "Chili rápido"],
+      "en": ["With rice and egg", "Quick chili"]
+    }
+  },
+  {
+    "id": "tremocos",
+    "name": {
+      "pt": "Tremoços",
+      "en": "Lupin beans"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 15.6,
+    "kcalPer100g": 119,
+    "carbsPer100g": 9.9,
+    "fatPer100g": 2.9,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "tremocos:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 50,
+        "default": true
+      }
+    ],
+    "moments": ["meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Petisco de meio da tarde", "Em salada"],
+      "en": ["Afternoon snack", "In a salad"]
+    }
+  }
+]

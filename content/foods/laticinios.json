@@ -1,0 +1,256 @@
+[
+  {
+    "id": "leite-meio-gordo",
+    "name": {
+      "pt": "Leite meio-gordo",
+      "en": "Semi-skimmed milk"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 3.3,
+    "kcalPer100g": 47,
+    "carbsPer100g": 4.8,
+    "fatPer100g": 1.6,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "leite-meio-gordo:copo",
+        "label": {
+          "pt": "1 copo",
+          "en": "1 glass"
+        },
+        "grams": 250,
+        "default": true
+      },
+      {
+        "id": "leite-meio-gordo:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 200
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com aveia e canela", "Batido com banana"],
+      "en": ["With oats and cinnamon", "Shake with banana"]
+    }
+  },
+  {
+    "id": "iogurte-grego-natural",
+    "name": {
+      "pt": "Iogurte grego natural",
+      "en": "Plain Greek yogurt"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 9,
+    "kcalPer100g": 93,
+    "carbsPer100g": 3,
+    "fatPer100g": 5,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "iogurte-grego-natural:iogurte",
+        "label": {
+          "pt": "1 iogurte",
+          "en": "1 pot"
+        },
+        "grams": 125,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 80,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com fruta e amêndoa", "Molho com pepino e alho"],
+      "en": ["With fruit and almonds", "Dip with cucumber and garlic"]
+    }
+  },
+  {
+    "id": "skyr-natural",
+    "name": {
+      "pt": "Skyr natural",
+      "en": "Plain skyr"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 11,
+    "kcalPer100g": 63,
+    "carbsPer100g": 4,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "skyr-natural:iogurte",
+        "label": {
+          "pt": "1 iogurte",
+          "en": "1 pot"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 90,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com morangos e aveia", "Com mel e canela"],
+      "en": ["With strawberries and oats", "With honey and cinnamon"]
+    }
+  },
+  {
+    "id": "queijo-fresco",
+    "name": {
+      "pt": "Queijo fresco",
+      "en": "Fresh cheese"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 11,
+    "kcalPer100g": 155,
+    "carbsPer100g": 3,
+    "fatPer100g": 10.5,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "queijo-fresco:queijo",
+        "label": {
+          "pt": "1 queijo pequeno",
+          "en": "1 small cheese"
+        },
+        "grams": 100,
+        "default": true
+      },
+      {
+        "id": "queijo-fresco:fatia",
+        "label": {
+          "pt": "1 fatia",
+          "en": "1 slice"
+        },
+        "grams": 30
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 70,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em pão com tomate", "Com mel e nozes"],
+      "en": ["On bread with tomato", "With honey and walnuts"]
+    }
+  },
+  {
+    "id": "requeijao",
+    "name": {
+      "pt": "Requeijão",
+      "en": "Requeijão (whey cheese)"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 10,
+    "kcalPer100g": 120,
+    "carbsPer100g": 3.5,
+    "fatPer100g": 6.5,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "requeijao:meio",
+        "label": {
+          "pt": "Meio requeijão",
+          "en": "Half a requeijão"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 65,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com doce de abóbora", "Em pão de mistura"],
+      "en": ["With pumpkin jam", "On mixed-grain bread"]
+    }
+  },
+  {
+    "id": "queijo-cottage",
+    "name": {
+      "pt": "Queijo cottage",
+      "en": "Cottage cheese"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 12,
+    "kcalPer100g": 98,
+    "carbsPer100g": 3.4,
+    "fatPer100g": 4.3,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "queijo-cottage:meia-embalagem",
+        "label": {
+          "pt": "Meia embalagem",
+          "en": "Half a tub"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com tomate e orégãos", "Em salada com grão"],
+      "en": ["With tomato and oregano", "In a chickpea salad"]
+    }
+  },
+  {
+    "id": "queijo-flamengo",
+    "name": {
+      "pt": "Queijo flamengo",
+      "en": "Edam cheese"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 25,
+    "kcalPer100g": 340,
+    "carbsPer100g": 0.5,
+    "fatPer100g": 26,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "queijo-flamengo:2-fatias",
+        "label": {
+          "pt": "2 fatias",
+          "en": "2 slices"
+        },
+        "grams": 40,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 55,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Tosta com fiambre de peru", "Em pão integral"],
+      "en": ["Toastie with turkey ham", "On wholemeal bread"]
+    }
+  }
+]

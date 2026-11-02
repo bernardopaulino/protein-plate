@@ -1,0 +1,70 @@
+[
+  {
+    "id": "batata",
+    "name": {
+      "pt": "Batata",
+      "en": "Potato"
+    },
+    "category": "tuberculos",
+    "role": "carb",
+    "proteinPer100g": 2,
+    "kcalPer100g": 80,
+    "carbsPer100g": 17,
+    "fatPer100g": 0.1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "batata:2-medias",
+        "label": {
+          "pt": "2 batatas médias",
+          "en": "2 medium potatoes"
+        },
+        "grams": 250,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 70,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Cozida com bacalhau", "No forno com alecrim"],
+      "en": ["Boiled with salt cod", "Roasted with rosemary"]
+    }
+  },
+  {
+    "id": "batata-doce",
+    "name": {
+      "pt": "Batata-doce",
+      "en": "Sweet potato"
+    },
+    "category": "tuberculos",
+    "role": "carb",
+    "proteinPer100g": 1.6,
+    "kcalPer100g": 90,
+    "carbsPer100g": 20,
+    "fatPer100g": 0.1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "batata-doce:media",
+        "label": {
+          "pt": "1 batata-doce média",
+          "en": "1 medium sweet potato"
+        },
+        "grams": 200,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 65,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Assada com salmão", "Em puré com canela"],
+      "en": ["Roasted with salmon", "Mashed with cinnamon"]
+    }
+  }
+]

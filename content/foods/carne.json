@@ -1,0 +1,128 @@
+[
+  {
+    "id": "peito-frango",
+    "name": {
+      "pt": "Peito de frango",
+      "en": "Chicken breast"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 23,
+    "kcalPer100g": 107,
+    "carbsPer100g": 0,
+    "fatPer100g": 1.4,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "peito-frango:peito",
+        "label": {
+          "pt": "1 peito",
+          "en": "1 breast"
+        },
+        "grams": 150,
+        "default": true
+      },
+      {
+        "id": "peito-frango:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 95,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhado com limão e orégãos", "Em tiras, salteado com legumes"],
+      "en": ["Grilled with lemon and oregano", "In strips, stir-fried with vegetables"]
+    }
+  },
+  {
+    "id": "peito-peru",
+    "name": {
+      "pt": "Peito de peru",
+      "en": "Turkey breast"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 22,
+    "kcalPer100g": 105,
+    "carbsPer100g": 0,
+    "fatPer100g": 1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "peito-peru:bife",
+        "label": {
+          "pt": "1 bife",
+          "en": "1 steak"
+        },
+        "grams": 120,
+        "default": true
+      },
+      {
+        "id": "peito-peru:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 75,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Bife na frigideira em 6 minutos", "Em cubos, no caril"],
+      "en": ["Pan-fried steak in 6 minutes", "Diced, in a curry"]
+    }
+  },
+  {
+    "id": "carne-picada-vaca",
+    "name": {
+      "pt": "Carne picada de vaca magra",
+      "en": "Lean minced beef"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 20.5,
+    "kcalPer100g": 137,
+    "carbsPer100g": 0,
+    "fatPer100g": 7,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "carne-picada-vaca:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 125,
+        "default": true
+      },
+      {
+        "id": "carne-picada-vaca:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 70,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Bolonhesa com massa", "Hambúrguer caseiro no forno"],
+      "en": ["Bolognese with pasta", "Homemade oven burger"]
+    }
+  }
+]

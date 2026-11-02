@@ -1,0 +1,138 @@
+[
+  {
+    "id": "aveia-flocos",
+    "name": {
+      "pt": "Aveia em flocos",
+      "en": "Rolled oats"
+    },
+    "category": "cereais",
+    "role": "carb",
+    "proteinPer100g": 13,
+    "kcalPer100g": 370,
+    "carbsPer100g": 60,
+    "fatPer100g": 7,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "aveia-flocos:4-colheres",
+        "label": {
+          "pt": "4 colheres de sopa",
+          "en": "4 tablespoons"
+        },
+        "grams": 40,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 85,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Papas com leite e canela", "Com skyr e fruta"],
+      "en": ["Porridge with milk and cinnamon", "With skyr and fruit"]
+    }
+  },
+  {
+    "id": "arroz-branco",
+    "name": {
+      "pt": "Arroz branco",
+      "en": "White rice"
+    },
+    "category": "cereais",
+    "role": "carb",
+    "proteinPer100g": 7,
+    "kcalPer100g": 355,
+    "carbsPer100g": 78,
+    "fatPer100g": 0.6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "arroz-branco:dose",
+        "label": {
+          "pt": "1 dose (cru)",
+          "en": "1 serving (raw)"
+        },
+        "grams": 80,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 90,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Arroz de tomate", "Base para salteados"],
+      "en": ["Tomato rice", "Base for stir-fries"]
+    }
+  },
+  {
+    "id": "massa-trigo",
+    "name": {
+      "pt": "Massa de trigo",
+      "en": "Wheat pasta"
+    },
+    "category": "cereais",
+    "role": "carb",
+    "proteinPer100g": 12,
+    "kcalPer100g": 360,
+    "carbsPer100g": 72,
+    "fatPer100g": 1.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "massa-trigo:dose",
+        "label": {
+          "pt": "1 dose (crua)",
+          "en": "1 serving (raw)"
+        },
+        "grams": 80,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 85,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com atum e tomate", "Com camarão e alho"],
+      "en": ["With tuna and tomato", "With prawns and garlic"]
+    }
+  },
+  {
+    "id": "pao-integral",
+    "name": {
+      "pt": "Pão integral",
+      "en": "Wholemeal bread"
+    },
+    "category": "cereais",
+    "role": "carb",
+    "proteinPer100g": 9.5,
+    "kcalPer100g": 240,
+    "carbsPer100g": 42,
+    "fatPer100g": 3,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "pao-integral:2-fatias",
+        "label": {
+          "pt": "2 fatias",
+          "en": "2 slices"
+        },
+        "grams": 60,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 80,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Tosta com ovo", "Sandes de queijo fresco"],
+      "en": ["Toast with egg", "Fresh cheese sandwich"]
+    }
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "id": "ovo",
+    "name": {
+      "pt": "Ovo",
+      "en": "Egg"
+    },
+    "category": "ovos",
+    "role": "protein",
+    "proteinPer100g": 12.6,
+    "kcalPer100g": 143,
+    "carbsPer100g": 0.7,
+    "fatPer100g": 9.5,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "ovo:ovo",
+        "label": {
+          "pt": "1 ovo médio",
+          "en": "1 medium egg"
+        },
+        "grams": 50,
+        "default": true
+      },
+      {
+        "id": "ovo:2-ovos",
+        "label": {
+          "pt": "2 ovos",
+          "en": "2 eggs"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    "ease": 2,
+    "exampleRank": 85,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Cozido (10 minutos) para levar", "Mexido com espinafres"],
+      "en": ["Hard-boiled (10 minutes) to go", "Scrambled with spinach"]
+    }
+  },
+  {
+    "id": "claras-ovo",
+    "name": {
+      "pt": "Claras de ovo",
+      "en": "Egg whites"
+    },
+    "category": "ovos",
+    "role": "protein",
+    "proteinPer100g": 10.9,
+    "kcalPer100g": 52,
+    "carbsPer100g": 0.7,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "claras-ovo:3-claras",
+        "label": {
+          "pt": "3 claras",
+          "en": "3 egg whites"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Omelete com um ovo inteiro", "Panquecas de aveia"],
+      "en": ["Omelette with one whole egg", "Oat pancakes"]
+    }
+  }
+]

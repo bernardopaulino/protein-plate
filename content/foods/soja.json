@@ -1,0 +1,70 @@
+[
+  {
+    "id": "tofu-firme",
+    "name": {
+      "pt": "Tofu firme",
+      "en": "Firm tofu"
+    },
+    "category": "soja",
+    "role": "protein",
+    "proteinPer100g": 13,
+    "kcalPer100g": 130,
+    "carbsPer100g": 2,
+    "fatPer100g": 7.5,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "tofu-firme:meio-bloco",
+        "label": {
+          "pt": "Meio bloco",
+          "en": "Half a block"
+        },
+        "grams": 125,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em cubos, salteado com soja e alho", "No forno com legumes"],
+      "en": ["Cubed, stir-fried with soy and garlic", "Baked with vegetables"]
+    }
+  },
+  {
+    "id": "edamame",
+    "name": {
+      "pt": "Edamame",
+      "en": "Edamame"
+    },
+    "category": "soja",
+    "role": "protein",
+    "proteinPer100g": 11.5,
+    "kcalPer100g": 122,
+    "carbsPer100g": 9,
+    "fatPer100g": 5.2,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "edamame:chavena",
+        "label": {
+          "pt": "1 chávena (sem casca)",
+          "en": "1 cup (shelled)"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 2,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com sal e limão", "Em salada de arroz"],
+      "en": ["With salt and lemon", "In a rice salad"]
+    }
+  }
+]

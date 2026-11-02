@@ -1,0 +1,104 @@
+[
+  {
+    "id": "azeite",
+    "name": {
+      "pt": "Azeite",
+      "en": "Olive oil"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 0,
+    "kcalPer100g": 900,
+    "carbsPer100g": 0,
+    "fatPer100g": 100,
+    "weightBasis": "as_sold",
+    "processing": "culinary",
+    "portions": [
+      {
+        "id": "azeite:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "alho",
+    "name": {
+      "pt": "Alho",
+      "en": "Garlic"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 6,
+    "kcalPer100g": 140,
+    "carbsPer100g": 28,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "alho:2-dentes",
+        "label": {
+          "pt": "2 dentes",
+          "en": "2 cloves"
+        },
+        "grams": 8,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "limao",
+    "name": {
+      "pt": "Limão",
+      "en": "Lemon"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 1,
+    "kcalPer100g": 30,
+    "carbsPer100g": 6,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "limao:meio",
+        "label": {
+          "pt": "Meio limão",
+          "en": "Half a lemon"
+        },
+        "grams": 40,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  }
+]

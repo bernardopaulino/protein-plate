@@ -1,0 +1,128 @@
+[
+  {
+    "id": "salmao",
+    "name": {
+      "pt": "Salmão",
+      "en": "Salmon"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 20,
+    "kcalPer100g": 202,
+    "carbsPer100g": 0,
+    "fatPer100g": 13,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "salmao:posta",
+        "label": {
+          "pt": "1 posta",
+          "en": "1 fillet"
+        },
+        "grams": 150,
+        "default": true
+      },
+      {
+        "id": "salmao:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 82,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["No forno com batata-doce", "Na frigideira, pele para baixo"],
+      "en": ["Baked with sweet potato", "Pan-seared, skin side down"]
+    }
+  },
+  {
+    "id": "pescada",
+    "name": {
+      "pt": "Pescada",
+      "en": "Hake"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 16.5,
+    "kcalPer100g": 75,
+    "carbsPer100g": 0,
+    "fatPer100g": 0.8,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pescada:posta",
+        "label": {
+          "pt": "1 posta",
+          "en": "1 fillet"
+        },
+        "grams": 150,
+        "default": true
+      },
+      {
+        "id": "pescada:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 65,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Cozida com legumes e um fio de azeite", "No forno com tomate"],
+      "en": ["Poached with vegetables and olive oil", "Baked with tomato"]
+    }
+  },
+  {
+    "id": "bacalhau-demolhado",
+    "name": {
+      "pt": "Bacalhau demolhado",
+      "en": "Soaked salt cod"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 19,
+    "kcalPer100g": 85,
+    "carbsPer100g": 0,
+    "fatPer100g": 0.4,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "bacalhau-demolhado:posta",
+        "label": {
+          "pt": "1 posta",
+          "en": "1 fillet"
+        },
+        "grams": 180,
+        "default": true
+      },
+      {
+        "id": "bacalhau-demolhado:100g",
+        "label": {
+          "pt": "100 g",
+          "en": "100 g"
+        },
+        "grams": 100
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 55,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Cozido com grão e ovo", "Lascas com espinafres"],
+      "en": ["Boiled with chickpeas and egg", "Flaked with spinach"]
+    }
+  }
+]

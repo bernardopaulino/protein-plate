@@ -1,0 +1,70 @@
+[
+  {
+    "id": "amendoa",
+    "name": {
+      "pt": "Amêndoa",
+      "en": "Almonds"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 21,
+    "kcalPer100g": 590,
+    "carbsPer100g": 7,
+    "fatPer100g": 52,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "amendoa:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com iogurte grego", "Petisco de bolso"],
+      "en": ["With Greek yogurt", "Pocket snack"]
+    }
+  },
+  {
+    "id": "manteiga-amendoim",
+    "name": {
+      "pt": "Manteiga de amendoim 100%",
+      "en": "100% peanut butter"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 25,
+    "kcalPer100g": 600,
+    "carbsPer100g": 12,
+    "fatPer100g": 50,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "manteiga-amendoim:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 15,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche"],
+    "ease": 1,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em tosta com banana", "Nas papas de aveia"],
+      "en": ["On toast with banana", "In porridge"]
+    }
+  }
+]

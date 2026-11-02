@@ -1,0 +1,112 @@
+[
+  {
+    "id": "atum-lata-natural",
+    "name": {
+      "pt": "Atum em lata ao natural",
+      "en": "Canned tuna in water"
+    },
+    "category": "conservas",
+    "role": "protein",
+    "proteinPer100g": 25,
+    "kcalPer100g": 110,
+    "carbsPer100g": 0,
+    "fatPer100g": 1,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "atum-lata-natural:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 60,
+        "default": true
+      },
+      {
+        "id": "atum-lata-natural:lata-grande",
+        "label": {
+          "pt": "1 lata grande (escorrida)",
+          "en": "1 large can (drained)"
+        },
+        "grams": 90
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 78,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salada de grão com atum", "Sandes com tomate"],
+      "en": ["Chickpea and tuna salad", "Sandwich with tomato"]
+    }
+  },
+  {
+    "id": "sardinhas-lata",
+    "name": {
+      "pt": "Sardinhas em lata",
+      "en": "Canned sardines"
+    },
+    "category": "conservas",
+    "role": "protein",
+    "proteinPer100g": 24,
+    "kcalPer100g": 208,
+    "carbsPer100g": 0,
+    "fatPer100g": 11.5,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "sardinhas-lata:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 85,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em tosta com tomate", "Com batata cozida e cebola"],
+      "en": ["On toast with tomato", "With boiled potato and onion"]
+    }
+  },
+  {
+    "id": "salmao-fumado",
+    "name": {
+      "pt": "Salmão fumado",
+      "en": "Smoked salmon"
+    },
+    "category": "conservas",
+    "role": "protein",
+    "proteinPer100g": 21,
+    "kcalPer100g": 160,
+    "carbsPer100g": 0,
+    "fatPer100g": 8,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "salmao-fumado:fatias",
+        "label": {
+          "pt": "3 fatias",
+          "en": "3 slices"
+        },
+        "grams": 60,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em pão com queijo fresco", "Com ovos mexidos"],
+      "en": ["On bread with fresh cheese", "With scrambled eggs"]
+    }
+  }
+]

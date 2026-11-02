@@ -1,0 +1,36 @@
+[
+  {
+    "id": "banana",
+    "name": {
+      "pt": "Banana",
+      "en": "Banana"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 1.2,
+    "kcalPer100g": 95,
+    "carbsPer100g": 21,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "banana:banana",
+        "label": {
+          "pt": "1 banana",
+          "en": "1 banana"
+        },
+        "grams": 120,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 75,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com skyr", "Batido com leite"],
+      "en": ["With skyr", "Shake with milk"]
+    }
+  }
+]

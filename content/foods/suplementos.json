@@ -1,0 +1,36 @@
+[
+  {
+    "id": "whey-sem-sabor",
+    "name": {
+      "pt": "Proteína whey sem sabor",
+      "en": "Unflavoured whey protein"
+    },
+    "category": "suplementos",
+    "role": "protein",
+    "proteinPer100g": 80,
+    "kcalPer100g": 380,
+    "carbsPer100g": 7,
+    "fatPer100g": 6,
+    "weightBasis": "as_sold",
+    "processing": "ultra",
+    "portions": [
+      {
+        "id": "whey-sem-sabor:dose",
+        "label": {
+          "pt": "1 dose (scoop)",
+          "en": "1 scoop"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 10,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Batido com leite e banana", "Misturada nas papas de aveia"],
+      "en": ["Shake with milk and banana", "Stirred into porridge"]
+    }
+  }
+]

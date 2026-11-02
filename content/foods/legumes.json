@@ -1,0 +1,104 @@
+[
+  {
+    "id": "brocolos",
+    "name": {
+      "pt": "Brócolos",
+      "en": "Broccoli"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 3,
+    "kcalPer100g": 34,
+    "carbsPer100g": 4,
+    "fatPer100g": 0.4,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "brocolos:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Ao vapor em 5 minutos", "Salteados com alho"],
+      "en": ["Steamed in 5 minutes", "Sautéed with garlic"]
+    }
+  },
+  {
+    "id": "espinafres",
+    "name": {
+      "pt": "Espinafres",
+      "en": "Spinach"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 2.9,
+    "kcalPer100g": 23,
+    "carbsPer100g": 1.4,
+    "fatPer100g": 0.4,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "espinafres:punhado",
+        "label": {
+          "pt": "1 punhado grande",
+          "en": "1 large handful"
+        },
+        "grams": 60,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salteados com ovo", "Crus em salada"],
+      "en": ["Sautéed with egg", "Raw in a salad"]
+    }
+  },
+  {
+    "id": "tomate",
+    "name": {
+      "pt": "Tomate",
+      "en": "Tomato"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 0.9,
+    "kcalPer100g": 20,
+    "carbsPer100g": 3.5,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "tomate:tomate",
+        "label": {
+          "pt": "1 tomate",
+          "en": "1 tomato"
+        },
+        "grams": 120,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 55,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salada com orégãos", "Em tosta com azeite"],
+      "en": ["Salad with oregano", "On toast with olive oil"]
+    }
+  }
+]
