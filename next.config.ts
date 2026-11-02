@@ -10,7 +10,20 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  * segmento [locale] das rotas) e /pt/... redireciona para o endereço sem prefixo. O inglês vive
  * em /en (v1.1). O proxy do Next 16 corre em Node, que no Workers ainda é experimental.
  */
-const NOT_LOCALIZED = "(?!en(?:/|$)|pt(?:/|$)|api(?:/|$)|_next/|.*\.[a-zA-Z0-9]+$)";
+/**
+ * Rotas da app (sem prefixo de idioma). Lista explícita: o routing do OpenNext não aceita
+ * lookaheads nos rewrites.
+ */
+const APP_ROUTES = [
+  "comecar",
+  "alimentos",
+  "o-meu-dia",
+  "receitas",
+  "conta",
+  "privacidade",
+  "termos",
+  "dev",
+] as const;
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -28,7 +41,10 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [
         { source: "/", destination: "/pt" },
-        { source: `/:path(${NOT_LOCALIZED}.+)`, destination: "/pt/:path" },
+        ...APP_ROUTES.flatMap((route) => [
+          { source: `/${route}`, destination: `/pt/${route}` },
+          { source: `/${route}/:path*`, destination: `/pt/${route}/:path*` },
+        ]),
       ],
       afterFiles: [],
       fallback: [],
