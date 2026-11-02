@@ -66,5 +66,39 @@
       "pt": ["Assada com salmão", "Em puré com canela"],
       "en": ["Roasted with salmon", "Mashed with cinnamon"]
     }
+  },
+  {
+    "id": "mandioca",
+    "name": {
+      "pt": "Mandioca",
+      "en": "Cassava"
+    },
+    "category": "tuberculos",
+    "role": "carb",
+    "proteinPer100g": 1.4,
+    "kcalPer100g": 160,
+    "carbsPer100g": 38,
+    "fatPer100g": 0.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "mandioca:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
   }
 ]

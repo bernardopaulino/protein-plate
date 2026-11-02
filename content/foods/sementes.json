@@ -1,0 +1,240 @@
+[
+  {
+    "id": "sementes-abobora",
+    "name": {
+      "pt": "Sementes de abóbora",
+      "en": "Pumpkin seeds"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 30,
+    "kcalPer100g": 560,
+    "carbsPer100g": 5,
+    "fatPer100g": 49,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sementes-abobora:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "sementes-girassol",
+    "name": {
+      "pt": "Sementes de girassol",
+      "en": "Sunflower seeds"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 21,
+    "kcalPer100g": 580,
+    "carbsPer100g": 11,
+    "fatPer100g": 51,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sementes-girassol:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "sementes-chia",
+    "name": {
+      "pt": "Sementes de chia",
+      "en": "Chia seeds"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 17,
+    "kcalPer100g": 490,
+    "carbsPer100g": 8,
+    "fatPer100g": 31,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sementes-chia:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 12,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 28,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "sementes-linhaca",
+    "name": {
+      "pt": "Sementes de linhaça",
+      "en": "Flaxseeds"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 18,
+    "kcalPer100g": 530,
+    "carbsPer100g": 2,
+    "fatPer100g": 42,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sementes-linhaca:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche"],
+    "ease": 1,
+    "exampleRank": 22,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "sementes-canhamo",
+    "name": {
+      "pt": "Sementes de cânhamo",
+      "en": "Hemp seeds"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 32,
+    "kcalPer100g": 570,
+    "carbsPer100g": 3,
+    "fatPer100g": 49,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sementes-canhamo:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "sesamo",
+    "name": {
+      "pt": "Sésamo",
+      "en": "Sesame seeds"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 18,
+    "kcalPer100g": 600,
+    "carbsPer100g": 12,
+    "fatPer100g": 50,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sesamo:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 15,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "tahini",
+    "name": {
+      "pt": "Tahini",
+      "en": "Tahini"
+    },
+    "category": "sementes",
+    "role": "fat",
+    "proteinPer100g": 17,
+    "kcalPer100g": 600,
+    "carbsPer100g": 10,
+    "fatPer100g": 54,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "tahini:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 15,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 20,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  }
+]

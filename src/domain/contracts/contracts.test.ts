@@ -164,7 +164,11 @@ describe("alimentos (content/foods)", () => {
     const heavy = { ...valid, portions: [{ ...valid.portions[0]!, grams: 501 }] };
     expect(issues(heavy).length).toBeGreaterThan(0);
     const light = { ...valid, portions: [{ ...valid.portions[0]!, grams: 4 }] };
-    expect(issues(light).length).toBeGreaterThan(0);
+    expect(issues(light).join()).toContain("só a despensa");
+    const pinch = { ...valid, role: "pantry", portions: [{ ...valid.portions[0]!, grams: 1 }] };
+    expect(issues(pinch)).toEqual([]);
+    const zero = { ...valid, role: "pantry", portions: [{ ...valid.portions[0]!, grams: 0.5 }] };
+    expect(issues(zero).length).toBeGreaterThan(0);
   });
 
   it("proteína entre 0 e 90 g por 100 g", () => {

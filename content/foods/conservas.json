@@ -108,5 +108,107 @@
       "pt": ["Em pão com queijo fresco", "Com ovos mexidos"],
       "en": ["On bread with fresh cheese", "With scrambled eggs"]
     }
+  },
+  {
+    "id": "atum-lata-azeite",
+    "name": {
+      "pt": "Atum em lata em azeite",
+      "en": "Canned tuna in olive oil"
+    },
+    "category": "conservas",
+    "role": "protein",
+    "proteinPer100g": 25,
+    "kcalPer100g": 190,
+    "carbsPer100g": 0,
+    "fatPer100g": 9,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "atum-lata-azeite:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 60,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 70,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com feijão-frade e cebola"],
+      "en": ["With black-eyed peas and onion"]
+    }
+  },
+  {
+    "id": "cavala-lata",
+    "name": {
+      "pt": "Cavala em lata",
+      "en": "Canned mackerel"
+    },
+    "category": "conservas",
+    "role": "protein",
+    "proteinPer100g": 21,
+    "kcalPer100g": 200,
+    "carbsPer100g": 0,
+    "fatPer100g": 12,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "cavala-lata:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 85,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em tosta com tomate"],
+      "en": ["On toast with tomato"]
+    }
+  },
+  {
+    "id": "mexilhao-conserva",
+    "name": {
+      "pt": "Mexilhão em conserva",
+      "en": "Canned mussels"
+    },
+    "category": "conservas",
+    "role": "protein",
+    "proteinPer100g": 17,
+    "kcalPer100g": 160,
+    "carbsPer100g": 4,
+    "fatPer100g": 8,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "mexilhao-conserva:lata",
+        "label": {
+          "pt": "1 lata (escorrida)",
+          "en": "1 can (drained)"
+        },
+        "grams": 70,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com arroz e salsa"],
+      "en": ["With rice and parsley"]
+    }
   }
 ]

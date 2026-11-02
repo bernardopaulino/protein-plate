@@ -116,5 +116,345 @@
       "pt": ["Petisco de meio da tarde", "Em salada"],
       "en": ["Afternoon snack", "In a salad"]
     }
+  },
+  {
+    "id": "grao-bico",
+    "name": {
+      "pt": "Grão-de-bico",
+      "en": "Chickpeas"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 8.9,
+    "kcalPer100g": 164,
+    "carbsPer100g": 27,
+    "fatPer100g": 2.6,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "grao-bico:chavena",
+        "label": {
+          "pt": "1 chávena (cozido)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 160,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com bacalhau e ovo"],
+      "en": ["With salt cod and egg"]
+    }
+  },
+  {
+    "id": "feijao-preto",
+    "name": {
+      "pt": "Feijão-preto",
+      "en": "Black beans"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 8.9,
+    "kcalPer100g": 132,
+    "carbsPer100g": 24,
+    "fatPer100g": 0.5,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "feijao-preto:chavena",
+        "label": {
+          "pt": "1 chávena (cozido)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 170,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 38,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com arroz"],
+      "en": ["With rice"]
+    }
+  },
+  {
+    "id": "feijao-encarnado",
+    "name": {
+      "pt": "Feijão-encarnado",
+      "en": "Red kidney beans"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 8.7,
+    "kcalPer100g": 127,
+    "carbsPer100g": 23,
+    "fatPer100g": 0.5,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "feijao-encarnado:chavena",
+        "label": {
+          "pt": "1 chávena (cozido)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 170,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 36,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Chili caseiro"],
+      "en": ["Homemade chili"]
+    }
+  },
+  {
+    "id": "feijao-branco",
+    "name": {
+      "pt": "Feijão-branco",
+      "en": "White beans"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 9.7,
+    "kcalPer100g": 140,
+    "carbsPer100g": 25,
+    "fatPer100g": 0.4,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "feijao-branco:chavena",
+        "label": {
+          "pt": "1 chávena (cozido)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 170,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 36,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em sopa"],
+      "en": ["In a soup"]
+    }
+  },
+  {
+    "id": "feijao-frade",
+    "name": {
+      "pt": "Feijão-frade",
+      "en": "Black-eyed peas"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 7.7,
+    "kcalPer100g": 116,
+    "carbsPer100g": 21,
+    "fatPer100g": 0.5,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "feijao-frade:chavena",
+        "label": {
+          "pt": "1 chávena (cozido)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 170,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salada com atum"],
+      "en": ["Salad with tuna"]
+    }
+  },
+  {
+    "id": "lentilhas-castanhas",
+    "name": {
+      "pt": "Lentilhas castanhas",
+      "en": "Brown lentils"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 9,
+    "kcalPer100g": 116,
+    "carbsPer100g": 20,
+    "fatPer100g": 0.4,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "lentilhas-castanhas:chavena",
+        "label": {
+          "pt": "1 chávena (cozidas)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 200,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Estufadas com legumes"],
+      "en": ["Stewed with vegetables"]
+    }
+  },
+  {
+    "id": "lentilhas-vermelhas",
+    "name": {
+      "pt": "Lentilhas vermelhas",
+      "en": "Red lentils"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 7.6,
+    "kcalPer100g": 110,
+    "carbsPer100g": 19,
+    "fatPer100g": 0.4,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "lentilhas-vermelhas:chavena",
+        "label": {
+          "pt": "1 chávena (cozidas)",
+          "en": "1 cup (cooked)"
+        },
+        "grams": 200,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 38,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Caril de lentilhas"],
+      "en": ["Lentil curry"]
+    }
+  },
+  {
+    "id": "ervilhas",
+    "name": {
+      "pt": "Ervilhas",
+      "en": "Peas"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 5.4,
+    "kcalPer100g": 80,
+    "carbsPer100g": 14,
+    "fatPer100g": 0.4,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "ervilhas:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com ovos escalfados"],
+      "en": ["With poached eggs"]
+    }
+  },
+  {
+    "id": "favas",
+    "name": {
+      "pt": "Favas",
+      "en": "Broad beans"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 7.6,
+    "kcalPer100g": 88,
+    "carbsPer100g": 12,
+    "fatPer100g": 0.7,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "favas:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 20,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Guisadas com coentros"],
+      "en": ["Stewed with coriander"]
+    }
+  },
+  {
+    "id": "massa-lentilhas",
+    "name": {
+      "pt": "Massa de lentilhas",
+      "en": "Lentil pasta"
+    },
+    "category": "leguminosas",
+    "role": "protein",
+    "proteinPer100g": 25,
+    "kcalPer100g": 340,
+    "carbsPer100g": 50,
+    "fatPer100g": 2,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "massa-lentilhas:dose",
+        "label": {
+          "pt": "1 dose (crua)",
+          "en": "1 serving (raw)"
+        },
+        "grams": 80,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com tomate e manjericão"],
+      "en": ["With tomato and basil"]
+    }
   }
 ]

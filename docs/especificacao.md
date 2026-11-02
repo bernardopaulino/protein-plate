@@ -129,7 +129,7 @@ O JSON é a fonte única: gera o seed da D1 e um módulo TypeScript tipado para 
 | `tcaCode` | texto | rastreabilidade |
 | `ideas` | `{ pt, en }` | ideias rápidas |
 
-**`content:check`** valida: campos obrigatórios, ids únicos, proteína 0–90 g/100 g, porções 5–500 g, uma porção `default`, `ultra` só para exceções.
+**`content:check`** valida: campos obrigatórios, ids únicos, proteína 0–90 g/100 g, porções 5–500 g (1–500 g na despensa: uma pitada de sal tem 1 g), uma porção `default`, `ultra` só para exceções.
 
 **Curadoria:** partir de `docs/alimentos.csv`; copiar valores da TCA com o código; definir porções reais; incrementar `FOOD_DATA_VERSION` a cada alteração. Começar pelos 40 alimentos mais usados para desbloquear a UI.
 

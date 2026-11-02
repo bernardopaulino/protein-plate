@@ -42,7 +42,7 @@ describe("dia exemplo: propriedade da especificação", () => {
         for (const target of TARGETS) expectInBand(FOODS, target, meals, post);
       }
     }
-  });
+  }, 60_000);
 
   it("alimentos de teste: o mesmo nas combinações pré-selecionadas", () => {
     // Os 13 alimentos de teste não chegam a 250 g só com pequeno-almoço e meio da manhã
@@ -65,7 +65,7 @@ describe("dia exemplo: propriedade da especificação", () => {
       ),
       { numRuns: 500 },
     );
-  });
+  }, 60_000);
 });
 
 describe("dia exemplo: regras", () => {

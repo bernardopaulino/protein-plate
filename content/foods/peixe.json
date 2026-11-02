@@ -124,5 +124,345 @@
       "pt": ["Cozido com grão e ovo", "Lascas com espinafres"],
       "en": ["Boiled with chickpeas and egg", "Flaked with spinach"]
     }
+  },
+  {
+    "id": "atum-fresco",
+    "name": {
+      "pt": "Atum fresco",
+      "en": "Fresh tuna"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 23,
+    "kcalPer100g": 110,
+    "carbsPer100g": 0,
+    "fatPer100g": 1.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "atum-fresco:posta",
+        "label": {
+          "pt": "1 posta",
+          "en": "1 steak"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Selado com sésamo"],
+      "en": ["Seared with sesame"]
+    }
+  },
+  {
+    "id": "sardinha",
+    "name": {
+      "pt": "Sardinha",
+      "en": "Sardine"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 20,
+    "kcalPer100g": 170,
+    "carbsPer100g": 0,
+    "fatPer100g": 10,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "sardinha:3-sardinhas",
+        "label": {
+          "pt": "3 sardinhas",
+          "en": "3 sardines"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Assadas com pimentos"],
+      "en": ["Grilled with peppers"]
+    }
+  },
+  {
+    "id": "carapau",
+    "name": {
+      "pt": "Carapau",
+      "en": "Horse mackerel"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 19.5,
+    "kcalPer100g": 130,
+    "carbsPer100g": 0,
+    "fatPer100g": 6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "carapau:2-carapaus",
+        "label": {
+          "pt": "2 carapaus",
+          "en": "2 fish"
+        },
+        "grams": 180,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhado com batata cozida"],
+      "en": ["Grilled with boiled potato"]
+    }
+  },
+  {
+    "id": "cavala",
+    "name": {
+      "pt": "Cavala",
+      "en": "Mackerel"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 19,
+    "kcalPer100g": 190,
+    "carbsPer100g": 0,
+    "fatPer100g": 13,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cavala:cavala",
+        "label": {
+          "pt": "1 cavala",
+          "en": "1 mackerel"
+        },
+        "grams": 160,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 42,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["No forno com limão"],
+      "en": ["Baked with lemon"]
+    }
+  },
+  {
+    "id": "dourada",
+    "name": {
+      "pt": "Dourada",
+      "en": "Sea bream"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 19.5,
+    "kcalPer100g": 120,
+    "carbsPer100g": 0,
+    "fatPer100g": 5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "dourada:dourada",
+        "label": {
+          "pt": "1 dourada",
+          "en": "1 sea bream"
+        },
+        "grams": 180,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 52,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhada com legumes"],
+      "en": ["Grilled with vegetables"]
+    }
+  },
+  {
+    "id": "robalo",
+    "name": {
+      "pt": "Robalo",
+      "en": "Sea bass"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 19,
+    "kcalPer100g": 105,
+    "carbsPer100g": 0,
+    "fatPer100g": 3.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "robalo:robalo",
+        "label": {
+          "pt": "1 robalo",
+          "en": "1 sea bass"
+        },
+        "grams": 180,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["No forno com batata-doce"],
+      "en": ["Baked with sweet potato"]
+    }
+  },
+  {
+    "id": "peixe-espada-preto",
+    "name": {
+      "pt": "Peixe-espada preto",
+      "en": "Black scabbardfish"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 16,
+    "kcalPer100g": 110,
+    "carbsPer100g": 0,
+    "fatPer100g": 6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "peixe-espada-preto:filete",
+        "label": {
+          "pt": "1 filete",
+          "en": "1 fillet"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 38,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com banana, à madeirense"],
+      "en": ["Madeira style, with banana"]
+    }
+  },
+  {
+    "id": "tamboril",
+    "name": {
+      "pt": "Tamboril",
+      "en": "Monkfish"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 15,
+    "kcalPer100g": 70,
+    "carbsPer100g": 0,
+    "fatPer100g": 0.6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "tamboril:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em arroz de tamboril"],
+      "en": ["In monkfish rice"]
+    }
+  },
+  {
+    "id": "linguado",
+    "name": {
+      "pt": "Linguado",
+      "en": "Sole"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 17,
+    "kcalPer100g": 80,
+    "carbsPer100g": 0,
+    "fatPer100g": 1.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "linguado:filete",
+        "label": {
+          "pt": "1 filete",
+          "en": "1 fillet"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Na frigideira com limão"],
+      "en": ["Pan-fried with lemon"]
+    }
+  },
+  {
+    "id": "truta",
+    "name": {
+      "pt": "Truta",
+      "en": "Trout"
+    },
+    "category": "peixe",
+    "role": "protein",
+    "proteinPer100g": 20,
+    "kcalPer100g": 135,
+    "carbsPer100g": 0,
+    "fatPer100g": 6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "truta:truta",
+        "label": {
+          "pt": "1 truta",
+          "en": "1 trout"
+        },
+        "grams": 180,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["No forno com amêndoa"],
+      "en": ["Baked with almonds"]
+    }
   }
 ]

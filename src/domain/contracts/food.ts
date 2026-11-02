@@ -13,6 +13,9 @@ import { portionIdSchema, slugSchema } from "./common";
 /** Marcador de curadoria: alimento ainda sem os valores confirmados na TCA. */
 export const TODO = "TODO";
 
+/** Porção mínima (g) fora da despensa. */
+export const PORTION_MIN_GRAMS = 5;
+
 const localized = z
   .object({ pt: z.string().min(1).max(80), en: z.string().min(1).max(80) })
   .strict();
@@ -23,7 +26,8 @@ export const portionSchema = z
   .object({
     id: portionIdSchema,
     label: localized,
-    grams: z.number().min(5).max(500),
+    // 1 g só na despensa (uma pitada de sal); os outros alimentos a partir de 5 g (superRefine)
+    grams: z.number().min(1).max(500),
     default: z.literal(true).optional(),
   })
   .strict();
@@ -67,6 +71,13 @@ export const foodSchema = z
       ctx.addIssue({ code: "custom", path: ["portions"], message: "ids de porção repetidos" });
     }
     for (const [i, p] of food.portions.entries()) {
+      if (food.role !== "pantry" && p.grams < PORTION_MIN_GRAMS) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["portions", i, "grams"],
+          message: `porções entre ${PORTION_MIN_GRAMS} e 500 g (só a despensa aceita menos)`,
+        });
+      }
       if (!p.id.startsWith(`${food.id}:`)) {
         ctx.addIssue({
           code: "custom",

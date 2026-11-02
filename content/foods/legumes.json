@@ -100,5 +100,583 @@
       "pt": ["Salada com orégãos", "Em tosta com azeite"],
       "en": ["Salad with oregano", "On toast with olive oil"]
     }
+  },
+  {
+    "id": "couve-flor",
+    "name": {
+      "pt": "Couve-flor",
+      "en": "Cauliflower"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1.9,
+    "kcalPer100g": 25,
+    "carbsPer100g": 3,
+    "fatPer100g": 0.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "couve-flor:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "couve-portuguesa",
+    "name": {
+      "pt": "Couve-portuguesa",
+      "en": "Portuguese cabbage"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 3,
+    "kcalPer100g": 33,
+    "carbsPer100g": 4,
+    "fatPer100g": 0.6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "couve-portuguesa:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "couve-kale",
+    "name": {
+      "pt": "Couve kale",
+      "en": "Kale"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 4.3,
+    "kcalPer100g": 49,
+    "carbsPer100g": 5,
+    "fatPer100g": 0.9,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "couve-kale:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 50,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "couve-bruxelas",
+    "name": {
+      "pt": "Couve-de-bruxelas",
+      "en": "Brussels sprouts"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 3.4,
+    "kcalPer100g": 43,
+    "carbsPer100g": 5,
+    "fatPer100g": 0.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "couve-bruxelas:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 90,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "cenoura",
+    "name": {
+      "pt": "Cenoura",
+      "en": "Carrot"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 0.9,
+    "kcalPer100g": 41,
+    "carbsPer100g": 7.5,
+    "fatPer100g": 0.2,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cenoura:cenoura",
+        "label": {
+          "pt": "1 cenoura",
+          "en": "1 carrot"
+        },
+        "grams": 80,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "pepino",
+    "name": {
+      "pt": "Pepino",
+      "en": "Cucumber"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 0.7,
+    "kcalPer100g": 15,
+    "carbsPer100g": 3,
+    "fatPer100g": 0.1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pepino:meio",
+        "label": {
+          "pt": "Meio pepino",
+          "en": "Half a cucumber"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "alface",
+    "name": {
+      "pt": "Alface",
+      "en": "Lettuce"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1.4,
+    "kcalPer100g": 15,
+    "carbsPer100g": 2,
+    "fatPer100g": 0.2,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "alface:taca",
+        "label": {
+          "pt": "1 taça",
+          "en": "1 bowl"
+        },
+        "grams": 50,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "rucula",
+    "name": {
+      "pt": "Rúcula",
+      "en": "Rocket"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 2.6,
+    "kcalPer100g": 25,
+    "carbsPer100g": 2,
+    "fatPer100g": 0.7,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "rucula:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "pimento",
+    "name": {
+      "pt": "Pimento",
+      "en": "Bell pepper"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 0.9,
+    "kcalPer100g": 26,
+    "carbsPer100g": 5,
+    "fatPer100g": 0.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pimento:meio",
+        "label": {
+          "pt": "Meio pimento",
+          "en": "Half a pepper"
+        },
+        "grams": 80,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "cebola",
+    "name": {
+      "pt": "Cebola",
+      "en": "Onion"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1.1,
+    "kcalPer100g": 40,
+    "carbsPer100g": 8,
+    "fatPer100g": 0.1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cebola:meia",
+        "label": {
+          "pt": "Meia cebola",
+          "en": "Half an onion"
+        },
+        "grams": 60,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "courgette",
+    "name": {
+      "pt": "Courgette",
+      "en": "Courgette"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1.2,
+    "kcalPer100g": 17,
+    "carbsPer100g": 2.5,
+    "fatPer100g": 0.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "courgette:meia",
+        "label": {
+          "pt": "Meia courgette",
+          "en": "Half a courgette"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "beringela",
+    "name": {
+      "pt": "Beringela",
+      "en": "Aubergine"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1,
+    "kcalPer100g": 25,
+    "carbsPer100g": 3,
+    "fatPer100g": 0.2,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "beringela:meia",
+        "label": {
+          "pt": "Meia beringela",
+          "en": "Half an aubergine"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "cogumelos",
+    "name": {
+      "pt": "Cogumelos",
+      "en": "Mushrooms"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 3.1,
+    "kcalPer100g": 22,
+    "carbsPer100g": 0.5,
+    "fatPer100g": 0.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cogumelos:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 90,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "feijao-verde",
+    "name": {
+      "pt": "Feijão-verde",
+      "en": "Green beans"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1.8,
+    "kcalPer100g": 31,
+    "carbsPer100g": 4,
+    "fatPer100g": 0.2,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "feijao-verde:chavena",
+        "label": {
+          "pt": "1 chávena",
+          "en": "1 cup"
+        },
+        "grams": 120,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "espargos",
+    "name": {
+      "pt": "Espargos",
+      "en": "Asparagus"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 2.2,
+    "kcalPer100g": 20,
+    "carbsPer100g": 2,
+    "fatPer100g": 0.1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "espargos:6-espargos",
+        "label": {
+          "pt": "6 espargos",
+          "en": "6 spears"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "abobora",
+    "name": {
+      "pt": "Abóbora",
+      "en": "Pumpkin"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1,
+    "kcalPer100g": 26,
+    "carbsPer100g": 5,
+    "fatPer100g": 0.1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "abobora:fatia",
+        "label": {
+          "pt": "1 fatia",
+          "en": "1 slice"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "beterraba",
+    "name": {
+      "pt": "Beterraba",
+      "en": "Beetroot"
+    },
+    "category": "legumes",
+    "role": "vegetable",
+    "proteinPer100g": 1.6,
+    "kcalPer100g": 43,
+    "carbsPer100g": 8,
+    "fatPer100g": 0.2,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "beterraba:beterraba",
+        "label": {
+          "pt": "1 beterraba",
+          "en": "1 beetroot"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
   }
 ]

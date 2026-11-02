@@ -38,6 +38,23 @@ describe("operações do dia", () => {
     expect(capped[0]?.count).toBe(4);
   });
 
+  it("ao somar porções, os outros itens ficam iguais", () => {
+    const other: PlanItem = {
+      id: "o",
+      meal: "jantar",
+      foodId: "atum",
+      portionId: "atum:lata",
+      count: 1,
+    };
+    const items = addItem(
+      [...base, other],
+      { meal: "almoco", foodId: "frango", portionId: "frango:peito", count: 1 },
+      "z",
+    );
+    expect(items[1]).toBe(other);
+    expect(items[0]?.count).toBe(2);
+  });
+
   it("muda porções em passos de 0,5 entre 0,5 e 4", () => {
     expect(setItemCount(base, "a", 1.3)[0]?.count).toBe(1.5);
     expect(setItemCount(base, "a", 0)[0]?.count).toBe(0.5);

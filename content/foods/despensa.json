@@ -100,5 +100,617 @@
       "pt": [],
       "en": []
     }
+  },
+  {
+    "id": "manteiga",
+    "name": {
+      "pt": "Manteiga",
+      "en": "Butter"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 0.6,
+    "kcalPer100g": 740,
+    "carbsPer100g": 0.6,
+    "fatPer100g": 82,
+    "weightBasis": "as_sold",
+    "processing": "culinary",
+    "portions": [
+      {
+        "id": "manteiga:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 5,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "sal",
+    "name": {
+      "pt": "Sal",
+      "en": "Salt"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 0,
+    "kcalPer100g": 0,
+    "carbsPer100g": 0,
+    "fatPer100g": 0,
+    "weightBasis": "as_sold",
+    "processing": "culinary",
+    "portions": [
+      {
+        "id": "sal:pitada",
+        "label": {
+          "pt": "1 pitada",
+          "en": "1 pinch"
+        },
+        "grams": 1,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "vinagre",
+    "name": {
+      "pt": "Vinagre",
+      "en": "Vinegar"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 0,
+    "kcalPer100g": 20,
+    "carbsPer100g": 0.6,
+    "fatPer100g": 0,
+    "weightBasis": "as_sold",
+    "processing": "culinary",
+    "portions": [
+      {
+        "id": "vinagre:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 15,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "mel",
+    "name": {
+      "pt": "Mel",
+      "en": "Honey"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 0.3,
+    "kcalPer100g": 320,
+    "carbsPer100g": 80,
+    "fatPer100g": 0,
+    "weightBasis": "as_sold",
+    "processing": "culinary",
+    "portions": [
+      {
+        "id": "mel:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 7,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche", "ceia", "almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "pimenta-preta",
+    "name": {
+      "pt": "Pimenta preta",
+      "en": "Black pepper"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 10,
+    "kcalPer100g": 250,
+    "carbsPer100g": 64,
+    "fatPer100g": 3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pimenta-preta:pitada",
+        "label": {
+          "pt": "1 pitada",
+          "en": "1 pinch"
+        },
+        "grams": 1,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "colorau",
+    "name": {
+      "pt": "Colorau",
+      "en": "Paprika"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 14,
+    "kcalPer100g": 280,
+    "carbsPer100g": 54,
+    "fatPer100g": 13,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "colorau:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 2,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "cominhos",
+    "name": {
+      "pt": "Cominhos",
+      "en": "Cumin"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 18,
+    "kcalPer100g": 375,
+    "carbsPer100g": 44,
+    "fatPer100g": 22,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cominhos:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 2,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "caril",
+    "name": {
+      "pt": "Caril em pó",
+      "en": "Curry powder"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 14,
+    "kcalPer100g": 325,
+    "carbsPer100g": 56,
+    "fatPer100g": 14,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "caril:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 2,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "oregaos",
+    "name": {
+      "pt": "Orégãos",
+      "en": "Oregano"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 9,
+    "kcalPer100g": 265,
+    "carbsPer100g": 69,
+    "fatPer100g": 4,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "oregaos:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 1,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "salsa",
+    "name": {
+      "pt": "Salsa",
+      "en": "Parsley"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 3,
+    "kcalPer100g": 36,
+    "carbsPer100g": 6,
+    "fatPer100g": 0.8,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "salsa:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "coentros",
+    "name": {
+      "pt": "Coentros",
+      "en": "Coriander"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 2.1,
+    "kcalPer100g": 23,
+    "carbsPer100g": 4,
+    "fatPer100g": 0.5,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "coentros:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "manjericao",
+    "name": {
+      "pt": "Manjericão",
+      "en": "Basil"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 3.2,
+    "kcalPer100g": 23,
+    "carbsPer100g": 2.7,
+    "fatPer100g": 0.6,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "manjericao:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "gengibre",
+    "name": {
+      "pt": "Gengibre",
+      "en": "Ginger"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 1.8,
+    "kcalPer100g": 80,
+    "carbsPer100g": 18,
+    "fatPer100g": 0.8,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "gengibre:pedaco",
+        "label": {
+          "pt": "1 pedaço",
+          "en": "1 piece"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "canela",
+    "name": {
+      "pt": "Canela",
+      "en": "Cinnamon"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 4,
+    "kcalPer100g": 247,
+    "carbsPer100g": 81,
+    "fatPer100g": 1.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "canela:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 2,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche", "ceia", "almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "cacau",
+    "name": {
+      "pt": "Cacau em pó 100%",
+      "en": "100% cocoa powder"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 20,
+    "kcalPer100g": 230,
+    "carbsPer100g": 58,
+    "fatPer100g": 14,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cacau:colher",
+        "label": {
+          "pt": "1 colher de sopa",
+          "en": "1 tablespoon"
+        },
+        "grams": 5,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "polpa-tomate",
+    "name": {
+      "pt": "Polpa de tomate",
+      "en": "Tomato passata"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 1.6,
+    "kcalPer100g": 30,
+    "carbsPer100g": 5,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "polpa-tomate:3-colheres",
+        "label": {
+          "pt": "3 colheres de sopa",
+          "en": "3 tablespoons"
+        },
+        "grams": 50,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "leite-coco",
+    "name": {
+      "pt": "Leite de coco",
+      "en": "Coconut milk"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 2,
+    "kcalPer100g": 200,
+    "carbsPer100g": 3,
+    "fatPer100g": 20,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "leite-coco:quarto-lata",
+        "label": {
+          "pt": "Um quarto de lata",
+          "en": "A quarter of a can"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "mostarda",
+    "name": {
+      "pt": "Mostarda",
+      "en": "Mustard"
+    },
+    "category": "despensa",
+    "role": "pantry",
+    "proteinPer100g": 4.4,
+    "kcalPer100g": 100,
+    "carbsPer100g": 6,
+    "fatPer100g": 6,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "mostarda:colher",
+        "label": {
+          "pt": "1 colher de chá",
+          "en": "1 teaspoon"
+        },
+        "grams": 5,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 0,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
   }
 ]

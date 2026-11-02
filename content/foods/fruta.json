@@ -32,5 +32,685 @@
       "pt": ["Com skyr", "Batido com leite"],
       "en": ["With skyr", "Shake with milk"]
     }
+  },
+  {
+    "id": "maca",
+    "name": {
+      "pt": "Maçã",
+      "en": "Apple"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.3,
+    "kcalPer100g": 52,
+    "carbsPer100g": 12,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "maca:maca",
+        "label": {
+          "pt": "1 maçã",
+          "en": "1 apple"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 70,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "pera",
+    "name": {
+      "pt": "Pera",
+      "en": "Pear"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.4,
+    "kcalPer100g": 57,
+    "carbsPer100g": 13,
+    "fatPer100g": 0.1,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pera:pera",
+        "label": {
+          "pt": "1 pera",
+          "en": "1 pear"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "laranja",
+    "name": {
+      "pt": "Laranja",
+      "en": "Orange"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.9,
+    "kcalPer100g": 47,
+    "carbsPer100g": 10,
+    "fatPer100g": 0.1,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "laranja:laranja",
+        "label": {
+          "pt": "1 laranja",
+          "en": "1 orange"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 55,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "tangerina",
+    "name": {
+      "pt": "Tangerina",
+      "en": "Tangerine"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.8,
+    "kcalPer100g": 53,
+    "carbsPer100g": 12,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "tangerina:2-tangerinas",
+        "label": {
+          "pt": "2 tangerinas",
+          "en": "2 tangerines"
+        },
+        "grams": 140,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "kiwi",
+    "name": {
+      "pt": "Kiwi",
+      "en": "Kiwi"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 1.1,
+    "kcalPer100g": 61,
+    "carbsPer100g": 13,
+    "fatPer100g": 0.5,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "kiwi:2-kiwis",
+        "label": {
+          "pt": "2 kiwis",
+          "en": "2 kiwis"
+        },
+        "grams": 140,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 50,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "morangos",
+    "name": {
+      "pt": "Morangos",
+      "en": "Strawberries"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.7,
+    "kcalPer100g": 32,
+    "carbsPer100g": 7,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "morangos:taca",
+        "label": {
+          "pt": "1 taça",
+          "en": "1 bowl"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "mirtilos",
+    "name": {
+      "pt": "Mirtilos",
+      "en": "Blueberries"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.7,
+    "kcalPer100g": 57,
+    "carbsPer100g": 13,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "mirtilos:taca",
+        "label": {
+          "pt": "1 taça",
+          "en": "1 bowl"
+        },
+        "grams": 125,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 55,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "framboesas",
+    "name": {
+      "pt": "Framboesas",
+      "en": "Raspberries"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 1.2,
+    "kcalPer100g": 52,
+    "carbsPer100g": 6,
+    "fatPer100g": 0.7,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "framboesas:taca",
+        "label": {
+          "pt": "1 taça",
+          "en": "1 bowl"
+        },
+        "grams": 125,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "uvas",
+    "name": {
+      "pt": "Uvas",
+      "en": "Grapes"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.7,
+    "kcalPer100g": 69,
+    "carbsPer100g": 17,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "uvas:cacho",
+        "label": {
+          "pt": "1 cacho pequeno",
+          "en": "1 small bunch"
+        },
+        "grams": 120,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "manga",
+    "name": {
+      "pt": "Manga",
+      "en": "Mango"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.8,
+    "kcalPer100g": 60,
+    "carbsPer100g": 14,
+    "fatPer100g": 0.4,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "manga:meia",
+        "label": {
+          "pt": "Meia manga",
+          "en": "Half a mango"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "ananas",
+    "name": {
+      "pt": "Ananás",
+      "en": "Pineapple"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.5,
+    "kcalPer100g": 50,
+    "carbsPer100g": 12,
+    "fatPer100g": 0.1,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "ananas:2-rodelas",
+        "label": {
+          "pt": "2 rodelas",
+          "en": "2 slices"
+        },
+        "grams": 160,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "pessego",
+    "name": {
+      "pt": "Pêssego",
+      "en": "Peach"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.9,
+    "kcalPer100g": 39,
+    "carbsPer100g": 9,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pessego:pessego",
+        "label": {
+          "pt": "1 pêssego",
+          "en": "1 peach"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "melao",
+    "name": {
+      "pt": "Melão",
+      "en": "Melon"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.8,
+    "kcalPer100g": 34,
+    "carbsPer100g": 8,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "melao:fatia",
+        "label": {
+          "pt": "1 fatia",
+          "en": "1 slice"
+        },
+        "grams": 200,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "melancia",
+    "name": {
+      "pt": "Melancia",
+      "en": "Watermelon"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.6,
+    "kcalPer100g": 30,
+    "carbsPer100g": 7,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "melancia:fatia",
+        "label": {
+          "pt": "1 fatia",
+          "en": "1 slice"
+        },
+        "grams": 250,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "figos",
+    "name": {
+      "pt": "Figos",
+      "en": "Figs"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.8,
+    "kcalPer100g": 74,
+    "carbsPer100g": 16,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "figos:2-figos",
+        "label": {
+          "pt": "2 figos",
+          "en": "2 figs"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "cerejas",
+    "name": {
+      "pt": "Cerejas",
+      "en": "Cherries"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 1.1,
+    "kcalPer100g": 63,
+    "carbsPer100g": 14,
+    "fatPer100g": 0.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "cerejas:taca",
+        "label": {
+          "pt": "1 taça",
+          "en": "1 bowl"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "ameixas",
+    "name": {
+      "pt": "Ameixas",
+      "en": "Plums"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 0.7,
+    "kcalPer100g": 46,
+    "carbsPer100g": 10,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "ameixas:2-ameixas",
+        "label": {
+          "pt": "2 ameixas",
+          "en": "2 plums"
+        },
+        "grams": 130,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "roma",
+    "name": {
+      "pt": "Romã",
+      "en": "Pomegranate"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 1.7,
+    "kcalPer100g": 83,
+    "carbsPer100g": 14,
+    "fatPer100g": 1.2,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "roma:meia",
+        "label": {
+          "pt": "Meia romã",
+          "en": "Half a pomegranate"
+        },
+        "grams": 100,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 20,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "tamaras",
+    "name": {
+      "pt": "Tâmaras",
+      "en": "Dates"
+    },
+    "category": "fruta",
+    "role": "carb",
+    "proteinPer100g": 1.8,
+    "kcalPer100g": 280,
+    "carbsPer100g": 66,
+    "fatPer100g": 0.4,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "tamaras:3-tamaras",
+        "label": {
+          "pt": "3 tâmaras",
+          "en": "3 dates"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "abacate",
+    "name": {
+      "pt": "Abacate",
+      "en": "Avocado"
+    },
+    "category": "fruta",
+    "role": "fat",
+    "proteinPer100g": 2,
+    "kcalPer100g": 160,
+    "carbsPer100g": 2,
+    "fatPer100g": 15,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "abacate:meio",
+        "label": {
+          "pt": "Meio abacate",
+          "en": "Half an avocado"
+        },
+        "grams": 80,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em tosta com ovo"],
+      "en": ["On toast with egg"]
+    }
   }
 ]

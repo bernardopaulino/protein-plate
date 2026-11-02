@@ -124,5 +124,379 @@
       "pt": ["Bolonhesa com massa", "Hambúrguer caseiro no forno"],
       "en": ["Bolognese with pasta", "Homemade oven burger"]
     }
+  },
+  {
+    "id": "coxa-frango",
+    "name": {
+      "pt": "Coxa de frango sem pele",
+      "en": "Skinless chicken thigh"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 19.5,
+    "kcalPer100g": 120,
+    "carbsPer100g": 0,
+    "fatPer100g": 4.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "coxa-frango:2-coxas",
+        "label": {
+          "pt": "2 coxas",
+          "en": "2 thighs"
+        },
+        "grams": 200,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 72,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["No forno com batata e limão"],
+      "en": ["Roasted with potato and lemon"]
+    }
+  },
+  {
+    "id": "carne-picada-peru",
+    "name": {
+      "pt": "Carne picada de peru",
+      "en": "Minced turkey"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 19.5,
+    "kcalPer100g": 150,
+    "carbsPer100g": 0,
+    "fatPer100g": 8,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "carne-picada-peru:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 125,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 62,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Almôndegas com tomate"],
+      "en": ["Meatballs in tomato sauce"]
+    }
+  },
+  {
+    "id": "bife-vaca",
+    "name": {
+      "pt": "Bife de vaca (alcatra ou pojadouro)",
+      "en": "Beef steak (rump)"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 21.5,
+    "kcalPer100g": 125,
+    "carbsPer100g": 0,
+    "fatPer100g": 4.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "bife-vaca:bife",
+        "label": {
+          "pt": "1 bife",
+          "en": "1 steak"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 68,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Na frigideira com alho"],
+      "en": ["Pan-fried with garlic"]
+    }
+  },
+  {
+    "id": "bife-vitela",
+    "name": {
+      "pt": "Bife de vitela",
+      "en": "Veal steak"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 21,
+    "kcalPer100g": 110,
+    "carbsPer100g": 0,
+    "fatPer100g": 3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "bife-vitela:bife",
+        "label": {
+          "pt": "1 bife",
+          "en": "1 steak"
+        },
+        "grams": 130,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 60,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhado com salada"],
+      "en": ["Grilled with salad"]
+    }
+  },
+  {
+    "id": "lombo-porco",
+    "name": {
+      "pt": "Lombo de porco",
+      "en": "Pork loin"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 21,
+    "kcalPer100g": 140,
+    "carbsPer100g": 0,
+    "fatPer100g": 6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "lombo-porco:2-fatias",
+        "label": {
+          "pt": "2 fatias",
+          "en": "2 slices"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 58,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Assado com laranja"],
+      "en": ["Roasted with orange"]
+    }
+  },
+  {
+    "id": "febras-porco",
+    "name": {
+      "pt": "Febras de porco",
+      "en": "Pork cutlets"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 20,
+    "kcalPer100g": 150,
+    "carbsPer100g": 0,
+    "fatPer100g": 7.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "febras-porco:2-febras",
+        "label": {
+          "pt": "2 febras",
+          "en": "2 cutlets"
+        },
+        "grams": 160,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 56,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhadas com alho e colorau"],
+      "en": ["Grilled with garlic and paprika"]
+    }
+  },
+  {
+    "id": "coelho",
+    "name": {
+      "pt": "Coelho",
+      "en": "Rabbit"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 21,
+    "kcalPer100g": 135,
+    "carbsPer100g": 0,
+    "fatPer100g": 5.5,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "coelho:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 180,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Estufado com vinho branco"],
+      "en": ["Stewed with white wine"]
+    }
+  },
+  {
+    "id": "perna-borrego",
+    "name": {
+      "pt": "Perna de borrego",
+      "en": "Leg of lamb"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 19.5,
+    "kcalPer100g": 190,
+    "carbsPer100g": 0,
+    "fatPer100g": 12,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "perna-borrego:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["No forno com alecrim"],
+      "en": ["Roasted with rosemary"]
+    }
+  },
+  {
+    "id": "figado-vaca",
+    "name": {
+      "pt": "Fígado de vaca",
+      "en": "Beef liver"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 20,
+    "kcalPer100g": 135,
+    "carbsPer100g": 3.9,
+    "fatPer100g": 3.6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "figado-vaca:bife",
+        "label": {
+          "pt": "1 bife",
+          "en": "1 steak"
+        },
+        "grams": 120,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 20,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Iscas com cebola"],
+      "en": ["With onions"]
+    }
+  },
+  {
+    "id": "peito-pato",
+    "name": {
+      "pt": "Peito de pato",
+      "en": "Duck breast"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 19,
+    "kcalPer100g": 135,
+    "carbsPer100g": 0,
+    "fatPer100g": 6,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "peito-pato:peito",
+        "label": {
+          "pt": "1 peito",
+          "en": "1 breast"
+        },
+        "grams": 180,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com laranja e arroz"],
+      "en": ["With orange and rice"]
+    }
+  },
+  {
+    "id": "presunto",
+    "name": {
+      "pt": "Presunto curado",
+      "en": "Cured ham"
+    },
+    "category": "carne",
+    "role": "protein",
+    "proteinPer100g": 30,
+    "kcalPer100g": 250,
+    "carbsPer100g": 0,
+    "fatPer100g": 13,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "presunto:3-fatias",
+        "label": {
+          "pt": "3 fatias finas",
+          "en": "3 thin slices"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em pão com tomate"],
+      "en": ["On bread with tomato"]
+    }
   }
 ]

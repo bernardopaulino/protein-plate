@@ -252,5 +252,311 @@
       "pt": ["Tosta com fiambre de peru", "Em pão integral"],
       "en": ["Toastie with turkey ham", "On wholemeal bread"]
     }
+  },
+  {
+    "id": "leite-magro",
+    "name": {
+      "pt": "Leite magro",
+      "en": "Skimmed milk"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 3.4,
+    "kcalPer100g": 34,
+    "carbsPer100g": 4.8,
+    "fatPer100g": 0.1,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "leite-magro:copo",
+        "label": {
+          "pt": "1 copo",
+          "en": "1 glass"
+        },
+        "grams": 250,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 58,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com aveia"],
+      "en": ["With oats"]
+    }
+  },
+  {
+    "id": "iogurte-natural",
+    "name": {
+      "pt": "Iogurte natural",
+      "en": "Plain yogurt"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 4.2,
+    "kcalPer100g": 62,
+    "carbsPer100g": 5.5,
+    "fatPer100g": 3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "iogurte-natural:iogurte",
+        "label": {
+          "pt": "1 iogurte",
+          "en": "1 pot"
+        },
+        "grams": 125,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 55,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com fruta"],
+      "en": ["With fruit"]
+    }
+  },
+  {
+    "id": "quark-natural",
+    "name": {
+      "pt": "Quark natural",
+      "en": "Plain quark"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 12,
+    "kcalPer100g": 70,
+    "carbsPer100g": 4,
+    "fatPer100g": 0.3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "quark-natural:embalagem",
+        "label": {
+          "pt": "1 embalagem pequena",
+          "en": "1 small tub"
+        },
+        "grams": 200,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 75,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com mirtilos e mel"],
+      "en": ["With blueberries and honey"]
+    }
+  },
+  {
+    "id": "kefir-natural",
+    "name": {
+      "pt": "Kefir natural",
+      "en": "Plain kefir"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 3.5,
+    "kcalPer100g": 60,
+    "carbsPer100g": 4.5,
+    "fatPer100g": 3,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "kefir-natural:copo",
+        "label": {
+          "pt": "1 copo",
+          "en": "1 glass"
+        },
+        "grams": 250,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 45,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Batido com fruta"],
+      "en": ["Shake with fruit"]
+    }
+  },
+  {
+    "id": "ricota",
+    "name": {
+      "pt": "Ricota",
+      "en": "Ricotta"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 11,
+    "kcalPer100g": 150,
+    "carbsPer100g": 3,
+    "fatPer100g": 10,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "ricota:2-colheres",
+        "label": {
+          "pt": "2 colheres de sopa",
+          "en": "2 tablespoons"
+        },
+        "grams": 50,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche"],
+    "ease": 1,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em tosta com mel"],
+      "en": ["On toast with honey"]
+    }
+  },
+  {
+    "id": "mozzarella-fresca",
+    "name": {
+      "pt": "Mozzarella fresca",
+      "en": "Fresh mozzarella"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 18,
+    "kcalPer100g": 250,
+    "carbsPer100g": 1,
+    "fatPer100g": 19,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "mozzarella-fresca:meia-bola",
+        "label": {
+          "pt": "Meia bola",
+          "en": "Half a ball"
+        },
+        "grams": 60,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    "ease": 1,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com tomate e manjericão"],
+      "en": ["With tomato and basil"]
+    }
+  },
+  {
+    "id": "queijo-sao-jorge",
+    "name": {
+      "pt": "Queijo da Ilha (São Jorge)",
+      "en": "São Jorge cheese"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 26,
+    "kcalPer100g": 380,
+    "carbsPer100g": 0,
+    "fatPer100g": 31,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "queijo-sao-jorge:fatia",
+        "label": {
+          "pt": "1 fatia grossa",
+          "en": "1 thick slice"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 35,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Em pão de mistura"],
+      "en": ["On mixed-grain bread"]
+    }
+  },
+  {
+    "id": "parmesao",
+    "name": {
+      "pt": "Parmesão ou Grana Padano",
+      "en": "Parmesan or Grana Padano"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 33,
+    "kcalPer100g": 400,
+    "carbsPer100g": 0,
+    "fatPer100g": 29,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "parmesao:colher",
+        "label": {
+          "pt": "1 colher de sopa (ralado)",
+          "en": "1 tablespoon (grated)"
+        },
+        "grams": 10,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 1,
+    "exampleRank": 20,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Por cima da massa"],
+      "en": ["Over pasta"]
+    }
+  },
+  {
+    "id": "queijo-cabra-curado",
+    "name": {
+      "pt": "Queijo de cabra curado",
+      "en": "Aged goat cheese"
+    },
+    "category": "laticinios",
+    "role": "protein",
+    "proteinPer100g": 25,
+    "kcalPer100g": 360,
+    "carbsPer100g": 0,
+    "fatPer100g": 29,
+    "weightBasis": "as_sold",
+    "processing": "processed",
+    "portions": [
+      {
+        "id": "queijo-cabra-curado:2-fatias",
+        "label": {
+          "pt": "2 fatias",
+          "en": "2 slices"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
+    "ease": 1,
+    "exampleRank": 25,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Com figos"],
+      "en": ["With figs"]
+    }
   }
 ]

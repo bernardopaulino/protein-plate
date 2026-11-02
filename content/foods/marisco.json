@@ -40,5 +40,175 @@
       "pt": ["Salteado com alho em 5 minutos", "Com massa e limão"],
       "en": ["Sautéed with garlic in 5 minutes", "With pasta and lemon"]
     }
+  },
+  {
+    "id": "polvo",
+    "name": {
+      "pt": "Polvo",
+      "en": "Octopus"
+    },
+    "category": "marisco",
+    "role": "protein",
+    "proteinPer100g": 22,
+    "kcalPer100g": 120,
+    "carbsPer100g": 2,
+    "fatPer100g": 1.5,
+    "weightBasis": "cooked",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "polvo:dose",
+        "label": {
+          "pt": "1 dose (cozido)",
+          "en": "1 serving (cooked)"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 3,
+    "exampleRank": 40,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Salada de polvo"],
+      "en": ["Octopus salad"]
+    }
+  },
+  {
+    "id": "lulas",
+    "name": {
+      "pt": "Lulas",
+      "en": "Squid"
+    },
+    "category": "marisco",
+    "role": "protein",
+    "proteinPer100g": 16,
+    "kcalPer100g": 85,
+    "carbsPer100g": 2,
+    "fatPer100g": 1.3,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "lulas:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 38,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhadas com alho"],
+      "en": ["Grilled with garlic"]
+    }
+  },
+  {
+    "id": "choco",
+    "name": {
+      "pt": "Choco",
+      "en": "Cuttlefish"
+    },
+    "category": "marisco",
+    "role": "protein",
+    "proteinPer100g": 16,
+    "kcalPer100g": 80,
+    "carbsPer100g": 0.8,
+    "fatPer100g": 0.7,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "choco:dose",
+        "label": {
+          "pt": "1 dose",
+          "en": "1 serving"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 36,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["Grelhado com batata"],
+      "en": ["Grilled with potato"]
+    }
+  },
+  {
+    "id": "mexilhao",
+    "name": {
+      "pt": "Mexilhão",
+      "en": "Mussels"
+    },
+    "category": "marisco",
+    "role": "protein",
+    "proteinPer100g": 12,
+    "kcalPer100g": 85,
+    "carbsPer100g": 3.7,
+    "fatPer100g": 2.2,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "mexilhao:dose",
+        "label": {
+          "pt": "1 dose (miolo)",
+          "en": "1 serving (meat)"
+        },
+        "grams": 150,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["À bulhão pato"],
+      "en": ["With garlic and coriander"]
+    }
+  },
+  {
+    "id": "ameijoas",
+    "name": {
+      "pt": "Amêijoas",
+      "en": "Clams"
+    },
+    "category": "marisco",
+    "role": "protein",
+    "proteinPer100g": 12.5,
+    "kcalPer100g": 75,
+    "carbsPer100g": 2.6,
+    "fatPer100g": 1,
+    "weightBasis": "raw",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "ameijoas:dose",
+        "label": {
+          "pt": "1 dose (miolo)",
+          "en": "1 serving (meat)"
+        },
+        "grams": 120,
+        "default": true
+      }
+    ],
+    "moments": ["almoco", "jantar"],
+    "ease": 2,
+    "exampleRank": 28,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": ["À bulhão pato"],
+      "en": ["With garlic and coriander"]
+    }
   }
 ]

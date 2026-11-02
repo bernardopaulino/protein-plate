@@ -66,5 +66,175 @@
       "pt": ["Em tosta com banana", "Nas papas de aveia"],
       "en": ["On toast with banana", "In porridge"]
     }
+  },
+  {
+    "id": "noz",
+    "name": {
+      "pt": "Noz",
+      "en": "Walnuts"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 15,
+    "kcalPer100g": 690,
+    "carbsPer100g": 3.3,
+    "fatPer100g": 65,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "noz:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 38,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "amendoim",
+    "name": {
+      "pt": "Amendoim torrado sem sal",
+      "en": "Unsalted roasted peanuts"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 26,
+    "kcalPer100g": 590,
+    "carbsPer100g": 10,
+    "fatPer100g": 49,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "amendoim:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 42,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "caju",
+    "name": {
+      "pt": "Caju",
+      "en": "Cashews"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 18,
+    "kcalPer100g": 580,
+    "carbsPer100g": 27,
+    "fatPer100g": 46,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "caju:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 32,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "avela",
+    "name": {
+      "pt": "Avelã",
+      "en": "Hazelnuts"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 15,
+    "kcalPer100g": 650,
+    "carbsPer100g": 7,
+    "fatPer100g": 61,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "avela:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 30,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
+  },
+  {
+    "id": "pistacio",
+    "name": {
+      "pt": "Pistácio",
+      "en": "Pistachios"
+    },
+    "category": "frutos-secos",
+    "role": "fat",
+    "proteinPer100g": 20,
+    "kcalPer100g": 570,
+    "carbsPer100g": 18,
+    "fatPer100g": 46,
+    "weightBasis": "as_sold",
+    "processing": "natural",
+    "portions": [
+      {
+        "id": "pistacio:punhado",
+        "label": {
+          "pt": "1 punhado",
+          "en": "1 handful"
+        },
+        "grams": 30,
+        "default": true
+      }
+    ],
+    "moments": ["meio-da-manha", "lanche", "ceia"],
+    "ease": 1,
+    "exampleRank": 34,
+    "tcaCode": "TODO",
+    "ideas": {
+      "pt": [],
+      "en": []
+    }
   }
 ]
