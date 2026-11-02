@@ -28,6 +28,15 @@ export const profileInputSchema = z
 
 export type ProfileInput = z.infer<typeof profileInputSchema>;
 
+/** Meta de uma conta nova sem estado de convidado (muda em /comecar). */
+export const DEFAULT_PROFILE: ProfileInput = {
+  dailyTargetG: 140,
+  intensity: "alta",
+  meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
+  postWorkoutMeal: null,
+  locale: "pt",
+};
+
 export const savePlanInputSchema = z.object({ items: planItemsSchema }).strict();
 
 /** Importação do estado de convidado (idempotente pelo importId). Sem peso. */

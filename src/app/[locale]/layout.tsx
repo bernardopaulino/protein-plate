@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { BottomNav, SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
+import { AccountSync } from "@/features/account/account-sync";
 import { ENABLED_LOCALES, HTML_LANG, type Locale } from "@/i18n/routing";
 import { bricolage, figtree } from "../fonts";
 
@@ -25,7 +26,7 @@ export async function generateMetadata({
     description: t("description"),
     applicationName: "Protein Plate",
     manifest: "/manifest.webmanifest",
-    icons: { icon: "/icon.svg", apple: "/apple-touch-icon.png" },
+    icons: { icon: "/icon.svg", apple: "/icon.svg" },
     openGraph: { type: "website", siteName: "Protein Plate", locale: HTML_LANG[locale as Locale] },
     formatDetection: { telephone: false },
   };
@@ -69,6 +70,7 @@ export default async function LocaleLayout({
           </main>
           <SiteFooter />
           <BottomNav />
+          <AccountSync />
         </NextIntlClientProvider>
       </body>
     </html>
