@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("gerar uma receita (modelo simulado) a partir de uma refeição do dia", async ({ page }) => {
   await page.goto("/comecar");
+  await page.locator("form[data-hydrated]").waitFor();
   await page.getByLabel("Peso").fill("80");
   await page.getByRole("button", { name: "Vê como é fácil" }).click();
   await expect(page.getByText(/Meta atingida/).first()).toBeVisible();

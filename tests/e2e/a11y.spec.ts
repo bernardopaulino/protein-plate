@@ -18,6 +18,7 @@ const PAGES = [
 /** Um dia já criado, para o ecrã "Hoje" ter conteúdo. */
 async function withDay(page: Page) {
   await page.goto("/comecar");
+  await page.locator("form[data-hydrated]").waitFor();
   await page.getByLabel("Peso").fill("80");
   await page.getByRole("button", { name: "Vê como é fácil" }).click();
   await expect(page.getByText(/Meta atingida/).first()).toBeVisible();

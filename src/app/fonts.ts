@@ -4,12 +4,12 @@ import { Bricolage_Grotesque, Figtree } from "next/font/google";
 export const bricolage = Bricolage_Grotesque({
   subsets: ["latin", "latin-ext"],
   variable: "--font-bricolage",
-  display: "swap",
+  display: "optional",
 });
 
 /** Texto corrido. */
 export const figtree = Figtree({
   subsets: ["latin", "latin-ext"],
   variable: "--font-figtree",
-  display: "swap",
+  display: "optional",
 });

@@ -4,7 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { BottomNav, SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
-import { AccountSync } from "@/features/account/account-sync";
+import { AccountSyncLazy } from "@/features/account/account-sync-lazy";
 import { ENABLED_LOCALES, HTML_LANG, type Locale } from "@/i18n/routing";
 import { bricolage, figtree } from "../fonts";
 
@@ -65,12 +65,16 @@ export default async function LocaleLayout({
         </a>
         <NextIntlClientProvider>
           <SiteHeader />
-          <main id="conteudo" tabIndex={-1} className="mx-auto max-w-5xl px-4 pt-6 outline-none">
+          <main
+            id="conteudo"
+            tabIndex={-1}
+            className="mx-auto min-h-[85dvh] max-w-5xl px-4 pt-6 outline-none"
+          >
             {children}
           </main>
           <SiteFooter />
           <BottomNav />
-          <AccountSync />
+          <AccountSyncLazy />
         </NextIntlClientProvider>
       </body>
     </html>

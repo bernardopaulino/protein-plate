@@ -40,12 +40,13 @@ const legend = "px-1 font-display text-lg font-bold";
 /** Formulário de /comecar: peso, intensidade, refeições e pós-treino → meta (secção 3). */
 export function StartForm() {
   const { state, hydrated } = useDay();
-  // O formulário só monta depois de ler o localStorage, para começar com o que já está guardado
-  if (!hydrated) return <div aria-hidden className="h-96 animate-pulse rounded-card bg-track" />;
-  return <StartFormInner key={state?.updatedAt ?? 0} initial={state} />;
+  // Mostra logo o formulário (sem esqueleto: evita saltos); depois de ler o localStorage volta a
+  // montar com o que já está guardado
+  const saved = hydrated ? state : null;
+  return <StartFormInner key={saved?.updatedAt ?? -1} initial={saved} hydrated={hydrated} />;
 }
 
-function StartFormInner({ initial }: { initial: GuestState | null }) {
+function StartFormInner({ initial, hydrated }: { initial: GuestState | null; hydrated: boolean }) {
   const t = useTranslations("start");
   const tm = useTranslations("meals");
   const ti = useTranslations("intensity");
@@ -122,7 +123,12 @@ function StartFormInner({ initial }: { initial: GuestState | null }) {
     );
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+    <form
+      onSubmit={submit}
+      noValidate
+      data-hydrated={hydrated || undefined}
+      className="flex flex-col gap-5"
+    >
       {/* 1. Peso (ou meta manual) */}
       <fieldset className={fieldset}>
         <legend className={legend}>{t("weight.legend")}</legend>

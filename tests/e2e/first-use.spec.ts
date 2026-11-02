@@ -10,6 +10,7 @@ test("primeira utilização: da landing a um dia que atinge a meta", async ({ pa
   await page.getByRole("link", { name: "Calcular a minha meta" }).first().click();
   await expect(page).toHaveURL(/\/comecar$/);
 
+  await page.locator("form[data-hydrated]").waitFor();
   await page.getByLabel("Peso").fill("80");
   // "Treino intenso" e 4 refeições já vêm escolhidos
   await expect(page.getByText("160 g por dia")).toBeVisible();
@@ -32,6 +33,7 @@ test("ajustar o dia: tirar porções mostra o que falta e uma sugestão fecha a 
   page,
 }) => {
   await page.goto("/comecar");
+  await page.locator("form[data-hydrated]").waitFor();
   await page.getByLabel("Peso").fill("80");
   await page.getByRole("button", { name: "Vê como é fácil" }).click();
   await expect(page.getByText(/Meta atingida/).first()).toBeVisible();
