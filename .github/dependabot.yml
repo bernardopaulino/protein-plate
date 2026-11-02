@@ -19,6 +19,12 @@ updates:
         update-types: [version-update:semver-major]
       - dependency-name: typescript
         versions: [">=6.1.0"]
+      # Os tipos do Node acompanham o Node 24 do projeto (.github/workflows, engines)
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+      # O eslint-config-next ainda depende de plugins que não suportam o ESLint 10
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
   - package-ecosystem: github-actions
     directory: /
     schedule:
