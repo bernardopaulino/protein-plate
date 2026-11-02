@@ -49,10 +49,22 @@
     "postWorkout": "Pós-treino"
   },
   "intensity": {
-    "base": { "label": "Para começar", "detail": "1,6 g por kg" },
-    "moderada": { "label": "Treino regular", "detail": "1,8 g por kg" },
-    "alta": { "label": "Treino intenso", "detail": "2,0 g por kg" },
-    "maxima": { "label": "Ganhar massa", "detail": "2,2 g por kg" }
+    "base": {
+      "label": "Para começar",
+      "detail": "1,6 g por kg"
+    },
+    "moderada": {
+      "label": "Treino regular",
+      "detail": "1,8 g por kg"
+    },
+    "alta": {
+      "label": "Treino intenso",
+      "detail": "2,0 g por kg"
+    },
+    "maxima": {
+      "label": "Ganhar massa",
+      "detail": "2,2 g por kg"
+    }
   },
   "categories": {
     "carne": "Carne",
@@ -146,7 +158,9 @@
       "manualLabel": "Meta diária",
       "manualInvalid": "Escreve uma meta entre 40 e 300 g."
     },
-    "intensity": { "legend": "Quanto treinas?" },
+    "intensity": {
+      "legend": "Quanto treinas?"
+    },
     "meals": {
       "legend": "Quantas refeições fazes por dia?",
       "which": "Quais?",
@@ -349,7 +363,69 @@
   "legal": {
     "privacyTitle": "Política de privacidade",
     "termsTitle": "Termos de utilização",
-    "updated": "Última atualização: {date}"
+    "updated": "Última atualização: {date}",
+    "date": "2 de novembro de 2026",
+    "draft": "Rascunho: este texto ainda vai ser revisto antes do lançamento.",
+    "privacy": [
+      {
+        "title": "Quem somos",
+        "body": "O Protein Plate é um projeto pessoal do Bernardo Paulino. Para qualquer questão sobre os teus dados, escreve para bernardo.sobral7@gmail.com."
+      },
+      {
+        "title": "Sem conta",
+        "body": "Sem conta, a tua meta, o teu peso e o teu dia ficam só neste browser (localStorage). Não os recebemos."
+      },
+      {
+        "title": "Com conta",
+        "body": "Se criares conta com o Google ou a Apple, guardamos o teu nome, o teu email, a meta diária em gramas, as refeições, o teu dia e as receitas que guardares. O teu peso nunca sai do browser. As sessões não guardam o teu IP nem o teu browser."
+      },
+      {
+        "title": "Receitas por IA",
+        "body": "Para gerar uma receita, enviamos ao modelo de IA (Anthropic) só os nomes dos alimentos escolhidos, a refeição, o tempo e as doses. Nunca enviamos dados teus."
+      },
+      {
+        "title": "Limites de utilização",
+        "body": "Para evitar abusos, contamos as receitas geradas por dia com um código derivado do teu IP (HMAC com uma chave que muda todos os dias). O IP não é guardado e os contadores são apagados ao fim de 2 dias."
+      },
+      {
+        "title": "Onde ficam os dados",
+        "body": "Na Cloudflare (base de dados D1 na União Europeia). A verificação anti-robô usa o Cloudflare Turnstile. Não usamos analytics de terceiros nem cookies de publicidade."
+      },
+      {
+        "title": "Os teus direitos",
+        "body": "Em Conta podes exportar todos os teus dados (JSON) e apagar a conta a qualquer momento. Apagar a conta apaga o perfil, o dia, as receitas guardadas e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
+      },
+      {
+        "title": "Idade",
+        "body": "Para criar conta tens de ter pelo menos 16 anos."
+      }
+    ],
+    "terms": [
+      {
+        "title": "O que é",
+        "body": "O Protein Plate ajuda-te a chegar à tua meta de proteína com comida de verdade. É gratuito e funciona sem conta."
+      },
+      {
+        "title": "Informação geral",
+        "body": "A informação é geral e não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína."
+      },
+      {
+        "title": "Números",
+        "body": "Os valores nutricionais vêm da Tabela da Composição de Alimentos do INSA. Enquanto a curadoria não estiver concluída, alguns valores são provisórios e estão assinalados."
+      },
+      {
+        "title": "Receitas geradas por IA",
+        "body": "As receitas são geradas por IA e podem ter erros. A proteína é calculada pela app a partir da TCA. Confirma sempre alergénios, intolerâncias e tempos de cozedura."
+      },
+      {
+        "title": "Utilização justa",
+        "body": "Há limites diários de receitas novas. Não uses a app de forma automatizada nem para sobrecarregar o serviço."
+      },
+      {
+        "title": "Conta",
+        "body": "Podes apagar a conta quando quiseres. Podemos suspender contas usadas para abuso."
+      }
+    ]
   },
   "notFound": {
     "title": "Esta página não existe",
