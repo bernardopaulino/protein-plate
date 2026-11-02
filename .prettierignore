@@ -1,0 +1,15 @@
+node_modules
+.next
+.open-next
+.wrangler
+.seed
+coverage
+playwright-report
+test-results
+migrations/meta
+package-lock.json
+cloudflare-env.d.ts
+src/content/foods.generated.ts
+CLAUDE.md
+docs
+.dev.vars.example

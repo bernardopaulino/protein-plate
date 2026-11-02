@@ -1,0 +1,27 @@
+# dependências
+node_modules
+
+# Next.js / OpenNext
+.next
+.open-next
+out
+next-env.d.ts
+*.tsbuildinfo
+
+# Wrangler e segredos
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
+
+# gerados
+.seed
+coverage
+playwright-report
+test-results
+.lighthouseci
+
+# sistema
+.DS_Store
+Thumbs.db
