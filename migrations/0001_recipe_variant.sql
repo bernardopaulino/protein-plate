@@ -1,0 +1,1 @@
+ALTER TABLE `recipes` ADD `variant` integer DEFAULT 1 NOT NULL;

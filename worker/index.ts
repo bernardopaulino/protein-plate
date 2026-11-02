@@ -22,6 +22,31 @@ function withTransportSecurity(request: Request, response: Response): Response {
   return secured;
 }
 
+const RECIPE_PAGE = /^\/receitas\/[0-9a-zA-Z]{6,20}\/?$/;
+
+/**
+ * As receitas são imutáveis e a página não tem nada da pessoa: cache pública longa (só o HTML;
+ * os pedidos RSC do router variam por cabeçalhos e ficam de fora).
+ */
+function withRecipeCache(request: Request, response: Response): Response {
+  const url = new URL(request.url);
+  if (
+    request.method !== "GET" ||
+    response.status !== 200 ||
+    !RECIPE_PAGE.test(url.pathname) ||
+    url.searchParams.has("_rsc") ||
+    request.headers.has("RSC")
+  ) {
+    return response;
+  }
+  const cached = new Response(response.body, response);
+  cached.headers.set(
+    "Cache-Control",
+    "public, max-age=3600, s-maxage=31536000, stale-while-revalidate=86400",
+  );
+  return cached;
+}
+
 const handler: ExportedHandler<CloudflareEnv> = {
   async fetch(request, env, ctx) {
     try {
@@ -33,7 +58,7 @@ const handler: ExportedHandler<CloudflareEnv> = {
       return new Response("Service unavailable", { status: 503 });
     }
     const response = await app.fetch(request, env, ctx);
-    return withTransportSecurity(request, response);
+    return withTransportSecurity(request, withRecipeCache(request, response));
   },
 
   async scheduled(_event, env, ctx) {

@@ -144,6 +144,8 @@ export const recipes = sqliteTable(
     meal: text("meal").$type<Meal>().notNull(),
     postWorkout: integer("post_workout", { mode: "boolean" }).notNull(),
     servings: integer("servings").notNull(),
+    /** "Gerar outra": 1 a 3 (entra na cache_key) */
+    variant: integer("variant").notNull().default(1),
     prepMinutes: integer("prep_minutes").notNull(),
     steps: text("steps", { mode: "json" }).$type<string[]>().notNull(),
     proteinPerServingG: real("protein_per_serving_g").notNull(),
