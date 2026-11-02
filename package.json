@@ -33,7 +33,6 @@
   "dependencies": {
     "@ai-sdk/anthropic": "3.0.137",
     "@better-auth/drizzle-adapter": "1.7.15",
-    "@opennextjs/cloudflare": "1.20.15",
     "ai": "6.0.320",
     "better-auth": "1.7.15",
     "class-variance-authority": "0.7.1",
@@ -53,6 +52,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
+    "@opennextjs/cloudflare": "1.20.15",
     "@playwright/test": "1.64.1",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.19.2",

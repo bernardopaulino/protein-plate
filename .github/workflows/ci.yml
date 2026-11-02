@@ -44,7 +44,8 @@ jobs:
           path: .open-next
           include-hidden-files: true
           retention-days: 1
-      # Nenhuma vulnerabilidade alta ou crítica no código que corre no Worker
+      # Nenhuma vulnerabilidade alta ou crítica no código que corre no Worker (o CLI do OpenNext,
+      # o wrangler e o drizzle-kit são ferramentas de build: ficam em devDependencies)
       - run: npm audit --omit=dev --audit-level=high
 
   e2e:
