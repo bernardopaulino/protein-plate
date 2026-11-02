@@ -148,7 +148,7 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 | `profiles` | `user_id`, `daily_target_g`, `intensity`, `meals` (JSON), `post_workout_meal`, `locale`, `consent_version`, `consented_at`, `last_import_id`, `updated_at` | PK `user_id`, FK cascade; **sem peso** |
 | `day_plans` | `id`, `user_id`, `name`, `position`, `updated_at` | FK cascade; único `(user_id, name)`; v1 usa um plano |
 | `plan_items` | `id`, `plan_id`, `meal`, `food_id`, `portion_id`, `portion_count`, `position` | FK cascade para `day_plans`; `portion_count` 0,5–4 em passos de 0,5 (CHECK); ids gerados no servidor; sem FK para `foods` (o seed reescreve o catálogo e um alimento retirado não pode apagar dias) |
-| `recipes` | `id` (curto), `cache_key`, `locale`, `title`, `summary`, `meal`, `post_workout`, `servings`, `prep_minutes`, `steps` (JSON), `protein_per_serving_g`, `meal_target_g`, `model`, `prompt_version`, `food_data_version`, `input_tokens`, `output_tokens`, `created_at` | `cache_key` único; imutável; sem dono |
+| `recipes` | `id` (curto), `cache_key`, `locale`, `title`, `summary`, `meal`, `post_workout`, `servings`, `variant` (1–3, migração 0001), `prep_minutes`, `steps` (JSON), `protein_per_serving_g`, `meal_target_g`, `model`, `prompt_version`, `food_data_version`, `input_tokens`, `output_tokens`, `created_at` | `cache_key` único; imutável; sem dono |
 | `recipe_ingredients` | `recipe_id`, `position`, `food_id`, `grams` | PK `(recipe_id, position)` |
 | `saved_recipes` | `user_id`, `recipe_id`, `saved_at` | PK composta; FK cascade |
 | `usage_counters` | `key_hash`, `day`, `count` | PK `(key_hash, day)`; chaves sempre HMAC com chave diária (IP do convidado ou id do utilizador) ou `global`; cron apaga após 2 dias |
@@ -207,6 +207,7 @@ Chave versionada (`protein-plate:guest`), validada com Zod ao ler; versão antig
 - **Google:** cliente OAuth Web; redirect `/api/auth/callback/google` por ambiente.
 - **Apple:** App ID + Services ID novos (Services ID = `clientId`); domínio e return URL `/api/auth/callback/apple` registados; client secret JWT ES256 gerado na configuração com `jose` (180 dias); `trustedOrigins: ['https://appleid.apple.com']`. Não funciona em localhost — testar em staging. O email só vem na primeira autorização.
 - **Regras de conta:** conta nova só a partir de "Criar conta", depois de aceitar termos e privacidade (versão guardada); sem ligação implícita entre contas com o mesmo email; apagar conta exige login recente com o mesmo provider; Apple revoga tokens.
+- **Sincronização:** a cópia local guarda `owner` (id da conta); o servidor só aceita a sincronização se `owner` for o utilizador da sessão, e sair da conta apaga a cópia local (aparelhos partilhados).
 - **Convidado → conta:** "Guardar o meu dia" → login → `/conta/bem-vindo` lê o estado local → Server Action `importGuestData` (Zod, ids existem, batch D1, idempotente com `importId`) → se já houver plano, perguntar qual manter → limpar estado local. O peso nunca é enviado.
 
 ## 8. Rotas e rendering
@@ -216,15 +217,15 @@ Chave versionada (`protein-plate:guest`), validada com Zod ao ler; versão antig
 | `/` | Estático |
 | `/alimentos`, `/alimentos/[id]` | Estático, gerado do JSON no build; filtros no cliente |
 | `/comecar` | Estático + Client Component |
-| `/o-meu-dia` | Dinâmico (convidado: browser; sessão: D1) |
-| `/receitas/nova` | Client Component |
-| `/receitas/[id]` | Dinâmico com cache pública longa (receitas imutáveis) |
+| `/o-meu-dia` | Estático: o dia vive no browser (convidado) ou numa cópia local ligada à conta, que o `AccountSync` sincroniza com a D1 por Server Action (debounce); `/conta/bem-vindo` carrega a cópia da D1 |
+| `/receitas/nova` | Dinâmico (lê a sessão e a chave do Turnstile) + Client Component |
+| `/receitas/[id]` | Dinâmico, sem nada da pessoa; o Worker acrescenta `Cache-Control` público longo ao HTML (não aos pedidos RSC). O estado "guardada" vem depois, por Server Action |
 | `/conta`, `/conta/bem-vindo` | Dinâmico, requer sessão |
 | `/privacidade`, `/termos` | Estático |
 
 Sem ISR (o catálogo muda com deploy): as páginas pré-renderizadas servem-se dos assets estáticos (`static-assets-incremental-cache` do OpenNext). Server Actions para mutações da UI; Route Handlers só onde há contrato público (`/api/recipes`, para a futura app) e `/api/health` (verificação do Worker).
 
-**Idiomas sem middleware:** o proxy do Next 16 corre em Node, que no Workers ainda é experimental. Os pedidos sem idioma são reescritos para `/pt/...` no `next.config.ts` e `/pt/...` redireciona (308) para o endereço sem prefixo; `/en` fica para a v1.1 (`ENABLED_LOCALES`).
+**Idiomas sem middleware:** o proxy do Next 16 corre em Node, que no Workers ainda é experimental. Os pedidos das rotas da app (lista explícita `APP_ROUTES`; o routing do OpenNext não aceita lookaheads) são reescritos para `/pt/...` no `next.config.ts` e `/pt/...` redireciona (308) para o endereço sem prefixo; `/en` fica para a v1.1 (`ENABLED_LOCALES`).
 
 ## 9. Segurança e privacidade
 

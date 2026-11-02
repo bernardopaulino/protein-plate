@@ -25,3 +25,6 @@ test-results
 # sistema
 .DS_Store
 Thumbs.db
+
+# avaliações da IA
+eval-results
