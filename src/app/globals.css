@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Modo escuro: segue o sistema; a classe .dark força-o (página /dev/ui) e .light força o claro */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tokens (secção 11): claro / escuro */
+:root {
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --text: #1f1b16;
+  --text-muted: #6b6258;
+  --primary: #2f6b3a;
+  --on-primary: #ffffff;
+  --accent: #f2b33d; /* só fundo */
+  --track: #eae3d8;
+  --danger: #b3261e; /* só erros técnicos, nunca ligado à nutrição */
+  --border: #e3d9cb;
+  --primary-soft: #e3efe2;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --bg: #12110f;
+    --surface: #1c1a17;
+    --text: #f3eee7;
+    --text-muted: #a99f93;
+    --primary: #6fbf7a;
+    --on-primary: #12110f;
+    --accent: #f5c25e;
+    --track: #2a2723;
+    --danger: #f2b8b5;
+    --border: #34302a;
+    --primary-soft: #1f2e21;
+    color-scheme: dark;
+  }
+}
+
+.dark {
+  --bg: #12110f;
+  --surface: #1c1a17;
+  --text: #f3eee7;
+  --text-muted: #a99f93;
+  --primary: #6fbf7a;
+  --on-primary: #12110f;
+  --accent: #f5c25e;
+  --track: #2a2723;
+  --danger: #f2b8b5;
+  --border: #34302a;
+  --primary-soft: #1f2e21;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-track: var(--track);
+  --color-danger: var(--danger);
+  --color-border: var(--border);
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+
+  /* Escala 12/14/16/20/24/32/56 */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 2.375rem;
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1;
+
+  --radius-card: 1.25rem;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Foco sempre visível (teclado) */
+  :focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  /* Nada se mexe com prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
