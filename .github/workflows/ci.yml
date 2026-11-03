@@ -32,6 +32,11 @@ jobs:
       # O módulo tipado está atualizado com content/foods
       - run: npm run content:build && git diff --exit-code -- src/content
       - run: npm test
+      # O backoffice (admin/): tipos do Worker, testes no runtime dos Workers com uma D1 local e
+      # o bundle de produção (sem publicar)
+      - run: npm run admin:typecheck
+      - run: npm run admin:test
+      - run: npx wrangler deploy -c admin/wrangler.jsonc --dry-run --env production
       # O schema e as migrações batem certo
       - run: npx drizzle-kit generate && git diff --exit-code -- migrations
       # Os tipos do Worker batem com o wrangler.jsonc

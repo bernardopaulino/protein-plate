@@ -47,5 +47,8 @@ export default defineConfig([
     "next-env.d.ts",
     "cloudflare-env.d.ts",
     "src/content/foods.generated.ts",
+    // O backoffice: os tipos gerados pelo wrangler e a pasta do wrangler dev
+    "admin/cloudflare-env.d.ts",
+    "admin/.wrangler/**",
   ]),
 ]);

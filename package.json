@@ -29,6 +29,12 @@
     "cf-typegen": "wrangler types cloudflare-env.d.ts --env-interface CloudflareEnv --env-file .dev.vars.example",
     "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env staging",
     "deploy:production": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production",
+    "admin:dev": "wrangler dev -c admin/wrangler.jsonc --persist-to .wrangler/state --port 8789",
+    "admin:test": "vitest run --config admin/vitest.config.ts",
+    "admin:typecheck": "tsc --noEmit -p admin/tsconfig.json",
+    "admin:types": "wrangler types -c admin/wrangler.jsonc admin/cloudflare-env.d.ts --strict-vars=false",
+    "admin:deploy:staging": "wrangler deploy -c admin/wrangler.jsonc --env staging",
+    "admin:deploy:production": "wrangler deploy -c admin/wrangler.jsonc --env production",
     "test:lighthouse": "lhci autorun"
   },
   "dependencies": {
@@ -39,6 +45,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "drizzle-orm": "0.45.4",
+    "hono": "4.13.13",
     "jose": "6.2.14",
     "lucide-react": "1.66.0",
     "motion": "14.4.0",
@@ -54,6 +61,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
+    "@cloudflare/vitest-plugin": "1.4.11",
     "@lhci/cli": "0.15.1",
     "@opennextjs/cloudflare": "1.20.15",
     "@playwright/test": "1.64.1",
