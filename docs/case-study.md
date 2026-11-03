@@ -77,7 +77,7 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 ## O que aprendi
 
 - **Validar à entrada não chega quando a saída vem de um modelo.** O schema do modelo restringe a *forma*, mas só uma segunda validação de domínio garante que a receita faz sentido (todas as proteínas presentes, doses plausíveis).
-- **O custo do Zod no cliente.** O estado de convidado é validado no browser e isso trazia o Zod clássico (cerca de 32 KB gzip) para as páginas com o dia. Os contratos que chegam ao cliente passaram para `zod/mini`, cuja API funcional só leva para o bundle as verificações usadas (−14 KB gzip). Os contratos só do servidor continuam no Zod clássico.
+- **O custo do Zod no cliente.** O estado de convidado é validado no browser e isso trazia o Zod clássico (cerca de 32 KB gzip) para as páginas com o dia. Os contratos que chegam ao cliente passaram para `zod/mini`, cuja API funcional só leva para o bundle as verificações usadas (−14 KB gzip). Os contratos só do servidor continuam no Zod clássico. No mesmo espírito, as fontes passaram a carregar só o subset `latin` (que já cobre o português), em vez de pré-carregar também o `latin-ext`.
 - **O runtime manda na arquitetura.** Escolher Workers em vez de um servidor Node teve consequências nas rotas (sem middleware), na base de dados (cliente por pedido) e nos testes (D1 local real em vez de mocks).
 
 ## Resultados
@@ -87,7 +87,7 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 | Métrica | Meta | Resultado |
 | --- | --- | --- |
 | Tempo até um dia que atinge a meta, sem conta | < 2 min | *por medir* |
-| Lighthouse mobile (4 categorias) | ≥ 90 | Acessibilidade 100, boas práticas 96, SEO 100; performance *por medir em staging* |
+| Lighthouse mobile (4 categorias, staging) | ≥ 90 | Performance 90–91 (89 em `/o-meu-dia`), acessibilidade 100, boas práticas 100, SEO 100 nas páginas indexáveis |
 | Receitas válidas no `eval:recipes` | — | *por correr com o modelo real* |
 | Latência de uma receita nova | < 15 s | *por medir* |
 
