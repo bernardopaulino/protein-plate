@@ -227,7 +227,7 @@ export function DayView({
     <div className="flex flex-col gap-4 pb-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-extrabold lg:text-3xl">{t("title")}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <SaveIndicator status={status} onRetry={retry} />
           <Button asChild variant="ghost" size="sm">
             <Link href="/conta/preferencias">
@@ -275,7 +275,12 @@ export function DayView({
                       {t("addFood")}
                     </Button>
                     {recipeFoods.length >= 2 ? (
-                      <Button asChild variant="ghost" size="sm">
+                      <Button
+                        asChild
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto min-h-11 max-w-full py-2 text-left whitespace-normal"
+                      >
                         <Link
                           href={{
                             pathname: "/receitas/nova",

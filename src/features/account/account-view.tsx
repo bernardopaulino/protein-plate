@@ -98,7 +98,7 @@ export function AccountView({
         {name ? t("hello", { name: name.split(" ")[0] ?? name }) : t("helloAnon")}
       </h1>
 
-      <div className="grid gap-5 md:grid-cols-2 md:items-stretch xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:items-stretch xl:grid-cols-3">
         <Link
           href="/conta/preferencias"
           className="group flex items-center gap-4 rounded-card border border-border bg-surface p-5 transition-colors hover:border-primary/60 md:col-span-2 xl:col-span-1"

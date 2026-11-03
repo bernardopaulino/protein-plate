@@ -134,7 +134,7 @@ export function RecipeForm({
           aria-busy={status === "loading"}
         >
           <div className="flex min-w-0 flex-col gap-5">
-            <fieldset className="rounded-card border border-border bg-surface p-5">
+            <fieldset className="min-w-0 rounded-card border border-border bg-surface p-5">
               <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
               <FilterChips
                 className="mt-2"
@@ -150,6 +150,7 @@ export function RecipeForm({
                 }))}
                 selected={[meal]}
                 onChange={(next) => next[0] && setMeal(next[0])}
+                wrap
               />
               <p className="mt-2 text-sm text-muted">
                 {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
@@ -256,7 +257,7 @@ export function RecipeForm({
                 hidden={!moreOpen}
                 className="grid gap-5 border-t border-border p-5 sm:grid-cols-2"
               >
-                <fieldset>
+                <fieldset className="min-w-0">
                   <legend className="font-semibold">{t("time")}</legend>
                   <FilterChips
                     className="mt-2"
@@ -269,7 +270,7 @@ export function RecipeForm({
                     onChange={(next) => next[0] && setMinutes(Number(next[0]) as MaxMinutes)}
                   />
                 </fieldset>
-                <fieldset>
+                <fieldset className="min-w-0">
                   <legend className="font-semibold">{t("servings")}</legend>
                   <FilterChips
                     className="mt-2"
