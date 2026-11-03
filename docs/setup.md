@@ -14,8 +14,8 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 ### Cloudflare (conta Workers Paid que já tens)
 
-- [ ] Criar as D1 de staging e produção na jurisdição UE (como no Rejection Quest).
-- [ ] Configurar o binding de rate limiting em `wrangler.jsonc` (staging e produção).
+- [x] Criar as D1 de staging e produção na jurisdição UE (como no Rejection Quest).
+- [x] Configurar o binding de rate limiting em `wrangler.jsonc` (staging e produção).
 - [ ] Criar um widget Turnstile (site key pública + secret key) com os domínios de staging e produção, e o domínio de teste do Turnstile para local.
 - [ ] Domínio: ligar ao Worker por custom domain, com `staging.` para staging.
 - [ ] Token de API para o GitHub Actions (`CLOUDFLARE_API_TOKEN`) e `CLOUDFLARE_ACCOUNT_ID`.
@@ -39,9 +39,9 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 ### GitHub
 
-- [ ] Repositório privado.
+- [x] Repositório privado.
 - [ ] Secrets do Actions: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
-- [ ] Dependabot ligado.
+- [x] Dependabot ligado.
 
 ### INSA
 
