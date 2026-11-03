@@ -1,0 +1,22 @@
+{
+  // O backoffice corre no runtime dos Workers (tipos de admin/cloudflare-env.d.ts, gerados com
+  // npm run admin:types) e os testes no pool da Cloudflare (cloudflare:test). Fica fora do
+  // tsconfig da raiz, que é o da app Next.js (DOM e o seu cloudflare-env.d.ts)
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["./cloudflare-env.d.ts", "@cloudflare/vitest-plugin/types"],
+    // O catálogo gerado (src/content/foods.generated.ts) importa os tipos do domínio por "@/"
+    "paths": { "@/*": ["../src/*"] }
+  },
+  "include": ["src", "test", "vitest.config.ts", "cloudflare-env.d.ts"]
+}

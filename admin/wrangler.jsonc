@@ -1,0 +1,85 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  // Backoffice do Protein Plate (docs/backoffice.md): o painel, os utilizadores, as receitas e os
+  // alimentos, para o dono gerir o serviço. Fica atrás do Cloudflare Access e o Worker valida
+  // também o token do Access em cada pedido (src/require-access.ts). Sem ACCESS_TEAM_DOMAIN,
+  // ACCESS_AUD e ADMIN_EMAILS válidos, recusa tudo (503). Os dados de saúde (peso e alergias)
+  // nunca aparecem por pessoa (src/privacy.ts).
+  "name": "protein-plate-admin",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-26",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // Sem registos automáticos de pedidos (guardariam o IP), como o Worker da app
+  "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+  // Um deploy sem --env não fica acessível (e falha: a base "local" não existe na Cloudflare)
+  "workers_dev": false,
+  "preview_urls": false,
+
+  // Local (npm run admin:dev): a mesma D1 local da app (.wrangler/state na raiz) e entrada sem
+  // Access só em pedidos a localhost. As vars não se herdam: ADMIN_DEV_BYPASS é "0" fora daqui
+  "vars": {
+    "ADMIN_DEV_BYPASS": "1",
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
+    "ADMIN_EMAILS": "",
+    // A app, para os links das receitas públicas (/receitas/<id>)
+    "APP_URL": "http://localhost:3000",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "protein-plate-local",
+      "database_id": "local",
+    },
+  ],
+
+  "env": {
+    "staging": {
+      "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [{ "pattern": "admin-staging.protein-plate.app", "custom_domain": true }],
+      // POR PREENCHER depois de criar a aplicação do Access (docs/backoffice.md, passo a passo):
+      // ACCESS_TEAM_DOMAIN é o nome da equipa do Zero Trust (<equipa>.cloudflareaccess.com),
+      // ACCESS_AUD a "Application Audience (AUD) Tag" e ADMIN_EMAILS os emails autorizados,
+      // separados por vírgulas (bernardo.sobral7@gmail.com). Nenhum é segredo. Enquanto
+      // estiverem vazios, o backoffice recusa tudo
+      "vars": {
+        "ADMIN_DEV_BYPASS": "0",
+        "ACCESS_TEAM_DOMAIN": "",
+        "ACCESS_AUD": "",
+        "ADMIN_EMAILS": "",
+        "APP_URL": "https://staging.protein-plate.app",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "protein-plate-staging",
+          "database_id": "1962d9d9-fd77-40a7-bf7e-8f56124e28cb",
+        },
+      ],
+    },
+    "production": {
+      "observability": { "enabled": true, "logs": { "invocation_logs": false } },
+      "workers_dev": false,
+      "preview_urls": false,
+      "routes": [{ "pattern": "admin.protein-plate.app", "custom_domain": true }],
+      // POR PREENCHER depois de criar a aplicação do Access (ver staging, acima). Enquanto
+      // estiverem vazios, o backoffice recusa tudo
+      "vars": {
+        "ADMIN_DEV_BYPASS": "0",
+        "ACCESS_TEAM_DOMAIN": "",
+        "ACCESS_AUD": "",
+        "ADMIN_EMAILS": "",
+        "APP_URL": "https://protein-plate.app",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "protein-plate-production",
+          "database_id": "562e6646-b033-458b-ae8b-e54952e68a81",
+        },
+      ],
+    },
+  },
+}
