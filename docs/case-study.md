@@ -88,8 +88,8 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 | --- | --- | --- |
 | Tempo até um dia que atinge a meta, sem conta | < 2 min | *por medir* |
 | Lighthouse mobile (4 categorias, staging) | ≥ 90 | Performance 90–91 (89 em `/o-meu-dia`), acessibilidade 100, boas práticas 100, SEO 100 nas páginas indexáveis |
-| Receitas válidas no `eval:recipes` | — | *por correr com o modelo real* |
-| Latência de uma receita nova | < 15 s | *por medir* |
+| Receitas válidas no `eval:recipes` (20 casos, Haiku 5.5) | ≥ 18/20 | 20/20 (19 à primeira; 1 precisou da segunda tentativa) |
+| Latência de uma receita nova | < 15 s | mediana 6,9 s; a única com segunda tentativa levou 25,7 s |
 
 ## Próximos passos
 

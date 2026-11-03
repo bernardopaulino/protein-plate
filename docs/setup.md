@@ -35,7 +35,7 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 ### Anthropic
 
-- [ ] Chave de API para staging e outra para produção, com limite de gasto definido na consola.
+- [x] Chave de API para staging e outra para produção (expiram a 03/11/2027). Sem cartão na consola, o gasto fica limitado aos créditos (100 $ promocionais do plano Max, expiram a 28/11/2026); antes disso, comprar créditos ou as receitas param.
 
 ### GitHub
 
