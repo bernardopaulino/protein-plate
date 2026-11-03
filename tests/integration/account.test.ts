@@ -2,7 +2,7 @@ import { count, eq } from "drizzle-orm";
 import type { SQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { PlanItemInput } from "@/domain/contracts/plan";
-import type { PreferencesInput } from "@/domain/contracts/profile";
+import { preferencesInputSchema, type PreferencesInput } from "@/domain/contracts/profile";
 import { isAllowed } from "@/domain/preferences";
 import { totalProtein } from "@/domain/protein";
 import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
@@ -131,6 +131,15 @@ describe("preferências e formulário de boas-vindas (dois utilizadores)", () =>
     // Cada pessoa só vê o seu
     expect((await loadDay(t.db, ana)).profile?.diet).toBe("omnivore");
     expect((await loadDay(t.db, rui)).profile?.diet).toBe("vegetarian");
+  });
+
+  it('"Como de tudo": todos os alimentos fora da despensa cabem no contrato e ficam guardados', async () => {
+    const id = await createUser(t.db);
+    const all = CATALOG.filter((f) => f.role !== "pantry").map((f) => f.id);
+    const input = { ...preferences, likedFoods: all };
+    expect(preferencesInputSchema.safeParse(input).success).toBe(true);
+    await onboard(id, { likedFoods: all });
+    expect((await loadProfile(t.db, id))?.likedFoods).toHaveLength(all.length);
   });
 
   it("meta manual sem peso: não guarda dados de saúde", async () => {

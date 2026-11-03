@@ -128,170 +128,210 @@ export function RecipeForm({
   return (
     <LazyMotion features={domMax} strict>
       <MotionConfig reducedMotion="user">
-        <form onSubmit={submit} className="flex flex-col gap-5" aria-busy={status === "loading"}>
-          <fieldset className="rounded-card border border-border bg-surface p-5">
-            <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
-            <FilterChips
-              className="mt-2"
-              label={t("meal")}
-              options={meals.map((m) => ({
-                value: m,
-                label:
-                  m === post
-                    ? `${tm(m)} · ${tm("postWorkout")}`
-                    : m === pre
-                      ? `${tm(m)} · ${tm("preWorkout")}`
-                      : tm(m),
-              }))}
-              selected={[meal]}
-              onChange={(next) => next[0] && setMeal(next[0])}
-            />
-            <p className="mt-2 text-sm text-muted">
-              {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
-            </p>
-          </fieldset>
-
-          <section
-            aria-labelledby={`${optionsId}-foods`}
-            className="rounded-card border border-border bg-surface p-5"
-          >
-            <h2 id={`${optionsId}-foods`} className="font-display text-lg font-bold">
-              {t("foods")}
-            </h2>
-            {!picking ? (
-              <div className="mt-2 flex flex-col gap-3">
-                <p className="flex gap-2 text-muted">
-                  <Sparkles aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
-                  {t("autoFoods")}
-                </p>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="self-start"
-                  onClick={() => setPicking(true)}
-                >
-                  {t("pickFoods")}
-                </Button>
-              </div>
-            ) : (
-              <div className="mt-2">
-                <p className="text-sm text-muted">{t("pickHint", { max: RECIPE_MAX_CHOSEN })}</p>
-                {selected.length > 0 ? (
-                  <ul className="mt-3 flex flex-wrap gap-2" aria-label={t("chosen")}>
-                    {selected.map((id) => (
-                      <li key={id}>
-                        <button
-                          type="button"
-                          onClick={() => setSelected(selected.filter((x) => x !== id))}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-primary px-3.5 text-sm font-semibold text-on-primary"
-                          aria-label={t("removeFood", {
-                            food: foodName(FOOD_INDEX.get(id)!, locale),
-                          })}
-                        >
-                          {foodName(FOOD_INDEX.get(id)!, locale)}
-                          <X aria-hidden className="size-4" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : null}
-                <div className="mt-4">
-                  <FoodPicker
-                    foods={foods}
-                    selected={selected}
-                    onChange={(next) => setSelected(next.slice(0, RECIPE_MAX_CHOSEN))}
-                    max={RECIPE_MAX_CHOSEN}
-                    stickyClassName="top-16"
-                    status={
-                      <p className="text-muted tabular">
-                        {t("foodsCount", { count: selected.length, max: RECIPE_MAX_CHOSEN })}
-                      </p>
-                    }
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="mt-3"
-                  onClick={() => {
-                    setPicking(false);
-                    setSelected([]);
-                  }}
-                >
-                  {t("autoInstead")}
-                </Button>
-              </div>
-            )}
-          </section>
-
-          <div className="rounded-card border border-border bg-surface">
-            <button
-              type="button"
-              aria-expanded={moreOpen}
-              aria-controls={`${optionsId}-more`}
-              onClick={() => setMoreOpen((o) => !o)}
-              className="flex min-h-14 w-full items-center justify-between gap-3 px-5 text-left"
-            >
-              <span>
-                <span className="font-display text-lg font-bold">{t("more")}</span>
-                <span className="block text-sm text-muted">
-                  {t("moreSummary", { minutes, servings })}
-                </span>
-              </span>
-              <ChevronDown
-                aria-hidden
-                className={cn("size-5 transition-transform duration-200", moreOpen && "rotate-180")}
+        <form
+          onSubmit={submit}
+          className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-8"
+          aria-busy={status === "loading"}
+        >
+          <div className="flex min-w-0 flex-col gap-5">
+            <fieldset className="rounded-card border border-border bg-surface p-5">
+              <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
+              <FilterChips
+                className="mt-2"
+                label={t("meal")}
+                options={meals.map((m) => ({
+                  value: m,
+                  label:
+                    m === post
+                      ? `${tm(m)} · ${tm("postWorkout")}`
+                      : m === pre
+                        ? `${tm(m)} · ${tm("preWorkout")}`
+                        : tm(m),
+                }))}
+                selected={[meal]}
+                onChange={(next) => next[0] && setMeal(next[0])}
               />
-            </button>
-            <div
-              id={`${optionsId}-more`}
-              hidden={!moreOpen}
-              className="grid gap-5 border-t border-border p-5 sm:grid-cols-2"
+              <p className="mt-2 text-sm text-muted">
+                {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
+              </p>
+            </fieldset>
+
+            <section
+              aria-labelledby={`${optionsId}-foods`}
+              className="rounded-card border border-border bg-surface p-5"
             >
-              <fieldset>
-                <legend className="font-semibold">{t("time")}</legend>
-                <FilterChips
-                  className="mt-2"
-                  label={t("time")}
-                  options={MAX_MINUTES_OPTIONS.map((m) => ({
-                    value: String(m),
-                    label: t("minutes", { minutes: m }),
-                  }))}
-                  selected={[String(minutes)]}
-                  onChange={(next) => next[0] && setMinutes(Number(next[0]) as MaxMinutes)}
+              <h2 id={`${optionsId}-foods`} className="font-display text-lg font-bold">
+                {t("foods")}
+              </h2>
+              {!picking ? (
+                <div className="mt-2 flex flex-col gap-3">
+                  <p className="flex gap-2 text-muted">
+                    <Sparkles aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
+                    {t("autoFoods")}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="self-start"
+                    onClick={() => setPicking(true)}
+                  >
+                    {t("pickFoods")}
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-2">
+                  <p className="text-sm text-muted">{t("pickHint", { max: RECIPE_MAX_CHOSEN })}</p>
+                  {selected.length > 0 ? (
+                    <ul className="mt-3 flex flex-wrap gap-2" aria-label={t("chosen")}>
+                      {selected.map((id) => (
+                        <li key={id}>
+                          <button
+                            type="button"
+                            onClick={() => setSelected(selected.filter((x) => x !== id))}
+                            className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-primary px-3.5 text-sm font-semibold text-on-primary"
+                            aria-label={t("removeFood", {
+                              food: foodName(FOOD_INDEX.get(id)!, locale),
+                            })}
+                          >
+                            {foodName(FOOD_INDEX.get(id)!, locale)}
+                            <X aria-hidden className="size-4" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <div className="mt-4">
+                    <FoodPicker
+                      foods={foods}
+                      selected={selected}
+                      onChange={(next) => setSelected(next.slice(0, RECIPE_MAX_CHOSEN))}
+                      max={RECIPE_MAX_CHOSEN}
+                      stickyClassName="top-16"
+                      status={
+                        <p className="text-muted tabular">
+                          {t("foodsCount", { count: selected.length, max: RECIPE_MAX_CHOSEN })}
+                        </p>
+                      }
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="mt-3"
+                    onClick={() => {
+                      setPicking(false);
+                      setSelected([]);
+                    }}
+                  >
+                    {t("autoInstead")}
+                  </Button>
+                </div>
+              )}
+            </section>
+
+            <div className="rounded-card border border-border bg-surface">
+              <button
+                type="button"
+                aria-expanded={moreOpen}
+                aria-controls={`${optionsId}-more`}
+                onClick={() => setMoreOpen((o) => !o)}
+                className="flex min-h-14 w-full items-center justify-between gap-3 px-5 text-left"
+              >
+                <span>
+                  <span className="font-display text-lg font-bold">{t("more")}</span>
+                  <span className="block text-sm text-muted">
+                    {t("moreSummary", { minutes, servings })}
+                  </span>
+                </span>
+                <ChevronDown
+                  aria-hidden
+                  className={cn(
+                    "size-5 transition-transform duration-200",
+                    moreOpen && "rotate-180",
+                  )}
                 />
-              </fieldset>
-              <fieldset>
-                <legend className="font-semibold">{t("servings")}</legend>
-                <FilterChips
-                  className="mt-2"
-                  label={t("servings")}
-                  options={["1", "2", "3", "4"].map((s) => ({ value: s, label: s }))}
-                  selected={[String(servings)]}
-                  onChange={(next) => next[0] && setServings(Number(next[0]))}
-                />
-              </fieldset>
+              </button>
+              <div
+                id={`${optionsId}-more`}
+                hidden={!moreOpen}
+                className="grid gap-5 border-t border-border p-5 sm:grid-cols-2"
+              >
+                <fieldset>
+                  <legend className="font-semibold">{t("time")}</legend>
+                  <FilterChips
+                    className="mt-2"
+                    label={t("time")}
+                    options={MAX_MINUTES_OPTIONS.map((m) => ({
+                      value: String(m),
+                      label: t("minutes", { minutes: m }),
+                    }))}
+                    selected={[String(minutes)]}
+                    onChange={(next) => next[0] && setMinutes(Number(next[0]) as MaxMinutes)}
+                  />
+                </fieldset>
+                <fieldset>
+                  <legend className="font-semibold">{t("servings")}</legend>
+                  <FilterChips
+                    className="mt-2"
+                    label={t("servings")}
+                    options={["1", "2", "3", "4"].map((s) => ({ value: s, label: s }))}
+                    selected={[String(servings)]}
+                    onChange={(next) => next[0] && setServings(Number(next[0]))}
+                  />
+                </fieldset>
+              </div>
             </div>
           </div>
 
-          <div aria-live="assertive">
-            {error ? (
-              <p className="rounded-card border border-border bg-surface p-4">{te(error)}</p>
-            ) : null}
-          </div>
+          {/* Desktop: o resumo e o botão ficam fixos ao lado; no telemóvel, no fim do formulário */}
+          <div className="flex flex-col gap-4 lg:sticky lg:top-24">
+            <div className="hidden rounded-card border border-border bg-surface p-5 lg:block">
+              <p className="font-display text-lg font-bold">{t("summary")}</p>
+              <dl className="mt-3 flex flex-col gap-2 text-sm">
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted">{t("meal")}</dt>
+                  <dd className="text-right font-semibold">{tm(meal)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted">{t("summaryTarget")}</dt>
+                  <dd className="font-semibold tabular">≈ {formatProtein(mealTarget, lang)} g</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted">{t("foods")}</dt>
+                  <dd className="text-right font-semibold">
+                    {picking && selected.length > 0
+                      ? t("summaryChosen", { count: selected.length })
+                      : t("summaryAuto")}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted">{t("more")}</dt>
+                  <dd className="text-right font-semibold">
+                    {t("moreSummary", { minutes, servings })}
+                  </dd>
+                </div>
+              </dl>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-4">
-            <Button type="submit" size="lg" disabled={status === "loading"}>
+            <div aria-live="assertive">
+              {error ? (
+                <p className="rounded-card border border-border bg-surface p-4">{te(error)}</p>
+              ) : null}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <Button type="submit" size="lg" className="lg:w-full" disabled={status === "loading"}>
+                {status === "loading" ? (
+                  <Loader2 aria-hidden className="animate-spin" />
+                ) : (
+                  <ChefHat aria-hidden />
+                )}
+                {status === "loading" ? t("generating") : t("submit")}
+              </Button>
               {status === "loading" ? (
-                <Loader2 aria-hidden className="animate-spin" />
-              ) : (
-                <ChefHat aria-hidden />
-              )}
-              {status === "loading" ? t("generating") : t("submit")}
-            </Button>
-            {status === "loading" ? (
-              <p className="text-sm text-muted">{t("generatingHint")}</p>
-            ) : null}
+                <p className="text-sm text-muted">{t("generatingHint")}</p>
+              ) : null}
+            </div>
           </div>
         </form>
       </MotionConfig>

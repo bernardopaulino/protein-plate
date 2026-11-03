@@ -65,9 +65,19 @@ for (const scheme of ["light", "dark"] as const) {
   });
 }
 
-test.describe("sem scroll horizontal", () => {
+/** Telemóvel pequeno, tablet ao alto e deitado, portátil e ecrã grande. */
+const VIEWPORTS = [
+  { width: 320, height: 640 },
+  { width: 768, height: 1024 },
+  { width: 1024, height: 768 },
+  { width: 1440, height: 900 },
+  { width: 2560, height: 1440 },
+];
+
+test.describe("responsive", () => {
   test.use({ storageState: ONBOARDED_STATE });
-  test("nas páginas principais", async ({ page }) => {
+
+  test("sem scroll horizontal nas páginas principais", async ({ page }) => {
     for (const path of [...PUBLIC_PAGES, ...APP_PAGES]) {
       await page.goto(path);
       await page.waitForLoadState("load");
@@ -75,6 +85,29 @@ test.describe("sem scroll horizontal", () => {
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       );
       expect(overflow, path).toBeLessThanOrEqual(0);
+    }
+  });
+
+  test("de 320 px a 2560 px: sem scroll horizontal e o conteúdo usa a largura", async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "os tamanhos são definidos aqui");
+    for (const viewport of VIEWPORTS) {
+      await page.setViewportSize(viewport);
+      for (const path of ["/", "/alimentos", "/o-meu-dia", "/receitas", "/receitas/nova"]) {
+        await page.goto(path);
+        await page.waitForLoadState("load");
+        const { overflow, main, width } = await page.evaluate(() => ({
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          main: document.querySelector("main")!.getBoundingClientRect().width,
+          width: document.documentElement.clientWidth,
+        }));
+        expect(overflow, `${path} a ${viewport.width}px`).toBeLessThanOrEqual(0);
+        // Até 1280 px o conteúdo ocupa a largura toda; acima, a coluna cresce até 1440 px
+        expect(main, `${path} a ${viewport.width}px`).toBeGreaterThanOrEqual(
+          Math.min(width, 1280) - 1,
+        );
+      }
     }
   });
 });

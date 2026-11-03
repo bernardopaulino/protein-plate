@@ -29,7 +29,7 @@ export default async function AccountPage({
   const query = await searchParams;
   const { session, profile } = await requireProfile(locale, "/conta");
   return (
-    <div className="mx-auto max-w-2xl pb-8">
+    <div className="pb-8">
       <AccountView
         name={session.user.name}
         sessionCreatedAt={session.createdAt}

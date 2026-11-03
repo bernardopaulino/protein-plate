@@ -51,8 +51,8 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
   const faq = ["diet", "account", "allergies", "numbers", "supplements"] as const;
 
   return (
-    <div className="flex flex-col gap-20 pb-8">
-      <section className="grid items-center gap-10 pt-6 md:grid-cols-[1.15fr_1fr] md:pt-12">
+    <div className="flex flex-col gap-20 pb-8 lg:gap-28">
+      <section className="grid items-center gap-10 pt-6 md:grid-cols-[1.15fr_1fr] md:pt-12 lg:gap-16 xl:pt-16">
         <div>
           <p className="font-semibold tracking-wide text-primary">{t("eyebrow")}</p>
           <h1 className="mt-3 text-[2.75rem] leading-[1.02] font-extrabold sm:text-hero">
@@ -85,7 +85,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
       </section>
 
       <section aria-labelledby="passos">
-        <h2 id="passos" className="text-2xl font-bold">
+        <h2 id="passos" className="text-2xl font-bold lg:text-3xl">
           {t("stepsTitle")}
         </h2>
         <ol className="mt-6 grid gap-4 md:grid-cols-3">
@@ -112,11 +112,14 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         </Button>
       </section>
 
-      <section aria-labelledby="faq" className="max-w-3xl">
-        <h2 id="faq" className="text-2xl font-bold">
+      <section
+        aria-labelledby="faq"
+        className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
+      >
+        <h2 id="faq" className="text-2xl font-bold lg:sticky lg:top-24 lg:self-start lg:text-3xl">
           {t("faqTitle")}
         </h2>
-        <div className="mt-6 divide-y divide-border rounded-card border border-border bg-surface">
+        <div className="divide-y divide-border rounded-card border border-border bg-surface">
           {faq.map((key) => (
             <details key={key} className="group p-5 [&_summary::-webkit-details-marker]:hidden">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 font-semibold">

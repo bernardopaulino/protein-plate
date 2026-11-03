@@ -139,7 +139,10 @@ export function CatalogBrowser() {
         </div>
       </div>
 
-      <ul aria-label={t("title")} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <ul
+        aria-label={t("title")}
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+      >
         {results.map((food) => (
           <li key={food.id} className="min-w-0">
             <FoodCard

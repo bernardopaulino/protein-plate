@@ -53,7 +53,7 @@ export default async function FoodPage({ params }: { params: Params }) {
   const ideas = food.ideas[locale];
 
   return (
-    <article className="mx-auto max-w-3xl pb-8">
+    <article className="mx-auto max-w-6xl pb-8">
       <Link
         href="/alimentos"
         className="inline-flex min-h-11 items-center gap-1 font-semibold text-muted hover:text-text"
@@ -84,55 +84,59 @@ export default async function FoodPage({ params }: { params: Params }) {
         </p>
       </header>
 
-      <section aria-labelledby="porcoes" className="mt-8">
-        <h2 id="porcoes" className="text-lg font-bold">
-          {t("portions")}
-        </h2>
-        <ul className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">
-          {food.portions.map((p) => (
-            <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
-              <span>
-                <span className="font-semibold">{p.label[locale]}</span>
-                <span className="ml-2 text-sm text-muted tabular">
-                  {formatProtein(p.grams, lang)} g
+      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
+        <div className="contents lg:block lg:min-w-0">
+          <section aria-labelledby="porcoes" className="order-1">
+            <h2 id="porcoes" className="text-lg font-bold">
+              {t("portions")}
+            </h2>
+            <ul className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">
+              {food.portions.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                  <span>
+                    <span className="font-semibold">{p.label[locale]}</span>
+                    <span className="ml-2 text-sm text-muted tabular">
+                      {formatProtein(p.grams, lang)} g
+                    </span>
+                  </span>
+                  <ProteinNumber value={portionProtein(food, p.id)} size="md" />
+                </li>
+              ))}
+              <li className="flex items-center justify-between gap-3 px-4 py-3 text-muted">
+                <span>
+                  {t("per100")} · {tw(food.weightBasis)}
                 </span>
-              </span>
-              <ProteinNumber value={portionProtein(food, p.id)} size="md" />
-            </li>
-          ))}
-          <li className="flex items-center justify-between gap-3 px-4 py-3 text-muted">
-            <span>
-              {t("per100")} · {tw(food.weightBasis)}
-            </span>
-            <ProteinNumber value={food.proteinPer100g} size="md" />
-          </li>
-        </ul>
-      </section>
-
-      <div className="mt-6">
-        <AddToDay foodId={food.id} food={food} />
-      </div>
-
-      {ideas.length > 0 ? (
-        <section aria-labelledby="ideias" className="mt-8">
-          <h2 id="ideias" className="text-lg font-bold">
-            {t("ideas")}
-          </h2>
-          <ul className="mt-3 flex flex-col gap-2">
-            {ideas.map((idea) => (
-              <li key={idea} className="flex items-start gap-3 rounded-2xl bg-primary-soft p-3">
-                <Lightbulb aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
-                {idea}
+                <ProteinNumber value={food.proteinPer100g} size="md" />
               </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+            </ul>
+          </section>
 
-      <p className="mt-8 text-sm text-muted">
-        {common("source")}
-        {food.tcaCode === TODO ? `. ${common("provisional")}` : ` (${food.tcaCode})`}
-      </p>
+          {ideas.length > 0 ? (
+            <section aria-labelledby="ideias" className="order-3 lg:mt-8">
+              <h2 id="ideias" className="text-lg font-bold">
+                {t("ideas")}
+              </h2>
+              <ul className="mt-3 flex flex-col gap-2">
+                {ideas.map((idea) => (
+                  <li key={idea} className="flex items-start gap-3 rounded-2xl bg-primary-soft p-3">
+                    <Lightbulb aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
+                    {idea}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          <p className="order-4 text-sm text-muted lg:mt-8">
+            {common("source")}
+            {food.tcaCode === TODO ? `. ${common("provisional")}` : ` (${food.tcaCode})`}
+          </p>
+        </div>
+        {/* No telemóvel fica a seguir às porções; no desktop, numa coluna fixa ao lado */}
+        <div className="order-2 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1">
+          <AddToDay foodId={food.id} food={food} />
+        </div>
+      </div>
     </article>
   );
 }

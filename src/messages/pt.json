@@ -147,45 +147,6 @@
       }
     }
   },
-  "start": {
-    "title": "Calcular a minha meta",
-    "lead": "Quatro perguntas rápidas. Nada disto sai do teu browser sem criares conta, e o peso nunca sai.",
-    "weight": {
-      "legend": "Quanto pesas?",
-      "label": "Peso",
-      "unit": "kg",
-      "hint": "Fica só neste browser.",
-      "invalid": "Escreve um peso entre 20 e 400 kg.",
-      "confirm": "Sim, o peso está certo",
-      "confirmHint": "Este peso está fora do habitual (35 a 250 kg). Confirma que está certo.",
-      "manualToggle": "Prefiro escrever a meta",
-      "weightToggle": "Calcular pelo peso",
-      "manualLabel": "Meta diária",
-      "manualInvalid": "Escreve uma meta entre 40 e 300 g."
-    },
-    "intensity": {
-      "legend": "Quanto treinas?"
-    },
-    "meals": {
-      "legend": "Quantas refeições fazes por dia?",
-      "which": "Quais?",
-      "whichHint": "Pré-selecionámos as mais comuns. Podes trocar.",
-      "min": "Escolhe pelo menos duas refeições."
-    },
-    "postWorkout": {
-      "legend": "Que refeição fazes a seguir ao treino?",
-      "hint": "Opcional. Essa refeição fica com mais proteína e opções rápidas.",
-      "none": "Nenhuma / não treino"
-    },
-    "result": {
-      "title": "A tua meta",
-      "value": "{grams} g por dia",
-      "perMeal": "Cerca de {grams} g por refeição principal.",
-      "empty": "Responde às perguntas para veres a tua meta.",
-      "cta": "Vê como é fácil",
-      "save": "Guardar a meta"
-    }
-  },
   "today": {
     "title": "O meu dia",
     "progressLabel": "Proteína do dia",
@@ -269,7 +230,7 @@
   },
   "recipes": {
     "title": "Receitas",
-    "lead": "Escolhe alimentos do teu dia e gera uma receita com eles. A proteína é sempre calculada pela app.",
+    "lead": "Escolhe a refeição e nós tratamos do resto, com os alimentos de que gostas. A proteína é sempre calculada pela app.",
     "new": "Gerar uma receita",
     "saved": "Receitas guardadas",
     "savedEmpty": "Ainda não guardaste receitas.",
@@ -293,7 +254,11 @@
       "removeFood": "Tirar {food}",
       "autoInstead": "Prefiro que escolham por mim",
       "more": "Mais opções",
-      "moreSummary": "Até {minutes} min · {servings, plural, one {# dose} other {# doses}}"
+      "moreSummary": "Até {minutes} min · {servings, plural, one {# dose} other {# doses}}",
+      "summary": "A tua receita",
+      "summaryTarget": "Proteína por dose",
+      "summaryAuto": "Escolhemos nós",
+      "summaryChosen": "{count, plural, one {# escolhido} other {# escolhidos}}"
     },
     "errors": {
       "invalid_request": "Há algo no pedido que não percebemos. Revê as escolhas e tenta outra vez.",

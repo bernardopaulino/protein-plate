@@ -43,7 +43,7 @@ export function SignIn({
   return (
     <LazyMotion features={domAnimation} strict>
       <MotionConfig reducedMotion="user">
-        <div className="mx-auto grid max-w-5xl items-center gap-10 pb-10 md:grid-cols-2 md:pt-6">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 pb-10 md:grid-cols-2 md:pt-6 lg:gap-16">
           <div>
             <m.h1
               initial={{ opacity: 0, y: 12 }}

@@ -71,7 +71,7 @@ export default async function RecipePage({ params }: { params: Params }) {
       : null;
 
   return (
-    <article className="mx-auto max-w-3xl pb-8">
+    <article className="mx-auto max-w-5xl pb-8">
       <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted">
         <span>{tm(recipe.meal)}</span>
         {recipe.postWorkout ? (

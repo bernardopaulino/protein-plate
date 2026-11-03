@@ -19,7 +19,7 @@ export function SiteHeader() {
   const t = useTranslations("nav");
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-bg/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+      <div className="app-container flex h-16 items-center justify-between">
         <Link href="/" aria-label={t("home")} className="rounded-lg">
           <Logo />
         </Link>
@@ -32,7 +32,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   const t = useTranslations("footer");
   return (
-    <footer className="mx-auto max-w-5xl px-4 pt-12 pb-28 text-sm text-muted md:pb-12">
+    <footer className="app-container pt-12 pb-28 text-sm text-muted md:pb-12">
       <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
         <p>
           <span className="font-semibold text-text">Protein Plate.</span> {t("tagline")}{" "}

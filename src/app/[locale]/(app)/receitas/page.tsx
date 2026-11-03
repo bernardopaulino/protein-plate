@@ -25,15 +25,19 @@ export default async function RecipesPage({ params }: { params: Promise<{ locale
   await requireProfile(locale, "/receitas");
   const t = await getTranslations("recipes");
   return (
-    <div className="mx-auto max-w-3xl pb-8">
-      <h1 className="text-2xl font-extrabold">{t("title")}</h1>
-      <p className="mt-2 text-muted">{t("lead")}</p>
-      <Button asChild size="lg" className="mt-6">
-        <Link href="/receitas/nova">
-          <ChefHat aria-hidden />
-          {t("new")}
-        </Link>
-      </Button>
+    <div className="pb-8">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <h1 className="text-2xl font-extrabold lg:text-3xl">{t("title")}</h1>
+          <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
+        </div>
+        <Button asChild size="lg" className="self-start lg:self-auto">
+          <Link href="/receitas/nova">
+            <ChefHat aria-hidden />
+            {t("new")}
+          </Link>
+        </Button>
+      </div>
       <SavedRecipes />
     </div>
   );

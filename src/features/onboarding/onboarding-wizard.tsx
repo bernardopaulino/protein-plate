@@ -142,7 +142,7 @@ export function OnboardingWizard({
   return (
     <LazyMotion features={domMax} strict>
       <MotionConfig reducedMotion="user">
-        <div className="mx-auto max-w-2xl pb-36">
+        <div className="mx-auto max-w-3xl pb-36 xl:max-w-4xl">
           <ProgressHeader
             index={index}
             onBack={index > 0 ? () => go(index - 1) : null}
@@ -197,7 +197,7 @@ export function OnboardingWizard({
 
         {/* Barra de ações fixa em baixo (o polegar chega lá) */}
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
-          <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
+          <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3 xl:max-w-4xl">
             {index > 0 ? (
               <Button variant="secondary" size="lg" onClick={() => go(index - 1)} className="px-5">
                 <ArrowLeft aria-hidden />

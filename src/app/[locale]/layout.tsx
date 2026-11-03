@@ -67,7 +67,7 @@ export default async function LocaleLayout({
           <main
             id="conteudo"
             tabIndex={-1}
-            className="mx-auto min-h-[85dvh] max-w-5xl px-4 pt-6 outline-none"
+            className="app-container min-h-[85dvh] pt-6 outline-none lg:pt-8"
           >
             {children}
           </main>

@@ -283,6 +283,7 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; esc
 - Ilustrações 3D (Fluent Emoji, MIT) nos alimentos, refeições, dietas, alergias, equipamento e passos.
 - Movimento com `motion` 14 (`LazyMotion` + `m`, só nas ilhas que o usam): transições de passo, cartões com mola ao escolher, números que contam, barras que enchem, o dia exemplo a entrar no ecrã. 150–350 ms `ease-out`; `MotionConfig reducedMotion="user"` e o CSS global param tudo com `prefers-reduced-motion`.
 - A11y: contraste ≥ 4,5:1, alvos ≥ 44 px, foco visível, teclado em tudo, `aria-live` para "Faltam X g", `lang="pt-PT"`.
+- **Responsive** (de 320 px a ecrãs de 2560 px): a app ocupa o ecrã até 80rem (90rem a partir de 1536 px), com margens de 16/24/32 px (utilitário `app-container`, igual no cabeçalho, no conteúdo e no rodapé). Telemóvel: uma coluna e barra de navegação em baixo. Desktop: o "Hoje" tem as refeições à esquerda (duas colunas a partir de 1280 px) e o progresso com "Para fechar a meta" numa coluna fixa à direita; a "Nova receita" tem o resumo e o botão fixos ao lado; o detalhe de um alimento tem o "Adicionar ao meu dia" ao lado; o catálogo e as receitas guardadas vão até 4 colunas. O formulário de boas-vindas e os textos legais ficam numa coluna centrada (leitura e foco). Os testes e2e verificam que não há scroll horizontal a 320, 768, 1024, 1440 e 2560 px e que o conteúdo usa a largura.
 
 ## 12. Qualidade
 

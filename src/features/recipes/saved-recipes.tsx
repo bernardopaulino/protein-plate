@@ -47,7 +47,7 @@ export function SavedRecipes() {
       ) : recipes && recipes.length === 0 ? (
         <p className="mt-2 text-muted">{t("savedEmpty")}</p>
       ) : (
-        <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+        <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {recipes?.map((r) => (
             <li key={r.id}>
               <RecipeCard

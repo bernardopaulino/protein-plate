@@ -222,7 +222,7 @@ export function MealsStep({ draft, update }: StepProps) {
       </Section>
 
       <Section title={t("which")}>
-        <div role="group" aria-label={t("which")} className="grid grid-cols-2 gap-3">
+        <div role="group" aria-label={t("which")} className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           {MEALS.map((meal) => {
             const on = draft.meals.includes(meal);
             return (
@@ -395,7 +395,7 @@ export function RestrictionsStep({ draft, update }: StepProps) {
         <div
           role="group"
           aria-label={t("allergies")}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+          className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4"
         >
           {ALLERGENS.map((allergen) => {
             const on = draft.allergies.includes(allergen);
@@ -477,7 +477,11 @@ export function KitchenStep({ draft, update }: StepProps) {
     <div>
       <StepHeader title={t("title")} lead={t("lead")} />
       <Section title={t("time")}>
-        <div role="radiogroup" aria-label={t("time")} className="grid grid-cols-2 gap-3">
+        <div
+          role="radiogroup"
+          aria-label={t("time")}
+          className="grid grid-cols-2 gap-3 lg:grid-cols-4"
+        >
           {MAX_MINUTES_OPTIONS.map((minutes) => (
             <OptionCard
               key={minutes}

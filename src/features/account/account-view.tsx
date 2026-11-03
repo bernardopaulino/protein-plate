@@ -94,38 +94,69 @@ export function AccountView({
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="text-2xl font-extrabold">
+      <h1 className="text-2xl font-extrabold lg:text-3xl">
         {name ? t("hello", { name: name.split(" ")[0] ?? name }) : t("helloAnon")}
       </h1>
 
-      <Link
-        href="/conta/preferencias"
-        className="group flex items-center gap-4 rounded-card border border-border bg-surface p-5 transition-colors hover:border-primary/60"
-      >
-        <span className="flex size-12 items-center justify-center rounded-full bg-primary-soft text-primary">
-          <SlidersHorizontal aria-hidden className="size-6" />
-        </span>
-        <span className="flex-1">
-          <span className="block text-lg font-bold">{t("preferences")}</span>
-          <span className="block text-muted">
-            {t("goalValue", { grams: formatProtein(goal.grams, lang), count: goal.meals })}
+      <div className="grid gap-5 md:grid-cols-2 md:items-stretch xl:grid-cols-3">
+        <Link
+          href="/conta/preferencias"
+          className="group flex items-center gap-4 rounded-card border border-border bg-surface p-5 transition-colors hover:border-primary/60 md:col-span-2 xl:col-span-1"
+        >
+          <span className="flex size-12 items-center justify-center rounded-full bg-primary-soft text-primary">
+            <SlidersHorizontal aria-hidden className="size-6" />
           </span>
-          <span className="block text-sm text-muted">{t("preferencesHint")}</span>
-        </span>
-        <ChevronRight
-          aria-hidden
-          className="size-5 text-muted transition-transform group-hover:translate-x-0.5"
-        />
-      </Link>
+          <span className="flex-1">
+            <span className="block text-lg font-bold">{t("preferences")}</span>
+            <span className="block text-muted">
+              {t("goalValue", { grams: formatProtein(goal.grams, lang), count: goal.meals })}
+            </span>
+            <span className="block text-sm text-muted">{t("preferencesHint")}</span>
+          </span>
+          <ChevronRight
+            aria-hidden
+            className="size-5 text-muted transition-transform group-hover:translate-x-0.5"
+          />
+        </Link>
 
-      <section className="rounded-card border border-border bg-surface p-5">
-        <h2 className="text-lg font-bold">{t("export")}</h2>
-        <p className="mt-1 text-muted">{t("exportHint")}</p>
-        <Button variant="secondary" className="mt-3" onClick={exportData} disabled={busy}>
-          <Download aria-hidden />
-          {t("export")}
-        </Button>
-      </section>
+        <section className="rounded-card border border-border bg-surface p-5">
+          <h2 className="text-lg font-bold">{t("export")}</h2>
+          <p className="mt-1 text-muted">{t("exportHint")}</p>
+          <Button variant="secondary" className="mt-3" onClick={exportData} disabled={busy}>
+            <Download aria-hidden />
+            {t("export")}
+          </Button>
+        </section>
+
+        <section className="rounded-card border border-border bg-surface p-5">
+          <h2 className="text-lg font-bold">{t("delete.title")}</h2>
+          <p className="mt-1 text-muted">{t("delete.body")}</p>
+          {!deleting ? (
+            <Button variant="secondary" className="mt-3" onClick={() => setDeleting(true)}>
+              <Trash2 aria-hidden />
+              {t("delete.title")}
+            </Button>
+          ) : fresh ? (
+            <Button className="mt-3" onClick={deleteAccount} disabled={busy}>
+              <Trash2 aria-hidden />
+              {t("delete.confirm")}
+            </Button>
+          ) : (
+            <div className="mt-3 flex flex-col gap-3">
+              <p>
+                {t("delete.reauth", {
+                  provider: provider ? PROVIDER_NAMES[provider] : "Google / Apple",
+                })}
+              </p>
+              <ProviderButtons
+                providers={provider ? [provider] : providers}
+                callbackURL="/conta?apagar=1"
+                labelKey="delete.reauthButton"
+              />
+            </div>
+          )}
+        </section>
+      </div>
 
       <div>
         <Button variant="ghost" onClick={signOut} disabled={busy}>
@@ -133,35 +164,6 @@ export function AccountView({
           {t("signOut")}
         </Button>
       </div>
-
-      <section className="rounded-card border border-border bg-surface p-5">
-        <h2 className="text-lg font-bold">{t("delete.title")}</h2>
-        <p className="mt-1 text-muted">{t("delete.body")}</p>
-        {!deleting ? (
-          <Button variant="secondary" className="mt-3" onClick={() => setDeleting(true)}>
-            <Trash2 aria-hidden />
-            {t("delete.title")}
-          </Button>
-        ) : fresh ? (
-          <Button className="mt-3" onClick={deleteAccount} disabled={busy}>
-            <Trash2 aria-hidden />
-            {t("delete.confirm")}
-          </Button>
-        ) : (
-          <div className="mt-3 flex flex-col gap-3">
-            <p>
-              {t("delete.reauth", {
-                provider: provider ? PROVIDER_NAMES[provider] : "Google / Apple",
-              })}
-            </p>
-            <ProviderButtons
-              providers={provider ? [provider] : providers}
-              callbackURL="/conta?apagar=1"
-              labelKey="delete.reauthButton"
-            />
-          </div>
-        )}
-      </section>
 
       {error ? (
         <p role="alert" className="font-semibold">

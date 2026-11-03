@@ -37,7 +37,7 @@ export default async function NewRecipePage({
       : [];
 
   return (
-    <div className="mx-auto max-w-2xl pb-8">
+    <div className="pb-8">
       <h1 className="text-2xl font-extrabold">{t("form.title")}</h1>
       <p className="mt-2 text-muted">{t("lead")}</p>
       <div className="mt-6">
