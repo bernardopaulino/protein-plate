@@ -307,7 +307,7 @@ export function FoodPicker({
           <div
             role="radiogroup"
             aria-label={t("sectionsLabel")}
-            className="-mx-4 mt-3 flex [scrollbar-width:none] gap-2 overflow-x-auto px-4 pb-1"
+            className="mt-3 flex flex-wrap gap-2"
           >
             {sections.map((s) => {
               const on = s === current;

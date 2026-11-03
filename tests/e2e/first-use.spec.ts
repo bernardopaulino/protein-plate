@@ -119,12 +119,22 @@ test.describe("com o plano feito", () => {
   });
 });
 
-test("catálogo: snack sem preparação com mais proteína em 2 toques", async ({ page }) => {
+test("catálogo: grupos, snack sem preparação com mais proteína e pesquisa", async ({ page }) => {
   await page.goto("/alimentos");
-  await page.getByRole("button", { name: "Lanche", exact: true }).click();
-  await page.getByRole("button", { name: "Sem preparação", exact: true }).click();
-  const first = page.getByRole("list", { name: "Alimentos" }).getByRole("link").first();
+  await page.getByLabel("Refeição").selectOption({ label: "Lanche" });
+  await page.getByLabel("Preparação").selectOption({ label: "Sem preparação" });
+  await page.getByRole("radio", { name: /^Proteína/ }).click();
+  // Agrupado por subgrupo, os de mais proteína primeiro
+  const first = page.getByRole("region").first().getByRole("link").first();
   await expect(first).toBeVisible();
+
+  // A pesquisa procura em tudo
+  await page.getByLabel("Procurar").fill("skyr");
+  await expect(
+    page.getByRole("list", { name: "Resultados da pesquisa" }).getByRole("link"),
+  ).toHaveCount(1);
+  await page.getByRole("button", { name: "Limpar a pesquisa" }).click();
+
   await first.click();
   await expect(page).toHaveURL(/\/alimentos\/[a-z0-9-]+$/);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
