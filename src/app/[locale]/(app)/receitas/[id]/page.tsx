@@ -113,7 +113,12 @@ export default async function RecipePage({ params }: { params: Params }) {
       </section>
 
       <div className="mt-4">
-        <RecipeActions recipeId={recipe.id} title={recipe.title} anotherHref={anotherHref} />
+        <RecipeActions
+          recipeId={recipe.id}
+          recipeMeal={recipe.meal}
+          title={recipe.title}
+          anotherHref={anotherHref}
+        />
       </div>
 
       <div className="mt-8 grid gap-8 md:grid-cols-[1fr_1.4fr]">

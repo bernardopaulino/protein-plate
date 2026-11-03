@@ -9,9 +9,9 @@ test("gerar uma receita (modelo simulado) a partir de uma refeição do dia", as
 
   const meal = page
     .locator("section[id^='refeicao-']")
-    .filter({ has: page.getByRole("link", { name: "Gerar receita com estes alimentos" }) })
+    .filter({ has: page.getByRole("link", { name: "Cozinhar isto" }) })
     .first();
-  await meal.getByRole("link", { name: "Gerar receita com estes alimentos" }).click();
+  await meal.getByRole("link", { name: "Cozinhar isto" }).click();
   await expect(page).toHaveURL(/\/receitas\/nova\?/);
   await expect(page.getByRole("heading", { name: "Nova receita" })).toBeVisible();
 
@@ -48,6 +48,28 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
     await page.getByRole("button", { name: "Gerar receita" }).click();
     await expect(page).toHaveURL(/\/receitas\/[0-9a-zA-Z]{10}$/, { timeout: 20_000 });
     await expect(page.getByRole("heading", { name: "Ingredientes" })).toBeVisible();
+
+    // A receita vai para o dia, fica favorita e aparece no livro de receitas
+    const title = (await page.getByRole("heading", { level: 1 }).innerText()).trim();
+    await page.getByLabel("Em que refeição").selectOption({ label: "Jantar" });
+    await page.getByRole("button", { name: "Pôr no meu dia" }).click();
+    await expect(page.getByText("Feito: Jantar atualizado no teu dia.")).toBeVisible();
+    await page.getByRole("button", { name: "Marcar como favorita" }).click();
+    await expect(page.getByRole("button", { name: "Favorita" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await page.goto("/o-meu-dia");
+    await expect(page.locator("#refeicao-jantar").getByText(`Receita: ${title}`)).toBeVisible();
+    await page.goto("/receitas");
+    const saved = page.getByRole("region", { name: "Guardadas" });
+    await expect(saved.getByRole("link", { name: title })).toBeVisible();
+    await expect(
+      saved.getByRole("button", { name: `Tirar ${title} das favoritas` }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      page.getByRole("region", { name: "Recentes" }).getByRole("link", { name: title }),
+    ).toBeVisible();
 
     // Com um alimento escolhido pelos grupos
     await page.goto("/receitas/nova");

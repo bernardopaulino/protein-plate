@@ -6,7 +6,7 @@ import { getDb } from "@/server/db/client";
 import { getBindings, getEnv } from "@/server/env";
 import { isCrossOrigin } from "@/server/origin";
 import { generateRecipe } from "@/server/recipes/generate";
-import { loadProfile } from "@/server/services/account";
+import { loadProfile, recordRecipeHistory } from "@/server/services/account";
 
 export const dynamic = "force-dynamic";
 
@@ -76,5 +76,7 @@ export async function POST(request: Request) {
     ms: Date.now() - started,
   });
   if (!result.ok) return json({ ok: false, code: result.code }, result.status);
+  // Fica no histórico da pessoa ("Recentes" em /receitas), também quando veio da cache
+  await recordRecipeHistory(db, session.user.id, result.id);
   return json({ ok: true, id: result.id, cached: result.cached }, 200);
 }

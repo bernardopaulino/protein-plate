@@ -35,7 +35,8 @@ A app prova que atingir a meta diária de proteína é fácil: escolhes alimento
 | Fechar a meta | "Faltam X g" e 3 sugestões | Cada sugestão cobre o que falta com 1 ou 2 porções, das que a pessoa pode comer |
 | Receitas por IA | Uma refeição da pessoa; alimentos opcionais (0 a 6, a app completa a base com o que a pessoa gosta), tempo, doses; meta, treino, equipamento e dieta vêm do perfil | Ingredientes 100% da base de dados e dentro das restrições; resposta < 15 s |
 | Página da receita | URL público, Open Graph | Abre sem conta |
-| Conta | Preferências, receitas guardadas, exportar e apagar | Exportar inclui tudo o que a app guarda |
+| Conta | Preferências, exportar e apagar | Exportar inclui tudo o que a app guarda |
+| Livro de receitas | `/receitas`: guardadas (favoritas primeiro, filtro "Só favoritas"), recentes (as últimas 50 geradas); na receita, "Pôr no meu dia" troca os alimentos dessa refeição por uma dose da receita | O "Hoje" mostra "Receita: …" na refeição; a proteína continua calculada pela app |
 | Backoffice | Painel, utilizadores, receitas, alimentos e duas ações (ver `docs/backoffice.md`) | Atrás do Cloudflare Access; sem dados de saúde por pessoa |
 | Base técnica | PWA, PT (EN preparado), páginas legais, motion com `prefers-reduced-motion` | Lighthouse mobile ≥ 90 nas 4 categorias |
 
@@ -164,10 +165,12 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 | `plan_items` | `id`, `plan_id`, `meal`, `food_id`, `portion_id`, `portion_count`, `position` | FK cascade para `day_plans`; `portion_count` 0,5–4 em passos de 0,5 (CHECK); ids gerados no servidor; sem FK para `foods` (o seed reescreve o catálogo e um alimento retirado não pode apagar dias) |
 | `recipes` | `id` (curto), `cache_key`, `locale`, `title`, `summary`, `meal`, `post_workout`, `servings`, `variant` (1–3, migração 0001), `prep_minutes`, `steps` (JSON), `protein_per_serving_g`, `meal_target_g`, `model`, `prompt_version`, `food_data_version`, `input_tokens`, `output_tokens`, `created_at` | `cache_key` único; imutável; sem dono |
 | `recipe_ingredients` | `recipe_id`, `position`, `food_id`, `grams` | PK `(recipe_id, position)` |
-| `saved_recipes` | `user_id`, `recipe_id`, `saved_at` | PK composta; FK cascade |
+| `saved_recipes` | `user_id`, `recipe_id`, `saved_at`, `favorite` | PK composta; FK cascade; `favorite` na migração 0003 (marcar como favorita também guarda) |
+| `user_recipes` | `user_id`, `recipe_id`, `created_at` | Histórico ("Recentes"): gravado em cada receita gerada ou servida da cache; só as últimas 50 por pessoa; FK cascade |
+| `meal_recipes` | `user_id`, `meal`, `recipe_id`, `used_at` | A receita posta numa refeição do dia (PK `user_id, meal`); desaparece quando a refeição fica vazia; FK cascade |
 | `usage_counters` | `key_hash`, `day`, `count` | PK `(key_hash, day)`; chaves sempre HMAC com chave diária (IP do convidado ou id do utilizador) ou `global`; cron apaga após 2 dias |
 
-Apagar um utilizador apaga em cascata perfil, planos, itens, receitas guardadas, sessões e contas. As receitas geradas ficam (não têm dono).
+Apagar um utilizador apaga em cascata perfil, planos, itens, receitas guardadas, histórico de receitas, receitas das refeições, sessões e contas. As receitas geradas ficam (não têm dono).
 
 ### O dia (só na conta)
 
@@ -269,8 +272,9 @@ Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor e
 6. **Catálogo:** pesquisa; os mesmos grupos do formulário (Todos, Proteína, Hidratos, Fruta, Legumes, Frutos secos e sementes) em cartões com ilustração e contagem, que cabem sempre no ecrã (3 por linha no telemóvel, 6 no desktop); uma barra com refeição, preparação e ordem (seletores com nome, sem chips a sair do ecrã); resultados agrupados por subgrupo (ou por grupo em "Todos"), os de mais proteína primeiro; os filtros ficam ao voltar do detalhe (sessão).
 7. **Detalhe:** porções com proteína, valor por 100 g, ideias, fonte, "Adicionar ao meu dia".
 8. **Nova receita:** refeição e "Gerar receita" chegam (a app escolhe a base); opcional "Quero usar alimentos que tenho" (o mesmo seletor por grupos, até 6); "Mais opções" com o tempo (o habitual da pessoa) e as doses; estados a gerar / erro / quota esgotada.
-9. **Receita:** proteína por dose e quanto cobre da meta da refeição, tempo, ingredientes, passos, guardar, partilhar, gerar outra, aviso IA.
-10. **Conta:** "As minhas preferências", exportar, sair, apagar.
+9. **Receita:** proteína por dose e quanto cobre da meta da refeição, tempo, ingredientes, passos, "Pôr no meu dia" (escolhe a refeição; uma dose, sem a despensa e só o que a pessoa pode comer, convertida para porções reais em meias porções — `src/domain/recipe-to-day.ts`), guardar, favorita, partilhar, gerar outra, aviso IA.
+10. **Receitas (livro):** "Gerar uma receita", Guardadas (estrela de favorita em cada uma, favoritas primeiro, "Só favoritas") e Recentes. O "Hoje" diz o que comer; as Receitas dizem como cozinhar e voltam ao dia com "Pôr no meu dia".
+11. **Conta:** "As minhas preferências", exportar, sair, apagar.
 
 Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; escondida no formulário e em Entrar), superior no desktop. Tom: tu, frases curtas, sempre o próximo passo ("Faltam 23 g. Um skyr resolve.").
 

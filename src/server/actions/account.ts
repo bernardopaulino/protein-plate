@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { addToDayInputSchema, saveDayInputSchema } from "@/domain/contracts/account";
-import { slugSchema } from "@/domain/contracts/common";
+import { mealSchema, slugSchema } from "@/domain/contracts/common";
 import type { Meal } from "@/domain/meals";
 import { isAllowed } from "@/domain/preferences";
 import { preferencesInputSchema } from "@/domain/contracts/profile";
@@ -14,9 +14,11 @@ import { getDb } from "../db/client";
 import { getEnv } from "../env";
 import {
   addDayItem,
+  applyRecipeToDay,
+  listRecentRecipes,
+  recipeStateFor,
+  setRecipeFavorite,
   exportUserData,
-  isRecipeSaved,
-  listSavedRecipes,
   loadProfile,
   recordConsent,
   restrictionsOf,
@@ -29,7 +31,10 @@ import {
 
 type Result<T> =
   | { ok: true; data: T }
-  | { ok: false; code: "unauthorized" | "invalid" | "liked_foods" | "no_profile" | "not_allowed" };
+  | {
+      ok: false;
+      code: "unauthorized" | "invalid" | "liked_foods" | "no_profile" | "not_allowed" | "not_found";
+    };
 
 const unauthorized = { ok: false, code: "unauthorized" } as const;
 const invalid = { ok: false, code: "invalid" } as const;
@@ -142,28 +147,76 @@ export async function setRecipeSavedAction(input: unknown): Promise<Result<boole
   return { ok: true, data: saved };
 }
 
-export async function recipeSavedStateAction(
-  input: unknown,
-): Promise<Result<{ signedIn: boolean; saved: boolean }>> {
+export type RecipeState =
+  | { signedIn: false }
+  | {
+      signedIn: true;
+      saved: boolean;
+      favorite: boolean;
+      /** Refeições da pessoa (vazio sem o formulário concluído) para "Usar no meu dia". */
+      meals: Meal[];
+    };
+
+/** O estado de uma receita para quem a vê (a página é pública e igual para toda a gente). */
+export async function recipeStateAction(input: unknown): Promise<Result<RecipeState>> {
   const parsed = z.object({ recipeId: recipeIdSchema }).strict().safeParse(input);
   if (!parsed.success) return invalid;
   const session = await getSession();
-  if (!session) return { ok: true, data: { signedIn: false, saved: false } };
+  if (!session) return { ok: true, data: { signedIn: false } };
+  const db = getDb();
+  const [state, profile] = await Promise.all([
+    recipeStateFor(db, session.user.id, parsed.data.recipeId),
+    loadProfile(db, session.user.id),
+  ]);
   return {
     ok: true,
-    data: {
-      signedIn: true,
-      saved: await isRecipeSaved(getDb(), session.user.id, parsed.data.recipeId),
-    },
+    data: { signedIn: true, ...state, meals: profile?.onboardedAt ? profile.meals : [] },
   };
 }
 
-export async function listSavedRecipesAction(): Promise<
-  Result<Awaited<ReturnType<typeof listSavedRecipes>>>
+export async function setRecipeFavoriteAction(
+  input: unknown,
+): Promise<Result<{ saved: boolean; favorite: boolean }>> {
+  const session = await getSession();
+  if (!session) return unauthorized;
+  const parsed = z
+    .object({ recipeId: recipeIdSchema, favorite: z.boolean() })
+    .strict()
+    .safeParse(input);
+  if (!parsed.success) return invalid;
+  return {
+    ok: true,
+    data: await setRecipeFavorite(
+      getDb(),
+      session.user.id,
+      parsed.data.recipeId,
+      parsed.data.favorite,
+    ),
+  };
+}
+
+/** "Usar no meu almoço": os alimentos da refeição passam a ser os da receita. */
+export async function applyRecipeToDayAction(input: unknown): Promise<Result<null>> {
+  const session = await getSession();
+  if (!session) return unauthorized;
+  const parsed = z.object({ recipeId: recipeIdSchema, meal: mealSchema }).strict().safeParse(input);
+  if (!parsed.success) return invalid;
+  const result = await applyRecipeToDay(
+    getDb(),
+    session.user.id,
+    parsed.data.recipeId,
+    parsed.data.meal,
+    FOOD_INDEX,
+  );
+  return result === "ok" ? { ok: true, data: null } : { ok: false, code: result };
+}
+
+export async function listRecentRecipesAction(): Promise<
+  Result<Awaited<ReturnType<typeof listRecentRecipes>>>
 > {
   const session = await getSession();
   if (!session) return unauthorized;
-  return { ok: true, data: await listSavedRecipes(getDb(), session.user.id) };
+  return { ok: true, data: await listRecentRecipes(getDb(), session.user.id) };
 }
 
 export async function exportDataAction(): Promise<

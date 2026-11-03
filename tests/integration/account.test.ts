@@ -7,10 +7,27 @@ import { isAllowed } from "@/domain/preferences";
 import { totalProtein } from "@/domain/protein";
 import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { account, session, user } from "@/server/db/auth-schema";
-import { dayPlans, foods, planItems, profiles, recipes, savedRecipes } from "@/server/db/schema";
 import {
+  dayPlans,
+  foods,
+  mealRecipes,
+  planItems,
+  profiles,
+  recipeIngredients,
+  recipes,
+  savedRecipes,
+  userRecipes,
+} from "@/server/db/schema";
+import {
+  RECIPE_HISTORY_MAX,
   addDayItem,
+  applyRecipeToDay,
   exportUserData,
+  listRecentRecipes,
+  loadMealRecipes,
+  recipeStateFor,
+  recordRecipeHistory,
+  setRecipeFavorite,
   isRecipeSaved,
   listSavedRecipes,
   loadDay,
@@ -342,6 +359,144 @@ describe("receitas guardadas (dois utilizadores)", () => {
     expect(exported.profile?.likedFoods).toContain("skyr-natural");
     expect(exported.savedRecipes.map((r) => r.id)).toEqual(["rcpExport1"]);
     expect(JSON.stringify(exported)).not.toContain(rui);
+  });
+});
+
+describe("livro de receitas: favoritas, recentes e pôr no dia (dois utilizadores)", () => {
+  async function recipeWithIngredients(id: string, servings = 2) {
+    await insertRecipe(id);
+    await t.db.update(recipes).set({ servings }).where(eq(recipes.id, id));
+    await t.db.insert(recipeIngredients).values([
+      { recipeId: id, position: 0, foodId: "peito-frango", grams: 300 },
+      { recipeId: id, position: 1, foodId: "arroz-branco", grams: 160 },
+      { recipeId: id, position: 2, foodId: "azeite", grams: 20 },
+    ]);
+  }
+
+  it("favorita: marcar também guarda; as favoritas vêm primeiro; cada pessoa tem as suas", async () => {
+    const ana = await createUser(t.db);
+    const rui = await createUser(t.db);
+    await insertRecipe("rcpFav0001");
+    await insertRecipe("rcpFav0002");
+    await setRecipeSaved(t.db, ana, "rcpFav0001", true, 1000);
+    expect(await setRecipeFavorite(t.db, ana, "rcpFav0002", true, 500)).toEqual({
+      saved: true,
+      favorite: true,
+    });
+    expect((await listSavedRecipes(t.db, ana)).map((r) => [r.id, r.favorite])).toEqual([
+      ["rcpFav0002", true],
+      ["rcpFav0001", false],
+    ]);
+    expect(await recipeStateFor(t.db, ana, "rcpFav0002")).toEqual({ saved: true, favorite: true });
+    expect(await recipeStateFor(t.db, rui, "rcpFav0002")).toEqual({
+      saved: false,
+      favorite: false,
+    });
+    expect(await setRecipeFavorite(t.db, ana, "nao-existe", true)).toEqual({
+      saved: false,
+      favorite: false,
+    });
+    // Tirar das favoritas mantém guardada
+    await setRecipeFavorite(t.db, ana, "rcpFav0002", false);
+    expect(await recipeStateFor(t.db, ana, "rcpFav0002")).toEqual({ saved: true, favorite: false });
+  });
+
+  it("recentes: mais recentes primeiro, sem repetidos, no máximo 50 e só da própria pessoa", async () => {
+    const ana = await createUser(t.db);
+    const rui = await createUser(t.db);
+    await insertRecipe("rcpRec0001");
+    await insertRecipe("rcpRec0002");
+    await recordRecipeHistory(t.db, ana, "rcpRec0001", 1000);
+    await recordRecipeHistory(t.db, ana, "rcpRec0002", 2000);
+    await recordRecipeHistory(t.db, ana, "rcpRec0001", 3000);
+    expect((await listRecentRecipes(t.db, ana)).map((r) => r.id)).toEqual([
+      "rcpRec0001",
+      "rcpRec0002",
+    ]);
+    expect(await listRecentRecipes(t.db, rui)).toEqual([]);
+
+    for (let i = 0; i < RECIPE_HISTORY_MAX + 3; i++) {
+      const id = `rcpMax${String(i).padStart(4, "0")}`;
+      await insertRecipe(id);
+      await recordRecipeHistory(t.db, rui, id, 10_000 + i);
+    }
+    const [row] = await t.db
+      .select({ n: count() })
+      .from(userRecipes)
+      .where(eq(userRecipes.userId, rui));
+    expect(row?.n).toBe(RECIPE_HISTORY_MAX);
+  });
+
+  it("pôr no dia: troca os alimentos dessa refeição por uma dose da receita e liga a receita", async () => {
+    const ana = await createUser(t.db);
+    const rui = await createUser(t.db);
+    await onboard(ana);
+    await onboard(rui, {
+      diet: "vegetarian",
+      likedFoods: ["tofu-firme", "grao-bico-lata", "iogurte-grego-natural"],
+    });
+    await saveDayItems(t.db, ana, items, FOOD_INDEX);
+    await recipeWithIngredients("rcpUse0001");
+
+    expect(await applyRecipeToDay(t.db, ana, "rcpUse0001", "almoco", FOOD_INDEX)).toBe("ok");
+    const day = await loadDay(t.db, ana);
+    // O pequeno-almoço fica; o almoço passa a ser frango + arroz (sem o azeite da despensa)
+    expect(day.items.filter((i) => i.meal === "pequeno-almoco").map((i) => i.foodId)).toEqual([
+      "skyr-natural",
+    ]);
+    expect(day.items.filter((i) => i.meal === "almoco").map((i) => i.foodId)).toEqual([
+      "peito-frango",
+      "arroz-branco",
+    ]);
+    expect(await loadMealRecipes(t.db, ana)).toEqual({
+      almoco: { id: "rcpUse0001", title: "Receita" },
+    });
+
+    // Vegetariano: o frango fica de fora; o arroz entra
+    expect(await applyRecipeToDay(t.db, rui, "rcpUse0001", "almoco", FOOD_INDEX)).toBe("ok");
+    expect(
+      (await loadDay(t.db, rui)).items.filter((i) => i.meal === "almoco").map((i) => i.foodId),
+    ).toEqual(["arroz-branco"]);
+    // Refeições que a pessoa não tem, receitas que não existem, contas sem plano
+    expect(await applyRecipeToDay(t.db, ana, "rcpUse0001", "ceia", FOOD_INDEX)).toBe("not_allowed");
+    expect(await applyRecipeToDay(t.db, ana, "nao-existe", "almoco", FOOD_INDEX)).toBe("not_found");
+    const fresh = await createUser(t.db);
+    expect(await applyRecipeToDay(t.db, fresh, "rcpUse0001", "almoco", FOOD_INDEX)).toBe(
+      "no_profile",
+    );
+
+    // Esvaziar a refeição desliga a receita
+    await saveDayItems(
+      t.db,
+      ana,
+      day.items.filter((i) => i.meal !== "almoco"),
+      FOOD_INDEX,
+    );
+    expect(await loadMealRecipes(t.db, ana)).toEqual({});
+    // A ligação do Rui não mudou
+    expect(Object.keys(await loadMealRecipes(t.db, rui))).toEqual(["almoco"]);
+  });
+
+  it("exportar inclui as recentes, as favoritas e as receitas do dia; apagar a conta leva tudo", async () => {
+    const id = await createUser(t.db);
+    await onboard(id);
+    await recipeWithIngredients("rcpExp0002");
+    await recordRecipeHistory(t.db, id, "rcpExp0002");
+    await setRecipeFavorite(t.db, id, "rcpExp0002", true);
+    await applyRecipeToDay(t.db, id, "rcpExp0002", "jantar", FOOD_INDEX);
+    const exported = await exportUserData(t.db, id);
+    expect(exported.recentRecipes.map((r) => r.id)).toEqual(["rcpExp0002"]);
+    expect(exported.mealRecipes).toEqual([{ meal: "jantar", recipeId: "rcpExp0002" }]);
+    expect(exported.savedRecipes[0]?.favorite).toBe(true);
+
+    await t.db.delete(user).where(eq(user.id, id));
+    for (const [table, col] of [
+      [userRecipes, userRecipes.userId],
+      [mealRecipes, mealRecipes.userId],
+    ] as const) {
+      const [row] = await t.db.select({ n: count() }).from(table).where(eq(col, id));
+      expect(row?.n).toBe(0);
+    }
   });
 });
 

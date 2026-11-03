@@ -1,9 +1,10 @@
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, notInArray } from "drizzle-orm";
 import { CONSENT_VERSION, type PreferencesInput } from "@/domain/contracts/profile";
 import type { PlanItemInput } from "@/domain/contracts/plan";
 import { buildExampleDay } from "@/domain/example-day";
 import { findPortion, type Allergen, type Food, type FoodIndex } from "@/domain/food";
 import { addItem, type NewItem } from "@/domain/plan";
+import { recipeToItems } from "@/domain/recipe-to-day";
 import { dailyTarget, type Intensity } from "@/domain/goal";
 import { normalizeTraining, sortMeals, type Meal } from "@/domain/meals";
 import {
@@ -25,11 +26,13 @@ import { user } from "../db/auth-schema";
 import type { Db } from "../db/client-core";
 import {
   dayPlans,
+  mealRecipes,
   planItems,
   profiles,
   recipeIngredients,
   recipes,
   savedRecipes,
+  userRecipes,
 } from "../db/schema";
 
 /** v1 usa um só plano por pessoa. */
@@ -168,7 +171,14 @@ function replaceItemsQueries(
   items: readonly PlanItemInput[],
   now: number,
 ) {
+  // A receita de uma refeição deixa de valer quando a refeição fica vazia
+  const mealsWithItems = [...new Set(items.map((i) => i.meal))];
   return [
+    mealsWithItems.length > 0
+      ? db
+          .delete(mealRecipes)
+          .where(and(eq(mealRecipes.userId, userId), notInArray(mealRecipes.meal, mealsWithItems)))
+      : db.delete(mealRecipes).where(eq(mealRecipes.userId, userId)),
     db
       .insert(dayPlans)
       .values({ id: planId, userId, name: DEFAULT_PLAN_NAME, position: 0, updatedAt: now })
@@ -401,12 +411,159 @@ export async function listSavedRecipes(db: Db, userId: string) {
       proteinPerServingG: recipes.proteinPerServingG,
       prepMinutes: recipes.prepMinutes,
       savedAt: savedRecipes.savedAt,
+      favorite: savedRecipes.favorite,
     })
     .from(savedRecipes)
     .innerJoin(recipes, eq(recipes.id, savedRecipes.recipeId))
     .where(eq(savedRecipes.userId, userId))
-    .orderBy(desc(savedRecipes.savedAt))
+    .orderBy(desc(savedRecipes.favorite), desc(savedRecipes.savedAt))
     .limit(100);
+}
+
+/** Favorita (as guardadas de que a pessoa mais gosta). Marcar como favorita também guarda. */
+export async function setRecipeFavorite(
+  db: Db,
+  userId: string,
+  recipeId: string,
+  favorite: boolean,
+  now = Date.now(),
+): Promise<{ saved: boolean; favorite: boolean }> {
+  const [recipe] = await db
+    .select({ id: recipes.id })
+    .from(recipes)
+    .where(eq(recipes.id, recipeId));
+  if (!recipe) return { saved: false, favorite: false };
+  await db
+    .insert(savedRecipes)
+    .values({ userId, recipeId, savedAt: now, favorite })
+    .onConflictDoUpdate({
+      target: [savedRecipes.userId, savedRecipes.recipeId],
+      set: { favorite },
+    });
+  return { saved: true, favorite };
+}
+
+export async function recipeStateFor(db: Db, userId: string, recipeId: string) {
+  const [row] = await db
+    .select({ favorite: savedRecipes.favorite })
+    .from(savedRecipes)
+    .where(and(eq(savedRecipes.userId, userId), eq(savedRecipes.recipeId, recipeId)));
+  return { saved: Boolean(row), favorite: row?.favorite ?? false };
+}
+
+/* ------------------------------------------------------------ Histórico de receitas */
+
+/** Quantas receitas recentes ficam no histórico de cada pessoa. */
+export const RECIPE_HISTORY_MAX = 50;
+
+/** Regista uma receita gerada (ou servida da cache) no histórico da pessoa. */
+export async function recordRecipeHistory(
+  db: Db,
+  userId: string,
+  recipeId: string,
+  now = Date.now(),
+): Promise<void> {
+  await db
+    .insert(userRecipes)
+    .values({ userId, recipeId, createdAt: now })
+    .onConflictDoUpdate({
+      target: [userRecipes.userId, userRecipes.recipeId],
+      set: { createdAt: now },
+    });
+  const keep = db
+    .select({ id: userRecipes.recipeId })
+    .from(userRecipes)
+    .where(eq(userRecipes.userId, userId))
+    .orderBy(desc(userRecipes.createdAt))
+    .limit(RECIPE_HISTORY_MAX);
+  await db
+    .delete(userRecipes)
+    .where(and(eq(userRecipes.userId, userId), notInArray(userRecipes.recipeId, keep)));
+}
+
+export async function listRecentRecipes(db: Db, userId: string, limit = 12) {
+  return db
+    .select({
+      id: recipes.id,
+      title: recipes.title,
+      summary: recipes.summary,
+      meal: recipes.meal,
+      proteinPerServingG: recipes.proteinPerServingG,
+      prepMinutes: recipes.prepMinutes,
+      createdAt: userRecipes.createdAt,
+    })
+    .from(userRecipes)
+    .innerJoin(recipes, eq(recipes.id, userRecipes.recipeId))
+    .where(eq(userRecipes.userId, userId))
+    .orderBy(desc(userRecipes.createdAt))
+    .limit(limit);
+}
+
+/* ------------------------------------------------------------ Receita → dia */
+
+export type ApplyRecipeResult = "ok" | "no_profile" | "not_found" | "not_allowed";
+
+/**
+ * "Usar no meu almoço": os alimentos dessa refeição passam a ser os de uma dose da receita (sem
+ * a despensa e só o que a pessoa pode comer); a refeição fica ligada à receita.
+ */
+export async function applyRecipeToDay(
+  db: Db,
+  userId: string,
+  recipeId: string,
+  meal: Meal,
+  foods: FoodIndex,
+  now = Date.now(),
+): Promise<ApplyRecipeResult> {
+  const profile = await loadProfile(db, userId);
+  if (!profile?.onboardedAt) return "no_profile";
+  if (!profile.meals.includes(meal)) return "not_allowed";
+  const [recipe] = await db
+    .select({ id: recipes.id, servings: recipes.servings })
+    .from(recipes)
+    .where(eq(recipes.id, recipeId));
+  if (!recipe) return "not_found";
+  const ingredients = await db
+    .select({ foodId: recipeIngredients.foodId, grams: recipeIngredients.grams })
+    .from(recipeIngredients)
+    .where(eq(recipeIngredients.recipeId, recipeId))
+    .orderBy(asc(recipeIngredients.position));
+  const restrictions = restrictionsOf(profile);
+  const fromRecipe = recipeToItems(ingredients, recipe.servings, meal, foods, (food) =>
+    isAllowed(food, restrictions),
+  );
+  if (fromRecipe.length === 0) return "not_allowed";
+
+  const { items } = await loadItems(db, userId);
+  const next = fromRecipe.reduce(
+    (list, item) => addItem(list, item, crypto.randomUUID()),
+    items.filter((i) => i.meal !== meal),
+  );
+  const planId = await planIdFor(db, userId);
+  await db.batch([
+    ...replaceItemsQueries(db, userId, planId, itemsForProfile(next, profile, foods), now),
+    db
+      .insert(mealRecipes)
+      .values({ userId, meal, recipeId, usedAt: now })
+      .onConflictDoUpdate({
+        target: [mealRecipes.userId, mealRecipes.meal],
+        set: { recipeId, usedAt: now },
+      }),
+  ] as never);
+  return "ok";
+}
+
+/** A receita usada em cada refeição do dia (para o "Hoje"). */
+export async function loadMealRecipes(
+  db: Db,
+  userId: string,
+): Promise<Partial<Record<Meal, { id: string; title: string }>>> {
+  const rows = await db
+    .select({ meal: mealRecipes.meal, id: recipes.id, title: recipes.title })
+    .from(mealRecipes)
+    .innerJoin(recipes, eq(recipes.id, mealRecipes.recipeId))
+    .where(eq(mealRecipes.userId, userId));
+  return Object.fromEntries(rows.map((r) => [r.meal, { id: r.id, title: r.title }]));
 }
 
 /* ------------------------------------------------------------ Exportar dados */
@@ -460,6 +617,15 @@ export async function exportUserData(db: Db, userId: string) {
         }
       : null,
     day: items.map(({ meal, foodId, portionId, count }) => ({ meal, foodId, portionId, count })),
+    recentRecipes: (await listRecentRecipes(db, userId, RECIPE_HISTORY_MAX)).map((r) => ({
+      id: r.id,
+      title: r.title,
+      createdAt: new Date(r.createdAt).toISOString(),
+    })),
+    mealRecipes: Object.entries(await loadMealRecipes(db, userId)).map(([meal, r]) => ({
+      meal,
+      recipeId: r.id,
+    })),
     savedRecipes: saved.map((r) => ({
       ...r,
       savedAt: new Date(r.savedAt).toISOString(),

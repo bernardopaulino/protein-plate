@@ -4,7 +4,7 @@ import { DayView } from "@/features/day/day-view";
 import type { Locale } from "@/i18n/routing";
 import { requireProfile } from "@/server/auth/guard";
 import { getDb } from "@/server/db/client";
-import { loadDay } from "@/server/services/account";
+import { loadDay, loadMealRecipes } from "@/server/services/account";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +26,11 @@ export default async function TodayPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   setRequestLocale(locale);
   const { session, profile } = await requireProfile(locale, "/o-meu-dia");
-  const { items } = await loadDay(getDb(), session.user.id);
+  const db = getDb();
+  const [{ items }, mealRecipes] = await Promise.all([
+    loadDay(db, session.user.id),
+    loadMealRecipes(db, session.user.id),
+  ]);
   return (
     <DayView
       day={{
@@ -38,6 +42,7 @@ export default async function TodayPage({ params }: { params: Promise<{ locale: 
         },
         items,
       }}
+      mealRecipes={mealRecipes}
       preferences={{
         diet: profile.diet,
         allergies: profile.allergies,

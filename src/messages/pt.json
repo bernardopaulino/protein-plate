@@ -158,7 +158,7 @@
     "mealEmpty": "Ainda nada aqui.",
     "addFood": "Adicionar alimento",
     "addTo": "Adicionar a {meal}",
-    "recipe": "Gerar receita com estes alimentos",
+    "recipe": "Cozinhar isto",
     "recipeNeeds": "Junta dois alimentos para gerar uma receita.",
     "closeTitle": "Para fechar a meta",
     "closeLead": "Faltam {grams} g. Uma destas resolve:",
@@ -181,7 +181,8 @@
       "count": "{count} porções",
       "unknown": "Alimento que já não está no catálogo"
     },
-    "saving": "A guardar…"
+    "saving": "A guardar…",
+    "fromRecipe": "Receita: {title}"
   },
   "drawer": {
     "title": "Adicionar a {meal}",
@@ -235,10 +236,10 @@
   },
   "recipes": {
     "title": "Receitas",
-    "lead": "Escolhe a refeição e nós tratamos do resto, com os alimentos de que gostas. A proteína é sempre calculada pela app.",
+    "lead": "O teu livro de receitas. O \"Hoje\" diz o que comer; aqui transformas isso em pratos, guardas os que gostas e pões no teu dia os que vais comer.",
     "new": "Gerar uma receita",
-    "saved": "Receitas guardadas",
-    "savedEmpty": "Ainda não guardaste receitas.",
+    "saved": "Guardadas",
+    "savedEmpty": "Ainda não guardaste receitas. Abre uma receita e carrega em \"Guardar\".",
     "form": {
       "title": "Nova receita",
       "foods": "Alimentos",
@@ -290,8 +291,23 @@
       "copied": "Link copiado.",
       "another": "Gerar outra",
       "postWorkout": "Pós-treino",
-      "loginToSave": "Entra para guardar"
-    }
+      "loginToSave": "Entra para guardar",
+      "useTitle": "Vais comer isto?",
+      "useHint": "Põe uma dose desta receita no teu dia: os alimentos dessa refeição passam a ser os da receita.",
+      "useMeal": "Em que refeição",
+      "useButton": "Pôr no meu dia",
+      "useDone": "Feito: {meal} atualizado no teu dia.",
+      "useError": "Não conseguimos mudar o teu dia. Tenta outra vez.",
+      "seeDay": "Ver o meu dia",
+      "favorite": "Favorita",
+      "markFavorite": "Marcar como favorita"
+    },
+    "recent": "Recentes",
+    "recentEmpty": "As receitas que gerares aparecem aqui.",
+    "favoritesOnly": "Só favoritas",
+    "favorite": "Favorita",
+    "markFavorite": "Marcar {title} como favorita",
+    "unmarkFavorite": "Tirar {title} das favoritas"
   },
   "account": {
     "title": "Conta",
@@ -363,7 +379,7 @@
       },
       {
         "title": "Os teus direitos",
-        "body": "Em Conta podes exportar todos os teus dados (JSON), mudar as tuas preferências e apagar a conta a qualquer momento. Apagar a conta apaga o perfil, as preferências, o dia, as receitas guardadas e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
+        "body": "Em Conta podes exportar todos os teus dados (JSON), mudar as tuas preferências e apagar a conta a qualquer momento. Guardamos também as últimas 50 receitas que geraste (para as encontrares em Receitas), as que marcaste como favoritas e a receita que puseste em cada refeição do teu dia. Apagar a conta apaga o perfil, as preferências, o dia, as receitas guardadas, o histórico e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
       },
       {
         "title": "Idade",

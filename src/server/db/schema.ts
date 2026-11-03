@@ -209,11 +209,47 @@ export const savedRecipes = sqliteTable(
       .notNull()
       .references(() => recipes.id, { onDelete: "cascade" }),
     savedAt: integer("saved_at").notNull(),
+    /** Favorita: as receitas guardadas de que a pessoa mais gosta aparecem primeiro (migração 0003). */
+    favorite: integer("favorite", { mode: "boolean" }).notNull().default(false),
   },
   (t) => [
     primaryKey({ columns: [t.userId, t.recipeId] }),
     index("saved_recipes_user_idx").on(t.userId, t.savedAt),
   ],
+);
+
+/** Histórico: as receitas que a pessoa gerou (também as da cache), para as encontrar depois. */
+export const userRecipes = sqliteTable(
+  "user_recipes",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    recipeId: text("recipe_id")
+      .notNull()
+      .references(() => recipes.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.recipeId] }),
+    index("user_recipes_user_idx").on(t.userId, t.createdAt),
+  ],
+);
+
+/** A receita usada numa refeição do dia ("Usar no meu almoço"): uma por refeição. */
+export const mealRecipes = sqliteTable(
+  "meal_recipes",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    meal: text("meal").$type<Meal>().notNull(),
+    recipeId: text("recipe_id")
+      .notNull()
+      .references(() => recipes.id, { onDelete: "cascade" }),
+    usedAt: integer("used_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.meal] })],
 );
 
 /* ---------------------------------------------------------------- Quotas */

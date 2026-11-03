@@ -85,9 +85,12 @@ function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () =>
 export function DayView({
   day,
   preferences,
+  mealRecipes = {},
 }: {
   day: { profile: DayProfile; items: PlanItem[] };
   preferences: DayPreferences;
+  /** A receita usada em cada refeição ("Pôr no meu dia" na página da receita). */
+  mealRecipes?: Partial<Record<Meal, { id: string; title: string }>>;
 }) {
   const t = useTranslations("today");
   const tm = useTranslations("meals");
@@ -295,6 +298,17 @@ export function DayView({
                   </>
                 }
               >
+                {mealRecipes[meal] && mealItems.length > 0 ? (
+                  <Link
+                    href={`/receitas/${mealRecipes[meal].id}`}
+                    className="mb-2 flex items-center gap-2 rounded-2xl bg-primary-soft px-3 py-2 text-sm font-semibold hover:underline"
+                  >
+                    <ChefHat aria-hidden className="size-4 shrink-0 text-primary" />
+                    <span className="min-w-0 truncate">
+                      {t("fromRecipe", { title: mealRecipes[meal].title })}
+                    </span>
+                  </Link>
+                ) : null}
                 {mealItems.length === 0 ? (
                   <p className="text-sm text-muted">{t("mealEmpty")}</p>
                 ) : (

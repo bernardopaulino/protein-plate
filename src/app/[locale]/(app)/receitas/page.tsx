@@ -2,10 +2,12 @@ import { ChefHat } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
-import { SavedRecipes } from "@/features/recipes/saved-recipes";
+import { RecipeLibrary } from "@/features/recipes/recipe-library";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { requireProfile } from "@/server/auth/guard";
+import { getDb } from "@/server/db/client";
+import { listRecentRecipes, listSavedRecipes } from "@/server/services/account";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +24,12 @@ export async function generateMetadata({
 export default async function RecipesPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  await requireProfile(locale, "/receitas");
+  const { session } = await requireProfile(locale, "/receitas");
+  const db = getDb();
+  const [recent, saved] = await Promise.all([
+    listRecentRecipes(db, session.user.id),
+    listSavedRecipes(db, session.user.id),
+  ]);
   const t = await getTranslations("recipes");
   return (
     <div className="pb-8">
@@ -38,7 +45,7 @@ export default async function RecipesPage({ params }: { params: Promise<{ locale
           </Link>
         </Button>
       </div>
-      <SavedRecipes />
+      <RecipeLibrary recent={recent} saved={saved.map(({ savedAt: _savedAt, ...r }) => r)} />
     </div>
   );
 }
