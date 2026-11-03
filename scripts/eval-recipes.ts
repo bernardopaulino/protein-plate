@@ -2,7 +2,7 @@
  * Avaliação das receitas contra o modelo real (secção 6). Corre antes de mudar o prompt ou o
  * modelo; cada mudança incrementa PROMPT_VERSION.
  *
- *   ANTHROPIC_API_KEY=... AI_MODEL=claude-haiku-5-5 npm run eval:recipes
+ *   npm run eval:recipes   (lê ANTHROPIC_API_KEY do ambiente ou de .dev.vars)
  *
  * Mede: respostas válidas (schema + regras da app, sem e com a segunda tentativa), ingredientes
  * fora da lista, proteína por dose plausível e perto da meta, e latência.

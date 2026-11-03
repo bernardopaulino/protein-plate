@@ -25,7 +25,7 @@
     "content:check": "tsx scripts/content-check.ts",
     "content:build": "tsx scripts/content-build.ts",
     "db:seed:local": "npm run content:build && wrangler d1 execute DB --local --file=.seed/foods.sql",
-    "eval:recipes": "tsx scripts/eval-recipes.ts",
+    "eval:recipes": "tsx --env-file-if-exists=.dev.vars scripts/eval-recipes.ts",
     "cf-typegen": "wrangler types cloudflare-env.d.ts --env-interface CloudflareEnv --env-file .dev.vars.example",
     "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env staging",
     "deploy:production": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production",
