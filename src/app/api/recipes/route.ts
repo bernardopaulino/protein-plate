@@ -4,6 +4,7 @@ import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { getSession } from "@/server/auth/session";
 import { getDb } from "@/server/db/client";
 import { getBindings, getEnv } from "@/server/env";
+import { isCrossOrigin } from "@/server/origin";
 import { generateRecipe } from "@/server/recipes/generate";
 import { loadProfile } from "@/server/services/account";
 
@@ -25,6 +26,14 @@ function log(event: Record<string, unknown>) {
 export async function POST(request: Request) {
   const started = Date.now();
   const requestId = crypto.randomUUID();
+  const env = getEnv();
+  if (isCrossOrigin(request)) {
+    return json({ ok: false, code: "invalid_request" }, 403);
+  }
+  // Corpo grande recusado antes de o ler (e outra vez depois, para pedidos sem Content-Length)
+  if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX_BYTES) {
+    return json({ ok: false, code: "invalid_request" }, 413);
+  }
   const text = await request.text();
   if (new TextEncoder().encode(text).length > BODY_MAX_BYTES) {
     return json({ ok: false, code: "invalid_request" }, 413);
@@ -44,7 +53,6 @@ export async function POST(request: Request) {
   const profile = await loadProfile(db, session.user.id);
   if (!profile?.onboardedAt) return json({ ok: false, code: "onboarding_required" }, 403);
 
-  const env = getEnv();
   const bindings = getBindings();
   const result = await generateRecipe(
     parsed.data,
