@@ -53,7 +53,7 @@
         "AI_DAILY_LIMIT": "50",
         "QUOTA_GUEST": "3",
         "QUOTA_USER": "15",
-        "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
+        "TURNSTILE_SITE_KEY": "0x4AAAAAAFyFDKChhtjAfV6m",
       },
       "d1_databases": [
         {
@@ -85,7 +85,7 @@
         "AI_DAILY_LIMIT": "500",
         "QUOTA_GUEST": "3",
         "QUOTA_USER": "15",
-        "TURNSTILE_SITE_KEY": "",
+        "TURNSTILE_SITE_KEY": "0x4AAAAAAFyFDKChhtjAfV6m",
       },
       "d1_databases": [
         {

@@ -16,9 +16,9 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 - [x] Criar as D1 de staging e produção na jurisdição UE (como no Rejection Quest).
 - [x] Configurar o binding de rate limiting em `wrangler.jsonc` (staging e produção).
-- [ ] Criar um widget Turnstile (site key pública + secret key) com os domínios de staging e produção, e o domínio de teste do Turnstile para local.
+- [x] Widget Turnstile "Protein Plate" (Managed, hostname `protein-plate.app`, que cobre o `staging.`); site key no `wrangler.jsonc`, secret key em staging e produção. Local usa as chaves de teste.
 - [x] Domínio `protein-plate.app` (Cloudflare Registrar), ligado ao Worker por custom domain, com `staging.` para staging (`routes` no `wrangler.jsonc`).
-- [ ] Token de API para o GitHub Actions (`CLOUDFLARE_API_TOKEN`) e `CLOUDFLARE_ACCOUNT_ID`.
+- [x] Token de API para o GitHub Actions (`CLOUDFLARE_API_TOKEN`) e `CLOUDFLARE_ACCOUNT_ID`.
 
 ### Google
 
@@ -40,7 +40,7 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 ### GitHub
 
 - [x] Repositório privado.
-- [ ] Secrets do Actions: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+- [x] Secrets do Actions: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
 - [x] Dependabot ligado.
 
 ### INSA
