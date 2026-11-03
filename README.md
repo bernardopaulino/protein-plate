@@ -28,17 +28,19 @@
 ```text
 src/domain/      regras puras (meta, refeições, proteína, dia exemplo, fechar a meta, contratos Zod)
 src/server/      D1, Better Auth, IA, serviços e Server Actions (server-only, db injetado)
-src/features/    UI por funcionalidade (goal, catalog, day, recipes, account)
+src/features/    UI por funcionalidade (onboarding, catalog, day, recipes, account, landing)
 src/components/  ProteinNumber, GoalProgress, MealSection, PortionStepper, FoodCard, chips…
 content/foods/   fonte única dos alimentos → seed da D1 + módulo tipado
 worker/          Worker próprio: valida o env (não arranca sem segredos), HSTS, cache das receitas, cron
+admin/           backoffice (Worker próprio, Cloudflare Access, HTML sem JavaScript)
 ```
 
 Decisões que vale a pena conhecer:
 
 - **Português sem prefixo, sem middleware.** O proxy do Next 16 corre em Node, que no Workers é experimental; as rotas são reescritas para `/pt/...` no `next.config.ts`.
-- **O dia vive no browser.** Convidado: `localStorage` versionado e validado com Zod. Com conta: a mesma cópia local (com `owner`) sincroniza com a D1 por Server Action; o servidor recusa se `owner` não for o utilizador da sessão.
+- **Login obrigatório, dia instantâneo.** As páginas da app exigem sessão e o formulário concluído (`src/server/auth/guard.ts`). O dia tem uma cópia local (`localStorage` versionado e validado com Zod, com `owner`) que sincroniza com a D1 por Server Action; o servidor recusa se `owner` não for o utilizador da sessão e volta a filtrar tudo pelas restrições da pessoa.
 - **Receitas imutáveis e sem dono**, com cache pública longa acrescentada pelo Worker (só no HTML).
+- **Dados de saúde só com consentimento**: o peso e as alergias guardam-se só com consentimento explícito, nunca vão para a IA nem aparecem por pessoa no backoffice.
 - **Sem PII nos registos**: quotas por HMAC com chave diária; sessões sem IP nem user agent; tokens OAuth descartados (exceto o refresh token da Apple, cifrado, para a revogar ao apagar a conta).
 
 ## Correr localmente
