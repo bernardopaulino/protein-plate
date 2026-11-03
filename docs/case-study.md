@@ -72,7 +72,7 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 | Acessibilidade | axe-core nas páginas principais em claro e escuro; anúncios `aria-live` no "Faltam X g"; `prefers-reduced-motion` |
 | IA | `eval:recipes`: 20 combinações fixas contra o modelo real (validade, ingredientes fora da lista, proteína plausível, latência) |
 | Performance | Lighthouse CI em mobile |
-| Segurança | CSP restrita, allowlist dos endpoints do Better Auth, Turnstile, rate limiting e quotas |
+| Segurança | CSP restrita, allowlist dos endpoints do Better Auth, login obrigatório, rate limiting e quotas por conta, dados de saúde só com consentimento |
 
 ## O que aprendi
 

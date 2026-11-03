@@ -16,7 +16,7 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 - [x] Criar as D1 de staging e produção na jurisdição UE (como no Rejection Quest).
 - [x] Configurar o binding de rate limiting em `wrangler.jsonc` (staging e produção).
-- [x] Widget Turnstile "Protein Plate" (Managed, hostname `protein-plate.app`, que cobre o `staging.`); site key no `wrangler.jsonc`, secret key em staging e produção. Local usa as chaves de teste.
+- [x] ~~Widget Turnstile~~: deixou de ser usado com o login obrigatório (3/11/2026). O segredo `TURNSTILE_SECRET_KEY` pode ser apagado em staging e produção (`npx wrangler secret delete TURNSTILE_SECRET_KEY --env <ambiente>`) e o widget removido no painel da Cloudflare.
 - [x] Domínio `protein-plate.app` (Cloudflare Registrar), ligado ao Worker por custom domain, com `staging.` para staging (`routes` no `wrangler.jsonc`).
 - [x] Token de API para o GitHub Actions (`CLOUDFLARE_API_TOKEN`) e `CLOUDFLARE_ACCOUNT_ID`.
 
@@ -74,3 +74,7 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 | D1 produção (UE) | `protein-plate-production` · `562e6646-b033-458b-ae8b-e54952e68a81` |
 | Staging | `https://staging.protein-plate.app` |
 | Produção | `https://protein-plate.app` |
+
+### Backoffice (Cloudflare Access)
+
+- [ ] Aplicação do Cloudflare Zero Trust Access para `admin.protein-plate.app` e `admin-staging.protein-plate.app` (passo a passo em `docs/backoffice.md`); team domain, AUD e email em `admin/wrangler.jsonc`.

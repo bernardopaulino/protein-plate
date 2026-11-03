@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
 import { Drawer } from "vaul";
+import { foodImage } from "@/content/food-images.generated";
 import { FilterChips } from "@/components/protein/chips";
 import { FoodCard } from "@/components/protein/food-card";
 import { CATEGORIES, defaultPortion, type Category, type Food } from "@/domain/food";
@@ -151,6 +152,7 @@ export function AddFoodDrawer({
               return (
                 <li key={food.id}>
                   <FoodCard
+                    image={foodImage(food.id)}
                     name={name}
                     portionLabel={portionLabel(portion, locale)}
                     protein={defaultPortionProtein(food)}

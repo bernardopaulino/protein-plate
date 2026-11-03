@@ -1,13 +1,13 @@
-// Lighthouse CI: mínimo de 90 nas quatro categorias em mobile (secção 12), contra o Worker local
+// Lighthouse CI: mínimo de 90 nas quatro categorias em mobile (secção 12), contra o Worker local.
+// Só as páginas públicas: desde o login obrigatório, as da app redirecionam para /entrar
 module.exports = {
   ci: {
     collect: {
       url: [
         "http://localhost:8787/",
-        "http://localhost:8787/comecar",
+        "http://localhost:8787/entrar",
         "http://localhost:8787/alimentos",
         "http://localhost:8787/alimentos/skyr-natural",
-        "http://localhost:8787/o-meu-dia",
       ],
       numberOfRuns: 1,
       // Por defeito o Lighthouse emula um telemóvel (Moto G Power, rede lenta)

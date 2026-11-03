@@ -108,3 +108,15 @@ Lê a secção 12 de docs/especificacao.md. Completa os testes end-to-end (ajust
 ```text
 Prepara o lançamento: workflow de deploy de produção manual (workflow_dispatch), migrações de produção, domínio, checklist final (login Google e Apple em produção, apagar conta, importar convidado, modo escuro, VoiceOver, rede lenta). Escreve o README com descrição, GIF da primeira utilização, stack, arquitetura e como correr localmente (no estilo do README do Rejection Quest), e um case study em docs/case-study.md para o portefólio.
 ```
+
+## 14. Login obrigatório e personalização (3/11/2026)
+
+```text
+Feito. Lê as secções 1, 3 ("Preferências"), 5, 6, 7 e 10 de docs/especificacao.md. Login obrigatório (/entrar, guardas de página, sem modo convidado nem Turnstile), formulário de boas-vindas em 6 passos com motion e ilustrações (meta, refeições com pré e pós-treino, restrições, alimentos de que gosta, cozinha, resumo com consentimento de dados de saúde), alergénios nos alimentos, dia exemplo e receitas só com o que a pessoa pode comer (prompt v2), "As minhas preferências" na conta, migração 0002, testes (unitários, D1 local com duas pessoas, e2e com sessão de teste).
+```
+
+## 15. Backoffice
+
+```text
+Lê a secção 13 de docs/especificacao.md e docs/backoffice.md. Worker admin/ com Cloudflare Access, painel, utilizadores (sem dados de saúde por pessoa), receitas, alimentos e as ações de terminar sessões e apagar conta, no padrão do backoffice do Rejection Quest.
+```

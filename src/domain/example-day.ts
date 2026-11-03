@@ -43,6 +43,8 @@ interface Move {
   rank: 0 | 1;
   /** 0 = alimento escolhido pela pessoa (ou mudança de porção), 1 = outro */
   pref: 0 | 1;
+  /** 1 = na refeição pré-treino (que fica leve: só cresce se não houver outra opção) */
+  light: 0 | 1;
   /** Facilidade do alimento (1 = sem preparação); 0 para mudanças de porção */
   ease: number;
   delta: number;
@@ -176,14 +178,17 @@ function increaseMoves(
   entries: readonly Entry[],
   foods: readonly Food[],
   preferred: ReadonlySet<string> | undefined,
+  pre: Meal | null = null,
 ): Move[] {
   const moves: Move[] = [];
+  const light = (meal: Meal): 0 | 1 => (meal === pre ? 1 : 0);
   entries.forEach((e, i) => {
     if (e.food.role === "protein" && e.count < MAX_COUNT) {
       const step = portionProtein(e.food, e.portion.id, 0.5);
       moves.push({
         rank: 0,
         pref: 0,
+        light: light(e.meal),
         ease: 0,
         delta: step,
         apply: (es) => withCount(es, i, e.count + 0.5),
@@ -203,6 +208,7 @@ function increaseMoves(
         moves.push({
           rank: 1,
           pref: pref(food),
+          light: light(meal),
           ease: food.ease,
           delta: proteinOf(entry),
           apply: (es) => [...es, entry],
@@ -221,6 +227,7 @@ function decreaseMoves(entries: readonly Entry[]): Move[] {
       moves.push({
         rank: 0,
         pref: 0,
+        light: 0,
         ease: 0,
         delta: -step,
         apply: (es) => withCount(es, i, e.count - 0.5),
@@ -240,10 +247,11 @@ const preferBig = (a: Move, b: Move) =>
 function adjust(
   entries: Entry[],
   foods: readonly Food[],
-  preferred: ReadonlySet<string> | undefined,
+  ctx: Pick<Context, "preferred" | "pre">,
   low: number,
   high: number,
 ): Entry[] {
+  const { preferred, pre } = ctx;
   let current = entries;
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const total = totalOf(current);
@@ -251,14 +259,18 @@ function adjust(
     const inBand = (t: number) => t >= low - 1e-9 && t <= high + 1e-9;
 
     if (total < low) {
-      const ups = increaseMoves(current, foods, preferred).sort(preferBig);
+      const ups = increaseMoves(current, foods, preferred, pre).sort(preferBig);
       // Primeiro mais meia porção do que já está no prato; só depois um alimento novo
-      // Os alimentos escolhidos pela pessoa vêm antes dos outros, mesmo que encaixem pior
+      // Os alimentos escolhidos pela pessoa vêm antes dos outros, mesmo que encaixem pior, e a
+      // refeição pré-treino só cresce quando nenhuma outra pode
       const tier = (rank: 0 | 1, pref: 0 | 1) => {
-        const moves = ups.filter((m) => m.rank === rank && m.pref === pref);
-        return (
-          moves.find((m) => inBand(total + m.delta)) ?? moves.find((m) => total + m.delta < low)
-        );
+        for (const light of [0, 1]) {
+          const moves = ups.filter((m) => m.rank === rank && m.pref === pref && m.light === light);
+          const move =
+            moves.find((m) => inBand(total + m.delta)) ?? moves.find((m) => total + m.delta < low);
+          if (move) return move;
+        }
+        return undefined;
       };
       const next = tier(0, 0) ?? tier(1, 0) ?? tier(1, 1);
       if (next) {
@@ -282,7 +294,7 @@ function adjust(
         continue;
       }
       const pair = bestPair(current, total, inBand, downs, (es) =>
-        increaseMoves(es, foods, preferred),
+        increaseMoves(es, foods, preferred, pre),
       );
       // Nenhum passo cai entre 100% e 110%: fica acima da meta, o mais perto possível
       return pair ?? current;
@@ -326,7 +338,7 @@ export function buildExampleDay(input: ExampleDayInput): PlanItem[] {
   const initial = initialEntries({ target: input.target, meals, foods: input.foods, seed, ctx });
   const low = input.target * EXAMPLE_DAY_BAND.min;
   const high = input.target * EXAMPLE_DAY_BAND.max;
-  const adjusted = adjust(initial, input.foods, input.preferred, low, high);
+  const adjusted = adjust(initial, input.foods, ctx, low, high);
 
   const kindOrder: Record<Kind, number> = { source: 0, extra: 1, side: 2 };
   return adjusted

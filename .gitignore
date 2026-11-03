@@ -34,3 +34,6 @@ eval-results
 
 # Gerado pelo Next (o projeto usa o CLAUDE.md)
 AGENTS.md
+
+# Sessões dos testes e2e
+tests/e2e/.auth/

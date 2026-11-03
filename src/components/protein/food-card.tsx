@@ -1,4 +1,5 @@
 import { ChevronRight, Plus } from "lucide-react";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { ProteinNumber } from "./protein-number";
@@ -9,6 +10,7 @@ import { ProteinNumber } from "./protein-number";
  */
 export function FoodCard({
   name,
+  image,
   portionLabel,
   protein,
   meta,
@@ -20,6 +22,8 @@ export function FoodCard({
   className,
 }: {
   name: string;
+  /** Ilustração do alimento (decorativa) */
+  image?: string;
   portionLabel: string;
   protein: number;
   /** Linha secundária (ex.: categoria · facilidade) */
@@ -34,6 +38,11 @@ export function FoodCard({
 }) {
   const body = (
     <>
+      {image ? (
+        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary-soft">
+          <Image src={image} alt="" aria-hidden width={32} height={32} />
+        </span>
+      ) : null}
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{name}</p>
         <p className="truncate text-sm text-muted">{portionLabel}</p>

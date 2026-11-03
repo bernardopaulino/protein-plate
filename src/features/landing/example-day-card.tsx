@@ -1,6 +1,13 @@
 "use client";
 
-import { LazyMotion, MotionConfig, domAnimation, m, useInView } from "motion/react";
+import {
+  LazyMotion,
+  MotionConfig,
+  domAnimation,
+  m,
+  useInView,
+  useReducedMotion,
+} from "motion/react";
 import { useRef } from "react";
 import { AnimatedNumber, Illustration } from "@/features/onboarding/ui";
 
@@ -34,7 +41,10 @@ export function ExampleDayCard({
   format: "pt-PT" | "en-GB";
 }) {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.3 });
+  const seen = useInView(ref, { once: true, amount: 0.3 });
+  // Com prefers-reduced-motion, tudo aparece logo, sem esperar pelo scroll
+  const reduced = useReducedMotion() ?? false;
+  const inView = seen || reduced;
   const number = new Intl.NumberFormat(format, { maximumFractionDigits: 0 });
   const percent = Math.min(100, (total / target) * 100);
 
@@ -43,7 +53,7 @@ export function ExampleDayCard({
       <MotionConfig reducedMotion="user">
         <m.figure
           ref={ref}
-          initial={{ opacity: 0, y: 24, rotate: 1.5 }}
+          initial={reduced ? false : { opacity: 0, y: 24, rotate: 1.5 }}
           animate={inView ? { opacity: 1, y: 0, rotate: 0 } : undefined}
           transition={{ type: "spring", stiffness: 140, damping: 20 }}
           className="relative rounded-[2rem] border border-border bg-surface p-5 shadow-[0_30px_80px_-40px_rgb(47_107_58/0.5)]"
@@ -56,7 +66,7 @@ export function ExampleDayCard({
             {meals.map((meal, i) => (
               <m.li
                 key={meal.key}
-                initial={{ opacity: 0, x: 16 }}
+                initial={reduced ? false : { opacity: 0, x: 16 }}
                 animate={inView ? { opacity: 1, x: 0 } : undefined}
                 transition={{ delay: 0.25 + i * 0.12, duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
                 className="flex items-center gap-3 rounded-2xl bg-bg p-3"
@@ -95,7 +105,7 @@ export function ExampleDayCard({
             <div className="mt-3 h-3 overflow-hidden rounded-full bg-track" aria-hidden>
               <m.div
                 className="h-full rounded-full bg-primary"
-                initial={{ width: "0%" }}
+                initial={reduced ? false : { width: "0%" }}
                 animate={inView ? { width: `${percent}%` } : undefined}
                 transition={{ delay: 0.5, duration: 1.1, ease: [0.2, 0.8, 0.2, 1] }}
               />

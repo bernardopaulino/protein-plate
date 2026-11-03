@@ -10,17 +10,23 @@ const serve = `npx wrangler dev --port ${PORT} --log-level warn`;
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: false,
+  // Um só worker: os testes com login partilham a pessoa do setup (e o dia dela)
+  workers: 1,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: `http://localhost:${PORT}`,
     locale: "pt-PT",
+    // Sem animações: o motion e o CSS respeitam prefers-reduced-motion
+    reducedMotion: "reduce",
     trace: "retain-on-failure",
   },
   projects: [
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
-    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
+    // Entra sem o Google (sessão na D1 local) e conclui o formulário uma vez
+    { name: "setup", testMatch: /global.setup.ts/ },
+    { name: "mobile", use: { ...devices["Pixel 7"] }, dependencies: ["setup"] },
+    { name: "desktop", use: { ...devices["Desktop Chrome"] }, dependencies: ["setup"] },
   ],
   webServer: {
     command: process.env.PLAYWRIGHT_SKIP_BUILD

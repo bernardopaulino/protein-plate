@@ -1,25 +1,26 @@
 # Protein Plate
 
-**Protein without the diet.** Uma web app que mostra que atingir a meta diária de proteína é fácil com comida de verdade: calculas a meta, vês um dia completo que já lá chega, ajustas porções reais e geras receitas por IA com os alimentos escolhidos. Sem dieta, sem contar calorias, sem conta obrigatória.
+**Protein without the diet.** Uma web app que mostra que atingir a meta diária de proteína é fácil com comida de verdade: entras com o Google ou a Apple, respondes a um formulário de dois minutos (meta, refeições e treino, o que não comes, o que gostas, a tua cozinha), vês um dia completo com os teus alimentos que já chega à meta e geras receitas por IA feitas para ti. Sem dieta, sem contar calorias.
 
 > Projeto de portefólio. A especificação está em [`docs/especificacao.md`](docs/especificacao.md) e a ordem de construção em [`docs/sessoes.md`](docs/sessoes.md).
 
 ## O que já faz
 
-- **Meta em menos de 45 s** (`/comecar`): peso × intensidade arredondado a 5 g, 2 a 6 refeições com combinação pré-selecionada e refeição pós-treino opcional. O peso fica só no browser.
-- **Dia exemplo determinístico** (`/o-meu-dia`): para todas as metas de 80 a 250 g e todas as 57 combinações de refeições, o total fica entre 100% e 110% (teste property-based).
+- **Login obrigatório** (`/entrar`, Google ou Apple) e **formulário de boas-vindas** (`/comecar`) em 6 passos com motion e ilustrações: meta (peso × intensidade), refeições com pré e pós-treino, dieta e alergias, alimentos de que gostas, tempo e equipamento de cozinha. O peso e as alergias só se guardam com consentimento explícito.
+- **Dia exemplo personalizado e determinístico** (`/o-meu-dia`): só com o que podes comer e os teus favoritos primeiro; para todas as metas de 80 a 250 g e todas as 57 combinações de refeições, o total fica entre 100% e 110% (testes property-based, também com dietas e alergias aleatórias).
 - **Ajustar o dia**: stepper de meia porção, painel inferior para adicionar alimentos, "Faltam 23 g" em região `aria-live` e 3 sugestões de um toque para fechar a meta.
 - **Catálogo** (`/alimentos`): páginas estáticas geradas do JSON, filtros por refeição, facilidade e categoria ("snack sem preparação com mais proteína" em 2 toques).
-- **Receitas por IA** (`POST /api/recipes`): só campos fechados; Turnstile para convidados; rate limiting; quotas diárias com HMAC diário do IP; cache por `cache_key`; schema do modelo construído por pedido; validação depois do modelo com uma nova tentativa; **a proteína é sempre calculada pela app**.
-- **Conta opcional** (Google e Apple, Better Auth): consentimento versionado, importação idempotente do estado de convidado, sincronização do dia, exportar dados (JSON) e apagar conta com login recente.
+- **Receitas por IA** (`POST /api/recipes`): só campos fechados; a meta da refeição, o treino, o equipamento e a dieta vêm do perfil; os alimentos com alergénios nunca chegam ao modelo; rate limiting; quotas diárias por conta (HMAC diário); cache por `cache_key`; schema do modelo construído por pedido; validação depois do modelo com uma nova tentativa; **a proteína é sempre calculada pela app**.
+- **Conta** (Google e Apple, Better Auth): consentimento versionado, "As minhas preferências", sincronização do dia, exportar dados (JSON) e apagar conta com login recente.
+- **Backoffice** (`admin/`, Cloudflare Access): painel, utilizadores, receitas e alimentos, sem dados de saúde por pessoa.
 - **Base**: CSP e cabeçalhos de segurança, cron de limpeza horário, PWA, páginas legais, PT (estrutura EN pronta).
 
 ## Stack
 
 - **Next.js 16** (App Router, TypeScript strict) em **Cloudflare Workers** com `@opennextjs/cloudflare`
-- **Cloudflare D1** (UE) + **Drizzle ORM**, rate limiting e Turnstile da Cloudflare
+- **Cloudflare D1** (UE) + **Drizzle ORM**, rate limiting da Cloudflare
 - **Better Auth 1.7**, **AI SDK 6** + Anthropic (`claude-haiku-5-5`)
-- **Tailwind v4**, Radix, vaul, Lucide, `next-intl`
+- **Tailwind v4**, Radix, vaul, Lucide, **motion**, ilustrações Fluent Emoji 3D, `next-intl`
 - **Zod 4**, **Vitest** + fast-check, **Playwright** + axe-core, Lighthouse CI
 
 ## Arquitetura
@@ -50,6 +51,7 @@ cp .dev.vars.example .dev.vars   # preenche BETTER_AUTH_SECRET e IP_HASH_SECRET 
 npm run db:migrate:local
 npm run db:seed:local
 npm run dev                      # http://localhost:3000 (IA simulada)
+npx tsx --env-file=.dev.vars scripts/dev-session.ts   # sessão de teste local (cookie pp.session_token)
 npm run preview                  # build OpenNext + Worker local, igual a produção (:8787)
 ```
 
@@ -66,5 +68,5 @@ npm run eval:recipes                             # contra o modelo real (ANTHROP
 ## Estado e próximos passos
 
 - **Curadoria**: os 168 alimentos da lista estão no catálogo, mas com valores provisórios (`tcaCode: "TODO"`) até serem confirmados na TCA do INSA. O `content:check` sem `--allow-todo` (usado no deploy de produção) falha até lá.
-- **Contas e segredos**: Google e Apple a funcionar em staging; receitas com o modelo real em staging (`eval:recipes`: 20/20 válidas, mediana 6,9 s, menos de 0,001 $ por receita); Turnstile real configurado (`docs/setup.md`). Staging em `https://staging.protein-plate.app`, produção em `https://protein-plate.app`.
+- **Contas e segredos**: Google e Apple a funcionar em staging; receitas com o modelo real em staging (`eval:recipes`: 20/20 válidas, mediana 6,9 s, menos de 0,001 $ por receita). Staging em `https://staging.protein-plate.app`, produção em `https://protein-plate.app`.
 - **Performance** (Lighthouse mobile contra staging, mediana de 3 corridas, 2026-11-03): performance 90–91 em `/`, `/comecar`, `/alimentos` e no detalhe dos alimentos, 89 em `/o-meu-dia` (o dia só aparece depois de ler o `localStorage`); acessibilidade e boas práticas 100; SEO 100 nas páginas indexáveis. O limite é o LCP (cerca de 3,5 s em 4G lento simulado).

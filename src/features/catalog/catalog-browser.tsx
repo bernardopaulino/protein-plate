@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
+import { foodImage } from "@/content/food-images.generated";
 import { FilterChips } from "@/components/protein/chips";
 import { FoodCard } from "@/components/protein/food-card";
 import { Button } from "@/components/ui/button";
@@ -142,6 +143,7 @@ export function CatalogBrowser() {
         {results.map((food) => (
           <li key={food.id}>
             <FoodCard
+              image={foodImage(food.id)}
               name={foodName(food, locale)}
               portionLabel={portionLabel(defaultPortion(food), locale)}
               protein={defaultPortionProtein(food)}

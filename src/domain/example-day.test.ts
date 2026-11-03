@@ -318,3 +318,28 @@ describe("dia exemplo personalizado (preferências)", () => {
     expect(source?.fatPer100g).toBeLessThanOrEqual(10);
   });
 });
+
+describe("refeição pré-treino leve", () => {
+  it("a proteína que falta vai para as outras refeições antes de crescer a pré-treino", () => {
+    const index = indexFoods(FOODS);
+    const r: Restrictions = { diet: "vegetarian", allergies: ["peanut"] };
+    const meals: Meal[] = ["pequeno-almoco", "almoco", "lanche", "jantar"];
+    const items = buildExampleDay({
+      target: 160,
+      meals,
+      foods: allowedFoods(FOODS, r),
+      preferred: new Set(["skyr-natural", "ovo", "iogurte-grego-natural", "grao-bico-lata"]),
+      preWorkoutMeal: "lanche",
+      postWorkoutMeal: "jantar",
+    });
+    const total = totalProtein(items, index);
+    expect(total).toBeGreaterThanOrEqual(160);
+    expect(total).toBeLessThanOrEqual(176);
+    const snack = totalProtein(
+      items.filter((i) => i.meal === "lanche"),
+      index,
+    );
+    // Meta do lanche: 160 × 1/7 ≈ 23 g
+    expect(snack).toBeLessThan(23 * 1.6);
+  });
+});

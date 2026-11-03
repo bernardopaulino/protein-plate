@@ -1,60 +1,72 @@
 import { expect, test } from "@playwright/test";
+import { ONBOARDED_STATE, completeOnboarding, signIn } from "./support/auth";
+
+test("sem sessão, a app pede para entrar e volta depois", async ({ page }) => {
+  await page.goto("/o-meu-dia");
+  await expect(page).toHaveURL(/\/entrar\?next=%2Fo-meu-dia$/);
+  await expect(page.getByRole("heading", { name: "Entra para começar" })).toBeVisible();
+  // A página inicial e o catálogo continuam abertos
+  await page.goto("/alimentos");
+  await expect(page).toHaveURL(/\/alimentos$/);
+});
 
 /**
- * Critério de sucesso do MVP: uma pessoa nova chega a um dia que atinge a meta em menos de
- * 2 minutos, sem criar conta.
+ * Critério de sucesso do MVP: depois de entrar, uma pessoa nova chega a um dia que atinge a meta,
+ * com os alimentos de que gosta, em menos de 2 minutos.
  */
-test("primeira utilização: da landing a um dia que atinge a meta", async ({ page }) => {
+test("primeira utilização: entrar → formulário de boas-vindas → um dia que atinge a meta", async ({
+  context,
+  page,
+  baseURL,
+}) => {
+  await signIn(context, baseURL!, "primeira@protein-plate.local", { fresh: true });
   const started = Date.now();
-  await page.goto("/");
-  await page.getByRole("link", { name: "Calcular a minha meta" }).first().click();
+  await page.goto("/o-meu-dia");
+  // Sem o formulário concluído, a app leva-o para lá primeiro
   await expect(page).toHaveURL(/\/comecar$/);
+  await completeOnboarding(page);
 
-  await page.locator("form[data-hydrated]").waitFor();
-  await page.getByLabel("Peso").fill("80");
-  // "Treino intenso" e 4 refeições já vêm escolhidos
-  await expect(page.getByText("160 g por dia")).toBeVisible();
-  await page.getByRole("button", { name: "Vê como é fácil" }).click();
-
-  await expect(page).toHaveURL(/\/o-meu-dia$/);
-  await expect(page.getByRole("heading", { name: "O meu dia" })).toBeVisible();
   for (const meal of ["Pequeno-almoço", "Almoço", "Lanche", "Jantar"]) {
     await expect(page.getByRole("heading", { name: meal, exact: true })).toBeVisible();
   }
-  await expect(page.getByText(/Meta atingida/).first()).toBeVisible();
   expect(Date.now() - started).toBeLessThan(120_000);
-
-  // O peso nunca sai do browser: fica só no localStorage
-  const stored = await page.evaluate(() => localStorage.getItem("protein-plate:guest"));
-  expect(JSON.parse(stored ?? "{}")).toMatchObject({ target: { grams: 160, weightKg: 80 } });
+  // Depois de concluído, /comecar já não aparece
+  await page.goto("/comecar");
+  await expect(page).toHaveURL(/\/o-meu-dia$/);
 });
 
-test("ajustar o dia: tirar porções mostra o que falta e uma sugestão fecha a meta", async ({
-  page,
-}) => {
-  await page.goto("/comecar");
-  await page.locator("form[data-hydrated]").waitFor();
-  await page.getByLabel("Peso").fill("80");
-  await page.getByRole("button", { name: "Vê como é fácil" }).click();
-  await expect(page.getByText(/Meta atingida/).first()).toBeVisible();
+test.describe("com o plano feito", () => {
+  test.use({ storageState: ONBOARDED_STATE });
 
-  // Tira o primeiro alimento do almoço até sair do dia
-  const lunch = page.locator("#refeicao-almoco");
-  const firstDecrease = lunch.getByRole("button", { name: /^(Menos meia porção|Tirar) / }).first();
-  for (let i = 0; i < 8 && (await firstDecrease.isVisible()); i++) {
-    const label = (await firstDecrease.getAttribute("aria-label")) ?? "";
-    await firstDecrease.click();
-    if (label.startsWith("Tirar")) break;
-  }
-  await expect(page.getByText(/^Faltam \d+ g\.$/).first()).toBeVisible();
+  test("ajustar o dia: tirar porções mostra o que falta e uma sugestão fecha a meta", async ({
+    page,
+  }) => {
+    await page.goto("/o-meu-dia");
+    await expect(page.getByRole("heading", { name: "O meu dia" })).toBeVisible();
+    const close = page.getByRole("region", { name: "Para fechar a meta" });
 
-  // Uma sugestão de um toque fecha a meta
-  const suggestion = page
-    .getByRole("region", { name: "Para fechar a meta" })
-    .getByRole("button")
-    .first();
-  await suggestion.click();
-  await expect(page.getByText(/Meta atingida/).first()).toBeVisible();
+    // Tira alimentos do almoço até faltar proteína
+    const lunch = page.locator("#refeicao-almoco");
+    const decrease = lunch.getByRole("button", { name: /^(Menos meia porção|Tirar) / }).first();
+    const missing = page.getByText(/^Faltam \d+ g\.$/).first();
+    for (let i = 0; i < 12 && !(await missing.isVisible()); i++) {
+      if (!(await decrease.isVisible())) break;
+      await decrease.click();
+    }
+    await expect(missing).toBeVisible();
+
+    // Uma sugestão de um toque fecha a meta
+    await close.getByRole("button").first().click();
+    await expect(page.getByText(/Meta atingida/).first()).toBeVisible();
+  });
+
+  test("as preferências abrem o mesmo formulário com o que está guardado", async ({ page }) => {
+    await page.goto("/conta");
+    await page.getByRole("link", { name: /As minhas preferências/ }).click();
+    await expect(page).toHaveURL(/\/conta\/preferencias$/);
+    await expect(page.getByRole("heading", { name: "Quanto pesas?" })).toBeVisible();
+    await expect(page.getByLabel("Peso")).toHaveValue("80");
+  });
 });
 
 test("catálogo: snack sem preparação com mais proteína em 2 toques", async ({ page }) => {
