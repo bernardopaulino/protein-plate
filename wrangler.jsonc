@@ -40,11 +40,13 @@
     "staging": {
       "observability": { "enabled": true, "logs": { "invocation_logs": false } },
       "triggers": { "crons": ["17 * * * *"] },
-      "workers_dev": true,
+      // Só o domínio próprio: o Better Auth tem uma única origem (BETTER_AUTH_URL)
+      "workers_dev": false,
+      "routes": [{ "pattern": "staging.protein-plate.app", "custom_domain": true }],
       "preview_urls": false,
       "vars": {
         "APP_ENV": "staging",
-        "BETTER_AUTH_URL": "https://protein-plate-staging.bernardo-sobral7.workers.dev",
+        "BETTER_AUTH_URL": "https://staging.protein-plate.app",
         // Simulada até haver ANTHROPIC_API_KEY de staging (wrangler secret put ANTHROPIC_API_KEY --env staging)
         "AI_MODE": "mock",
         "AI_MODEL": "claude-haiku-5-5",
@@ -72,12 +74,12 @@
     "production": {
       "observability": { "enabled": true, "logs": { "invocation_logs": false } },
       "triggers": { "crons": ["17 * * * *"] },
-      // Domínio próprio na sessão 13 (routes com custom_domain)
-      "workers_dev": true,
+      "workers_dev": false,
+      "routes": [{ "pattern": "protein-plate.app", "custom_domain": true }],
       "preview_urls": false,
       "vars": {
         "APP_ENV": "production",
-        "BETTER_AUTH_URL": "https://protein-plate-production.bernardo-sobral7.workers.dev",
+        "BETTER_AUTH_URL": "https://protein-plate.app",
         "AI_MODE": "live",
         "AI_MODEL": "claude-haiku-5-5",
         "AI_DAILY_LIMIT": "500",

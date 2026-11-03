@@ -66,5 +66,5 @@ npm run eval:recipes                             # contra o modelo real (ANTHROP
 ## Estado e próximos passos
 
 - **Curadoria**: os 168 alimentos da lista estão no catálogo, mas com valores provisórios (`tcaCode: "TODO"`) até serem confirmados na TCA do INSA. O `content:check` sem `--allow-todo` (usado no deploy de produção) falha até lá.
-- **Contas e segredos**: Google configurado em staging; Apple a meio; Anthropic e Turnstile real por configurar (`docs/setup.md`). Staging: `protein-plate-staging.bernardo-sobral7.workers.dev` (até haver domínio).
+- **Contas e segredos**: Google configurado em staging; Apple a meio; Anthropic e Turnstile real por configurar (`docs/setup.md`). Staging em `https://staging.protein-plate.app`, produção em `https://protein-plate.app`.
 - **Performance**: acessibilidade 100, boas práticas 96 e SEO 100 no Lighthouse mobile; a performance simulada no Worker local ficava em 0,71–0,88. Os contratos do cliente passaram para `zod/mini` (−14 KB gzip em /comecar, /o-meu-dia e nas páginas de alimentos); falta medir contra staging.

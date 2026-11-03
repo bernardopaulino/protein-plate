@@ -17,20 +17,20 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 - [x] Criar as D1 de staging e produção na jurisdição UE (como no Rejection Quest).
 - [x] Configurar o binding de rate limiting em `wrangler.jsonc` (staging e produção).
 - [ ] Criar um widget Turnstile (site key pública + secret key) com os domínios de staging e produção, e o domínio de teste do Turnstile para local.
-- [ ] Domínio: ligar ao Worker por custom domain, com `staging.` para staging.
+- [x] Domínio `protein-plate.app` (Cloudflare Registrar), ligado ao Worker por custom domain, com `staging.` para staging (`routes` no `wrangler.jsonc`).
 - [ ] Token de API para o GitHub Actions (`CLOUDFLARE_API_TOKEN`) e `CLOUDFLARE_ACCOUNT_ID`.
 
 ### Google
 
 - [ ] Cliente OAuth do tipo **Web** (separado do cliente iOS do Rejection Quest).
-- [ ] Redirect URIs: `http://localhost:3000/api/auth/callback/google`, `https://staging.<domínio>/api/auth/callback/google`, `https://<domínio>/api/auth/callback/google`.
+- [ ] Redirect URIs: `http://localhost:3000/api/auth/callback/google`, `https://staging.protein-plate.app/api/auth/callback/google`, `https://protein-plate.app/api/auth/callback/google`.
 - [ ] Ecrã de consentimento com o nome final da app.
 
 ### Apple (conta de developer que já tens)
 
 - [ ] App ID novo com "Sign In with Apple" (a descrição aparece no ecrã de login).
 - [ ] Services ID novo (este é o `APPLE_CLIENT_ID`), associado ao App ID.
-- [ ] Domínios e return URLs: `https://staging.<domínio>/api/auth/callback/apple` e `https://<domínio>/api/auth/callback/apple`.
+- [ ] Domínios e return URLs: `https://staging.protein-plate.app/api/auth/callback/apple` e `https://protein-plate.app/api/auth/callback/apple`.
 - [ ] Chave "Sign In with Apple" (.p8, só se descarrega uma vez), Key ID e Team ID.
 
 ### Anthropic
@@ -72,4 +72,5 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 | --- | --- |
 | D1 staging (UE) | `protein-plate-staging` · `1962d9d9-fd77-40a7-bf7e-8f56124e28cb` |
 | D1 produção (UE) | `protein-plate-production` · `562e6646-b033-458b-ae8b-e54952e68a81` |
-| Staging | `https://protein-plate-staging.bernardo-sobral7.workers.dev` (até haver domínio) |
+| Staging | `https://staging.protein-plate.app` |
+| Produção | `https://protein-plate.app` |
