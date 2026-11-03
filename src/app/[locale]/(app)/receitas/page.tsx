@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { SavedRecipes } from "@/features/recipes/saved-recipes";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { requireProfile } from "@/server/auth/guard";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -13,12 +16,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "recipes" });
-  return { title: t("title"), description: t("lead") };
+  return { title: t("title"), description: t("lead"), robots: { index: false } };
 }
 
 export default async function RecipesPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await requireProfile(locale, "/receitas");
   const t = await getTranslations("recipes");
   return (
     <div className="mx-auto max-w-3xl pb-8">

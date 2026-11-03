@@ -1,11 +1,12 @@
-// zod/mini: este schema valida o localStorage no browser (ver common.ts).
+// zod/mini: este schema valida o localStorage no browser (ver common.ts). Com o login obrigatório,
+// é a cópia local do dia da conta (o AccountSync sincroniza-a com a D1).
 import { z } from "zod/mini";
 import { WEIGHT_HARD_LIMITS } from "../goal";
 import { dailyTargetSchema, intensitySchema, mealSchema, mealsSchema } from "./common";
 import { planItemsSchema } from "./plan";
 
 /** Versão atual do estado de convidado no localStorage. */
-export const GUEST_STATE_VERSION = 1;
+export const GUEST_STATE_VERSION = 2;
 
 export const guestTargetSchema = z.object({
   grams: dailyTargetSchema,
@@ -24,6 +25,8 @@ export const guestStateSchema = z
     target: guestTargetSchema,
     meals: mealsSchema,
     postWorkoutMeal: z.nullable(mealSchema),
+    /** Refeição antes do treino (versão 2). */
+    preWorkoutMeal: z._default(z.nullable(mealSchema), null),
     plan: z.object({
       items: planItemsSchema,
       /** Seed do dia exemplo ("Outras opções"). */
@@ -43,6 +46,15 @@ export const guestStateSchema = z
       message: "a refeição pós-treino tem de ser uma das escolhidas",
       path: ["postWorkoutMeal"],
     }),
+    z.refine(
+      (s) =>
+        s.preWorkoutMeal === null ||
+        (s.meals.includes(s.preWorkoutMeal) && s.preWorkoutMeal !== s.postWorkoutMeal),
+      {
+        message: "a refeição pré-treino tem de ser uma das escolhidas e diferente da pós-treino",
+        path: ["preWorkoutMeal"],
+      },
+    ),
   );
 
 export type GuestState = z.infer<typeof guestStateSchema>;

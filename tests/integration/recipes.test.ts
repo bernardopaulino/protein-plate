@@ -30,22 +30,14 @@ const env: AppEnv = parseEnv({
   AI_MODE: "mock",
   AI_MODEL: "claude-haiku-5-5",
   AI_DAILY_LIMIT: "100",
-  QUOTA_GUEST: "3",
   QUOTA_USER: "15",
-  TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
-  TURNSTILE_SECRET_KEY: "1x0000000000000000000000000000000AA",
   IP_HASH_SECRET: "ip-hash-secret-0123456789abcdef0123456789",
 });
 
-let requestCounter = 0;
-/** Um pedido válido; `mealTargetG` muda a cada chamada para não bater na cache. */
 function request(partial: Partial<RecipeRequest> = {}): RecipeRequest {
-  requestCounter += 1;
   return {
     foodIds: ["atum-lata-natural", "grao-bico-lata", "tomate"],
     meal: "almoco",
-    postWorkout: false,
-    mealTargetG: 20 + requestCounter * 5,
     maxMinutes: 20,
     servings: 2,
     locale: "pt",
@@ -61,19 +53,38 @@ function deps(overrides: Partial<GenerateDeps> = {}): GenerateDeps {
     foods: FOODS,
     foodIndex: FOOD_INDEX,
     foodDataVersion: FOOD_DATA_VERSION,
-    verifyTurnstile: async (token) => token === "ok",
     rateLimit: async () => true,
     ...overrides,
   };
 }
 
-const guest: Actor = { kind: "guest", ip: "203.0.113.7" };
+let targetCounter = 0;
+/**
+ * Uma conta com o formulário concluído. A meta muda a cada chamada (muda a meta da refeição e a
+ * chave da cache), para cada teste gerar receitas novas.
+ */
+function person(userId: string, profile: Partial<Actor["profile"]> = {}): Actor {
+  targetCounter += 1;
+  return {
+    userId,
+    profile: {
+      dailyTargetG: 60 + targetCounter * 20,
+      meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
+      preWorkoutMeal: null,
+      postWorkoutMeal: null,
+      diet: "omnivore",
+      allergies: [],
+      equipment: ["stove", "microwave"],
+      ...profile,
+    },
+  };
+}
 
 describe("POST /api/recipes: pipeline com o modelo simulado", () => {
   it("gera, calcula a proteína pela app e guarda receita + ingredientes", async () => {
     const userId = await createUser(t.db);
     const req = request();
-    const result = await generateRecipe(req, { kind: "user", userId }, deps());
+    const result = await generateRecipe(req, person(userId), deps());
     expect(result).toMatchObject({ ok: true, cached: false });
     if (!result.ok) return;
 
@@ -95,68 +106,99 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
   it("o mesmo pedido devolve a receita da cache, sem gastar quota; outra variante gera outra", async () => {
     const userId = await createUser(t.db);
     const req = request();
-    const first = await generateRecipe(req, { kind: "user", userId }, deps());
-    const again = await generateRecipe(
-      { ...req, foodIds: [...req.foodIds].reverse() },
-      { kind: "user", userId },
-      deps(),
-    );
+    const me = person(userId);
+    const first = await generateRecipe(req, me, deps());
+    const again = await generateRecipe({ ...req, foodIds: [...req.foodIds].reverse() }, me, deps());
     expect(again).toEqual({ ok: true, id: first.ok ? first.id : "", cached: true });
-    const other = await generateRecipe({ ...req, variant: 2 }, { kind: "user", userId }, deps());
+    const other = await generateRecipe({ ...req, variant: 2 }, me, deps());
     expect(other.ok && other.id).not.toBe(first.ok && first.id);
     const [usage] = await t.db.select({ n: count() }).from(recipes);
     expect(usage?.n).toBeGreaterThanOrEqual(2);
   });
 
-  it("convidados: sem Turnstile válido não passa", async () => {
-    expect(await generateRecipe(request(), guest, deps())).toMatchObject({
-      ok: false,
-      code: "turnstile_failed",
-    });
-    expect(await generateRecipe(request({ turnstileToken: "ok" }), guest, deps())).toMatchObject({
-      ok: true,
-    });
-  });
-
-  it("convidados: 3 receitas novas por dia; a quarta é recusada e a cache continua a abrir", async () => {
-    const reqs = [1, 2, 3].map(() => request({ turnstileToken: "ok" }));
-    for (const req of reqs) expect((await generateRecipe(req, guest, deps())).ok).toBe(true);
-    expect(await generateRecipe(request({ turnstileToken: "ok" }), guest, deps())).toMatchObject({
+  it("quota por conta: a receita a mais é recusada, a cache continua a abrir e cada conta tem a sua", async () => {
+    const userId = await createUser(t.db);
+    const small = { ...env, QUOTA_USER: 2 };
+    const reqs = [1, 2].map(() => request());
+    const actors = reqs.map(() => person(userId));
+    for (const [i, req] of reqs.entries()) {
+      expect((await generateRecipe(req, actors[i]!, deps({ env: small }))).ok).toBe(true);
+    }
+    expect(await generateRecipe(request(), person(userId), deps({ env: small }))).toMatchObject({
       ok: false,
       code: "quota_exceeded",
     });
-    expect(await generateRecipe(reqs[0]!, guest, deps())).toMatchObject({ ok: true, cached: true });
-    // Outro IP tem a sua própria quota
-    expect(
-      (
-        await generateRecipe(
-          request({ turnstileToken: "ok" }),
-          { kind: "guest", ip: "198.51.100.1" },
-          deps(),
-        )
-      ).ok,
-    ).toBe(true);
+    expect(await generateRecipe(reqs[0]!, actors[0]!, deps({ env: small }))).toMatchObject({
+      ok: true,
+      cached: true,
+    });
+    const other = await createUser(t.db);
+    expect((await generateRecipe(request(), person(other), deps({ env: small }))).ok).toBe(true);
   });
 
-  it("as chaves de quota não guardam o IP nem o id do utilizador", async () => {
-    await generateRecipe(request({ turnstileToken: "ok" }), guest, deps());
+  it("as chaves de quota não guardam o id da conta", async () => {
+    const userId = await createUser(t.db);
+    await generateRecipe(request(), person(userId), deps());
     const rows = await t.db.select().from(usageCounters);
     expect(rows.length).toBeGreaterThan(0);
     for (const row of rows) {
-      expect(row.keyHash).not.toContain("203.0.113.7");
+      expect(row.keyHash).not.toContain(userId);
       expect(row.keyHash === "global" || /^[0-9a-f]{64}$/.test(row.keyHash)).toBe(true);
     }
+  });
+
+  it("recusa alimentos que as restrições da pessoa excluem e refeições que não são dela", async () => {
+    const userId = await createUser(t.db);
+    expect(
+      await generateRecipe(request(), person(userId, { diet: "vegetarian" }), deps()),
+    ).toMatchObject({ ok: false, code: "restricted_food" });
+    expect(
+      await generateRecipe(request(), person(userId, { allergies: ["fish"] }), deps()),
+    ).toMatchObject({ ok: false, code: "restricted_food" });
+    expect(await generateRecipe(request({ meal: "ceia" }), person(userId), deps())).toMatchObject({
+      ok: false,
+      code: "invalid_request",
+    });
+  });
+
+  it("o prompt leva o equipamento, o pré-treino e só a despensa que a pessoa pode comer", async () => {
+    const userId = await createUser(t.db);
+    const prompts: string[] = [];
+    const me = person(userId, {
+      diet: "vegan",
+      preWorkoutMeal: "almoco",
+      equipment: ["airfryer"],
+    });
+    const req = request({ foodIds: ["tofu-firme", "grao-bico-lata", "tomate"] });
+    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const result = await generateRecipe(
+      req,
+      me,
+      deps({
+        model: () =>
+          mockModel((prompt) => {
+            prompts.push(prompt);
+            return JSON.stringify(mockRecipe(req, chosen, []));
+          }),
+      }),
+    );
+    expect(result.ok).toBe(true);
+    expect(prompts[0]).toContain("Equipamento disponível: airfryer");
+    expect(prompts[0]).toContain("pré-treino");
+    expect(prompts[0]).toContain("vegana");
+    expect(prompts[0]).not.toContain("manteiga");
+    expect(prompts[0]).not.toContain(String.raw`id \"mel\"`);
+    expect(prompts[0]).toContain("azeite");
+    if (!result.ok) return;
+    const saved = await getRecipe(t.db, result.id);
+    expect(saved?.postWorkout).toBe(false);
   });
 
   it("acima do limite global só serve a cache", async () => {
     const userId = await createUser(t.db);
     const low = { ...env, AI_DAILY_LIMIT: 1 };
-    expect((await generateRecipe(request(), { kind: "user", userId }, deps({ env: low }))).ok).toBe(
-      true,
-    );
-    expect(
-      await generateRecipe(request(), { kind: "user", userId }, deps({ env: low })),
-    ).toMatchObject({
+    expect((await generateRecipe(request(), person(userId), deps({ env: low }))).ok).toBe(true);
+    expect(await generateRecipe(request(), person(userId), deps({ env: low }))).toMatchObject({
       ok: false,
       code: "service_unavailable",
     });
@@ -165,11 +207,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
   it("rate limiting por chave", async () => {
     const userId = await createUser(t.db);
     expect(
-      await generateRecipe(
-        request(),
-        { kind: "user", userId },
-        deps({ rateLimit: async () => false }),
-      ),
+      await generateRecipe(request(), person(userId), deps({ rateLimit: async () => false })),
     ).toMatchObject({ ok: false, code: "rate_limited" });
   });
 
@@ -179,9 +217,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
       ["atum-lata-natural", "nao-existe"],
       ["atum-lata-natural", "azeite"],
     ]) {
-      expect(
-        await generateRecipe(request({ foodIds }), { kind: "user", userId }, deps()),
-      ).toMatchObject({
+      expect(await generateRecipe(request({ foodIds }), person(userId), deps())).toMatchObject({
         ok: false,
         code: "unknown_food",
       });
@@ -205,7 +241,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     });
     const result = await generateRecipe(
       req,
-      { kind: "user", userId },
+      person(userId),
       deps({ model: () => mockModel(respond) }),
     );
     expect(result.ok).toBe(true);
@@ -219,7 +255,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     const before = await t.db.select().from(usageCounters);
     const result = await generateRecipe(
       request(),
-      { kind: "user", userId },
+      person(userId),
       deps({ model: () => mockModel(respond) }),
     );
     expect(result).toMatchObject({ ok: false, code: "generation_failed" });
@@ -240,7 +276,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     };
     const result = await generateRecipe(
       req,
-      { kind: "user", userId },
+      person(userId),
       deps({ model: () => mockModel(() => JSON.stringify(huge)) }),
     );
     expect(result).toMatchObject({ ok: false, code: "generation_failed" });

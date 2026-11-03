@@ -1,19 +1,22 @@
 import { count, eq } from "drizzle-orm";
 import type { SQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { DEFAULT_PROFILE, type ProfileInput } from "@/domain/contracts/account";
 import type { PlanItemInput } from "@/domain/contracts/plan";
-import { FOOD_INDEX } from "@/features/catalog/catalog";
+import type { PreferencesInput } from "@/domain/contracts/profile";
+import { isAllowed } from "@/domain/preferences";
+import { totalProtein } from "@/domain/protein";
+import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { account, session, user } from "@/server/db/auth-schema";
 import { dayPlans, foods, planItems, profiles, recipes, savedRecipes } from "@/server/db/schema";
 import {
   exportUserData,
-  importGuestData,
   isRecipeSaved,
   listSavedRecipes,
   loadDay,
+  loadProfile,
   recordConsent,
-  saveDay,
+  saveDayItems,
+  savePreferences,
   setRecipeSaved,
 } from "@/server/services/account";
 import { cleanUpExpiredRows } from "@/server/services/cleanup";
@@ -27,13 +30,32 @@ afterAll(async () => {
   await t?.dispose();
 });
 
-const profile: ProfileInput = {
-  dailyTargetG: 160,
+const preferences: PreferencesInput = {
+  weightKg: 80,
   intensity: "alta",
+  manualTargetG: null,
   meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
-  postWorkoutMeal: "lanche",
-  locale: "pt",
+  preWorkoutMeal: "lanche",
+  postWorkoutMeal: "jantar",
+  diet: "omnivore",
+  allergies: [],
+  likedFoods: ["skyr-natural", "peito-frango", "ovo", "atum-lata-natural", "arroz-branco"],
+  equipment: ["stove", "microwave"],
+  cookMinutes: 20,
+  healthConsent: true,
 };
+
+async function onboard(id: string, overrides: Partial<PreferencesInput> = {}) {
+  const result = await savePreferences(
+    t.db,
+    id,
+    { ...preferences, ...overrides },
+    CATALOG,
+    FOOD_INDEX,
+  );
+  if (!result.ok) throw new Error(result.code);
+  return result.day;
+}
 
 const items: PlanItemInput[] = [
   {
@@ -76,58 +98,140 @@ describe("catálogo na D1", () => {
   });
 });
 
-describe("dia e meta (dois utilizadores)", () => {
-  it("cada pessoa só lê e escreve o seu dia", async () => {
+describe("preferências e formulário de boas-vindas (dois utilizadores)", () => {
+  it("calcula a meta pelo peso, guarda tudo e cria o dia exemplo da pessoa", async () => {
     const ana = await createUser(t.db, "Ana");
     const rui = await createUser(t.db, "Rui");
-    await saveDay(t.db, ana, { profile, items }, FOOD_INDEX);
-    await saveDay(
+    const dayAna = await onboard(ana);
+    const dayRui = await onboard(rui, {
+      weightKg: 60,
+      diet: "vegetarian",
+      allergies: ["peanut"],
+      likedFoods: ["tofu-firme", "grao-bico-lata", "iogurte-grego-natural", "peito-frango"],
+    });
+
+    expect(dayAna.profile?.dailyTargetG).toBe(160);
+    expect(dayAna.profile?.weightKg).toBe(80);
+    expect(dayAna.profile?.onboardedAt).toBeTypeOf("number");
+    expect(dayAna.profile?.healthConsentAt).toBeTypeOf("number");
+    expect(dayAna.profile?.preWorkoutMeal).toBe("lanche");
+    expect(dayAna.items.length).toBeGreaterThan(0);
+    const total = totalProtein(dayAna.items, FOOD_INDEX);
+    expect(total).toBeGreaterThanOrEqual(160);
+    expect(total).toBeLessThanOrEqual(176);
+
+    // A carne que o Rui marcou não fica (é vegetariano) e o dia só tem o que ele pode comer
+    const rui0 = await loadProfile(t.db, rui);
+    expect(rui0?.dailyTargetG).toBe(120);
+    expect(rui0?.likedFoods).toEqual(["tofu-firme", "grao-bico-lata", "iogurte-grego-natural"]);
+    for (const item of dayRui.items) {
+      expect(isAllowed(FOOD_INDEX.get(item.foodId)!, rui0!), item.foodId).toBe(true);
+    }
+    // Cada pessoa só vê o seu
+    expect((await loadDay(t.db, ana)).profile?.diet).toBe("omnivore");
+    expect((await loadDay(t.db, rui)).profile?.diet).toBe("vegetarian");
+  });
+
+  it("meta manual sem peso: não guarda dados de saúde", async () => {
+    const id = await createUser(t.db);
+    const day = await onboard(id, { weightKg: null, manualTargetG: 130, healthConsent: false });
+    expect(day.profile?.dailyTargetG).toBe(130);
+    expect(day.profile?.weightKg).toBeNull();
+    expect(day.profile?.healthConsentAt).toBeNull();
+    expect(day.profile?.manualTarget).toBe(true);
+  });
+
+  it("recusa menos de 3 fontes de proteína que a pessoa possa comer", async () => {
+    const id = await createUser(t.db);
+    const result = await savePreferences(
       t.db,
-      rui,
-      { profile: { ...profile, dailyTargetG: 120 }, items: [items[0]!] },
+      id,
+      { ...preferences, diet: "vegan", likedFoods: ["peito-frango", "ovo", "tofu-firme"] },
+      CATALOG,
       FOOD_INDEX,
     );
+    expect(result).toEqual({ ok: false, code: "liked_foods" });
+    expect(await loadProfile(t.db, id)).toBeNull();
+  });
 
+  it("ao editar, mantém o dia que ainda cabe e tira o que deixou de caber", async () => {
+    const id = await createUser(t.db);
+    const first = await onboard(id);
+    await saveDayItems(t.db, id, items, FOOD_INDEX);
+    const onboardedAt = first.profile?.onboardedAt;
+
+    const edited = await onboard(id, { diet: "pescatarian" });
+    expect(edited.items.map((i) => i.foodId)).toEqual(["skyr-natural"]);
+    expect(edited.profile?.onboardedAt).toBe(onboardedAt);
+
+    // Sem nada que caiba, volta ao dia exemplo (vegano)
+    const vegan = await onboard(id, {
+      diet: "vegan",
+      likedFoods: ["tofu-firme", "grao-bico-lata", "lentilhas-castanhas"],
+    });
+    expect(vegan.items.length).toBeGreaterThan(0);
+    for (const item of vegan.items) {
+      expect(isAllowed(FOOD_INDEX.get(item.foodId)!, vegan.profile!), item.foodId).toBe(true);
+    }
+  });
+
+  it("regista a versão 2 do consentimento sem dar o formulário por concluído", async () => {
+    const id = await createUser(t.db);
+    await recordConsent(t.db, id);
+    const profile = await loadProfile(t.db, id);
+    const [row] = await t.db.select().from(profiles).where(eq(profiles.userId, id));
+    expect(row?.consentVersion).toBe(2);
+    expect(row?.consentedAt).toBeTypeOf("number");
+    expect(profile?.onboardedAt).toBeNull();
+  });
+});
+
+describe("dia (dois utilizadores)", () => {
+  it("sem formulário concluído não guarda nada", async () => {
+    const id = await createUser(t.db);
+    expect(await saveDayItems(t.db, id, items, FOOD_INDEX)).toBe(false);
+    await recordConsent(t.db, id);
+    expect(await saveDayItems(t.db, id, items, FOOD_INDEX)).toBe(false);
+  });
+
+  it("cada pessoa só escreve o seu dia; ids gerados no servidor", async () => {
+    const ana = await createUser(t.db, "Ana");
+    const rui = await createUser(t.db, "Rui");
+    await onboard(ana);
+    await onboard(rui);
+    await saveDayItems(t.db, ana, items, FOOD_INDEX);
+    await saveDayItems(t.db, rui, [items[0]!], FOOD_INDEX);
     const dayAna = await loadDay(t.db, ana);
-    const dayRui = await loadDay(t.db, rui);
-    expect(dayAna.profile?.dailyTargetG).toBe(160);
     expect(dayAna.items.map((i) => i.foodId)).toEqual(["skyr-natural", "peito-frango"]);
-    expect(dayRui.profile?.dailyTargetG).toBe(120);
-    expect(dayRui.items).toHaveLength(1);
-    // Ids gerados no servidor: os do cliente ("a", "b") nunca chegam à D1
+    expect((await loadDay(t.db, rui)).items).toHaveLength(1);
     expect(dayAna.items.some((i) => i.id === "a")).toBe(false);
   });
 
-  it("guardar outra vez substitui o dia e ignora alimentos que não existem", async () => {
+  it("ignora alimentos que não existem, refeições fora do dia e o que as restrições excluem", async () => {
     const id = await createUser(t.db);
-    await saveDay(t.db, id, { profile, items }, FOOD_INDEX);
-    await saveDay(
+    await onboard(id, { allergies: ["milk"] });
+    await saveDayItems(
       t.db,
       id,
-      {
-        profile,
-        items: [
-          items[1]!,
-          { id: "x", meal: "jantar", foodId: "nao-existe", portionId: "nao-existe:dose", count: 1 },
-          // refeição que não faz parte do dia
-          {
-            id: "y",
-            meal: "ceia",
-            foodId: "skyr-natural",
-            portionId: "skyr-natural:iogurte",
-            count: 1,
-          },
-        ],
-      },
+      [
+        ...items,
+        { id: "x", meal: "jantar", foodId: "nao-existe", portionId: "nao-existe:dose", count: 1 },
+        {
+          id: "y",
+          meal: "ceia",
+          foodId: "peito-frango",
+          portionId: "peito-frango:peito",
+          count: 1,
+        },
+      ],
       FOOD_INDEX,
     );
-    const day = await loadDay(t.db, id);
-    expect(day.items.map((i) => i.foodId)).toEqual(["peito-frango"]);
+    expect((await loadDay(t.db, id)).items.map((i) => i.foodId)).toEqual(["peito-frango"]);
   });
 
   it("a D1 recusa porções fora de 0,5–4 em passos de 0,5", async () => {
     const id = await createUser(t.db);
-    await saveDay(t.db, id, { profile, items }, FOOD_INDEX);
+    await onboard(id);
     const [plan] = await t.db.select().from(dayPlans).where(eq(dayPlans.userId, id));
     await expect(
       t.db.insert(planItems).values({
@@ -140,54 +244,6 @@ describe("dia e meta (dois utilizadores)", () => {
         position: 9,
       }),
     ).rejects.toThrow();
-  });
-
-  it("o perfil nunca tem peso", async () => {
-    const id = await createUser(t.db);
-    await saveDay(t.db, id, { profile, items }, FOOD_INDEX);
-    const [row] = await t.db.select().from(profiles).where(eq(profiles.userId, id));
-    expect(Object.keys(row!).some((k) => k.toLowerCase().includes("weight"))).toBe(false);
-  });
-});
-
-describe("importar o estado de convidado", () => {
-  it("é idempotente pelo importId", async () => {
-    const id = await createUser(t.db);
-    const importId = crypto.randomUUID();
-    expect(await importGuestData(t.db, id, { importId, profile, items }, FOOD_INDEX)).toBe(
-      "imported",
-    );
-    expect(await importGuestData(t.db, id, { importId, profile, items }, FOOD_INDEX)).toBe(
-      "already_imported",
-    );
-    expect((await loadDay(t.db, id)).items).toHaveLength(2);
-  });
-
-  it("sem duplicados quando a conta já tem um dia: pergunta qual manter", async () => {
-    const id = await createUser(t.db);
-    await saveDay(t.db, id, { profile, items: [items[0]!] }, FOOD_INDEX);
-    const input = { importId: crypto.randomUUID(), profile, items };
-    expect(await importGuestData(t.db, id, input, FOOD_INDEX)).toBe("conflict");
-    expect((await loadDay(t.db, id)).items).toHaveLength(1);
-
-    expect(await importGuestData(t.db, id, { ...input, keep: "account" }, FOOD_INDEX)).toBe(
-      "kept_account",
-    );
-    expect((await loadDay(t.db, id)).items).toHaveLength(1);
-
-    const second = { importId: crypto.randomUUID(), profile, items };
-    expect(await importGuestData(t.db, id, { ...second, keep: "guest" }, FOOD_INDEX)).toBe(
-      "imported",
-    );
-    expect((await loadDay(t.db, id)).items).toHaveLength(2);
-  });
-
-  it("regista a versão do consentimento", async () => {
-    const id = await createUser(t.db);
-    await recordConsent(t.db, id, DEFAULT_PROFILE);
-    const [row] = await t.db.select().from(profiles).where(eq(profiles.userId, id));
-    expect(row?.consentVersion).toBe(1);
-    expect(row?.consentedAt).toBeTypeOf("number");
   });
 });
 
@@ -210,12 +266,17 @@ describe("receitas guardadas (dois utilizadores)", () => {
   it("exportar devolve só os dados da própria pessoa", async () => {
     const ana = await createUser(t.db, "Ana");
     const rui = await createUser(t.db, "Rui");
-    await saveDay(t.db, ana, { profile, items }, FOOD_INDEX);
+    await onboard(ana, { allergies: ["egg"] });
+    await saveDayItems(t.db, ana, items, FOOD_INDEX);
     await insertRecipe("rcpExport1");
     await setRecipeSaved(t.db, ana, "rcpExport1", true);
     const exported = await exportUserData(t.db, ana);
     expect(exported.account?.name).toBe("Ana");
     expect(exported.day).toHaveLength(2);
+    // A própria pessoa recebe todos os seus dados, incluindo os de saúde
+    expect(exported.profile?.weightKg).toBe(80);
+    expect(exported.profile?.allergies).toEqual(["egg"]);
+    expect(exported.profile?.likedFoods).toContain("skyr-natural");
     expect(exported.savedRecipes.map((r) => r.id)).toEqual(["rcpExport1"]);
     expect(JSON.stringify(exported)).not.toContain(rui);
   });
@@ -225,8 +286,10 @@ describe("apagar um utilizador", () => {
   it("apaga em cascata perfil, dia, itens, receitas guardadas, sessões e contas; as receitas ficam", async () => {
     const id = await createUser(t.db);
     const other = await createUser(t.db);
-    await saveDay(t.db, id, { profile, items }, FOOD_INDEX);
-    await saveDay(t.db, other, { profile, items }, FOOD_INDEX);
+    await onboard(id);
+    await onboard(other);
+    await saveDayItems(t.db, id, items, FOOD_INDEX);
+    await saveDayItems(t.db, other, items, FOOD_INDEX);
     await insertRecipe("rcpCascade");
     await setRecipeSaved(t.db, id, "rcpCascade", true);
     await setRecipeSaved(t.db, other, "rcpCascade", true);

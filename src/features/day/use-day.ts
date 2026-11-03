@@ -3,9 +3,8 @@
 import { useCallback, useSyncExternalStore } from "react";
 import type { GuestState } from "@/domain/contracts/guest-state";
 import { buildExampleDay } from "@/domain/example-day";
-import type { Intensity } from "@/domain/goal";
-import { sortMeals, type Meal } from "@/domain/meals";
-import { addItem, keepMeals, removeItem, setItemCount, type NewItem } from "@/domain/plan";
+import type { Food } from "@/domain/food";
+import { addItem, removeItem, setItemCount, type NewItem } from "@/domain/plan";
 import { CATALOG } from "@/features/catalog/catalog";
 import {
   getGuestServerSnapshot,
@@ -30,27 +29,33 @@ export function newItemId(): string {
   return crypto.randomUUID().slice(0, 12);
 }
 
-/** O dia exemplo para uma meta e refeições (determinístico pela seed). */
-export function exampleItems(
-  target: number,
-  meals: readonly Meal[],
-  post: Meal | null,
-  seed: number,
-) {
-  return buildExampleDay({ target, meals, postWorkoutMeal: post, foods: CATALOG, seed });
+/** Os alimentos que a pessoa pode comer e os que escolheu (para o dia exemplo). */
+export interface PersonalFoods {
+  foods: readonly Food[];
+  preferred: ReadonlySet<string>;
 }
 
-export interface GoalInput {
-  grams: number;
-  intensity: Intensity;
-  weightKg: number | null;
-  manual: boolean;
-  meals: Meal[];
-  postWorkoutMeal: Meal | null;
+/** O dia exemplo para uma meta e refeições (determinístico pela seed). */
+export function exampleItems(
+  state: Pick<GuestState, "meals" | "postWorkoutMeal" | "preWorkoutMeal"> & {
+    target: { grams: number };
+  },
+  seed: number,
+  personal?: PersonalFoods,
+) {
+  return buildExampleDay({
+    target: state.target.grams,
+    meals: state.meals,
+    postWorkoutMeal: state.postWorkoutMeal,
+    preWorkoutMeal: state.preWorkoutMeal,
+    foods: personal?.foods ?? CATALOG,
+    preferred: personal?.preferred,
+    seed,
+  });
 }
 
 /**
- * O dia guardado no browser (convidado, ou cópia local da conta que o AccountSync sincroniza).
+ * O dia guardado no browser: a cópia local da conta, que o AccountSync sincroniza com a D1.
  * Todas as mudanças passam por aqui.
  */
 export function useDay() {
@@ -60,30 +65,6 @@ export function useDay() {
   const update = useCallback((fn: (s: GuestState) => GuestState) => {
     const current = getGuestSnapshot();
     if (current) saveGuestState(fn(current));
-  }, []);
-
-  /** Nova meta/refeições. Se o dia ainda é o exemplo (ou não existe), gera um exemplo novo. */
-  const setGoal = useCallback((goal: GoalInput) => {
-    const current = getGuestSnapshot();
-    const meals = sortMeals(goal.meals);
-    const keepPlan = current && !current.plan.isExample;
-    const items = keepPlan
-      ? keepMeals(current.plan.items, meals)
-      : exampleItems(goal.grams, meals, goal.postWorkoutMeal, 0);
-    saveGuestState({
-      version: 1,
-      target: {
-        grams: goal.grams,
-        intensity: goal.intensity,
-        weightKg: goal.weightKg,
-        manual: goal.manual,
-      },
-      meals,
-      postWorkoutMeal: goal.postWorkoutMeal,
-      plan: { items, seed: keepPlan ? current.plan.seed : 0, isExample: !keepPlan },
-      updatedAt: Date.now(),
-      owner: current?.owner ?? null,
-    });
   }, []);
 
   const add = useCallback(
@@ -113,18 +94,14 @@ export function useDay() {
     [update],
   );
 
-  /** "Outras opções": a seed seguinte do dia exemplo. */
+  /** "Outras opções": a seed seguinte do dia exemplo (com os alimentos da pessoa). */
   const otherOptions = useCallback(
-    () =>
+    (personal?: PersonalFoods) =>
       update((s) => {
         const seed = (s.plan.isExample ? s.plan.seed + 1 : 0) % 1000;
         return {
           ...s,
-          plan: {
-            items: exampleItems(s.target.grams, s.meals, s.postWorkoutMeal, seed),
-            seed,
-            isExample: true,
-          },
+          plan: { items: exampleItems(s, seed, personal), seed, isExample: true },
         };
       }),
     [update],
@@ -133,7 +110,6 @@ export function useDay() {
   return {
     state,
     hydrated,
-    setGoal,
     add,
     setCount,
     remove,

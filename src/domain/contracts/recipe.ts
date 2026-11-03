@@ -12,7 +12,7 @@ export {
 
 export const RECIPE_VARIANTS = [1, 2, 3] as const;
 
-/** Pedido de receita: só campos fechados, sem texto livre (secção 6). */
+/** Pedido de receita: só campos fechados, sem texto livre; exige login (secção 6). */
 export const recipeRequestSchema = z
   .object({
     foodIds: z
@@ -20,9 +20,8 @@ export const recipeRequestSchema = z
       .min(2)
       .max(6)
       .refine((ids) => new Set(ids).size === ids.length, "alimentos repetidos"),
+    /** Uma das refeições da pessoa; a meta da refeição e o treino vêm do perfil. */
     meal: mealSchema,
-    postWorkout: z.boolean(),
-    mealTargetG: z.number().min(1).max(300),
     maxMinutes: z.union(
       MAX_MINUTES_OPTIONS.map((m) => z.literal(m)) as [
         z.ZodLiteral<10>,
@@ -35,8 +34,6 @@ export const recipeRequestSchema = z
     locale: localeSchema,
     /** "Gerar outra": 1 a 3 (cada variante tem a sua entrada na cache). */
     variant: z.number().int().min(1).max(3).default(1),
-    /** Obrigatório para convidados. */
-    turnstileToken: z.string().max(2048).optional(),
   })
   .strict();
 

@@ -9,7 +9,9 @@ export type MaxMinutes = (typeof MAX_MINUTES_OPTIONS)[number];
 export const RECIPE_ERROR_CODES = [
   "invalid_request",
   "unknown_food",
-  "turnstile_failed",
+  "restricted_food",
+  "unauthorized",
+  "onboarding_required",
   "rate_limited",
   "quota_exceeded",
   "generation_failed",

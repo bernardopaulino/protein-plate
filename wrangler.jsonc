@@ -18,10 +18,7 @@
     "AI_MODE": "mock",
     "AI_MODEL": "claude-haiku-5-5",
     "AI_DAILY_LIMIT": "200",
-    "QUOTA_GUEST": "3",
     "QUOTA_USER": "15",
-    // Chave de teste do Turnstile (passa sempre); a secreta de teste está no .dev.vars.example
-    "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
   },
   "d1_databases": [
     {
@@ -51,9 +48,7 @@
         "AI_MODE": "live",
         "AI_MODEL": "claude-haiku-5-5",
         "AI_DAILY_LIMIT": "50",
-        "QUOTA_GUEST": "3",
         "QUOTA_USER": "15",
-        "TURNSTILE_SITE_KEY": "0x4AAAAAAFyFDKChhtjAfV6m",
       },
       "d1_databases": [
         {
@@ -83,9 +78,7 @@
         "AI_MODE": "live",
         "AI_MODEL": "claude-haiku-5-5",
         "AI_DAILY_LIMIT": "500",
-        "QUOTA_GUEST": "3",
         "QUOTA_USER": "15",
-        "TURNSTILE_SITE_KEY": "0x4AAAAAAFyFDKChhtjAfV6m",
       },
       "d1_databases": [
         {

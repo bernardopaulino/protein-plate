@@ -6,7 +6,7 @@ import { useId, useMemo, useState } from "react";
 import { Drawer } from "vaul";
 import { FilterChips } from "@/components/protein/chips";
 import { FoodCard } from "@/components/protein/food-card";
-import { CATEGORIES, defaultPortion, type Category } from "@/domain/food";
+import { CATEGORIES, defaultPortion, type Category, type Food } from "@/domain/food";
 import type { Meal } from "@/domain/meals";
 import {
   LISTED_FOODS,
@@ -28,11 +28,17 @@ export function AddFoodDrawer({
   open,
   onOpenChange,
   onAdd,
+  foods = LISTED_FOODS,
+  preferred,
 }: {
   meal: Meal | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: (foodId: string, portionId: string) => void;
+  /** Só os alimentos que a pessoa pode comer (as restrições já aplicadas). */
+  foods?: readonly Food[];
+  /** Os de que gosta aparecem primeiro. */
+  preferred?: ReadonlySet<string>;
 }) {
   const t = useTranslations("drawer");
   const tm = useTranslations("meals");
@@ -47,23 +53,33 @@ export function AddFoodDrawer({
 
   const results = useMemo(() => {
     if (!meal) return [];
-    return LISTED_FOODS.filter(
-      (f) => matchesSearch(f, query) && (category.length === 0 || category.includes(f.category)),
-    ).sort((a, b) => {
-      const fitA = a.moments.includes(meal) ? 0 : 1;
-      const fitB = b.moments.includes(meal) ? 0 : 1;
-      const proteinA = a.role === "protein" ? 0 : 1;
-      const proteinB = b.role === "protein" ? 0 : 1;
-      return (
-        fitA - fitB ||
-        proteinA - proteinB ||
-        a.ease - b.ease ||
-        defaultPortionProtein(b) - defaultPortionProtein(a)
-      );
-    });
-  }, [meal, query, category]);
+    return foods
+      .filter(
+        (f) =>
+          f.role !== "pantry" &&
+          matchesSearch(f, query) &&
+          (category.length === 0 || category.includes(f.category)),
+      )
+      .sort((a, b) => {
+        const fitA = a.moments.includes(meal) ? 0 : 1;
+        const fitB = b.moments.includes(meal) ? 0 : 1;
+        const mineA = preferred?.has(a.id) ? 0 : 1;
+        const mineB = preferred?.has(b.id) ? 0 : 1;
+        const proteinA = a.role === "protein" ? 0 : 1;
+        const proteinB = b.role === "protein" ? 0 : 1;
+        return (
+          fitA - fitB ||
+          mineA - mineB ||
+          proteinA - proteinB ||
+          a.ease - b.ease ||
+          defaultPortionProtein(b) - defaultPortionProtein(a)
+        );
+      });
+  }, [meal, query, category, foods, preferred]);
 
-  const categories = CATEGORIES.filter((c) => LISTED_FOODS.some((f) => f.category === c));
+  const categories = CATEGORIES.filter((c) =>
+    foods.some((f) => f.role !== "pantry" && f.category === c),
+  );
 
   return (
     <Drawer.Root

@@ -18,7 +18,6 @@ type Saved = {
 export function SavedRecipes() {
   const t = useTranslations("recipes");
   const td = useTranslations("recipes.detail");
-  const ta = useTranslations("account");
   const [recipes, setRecipes] = useState<Saved[] | null>(null);
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
 
@@ -44,15 +43,7 @@ export function SavedRecipes() {
       {signedIn === null ? (
         <div aria-hidden className="mt-3 h-24 animate-pulse rounded-card bg-track" />
       ) : !signedIn ? (
-        <p className="mt-2 text-muted">
-          {t("guestSaved")}{" "}
-          <Link
-            href="/conta/criar"
-            className="font-semibold text-primary underline underline-offset-4"
-          >
-            {ta("create")}
-          </Link>
-        </p>
+        <p className="mt-2 text-muted">{t("savedEmpty")}</p>
       ) : recipes && recipes.length === 0 ? (
         <p className="mt-2 text-muted">{t("savedEmpty")}</p>
       ) : (

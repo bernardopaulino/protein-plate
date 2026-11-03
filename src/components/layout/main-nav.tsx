@@ -43,9 +43,14 @@ export function TopNav() {
   );
 }
 
+/** Ecrãs com a sua própria barra de ações em baixo (o formulário inicial) ou sem app ainda. */
+const WITHOUT_BOTTOM_NAV = ["/comecar", "/conta/preferencias", "/entrar"];
+
 export function BottomNav() {
   const t = useTranslations("nav");
   const isActive = useActive();
+  const pathname = usePathname();
+  if (WITHOUT_BOTTOM_NAV.includes(pathname)) return null;
   return (
     <nav
       aria-label={t("label")}

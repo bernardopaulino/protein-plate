@@ -1,9 +1,25 @@
 import { and, asc, desc, eq, inArray } from "drizzle-orm";
-import { CONSENT_VERSION, type ProfileInput } from "@/domain/contracts/account";
+import { CONSENT_VERSION, type PreferencesInput } from "@/domain/contracts/profile";
 import type { PlanItemInput } from "@/domain/contracts/plan";
-import { findPortion, type FoodIndex } from "@/domain/food";
-import type { Intensity } from "@/domain/goal";
-import type { Meal } from "@/domain/meals";
+import { buildExampleDay } from "@/domain/example-day";
+import { findPortion, type Allergen, type Food, type FoodIndex } from "@/domain/food";
+import { dailyTarget, type Intensity } from "@/domain/goal";
+import { normalizeTraining, sortMeals, type Meal } from "@/domain/meals";
+import {
+  DEFAULT_COOK_MINUTES,
+  DEFAULT_DIET,
+  DEFAULT_EQUIPMENT,
+  MIN_LIKED_PROTEINS,
+  allowedFoods,
+  cleanLikedFoods,
+  isAllowed,
+  proteinCount,
+  type Diet,
+  type Equipment,
+  type Restrictions,
+} from "@/domain/preferences";
+import type { MaxMinutes } from "@/domain/recipe-options";
+import type { ClientProfile } from "@/features/onboarding/draft";
 import { user } from "../db/auth-schema";
 import type { Db } from "../db/client-core";
 import {
@@ -18,15 +34,70 @@ import {
 /** v1 usa um só plano por pessoa. */
 export const DEFAULT_PLAN_NAME = "hoje";
 
+/** O perfil completo (meta, refeições e preferências). */
+export interface Profile {
+  dailyTargetG: number;
+  intensity: Intensity;
+  weightKg: number | null;
+  manualTarget: boolean;
+  meals: Meal[];
+  preWorkoutMeal: Meal | null;
+  postWorkoutMeal: Meal | null;
+  diet: Diet;
+  allergies: Allergen[];
+  likedFoods: string[];
+  equipment: Equipment[];
+  cookMinutes: MaxMinutes;
+  onboardedAt: number | null;
+  healthConsentAt: number | null;
+}
+
 export interface StoredDay {
-  profile: {
-    dailyTargetG: number;
-    intensity: Intensity;
-    meals: Meal[];
-    postWorkoutMeal: Meal | null;
-  } | null;
+  profile: Profile | null;
   items: PlanItemInput[];
   updatedAt: number;
+}
+
+/** Perfil de uma conta acabada de criar (até concluir o formulário de boas-vindas). */
+export const DEFAULT_PROFILE = {
+  dailyTargetG: 140,
+  intensity: "alta" as Intensity,
+  meals: ["pequeno-almoco", "almoco", "lanche", "jantar"] as Meal[],
+};
+
+const COOK_MINUTES = new Set<number>([10, 20, 30, 45]);
+
+export function restrictionsOf(profile: Pick<Profile, "diet" | "allergies">): Restrictions {
+  return { diet: profile.diet, allergies: profile.allergies };
+}
+
+type ProfileRow = typeof profiles.$inferSelect;
+
+function toProfile(row: ProfileRow): Profile {
+  const meals = sortMeals(row.meals);
+  const training = normalizeTraining(meals, row.preWorkoutMeal, row.postWorkoutMeal);
+  return {
+    dailyTargetG: row.dailyTargetG,
+    intensity: row.intensity,
+    weightKg: row.weightKg ?? null,
+    manualTarget: row.manualTarget,
+    meals,
+    ...training,
+    diet: row.diet,
+    allergies: row.allergies,
+    likedFoods: row.likedFoods,
+    equipment: row.equipment,
+    cookMinutes: (COOK_MINUTES.has(row.cookMinutes)
+      ? row.cookMinutes
+      : DEFAULT_COOK_MINUTES) as MaxMinutes,
+    onboardedAt: row.onboardedAt ?? null,
+    healthConsentAt: row.healthConsentAt ?? null,
+  };
+}
+
+export async function loadProfile(db: Db, userId: string): Promise<Profile | null> {
+  const [row] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+  return row ? toProfile(row) : null;
 }
 
 /** Só itens de alimentos e porções que existem no catálogo (a D1 não tem FK para foods). */
@@ -37,8 +108,19 @@ export function knownItems(items: readonly PlanItemInput[], foods: FoodIndex): P
   });
 }
 
-export async function loadDay(db: Db, userId: string): Promise<StoredDay> {
-  const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+/** Itens que cabem no perfil: refeições escolhidas e só alimentos que a pessoa pode comer. */
+export function itemsForProfile(
+  items: readonly PlanItemInput[],
+  profile: Pick<Profile, "meals" | "diet" | "allergies">,
+  foods: FoodIndex,
+): PlanItemInput[] {
+  const restrictions = restrictionsOf(profile);
+  return knownItems(items, foods).filter(
+    (i) => profile.meals.includes(i.meal) && isAllowed(foods.get(i.foodId)!, restrictions),
+  );
+}
+
+async function loadItems(db: Db, userId: string) {
   const [plan] = await db
     .select()
     .from(dayPlans)
@@ -51,14 +133,7 @@ export async function loadDay(db: Db, userId: string): Promise<StoredDay> {
         .orderBy(asc(planItems.position))
     : [];
   return {
-    profile: profile
-      ? {
-          dailyTargetG: profile.dailyTargetG,
-          intensity: profile.intensity,
-          meals: profile.meals,
-          postWorkoutMeal: profile.postWorkoutMeal ?? null,
-        }
-      : null,
+    plan,
     items: items.map((i) => ({
       id: i.id,
       meal: i.meal,
@@ -66,56 +141,28 @@ export async function loadDay(db: Db, userId: string): Promise<StoredDay> {
       portionId: i.portionId,
       count: i.portionCount,
     })),
-    updatedAt: Math.max(profile?.updatedAt ?? 0, plan?.updatedAt ?? 0),
   };
 }
 
-function profileValues(userId: string, profile: ProfileInput, now: number) {
+export async function loadDay(db: Db, userId: string): Promise<StoredDay> {
+  const [row] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+  const { plan, items } = await loadItems(db, userId);
   return {
-    userId,
-    dailyTargetG: profile.dailyTargetG,
-    intensity: profile.intensity,
-    meals: profile.meals,
-    postWorkoutMeal: profile.postWorkoutMeal,
-    locale: profile.locale,
-    updatedAt: now,
+    profile: row ? toProfile(row) : null,
+    items,
+    updatedAt: Math.max(row?.updatedAt ?? 0, plan?.updatedAt ?? 0),
   };
 }
 
-/**
- * Guarda meta, refeições e o dia de uma vez (batch D1). O dia é substituído por inteiro: os ids
- * dos itens são gerados aqui, nunca vêm do cliente (evita colisões entre pessoas).
- */
-export async function saveDay(
+/** Substitui o dia por inteiro (os ids dos itens são gerados aqui, nunca vêm do cliente). */
+function replaceItemsQueries(
   db: Db,
   userId: string,
-  input: { profile: ProfileInput; items: readonly PlanItemInput[] },
-  foods: FoodIndex,
-  now = Date.now(),
-): Promise<void> {
-  const items = knownItems(input.items, foods).filter((i) => input.profile.meals.includes(i.meal));
-  const [existing] = await db
-    .select({ id: dayPlans.id })
-    .from(dayPlans)
-    .where(and(eq(dayPlans.userId, userId), eq(dayPlans.name, DEFAULT_PLAN_NAME)));
-  const planId = existing?.id ?? crypto.randomUUID();
-  const values = profileValues(userId, input.profile, now);
-
-  await db.batch([
-    db
-      .insert(profiles)
-      .values(values)
-      .onConflictDoUpdate({
-        target: profiles.userId,
-        set: {
-          dailyTargetG: values.dailyTargetG,
-          intensity: values.intensity,
-          meals: values.meals,
-          postWorkoutMeal: values.postWorkoutMeal,
-          locale: values.locale,
-          updatedAt: now,
-        },
-      }),
+  planId: string,
+  items: readonly PlanItemInput[],
+  now: number,
+) {
+  return [
     db
       .insert(dayPlans)
       .values({ id: planId, userId, name: DEFAULT_PLAN_NAME, position: 0, updatedAt: now })
@@ -132,71 +179,146 @@ export async function saveDay(
         position,
       }),
     ),
-  ] as unknown as Parameters<Db["batch"]>[0]);
+  ];
 }
 
-/** Regista o consentimento (versão dos termos) na primeira visita depois de criar conta. */
-export async function recordConsent(
+async function planIdFor(db: Db, userId: string): Promise<string> {
+  const [existing] = await db
+    .select({ id: dayPlans.id })
+    .from(dayPlans)
+    .where(and(eq(dayPlans.userId, userId), eq(dayPlans.name, DEFAULT_PLAN_NAME)));
+  return existing?.id ?? crypto.randomUUID();
+}
+
+/**
+ * Guarda o dia (chamado pelo AccountSync). Sem perfil concluído não guarda nada; os itens fora das
+ * refeições ou das restrições da pessoa ficam de fora.
+ */
+export async function saveDayItems(
   db: Db,
   userId: string,
-  profile: ProfileInput,
+  items: readonly PlanItemInput[],
+  foods: FoodIndex,
   now = Date.now(),
+): Promise<boolean> {
+  const profile = await loadProfile(db, userId);
+  if (!profile?.onboardedAt) return false;
+  const planId = await planIdFor(db, userId);
+  await db.batch(
+    replaceItemsQueries(db, userId, planId, itemsForProfile(items, profile, foods), now) as never,
+  );
+  return true;
+}
+
+/** O dia exemplo da pessoa: só alimentos permitidos, com os de que gosta primeiro. */
+export function personalExampleDay(
+  profile: Pick<
+    Profile,
+    | "dailyTargetG"
+    | "meals"
+    | "preWorkoutMeal"
+    | "postWorkoutMeal"
+    | "diet"
+    | "allergies"
+    | "likedFoods"
+  >,
+  catalog: readonly Food[],
+  seed = 0,
 ) {
+  return buildExampleDay({
+    target: profile.dailyTargetG,
+    meals: profile.meals,
+    preWorkoutMeal: profile.preWorkoutMeal,
+    postWorkoutMeal: profile.postWorkoutMeal,
+    foods: allowedFoods(catalog, restrictionsOf(profile)),
+    preferred: new Set(profile.likedFoods),
+    seed,
+  });
+}
+
+export type SavePreferencesResult =
+  { ok: true; day: StoredDay } | { ok: false; code: "liked_foods" };
+
+/**
+ * Formulário de boas-vindas e "As minhas preferências". A meta calcula-se aqui a partir do peso
+ * (ou é a manual). Na primeira vez, o dia passa a ser o exemplo da pessoa; depois, o dia mantém-se
+ * sem os itens que deixaram de caber (e volta ao exemplo se ficar vazio).
+ */
+export async function savePreferences(
+  db: Db,
+  userId: string,
+  input: PreferencesInput,
+  catalog: readonly Food[],
+  foods: FoodIndex,
+  now = Date.now(),
+): Promise<SavePreferencesResult> {
+  const restrictions: Restrictions = { diet: input.diet, allergies: input.allergies };
+  const likedFoods = cleanLikedFoods(input.likedFoods, foods, restrictions);
+  if (proteinCount(likedFoods, foods) < MIN_LIKED_PROTEINS)
+    return { ok: false, code: "liked_foods" };
+
+  const meals = sortMeals(input.meals);
+  const training = normalizeTraining(meals, input.preWorkoutMeal, input.postWorkoutMeal);
+  const manual = input.manualTargetG !== null;
+  const dailyTargetG = manual
+    ? input.manualTargetG!
+    : dailyTarget(input.weightKg!, input.intensity);
+  const weightKg = input.weightKg;
+  const hasHealthData = weightKg !== null || input.allergies.length > 0;
+
+  const previous = await loadProfile(db, userId);
+  const values = {
+    dailyTargetG,
+    intensity: input.intensity,
+    weightKg,
+    manualTarget: manual,
+    meals,
+    preWorkoutMeal: training.preWorkoutMeal,
+    postWorkoutMeal: training.postWorkoutMeal,
+    diet: input.diet,
+    allergies: [...input.allergies],
+    likedFoods,
+    equipment: [...input.equipment],
+    cookMinutes: input.cookMinutes,
+    healthConsentAt: hasHealthData ? (previous?.healthConsentAt ?? now) : null,
+    onboardedAt: previous?.onboardedAt ?? now,
+    updatedAt: now,
+  };
+  const profile: Profile = { ...values, onboardedAt: values.onboardedAt };
+
+  const { items: current } = await loadItems(db, userId);
+  const kept = previous?.onboardedAt ? itemsForProfile(current, profile, foods) : [];
+  const items = kept.length > 0 ? kept : personalExampleDay(profile, catalog);
+  const planId = await planIdFor(db, userId);
+
+  await db.batch([
+    db
+      .insert(profiles)
+      .values({ userId, locale: "pt", ...values })
+      .onConflictDoUpdate({ target: profiles.userId, set: values }),
+    ...replaceItemsQueries(db, userId, planId, items, now),
+  ] as never);
+  return { ok: true, day: await loadDay(db, userId) };
+}
+
+/** Regista o consentimento (versão dos termos) no primeiro login, antes do formulário. */
+export async function recordConsent(db: Db, userId: string, now = Date.now()) {
   await db
     .insert(profiles)
     .values({
-      ...profileValues(userId, profile, now),
+      userId,
+      ...DEFAULT_PROFILE,
+      diet: DEFAULT_DIET,
+      equipment: [...DEFAULT_EQUIPMENT],
+      cookMinutes: DEFAULT_COOK_MINUTES,
       consentVersion: CONSENT_VERSION,
       consentedAt: now,
+      updatedAt: now,
     })
     .onConflictDoUpdate({
       target: profiles.userId,
       set: { consentVersion: CONSENT_VERSION, consentedAt: now },
     });
-}
-
-export type ImportOutcome = "imported" | "already_imported" | "conflict" | "kept_account";
-
-/**
- * Importa o estado de convidado (idempotente pelo importId). Se a conta já tem um dia, pergunta
- * qual manter (`keep`); sem resposta devolve "conflict" e não mexe em nada.
- */
-export async function importGuestData(
-  db: Db,
-  userId: string,
-  input: {
-    importId: string;
-    profile: ProfileInput;
-    items: readonly PlanItemInput[];
-    keep?: "guest" | "account";
-  },
-  foods: FoodIndex,
-  now = Date.now(),
-): Promise<ImportOutcome> {
-  const [profile] = await db
-    .select({ lastImportId: profiles.lastImportId })
-    .from(profiles)
-    .where(eq(profiles.userId, userId));
-  if (profile?.lastImportId === input.importId) return "already_imported";
-
-  const current = await loadDay(db, userId);
-  const hasDay = current.items.length > 0;
-  if (hasDay && !input.keep) return "conflict";
-
-  if (input.keep === "account") {
-    await db
-      .update(profiles)
-      .set({ lastImportId: input.importId })
-      .where(eq(profiles.userId, userId));
-    return "kept_account";
-  }
-
-  await saveDay(db, userId, input, foods, now);
-  await db
-    .update(profiles)
-    .set({ lastImportId: input.importId })
-    .where(eq(profiles.userId, userId));
-  return "imported";
 }
 
 /* ------------------------------------------------------------ Receitas guardadas */
@@ -250,14 +372,16 @@ export async function listSavedRecipes(db: Db, userId: string) {
 
 /* ------------------------------------------------------------ Exportar dados */
 
+const iso = (ms: number | null | undefined) => (ms ? new Date(ms).toISOString() : null);
+
 /** Tudo o que a app guarda sobre a pessoa (RGPD: direito de acesso e portabilidade). */
 export async function exportUserData(db: Db, userId: string) {
   const [account] = await db
     .select({ name: user.name, email: user.email, createdAt: user.createdAt })
     .from(user)
     .where(eq(user.id, userId));
-  const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
-  const day = await loadDay(db, userId);
+  const [row] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+  const { items } = await loadItems(db, userId);
   const saved = await listSavedRecipes(db, userId);
   const ingredients = saved.length
     ? await db
@@ -275,23 +399,28 @@ export async function exportUserData(db: Db, userId: string) {
     account: account
       ? { name: account.name, email: account.email, createdAt: account.createdAt.toISOString() }
       : null,
-    profile: profile
+    profile: row
       ? {
-          dailyTargetG: profile.dailyTargetG,
-          intensity: profile.intensity,
-          meals: profile.meals,
-          postWorkoutMeal: profile.postWorkoutMeal,
-          locale: profile.locale,
-          consentVersion: profile.consentVersion,
-          consentedAt: profile.consentedAt ? new Date(profile.consentedAt).toISOString() : null,
+          dailyTargetG: row.dailyTargetG,
+          intensity: row.intensity,
+          weightKg: row.weightKg,
+          manualTarget: row.manualTarget,
+          meals: row.meals,
+          preWorkoutMeal: row.preWorkoutMeal,
+          postWorkoutMeal: row.postWorkoutMeal,
+          diet: row.diet,
+          allergies: row.allergies,
+          likedFoods: row.likedFoods,
+          equipment: row.equipment,
+          cookMinutes: row.cookMinutes,
+          locale: row.locale,
+          consentVersion: row.consentVersion,
+          consentedAt: iso(row.consentedAt),
+          healthConsentAt: iso(row.healthConsentAt),
+          onboardedAt: iso(row.onboardedAt),
         }
       : null,
-    day: day.items.map(({ meal, foodId, portionId, count }) => ({
-      meal,
-      foodId,
-      portionId,
-      count,
-    })),
+    day: items.map(({ meal, foodId, portionId, count }) => ({ meal, foodId, portionId, count })),
     savedRecipes: saved.map((r) => ({
       ...r,
       savedAt: new Date(r.savedAt).toISOString(),
@@ -300,4 +429,10 @@ export async function exportUserData(db: Db, userId: string) {
         .map(({ foodId, grams }) => ({ foodId, grams })),
     })),
   };
+}
+
+/** O perfil que vai para o browser (sem datas internas). */
+export function toClientProfile(profile: Profile): ClientProfile {
+  const { onboardedAt, healthConsentAt, ...rest } = profile;
+  return { ...rest, onboarded: onboardedAt !== null, healthConsent: healthConsentAt !== null };
 }

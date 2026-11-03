@@ -28,3 +28,9 @@ Thumbs.db
 
 # avaliações da IA
 eval-results
+
+# Worktrees temporárias dos agentes do Claude Code
+.claude/worktrees/
+
+# Gerado pelo Next (o projeto usa o CLAUDE.md)
+AGENTS.md

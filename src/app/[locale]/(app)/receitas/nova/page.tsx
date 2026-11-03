@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RecipeForm } from "@/features/recipes/recipe-form";
 import type { Locale } from "@/i18n/routing";
-import { getSession } from "@/server/auth/session";
-import { getEnv } from "@/server/env";
+import { requireProfile } from "@/server/auth/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -29,8 +28,7 @@ export default async function NewRecipePage({
   const query = await searchParams;
   const t = await getTranslations("recipes");
   const td = await getTranslations("disclaimer");
-  const session = await getSession();
-  const env = getEnv();
+  const { profile } = await requireProfile(locale, "/receitas/nova");
 
   const meal = typeof query.refeicao === "string" ? query.refeicao : null;
   const foods =
@@ -44,13 +42,21 @@ export default async function NewRecipePage({
       <p className="mt-2 text-muted">{t("lead")}</p>
       <div className="mt-6">
         <RecipeForm
+          profile={{
+            dailyTargetG: profile.dailyTargetG,
+            meals: profile.meals,
+            preWorkoutMeal: profile.preWorkoutMeal,
+            postWorkoutMeal: profile.postWorkoutMeal,
+            diet: profile.diet,
+            allergies: profile.allergies,
+            likedFoods: profile.likedFoods,
+            cookMinutes: profile.cookMinutes,
+          }}
           initialMeal={meal}
           initialFoods={foods}
-          initialMinutes={Number(query.tempo) || 20}
+          initialMinutes={Number(query.tempo) || null}
           initialServings={Number(query.doses) || 1}
           variant={Number(query.variante) || 1}
-          isGuest={!session}
-          siteKey={env.TURNSTILE_SITE_KEY}
         />
       </div>
       <p className="mt-6 text-sm text-muted">{td("recipe")}</p>

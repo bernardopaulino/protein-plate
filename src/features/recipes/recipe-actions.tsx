@@ -73,7 +73,7 @@ export function RecipeActions({
         </Button>
       ) : state ? (
         <Button asChild variant="secondary">
-          <Link href="/conta/criar">
+          <Link href="/entrar">
             <Bookmark aria-hidden />
             {t("loginToSave")}
           </Link>

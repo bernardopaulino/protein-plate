@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-/** Chave secreta de teste do Turnstile (passa sempre): nunca pode chegar à produção. */
-export const TURNSTILE_TEST_SECRET = "1x0000000000000000000000000000000AA";
-
 const optional = z
   .string()
   .optional()
@@ -28,11 +25,8 @@ export const envSchema = z
     AI_MODE: z.enum(["live", "mock"]),
     AI_MODEL: z.string().min(1),
     AI_DAILY_LIMIT: positiveInt,
-    QUOTA_GUEST: positiveInt,
     QUOTA_USER: positiveInt,
     ANTHROPIC_API_KEY: optional,
-    TURNSTILE_SITE_KEY: z.string(),
-    TURNSTILE_SECRET_KEY: z.string().min(1),
     IP_HASH_SECRET: z.string().min(32, "mínimo 32 caracteres"),
   })
   .superRefine((env, ctx) => {
@@ -51,9 +45,6 @@ export const envSchema = z
     }
     if (env.APP_ENV === "production") {
       if (env.AI_MODE !== "live") issue("AI_MODE", "a produção usa o modelo real");
-      if (env.TURNSTILE_SECRET_KEY === TURNSTILE_TEST_SECRET) {
-        issue("TURNSTILE_SECRET_KEY", "a chave de teste não pode ir para produção");
-      }
       if (!env.BETTER_AUTH_URL.startsWith("https://")) {
         issue("BETTER_AUTH_URL", "a produção usa HTTPS");
       }

@@ -78,7 +78,11 @@ export async function recipeCacheKey(parts: {
   foodIds: readonly string[];
   meal: string;
   postWorkout: boolean;
+  preWorkout: boolean;
   mealTargetG: number;
+  /** Despensa permitida (muda com as restrições da pessoa) e equipamento. */
+  pantryIds: readonly string[];
+  equipment: readonly string[];
   maxMinutes: number;
   servings: number;
   locale: string;
@@ -91,7 +95,10 @@ export async function recipeCacheKey(parts: {
     [...parts.foodIds].sort(),
     parts.meal,
     parts.postWorkout,
+    parts.preWorkout,
     Math.round(parts.mealTargetG / 5) * 5,
+    [...parts.pantryIds].sort(),
+    [...parts.equipment].sort(),
     parts.maxMinutes,
     parts.servings,
     parts.locale,

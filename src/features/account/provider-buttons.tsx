@@ -36,8 +36,8 @@ function ProviderIcon({ provider }: { provider: SocialProvider }) {
 }
 
 /**
- * Botões de login (redirect para o Google ou a Apple). `signUp`: só no ecrã "Criar conta", depois
- * de aceitar os termos (requestSignUp). `callbackURL`: para onde volta.
+ * Botões de login (redirect para o Google ou a Apple). `signUp`: no ecrã "Entrar", depois de aceitar
+ * os termos (requestSignUp; uma conta existente entra normalmente). `callbackURL`: para onde volta.
  */
 export function ProviderButtons({
   providers,
@@ -51,7 +51,7 @@ export function ProviderButtons({
   signUp?: boolean;
   callbackURL?: string;
   disabled?: boolean;
-  labelKey?: "signInWith" | "createPage.with" | "delete.reauthButton";
+  labelKey?: "signInWith" | "delete.reauthButton";
   beforeRedirect?: () => Promise<boolean>;
 }) {
   const t = useTranslations("account");
@@ -70,7 +70,7 @@ export function ProviderButtons({
     const { error } = await authClient.signIn.social({
       provider,
       callbackURL,
-      errorCallbackURL: "/conta?erro=1",
+      errorCallbackURL: "/entrar?erro=1",
       ...(signUp ? { requestSignUp: true, newUserCallbackURL: callbackURL } : {}),
     });
     if (error) {

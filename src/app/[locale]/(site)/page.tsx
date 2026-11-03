@@ -1,12 +1,14 @@
-import { ArrowRight, Calculator, SlidersHorizontal, Sun } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ProteinNumber } from "@/components/protein/protein-number";
 import { Button } from "@/components/ui/button";
+import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
 import { buildExampleDay } from "@/domain/example-day";
 import { defaultPortion } from "@/domain/food";
 import { DEFAULT_COMBINATIONS, sortMeals } from "@/domain/meals";
 import { formatCount, itemProtein, totalProtein } from "@/domain/protein";
 import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
+import { ExampleDayCard } from "@/features/landing/example-day-card";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 
@@ -24,11 +26,29 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
   const lang = HTML_LANG[locale];
 
   const steps = [
-    { key: "goal", Icon: Calculator },
-    { key: "day", Icon: Sun },
-    { key: "adjust", Icon: SlidersHorizontal },
+    { key: "goal", image: UI_IMAGES["misc:target"] },
+    { key: "day", image: UI_IMAGES["diet:vegetarian"] },
+    { key: "adjust", image: UI_IMAGES["misc:sparkles"] },
   ] as const;
-  const faq = ["diet", "numbers", "account", "supplements"] as const;
+  const exampleMeals = sortMeals(EXAMPLE.meals).map((meal) => {
+    const items = day.filter((i) => i.meal === meal);
+    return {
+      key: meal,
+      label: tm(meal),
+      image: UI_IMAGES[`meal:${meal}`],
+      protein: items.reduce((s, i) => s + itemProtein(i, FOOD_INDEX), 0),
+      items: items.map((i) => {
+        const food = FOOD_INDEX.get(i.foodId)!;
+        const portion = food.portions.find((p) => p.id === i.portionId) ?? defaultPortion(food);
+        return {
+          id: i.id,
+          image: foodImage(food.id),
+          label: `${formatCount(i.count, lang)} × ${portion.label[locale].toLowerCase()} ${foodName(food, locale).toLowerCase()}`,
+        };
+      }),
+    };
+  });
+  const faq = ["diet", "account", "allergies", "numbers", "supplements"] as const;
 
   return (
     <div className="flex flex-col gap-20 pb-8">
@@ -53,42 +73,15 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
           <p className="mt-6 max-w-xl text-sm text-muted">{td("health")}</p>
         </div>
 
-        <figure className="rounded-[2rem] border border-border bg-surface p-5 shadow-sm">
-          <figcaption className="flex items-baseline justify-between gap-3">
-            <span className="font-display text-lg font-bold">{t("exampleTitle")}</span>
-            <span className="text-sm text-muted">{t("exampleCaption")}</span>
-          </figcaption>
-          <ul className="mt-4 flex flex-col gap-3">
-            {sortMeals(EXAMPLE.meals).map((meal) => {
-              const items = day.filter((i) => i.meal === meal);
-              return (
-                <li key={meal} className="rounded-2xl bg-bg p-3">
-                  <p className="flex items-baseline justify-between">
-                    <span className="font-semibold">{tm(meal)}</span>
-                    <ProteinNumber
-                      value={items.reduce((s, i) => s + itemProtein(i, FOOD_INDEX), 0)}
-                      size="md"
-                    />
-                  </p>
-                  <p className="mt-0.5 text-sm text-muted">
-                    {items
-                      .map((i) => {
-                        const food = FOOD_INDEX.get(i.foodId)!;
-                        const portion =
-                          food.portions.find((p) => p.id === i.portionId) ?? defaultPortion(food);
-                        return `${formatCount(i.count, lang)} × ${portion.label[locale].toLowerCase()} ${foodName(food, locale).toLowerCase()}`;
-                      })
-                      .join(" · ")}
-                  </p>
-                </li>
-              );
-            })}
-          </ul>
-          <p className="mt-4 flex items-baseline justify-between border-t border-border pt-4">
-            <span className="font-semibold">{t("exampleTotal")}</span>
-            <ProteinNumber value={total} size="xl" className="text-primary" />
-          </p>
-        </figure>
+        <ExampleDayCard
+          title={t("exampleTitle")}
+          caption={t("exampleCaption")}
+          totalLabel={t("exampleTotal")}
+          meals={exampleMeals}
+          total={total}
+          target={EXAMPLE.target}
+          format={lang === "pt-PT" ? "pt-PT" : "en-GB"}
+        />
       </section>
 
       <section aria-labelledby="passos">
@@ -96,11 +89,11 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
           {t("stepsTitle")}
         </h2>
         <ol className="mt-6 grid gap-4 md:grid-cols-3">
-          {steps.map(({ key, Icon }, index) => (
+          {steps.map(({ key, image }, index) => (
             <li key={key} className="rounded-card border border-border bg-surface p-5">
               <span className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-full bg-primary-soft text-primary">
-                  <Icon aria-hidden className="size-5" />
+                <span className="grid size-14 place-items-center rounded-2xl bg-primary-soft">
+                  {image ? <Image src={image} alt="" width={40} height={40} /> : null}
                 </span>
                 <span className="font-display text-sm font-bold text-muted tabular">
                   {index + 1}

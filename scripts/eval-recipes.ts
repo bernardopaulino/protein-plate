@@ -15,7 +15,7 @@ import { FOODS } from "../src/content/foods.generated";
 import type { MaxMinutes } from "../src/domain/contracts/recipe";
 import { indexFoods } from "../src/domain/food";
 import type { Meal } from "../src/domain/meals";
-import { PROMPT_VERSION, buildRecipePrompt } from "../src/server/ai/prompts/recipe.v1";
+import { PROMPT_VERSION, buildRecipePrompt } from "../src/server/ai/prompts/recipe.v2";
 import {
   proteinPerServing,
   recipeOutputSchema,
@@ -193,11 +193,17 @@ for (const [i, c] of CASES.entries()) {
   const proteinIds = chosen.filter((f) => f.role === "protein").map((f) => f.id);
   const request = {
     meal: c.meal,
-    postWorkout: c.postWorkout ?? false,
-    mealTargetG: c.target,
     maxMinutes: c.minutes,
     servings: c.servings,
     variant: 1,
+  };
+  // Perfil típico: fogão e micro-ondas, come de tudo
+  const context = {
+    mealTargetG: c.target,
+    postWorkout: c.postWorkout ?? false,
+    preWorkout: false,
+    equipment: ["stove", "microwave"] as const,
+    diet: "omnivore" as const,
   };
   const started = Date.now();
   let problem: string | null = "sem resposta";
@@ -208,6 +214,7 @@ for (const [i, c] of CASES.entries()) {
     attempts = attempt;
     const { system, prompt } = buildRecipePrompt({
       request,
+      context,
       chosen,
       pantry,
       previousError: attempt > 1 ? problem : undefined,

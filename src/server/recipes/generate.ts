@@ -2,11 +2,14 @@ import { Output, generateText, type LanguageModel } from "ai";
 import { eq } from "drizzle-orm";
 import type { RecipeErrorCode, RecipeRequest } from "@/domain/contracts/recipe";
 import type { Food, FoodIndex } from "@/domain/food";
+import { mealTarget } from "@/domain/meals";
+import { isAllowed } from "@/domain/preferences";
 import type { AppEnv } from "@/lib/env";
 import { AI_TIMEOUT_MS, languageModel, mockModel } from "../ai/model";
-import { PROMPT_VERSION, buildRecipePrompt } from "../ai/prompts/recipe.v1";
+import { PROMPT_VERSION, buildRecipePrompt } from "../ai/prompts/recipe.v2";
 import type { Db } from "../db/client-core";
 import { recipeIngredients, recipes } from "../db/schema";
+import { restrictionsOf, type Profile } from "../services/account";
 import { GLOBAL_KEY, countUsage, quotaKey, usageCount } from "../services/quota";
 import { mockRecipe } from "./mock-recipe";
 import {
@@ -18,7 +21,20 @@ import {
   type RecipeOutput,
 } from "./recipe-rules";
 
-export type Actor = { kind: "user"; userId: string } | { kind: "guest"; ip: string | null };
+/** Quem pede: sempre uma conta com o formulário de boas-vindas concluído. */
+export interface Actor {
+  userId: string;
+  profile: Pick<
+    Profile,
+    | "dailyTargetG"
+    | "meals"
+    | "preWorkoutMeal"
+    | "postWorkoutMeal"
+    | "diet"
+    | "allergies"
+    | "equipment"
+  >;
+}
 
 export type GenerateResult =
   { ok: true; id: string; cached: boolean } | { ok: false; code: RecipeErrorCode; status: number };
@@ -29,8 +45,6 @@ export interface GenerateDeps {
   foods: readonly Food[];
   foodIndex: FoodIndex;
   foodDataVersion: number;
-  /** Verificação do Turnstile (convidados) */
-  verifyTurnstile: (token: string | undefined, ip: string | null) => Promise<boolean>;
   /** Rate limiting por chave (binding RECIPE_LIMITER) */
   rateLimit: (key: string) => Promise<boolean>;
   /** Modelo a usar (os testes injetam um simulado) */
@@ -46,8 +60,9 @@ const fail = (code: RecipeErrorCode, status: number): GenerateResult => ({
 });
 
 /**
- * Pipeline das receitas (secção 6): validação → Turnstile (convidados) → rate limiting → cache →
- * quotas → modelo (uma nova tentativa com o erro descrito) → proteína calculada pela app → D1.
+ * Pipeline das receitas (secção 6): validação (refeição da pessoa, alimentos permitidos) → rate
+ * limiting → cache → quotas → modelo (uma nova tentativa com o erro descrito) → proteína calculada
+ * pela app → D1.
  */
 export async function generateRecipe(
   request: RecipeRequest,
@@ -58,23 +73,39 @@ export async function generateRecipe(
   const log = deps.log ?? (() => {});
   const { db, env } = deps;
 
-  // Alimentos: todos têm de existir; a despensa entra sempre como opcional
+  const { profile } = actor;
+  if (!profile.meals.includes(request.meal)) return fail("invalid_request", 400);
+
+  // Alimentos: todos têm de existir e caber nas restrições; a despensa entra sempre como opcional
+  const restrictions = restrictionsOf(profile);
   const chosen = request.foodIds.map((id) => deps.foodIndex.get(id));
   if (chosen.some((f) => !f || f.role === "pantry")) return fail("unknown_food", 400);
   const chosenFoods = chosen as Food[];
-  const pantry = deps.foods.filter((f) => f.role === "pantry" && !request.foodIds.includes(f.id));
+  if (chosenFoods.some((f) => !isAllowed(f, restrictions))) return fail("restricted_food", 400);
+  const pantry = deps.foods.filter(
+    (f) => f.role === "pantry" && !request.foodIds.includes(f.id) && isAllowed(f, restrictions),
+  );
+  const context = {
+    mealTargetG: mealTarget(
+      profile.dailyTargetG,
+      profile.meals,
+      request.meal,
+      profile.postWorkoutMeal,
+    ),
+    postWorkout: request.meal === profile.postWorkoutMeal,
+    preWorkout: request.meal === profile.preWorkoutMeal,
+    equipment: profile.equipment,
+    diet: profile.diet,
+  };
 
-  if (actor.kind === "guest" && !(await deps.verifyTurnstile(request.turnstileToken, actor.ip))) {
-    return fail("turnstile_failed", 403);
-  }
-
-  const subject = actor.kind === "user" ? `user:${actor.userId}` : `ip:${actor.ip ?? "unknown"}`;
-  const personKey = await quotaKey(env.IP_HASH_SECRET, subject, now());
+  const personKey = await quotaKey(env.IP_HASH_SECRET, `user:${actor.userId}`, now());
   if (!(await deps.rateLimit(personKey))) return fail("rate_limited", 429);
 
   const modelId = env.AI_MODE === "mock" ? "mock" : env.AI_MODEL;
   const cacheKey = await recipeCacheKey({
     ...request,
+    ...context,
+    pantryIds: pantry.map((f) => f.id),
     promptVersion: PROMPT_VERSION,
     model: modelId,
     foodDataVersion: deps.foodDataVersion,
@@ -89,7 +120,7 @@ export async function generateRecipe(
   }
 
   // Quotas: por pessoa e global (acima do global, só cache)
-  const limit = actor.kind === "user" ? env.QUOTA_USER : env.QUOTA_GUEST;
+  const limit = env.QUOTA_USER;
   const [used, usedGlobal] = await Promise.all([
     usageCount(db, personKey, now()),
     usageCount(db, GLOBAL_KEY, now()),
@@ -114,6 +145,7 @@ export async function generateRecipe(
   for (let attempt = 1; attempt <= 2 && !output; attempt++) {
     const { system, prompt } = buildRecipePrompt({
       request,
+      context,
       chosen: chosenFoods,
       pantry,
       previousError,
@@ -170,13 +202,13 @@ export async function generateRecipe(
         title: output.title.trim(),
         summary: output.summary.trim(),
         meal: request.meal,
-        postWorkout: request.postWorkout,
+        postWorkout: context.postWorkout,
         servings: request.servings,
         variant: request.variant,
         prepMinutes: output.prepMinutes,
         steps: output.steps.map((s) => s.trim()),
         proteinPerServingG: perServing,
-        mealTargetG: request.mealTargetG,
+        mealTargetG: context.mealTargetG,
         model: modelId,
         promptVersion: PROMPT_VERSION,
         foodDataVersion: deps.foodDataVersion,

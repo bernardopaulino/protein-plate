@@ -1,11 +1,10 @@
 "use client";
 
-import { Download, LogOut, Trash2 } from "lucide-react";
+import { ChevronRight, Download, LogOut, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatProtein } from "@/domain/protein";
-import { useDay } from "@/features/day/use-day";
 import { Link, useRouter } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { PROVIDER_NAMES, authClient, type SocialProvider } from "@/lib/auth-client";
@@ -16,23 +15,24 @@ import { ProviderButtons } from "./provider-buttons";
 /** Apagar a conta exige uma sessão criada há menos disto (igual ao freshAge do Better Auth). */
 const FRESH_MS = 5 * 60 * 1000;
 
-/** Conta (ecrã 9): meta e refeições, exportar, sair e apagar conta. */
+/** Conta (ecrã 9): meta e preferências, exportar, sair e apagar conta. */
 export function AccountView({
   name,
   sessionCreatedAt,
   providers,
   deleteRequested,
+  goal,
 }: {
   name: string;
   sessionCreatedAt: number;
   providers: SocialProvider[];
   deleteRequested: boolean;
+  goal: { grams: number; meals: number };
 }) {
   const t = useTranslations("account");
   const tc = useTranslations("common");
   const lang = HTML_LANG[useLocale() as Locale];
   const router = useRouter();
-  const { state } = useDay();
   const [deleting, setDeleting] = useState(deleteRequested);
   const [provider, setProvider] = useState<SocialProvider | null>(null);
   const [busy, setBusy] = useState(false);
@@ -99,20 +99,25 @@ export function AccountView({
         {name ? t("hello", { name: name.split(" ")[0] ?? name }) : t("helloAnon")}
       </h1>
 
-      <section className="rounded-card border border-border bg-surface p-5">
-        <h2 className="text-lg font-bold">{t("goal")}</h2>
-        {state ? (
-          <p className="mt-1 text-muted">
-            {t("goalValue", {
-              grams: formatProtein(state.target.grams, lang),
-              count: state.meals.length,
-            })}
-          </p>
-        ) : null}
-        <Button asChild variant="secondary" size="sm" className="mt-3">
-          <Link href="/comecar">{t("editGoal")}</Link>
-        </Button>
-      </section>
+      <Link
+        href="/conta/preferencias"
+        className="group flex items-center gap-4 rounded-card border border-border bg-surface p-5 transition-colors hover:border-primary/60"
+      >
+        <span className="flex size-12 items-center justify-center rounded-full bg-primary-soft text-primary">
+          <SlidersHorizontal aria-hidden className="size-6" />
+        </span>
+        <span className="flex-1">
+          <span className="block text-lg font-bold">{t("preferences")}</span>
+          <span className="block text-muted">
+            {t("goalValue", { grams: formatProtein(goal.grams, lang), count: goal.meals })}
+          </span>
+          <span className="block text-sm text-muted">{t("preferencesHint")}</span>
+        </span>
+        <ChevronRight
+          aria-hidden
+          className="size-5 text-muted transition-transform group-hover:translate-x-0.5"
+        />
+      </Link>
 
       <section className="rounded-card border border-border bg-surface p-5">
         <h2 className="text-lg font-bold">{t("export")}</h2>

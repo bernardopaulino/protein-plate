@@ -6,39 +6,49 @@ import { useMemo, useState } from "react";
 import { FilterChips } from "@/components/protein/chips";
 import { Button } from "@/components/ui/button";
 import type { RecipeResponse } from "@/domain/contracts/recipe";
+import type { Allergen } from "@/domain/food";
+import { isMeal, mealTargets, type Meal } from "@/domain/meals";
+import { isAllowed, type Diet } from "@/domain/preferences";
+import { formatProtein } from "@/domain/protein";
 import {
   MAX_MINUTES_OPTIONS,
   type MaxMinutes,
   type RecipeErrorCode,
 } from "@/domain/recipe-options";
-import { MEALS, isMeal, mealTargets, type Meal } from "@/domain/meals";
-import { formatProtein } from "@/domain/protein";
-import { useDay } from "@/features/day/use-day";
 import { FOOD_INDEX, LISTED_FOODS, foodName } from "@/features/catalog/catalog";
+import { useDay } from "@/features/day/use-day";
 import { useRouter } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
-import { Turnstile } from "./turnstile";
 
-/** Meta de uma refeição sem meta definida (convidado que chegou direto aqui). */
-const FALLBACK_MEAL_TARGET = 30;
+export interface RecipeProfile {
+  dailyTargetG: number;
+  meals: Meal[];
+  preWorkoutMeal: Meal | null;
+  postWorkoutMeal: Meal | null;
+  diet: Diet;
+  allergies: Allergen[];
+  likedFoods: string[];
+  cookMinutes: MaxMinutes;
+}
 
-/** Nova receita (ecrã 7): alimentos, refeição, tempo, doses e Turnstile para convidados. */
+/**
+ * Nova receita (ecrã 7): alimentos (os favoritos primeiro, só os que a pessoa pode comer),
+ * refeição, tempo e doses. A meta da refeição e o treino vêm do perfil, no servidor.
+ */
 export function RecipeForm({
+  profile,
   initialMeal,
   initialFoods,
   initialMinutes,
   initialServings,
   variant,
-  isGuest,
-  siteKey,
 }: {
+  profile: RecipeProfile;
   initialMeal: string | null;
   initialFoods: string[];
-  initialMinutes: number;
+  initialMinutes: number | null;
   initialServings: number;
   variant: number;
-  isGuest: boolean;
-  siteKey: string;
 }) {
   const t = useTranslations("recipes.form");
   const te = useTranslations("recipes.errors");
@@ -48,42 +58,48 @@ export function RecipeForm({
   const router = useRouter();
   const { state } = useDay();
 
-  const meals: readonly Meal[] = state?.meals ?? MEALS;
+  const allowed = (id: string) => {
+    const food = FOOD_INDEX.get(id);
+    return Boolean(food && food.role !== "pantry" && isAllowed(food, profile));
+  };
+  const meals = profile.meals;
   const [meal, setMeal] = useState<Meal>(
-    initialMeal && isMeal(initialMeal) ? initialMeal : (meals[0] ?? "almoco"),
+    initialMeal && isMeal(initialMeal) && meals.includes(initialMeal)
+      ? initialMeal
+      : (meals[0] ?? "almoco"),
   );
-  const validInitial = initialFoods.filter(
-    (id) => FOOD_INDEX.get(id) && FOOD_INDEX.get(id)?.role !== "pantry",
-  );
+  const validInitial = initialFoods.filter(allowed);
   const [selected, setSelected] = useState<string[]>(validInitial.slice(0, 6));
   const [minutes, setMinutes] = useState<MaxMinutes>(
-    (MAX_MINUTES_OPTIONS as readonly number[]).includes(initialMinutes)
+    initialMinutes !== null && (MAX_MINUTES_OPTIONS as readonly number[]).includes(initialMinutes)
       ? (initialMinutes as MaxMinutes)
-      : 20,
+      : profile.cookMinutes,
   );
   const [servings, setServings] = useState(Math.min(4, Math.max(1, Math.round(initialServings))));
-  const [token, setToken] = useState<string | null>(null);
-  const [resetKey, setResetKey] = useState(0);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [error, setError] = useState<RecipeErrorCode | null>(null);
 
-  // Alimentos à escolha: os do dia, os do link e os do catálogo mais usados para a refeição
+  // Alimentos à escolha: os do link, os do dia, os favoritos para a refeição e os mais usados
   const options = useMemo(() => {
-    const dayIds = state?.plan.items.map((i) => i.foodId) ?? [];
-    const forMeal = LISTED_FOODS.filter((f) => f.moments.includes(meal))
-      .sort((a, b) => b.exampleRank - a.exampleRank)
-      .map((f) => f.id);
-    return [...new Set([...validInitial, ...dayIds, ...forMeal])]
-      .filter((id) => FOOD_INDEX.has(id) && FOOD_INDEX.get(id)?.role !== "pantry")
-      .slice(0, 24);
-    // validInitial vem das props: só muda com a navegação
+    const dayIds = state?.plan.items.filter((i) => i.meal === meal).map((i) => i.foodId) ?? [];
+    const byRank = LISTED_FOODS.filter((f) => f.moments.includes(meal)).sort(
+      (a, b) => b.exampleRank - a.exampleRank,
+    );
+    const liked = new Set(profile.likedFoods);
+    const likedForMeal = byRank.filter((f) => liked.has(f.id)).map((f) => f.id);
+    const others = byRank.filter((f) => !liked.has(f.id)).map((f) => f.id);
+    return [
+      ...new Set([...validInitial, ...dayIds, ...likedForMeal, ...profile.likedFoods, ...others]),
+    ]
+      .filter(allowed)
+      .slice(0, 30);
+    // validInitial e o perfil vêm das props: só mudam com a navegação
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, meal]);
 
-  const post = state?.postWorkoutMeal ?? null;
-  const mealTarget = state
-    ? (mealTargets(state.target.grams, state.meals, post).get(meal) ?? FALLBACK_MEAL_TARGET)
-    : FALLBACK_MEAL_TARGET;
+  const post = profile.postWorkoutMeal;
+  const pre = profile.preWorkoutMeal;
+  const mealTarget = mealTargets(profile.dailyTargetG, meals, post).get(meal) ?? 0;
 
   const tooFew = selected.length < 2;
   const tooMany = selected.length > 6;
@@ -100,13 +116,10 @@ export function RecipeForm({
         body: JSON.stringify({
           foodIds: selected,
           meal,
-          postWorkout: meal === post,
-          mealTargetG: Math.round(mealTarget * 10) / 10,
           maxMinutes: minutes,
           servings,
           locale,
           variant: Math.min(3, Math.max(1, Math.round(variant))),
-          ...(isGuest && token ? { turnstileToken: token } : {}),
         }),
       });
       const body = (await response.json()) as RecipeResponse;
@@ -114,19 +127,41 @@ export function RecipeForm({
         router.push(`/receitas/${body.id}`);
         return;
       }
+      if (body.code === "unauthorized") {
+        router.push("/entrar?next=/receitas/nova");
+        return;
+      }
       setError(body.code);
     } catch {
       setError("generation_failed");
     }
     setStatus("idle");
-    if (isGuest) {
-      setToken(null);
-      setResetKey((k) => k + 1);
-    }
   };
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5" aria-busy={status === "loading"}>
+      <fieldset className="rounded-card border border-border bg-surface p-5">
+        <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
+        <FilterChips
+          className="mt-2"
+          label={t("meal")}
+          options={meals.map((m) => ({
+            value: m,
+            label:
+              m === post
+                ? `${tm(m)} · ${tm("postWorkout")}`
+                : m === pre
+                  ? `${tm(m)} · ${tm("preWorkout")}`
+                  : tm(m),
+          }))}
+          selected={[meal]}
+          onChange={(next) => next[0] && setMeal(next[0])}
+        />
+        <p className="mt-2 text-sm text-muted">
+          {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
+        </p>
+      </fieldset>
+
       <fieldset className="rounded-card border border-border bg-surface p-5">
         <legend className="px-1 font-display text-lg font-bold">{t("foods")}</legend>
         <p className="text-sm text-muted">{t("foodsHint")}</p>
@@ -146,23 +181,9 @@ export function RecipeForm({
           {t("foodsCount", { count: selected.length })}
           {tooFew ? ` · ${t("needsFoods")}` : ""}
         </p>
-      </fieldset>
-
-      <fieldset className="rounded-card border border-border bg-surface p-5">
-        <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
-        <FilterChips
-          className="mt-2"
-          label={t("meal")}
-          options={meals.map((m) => ({
-            value: m,
-            label: m === post ? `${tm(m)} · ${tm("postWorkout")}` : tm(m),
-          }))}
-          selected={[meal]}
-          onChange={(next) => next[0] && setMeal(next[0])}
-        />
-        <p className="mt-2 text-sm text-muted">
-          {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
-        </p>
+        {profile.diet !== "omnivore" || profile.allergies.length > 0 ? (
+          <p className="mt-1 text-sm text-muted">{t("restricted")}</p>
+        ) : null}
       </fieldset>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -191,31 +212,14 @@ export function RecipeForm({
         </fieldset>
       </div>
 
-      {isGuest && siteKey ? (
-        <Turnstile
-          siteKey={siteKey}
-          onToken={setToken}
-          label={t("turnstile")}
-          resetKey={resetKey}
-        />
-      ) : null}
-
       <div aria-live="assertive">
         {error ? (
-          <p className="rounded-card border border-border bg-surface p-4">
-            {te(error)} {error === "quota_exceeded" && isGuest ? te("quota_guest") : null}
-          </p>
+          <p className="rounded-card border border-border bg-surface p-4">{te(error)}</p>
         ) : null}
       </div>
 
       <div className="flex flex-wrap items-center gap-4">
-        <Button
-          type="submit"
-          size="lg"
-          disabled={
-            tooFew || tooMany || status === "loading" || (isGuest && Boolean(siteKey) && !token)
-          }
-        >
+        <Button type="submit" size="lg" disabled={tooFew || tooMany || status === "loading"}>
           {status === "loading" ? (
             <Loader2 aria-hidden className="animate-spin" />
           ) : (

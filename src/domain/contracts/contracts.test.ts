@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { FIXTURE_FOODS, fixtureFood } from "../__fixtures__/foods";
-import { importGuestDataSchema, profileInputSchema, savePlanInputSchema } from "./account";
+import { syncDayInputSchema } from "./account";
 import { mealsSchema, portionCountSchema } from "./common";
 import { TODO, checkCatalog, foodSchema, foodsMetaSchema } from "./food";
 import { guestStateSchema } from "./guest-state";
 import { planItemSchema } from "./plan";
+import { preferencesInputSchema } from "./profile";
 import { recipeRequestSchema, recipeResponseSchema } from "./recipe";
 
 const validState = {
-  version: 1,
+  version: 2,
   target: { grams: 160, intensity: "alta", weightKg: 80 },
   meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
   postWorkoutMeal: "lanche",
@@ -32,6 +33,19 @@ describe("estado de convidado", () => {
     expect(parsed.target.manual).toBe(false);
     expect(parsed.plan.seed).toBe(0);
     expect(parsed.plan.isExample).toBe(false);
+    expect(parsed.preWorkoutMeal).toBeNull();
+  });
+
+  it("a refeição pré-treino é uma das escolhidas e diferente da pós-treino", () => {
+    expect(guestStateSchema.safeParse({ ...validState, preWorkoutMeal: "almoco" }).success).toBe(
+      true,
+    );
+    expect(guestStateSchema.safeParse({ ...validState, preWorkoutMeal: "lanche" }).success).toBe(
+      false,
+    );
+    expect(guestStateSchema.safeParse({ ...validState, preWorkoutMeal: "ceia" }).success).toBe(
+      false,
+    );
   });
 
   it("recusa uma refeição pós-treino fora das escolhidas", () => {
@@ -41,7 +55,7 @@ describe("estado de convidado", () => {
   });
 
   it("recusa versões desconhecidas e refeições repetidas", () => {
-    expect(guestStateSchema.safeParse({ ...validState, version: 2 }).success).toBe(false);
+    expect(guestStateSchema.safeParse({ ...validState, version: 3 }).success).toBe(false);
     expect(guestStateSchema.safeParse({ ...validState, meals: ["almoco", "almoco"] }).success).toBe(
       false,
     );
@@ -78,27 +92,61 @@ describe("itens do dia", () => {
 });
 
 describe("conta", () => {
-  const profile = {
-    dailyTargetG: 160,
+  const preferences = {
+    weightKg: 80,
     intensity: "alta",
-    meals: ["almoco", "jantar"],
-    postWorkoutMeal: null,
+    manualTargetG: null,
+    meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    preWorkoutMeal: "lanche",
+    postWorkoutMeal: "jantar",
+    diet: "vegetarian",
+    allergies: ["peanut"],
+    likedFoods: ["skyr-natural", "ovo", "tofu-firme"],
+    equipment: ["stove", "microwave"],
+    cookMinutes: 20,
+    healthConsent: true,
   };
+  const issues = (input: unknown) =>
+    preferencesInputSchema.safeParse(input).error?.issues.map((i) => i.path.join(".")) ?? [];
 
-  it("o perfil nunca leva o peso", () => {
-    expect(profileInputSchema.parse(profile).locale).toBe("pt");
-    expect(profileInputSchema.safeParse({ ...profile, weightKg: 80 }).success).toBe(false);
-    expect(profileInputSchema.safeParse({ ...profile, postWorkoutMeal: "lanche" }).success).toBe(
-      false,
-    );
+  it("aceita as preferências completas", () => {
+    expect(issues(preferences)).toEqual([]);
   });
 
-  it("a importação exige um importId UUID e recusa campos a mais", () => {
-    const input = { importId: crypto.randomUUID(), profile, items: [] };
-    expect(importGuestDataSchema.safeParse(input).success).toBe(true);
-    expect(importGuestDataSchema.safeParse({ ...input, importId: "abc" }).success).toBe(false);
-    expect(importGuestDataSchema.safeParse({ ...input, weightKg: 80 }).success).toBe(false);
-    expect(savePlanInputSchema.safeParse({ items: [], extra: 1 }).success).toBe(false);
+  it("o peso e as alergias só com consentimento; sem peso, a meta é manual", () => {
+    expect(issues({ ...preferences, healthConsent: false })).toEqual(["healthConsent"]);
+    expect(issues({ ...preferences, weightKg: null, allergies: [], healthConsent: false })).toEqual(
+      ["weightKg"],
+    );
+    expect(
+      issues({
+        ...preferences,
+        weightKg: null,
+        manualTargetG: 150,
+        allergies: [],
+        healthConsent: false,
+      }),
+    ).toEqual([]);
+  });
+
+  it("as refeições do treino são das escolhidas e diferentes entre si", () => {
+    expect(issues({ ...preferences, preWorkoutMeal: "ceia" })).toEqual(["preWorkoutMeal"]);
+    expect(issues({ ...preferences, preWorkoutMeal: "jantar" })).toEqual(["preWorkoutMeal"]);
+  });
+
+  it("recusa repetidos, valores fora da lista e campos a mais", () => {
+    expect(issues({ ...preferences, allergies: ["milk", "milk"] }).length).toBeGreaterThan(0);
+    expect(issues({ ...preferences, equipment: [] }).length).toBeGreaterThan(0);
+    expect(issues({ ...preferences, cookMinutes: 25 }).length).toBeGreaterThan(0);
+    expect(issues({ ...preferences, diet: "keto" }).length).toBeGreaterThan(0);
+    expect(issues({ ...preferences, notes: "x" }).length).toBeGreaterThan(0);
+  });
+
+  it("a sincronização do dia leva só o dono e os itens", () => {
+    expect(syncDayInputSchema.safeParse({ owner: "u1", items: [] }).success).toBe(true);
+    expect(syncDayInputSchema.safeParse({ owner: "u1", items: [], profile: {} }).success).toBe(
+      false,
+    );
   });
 });
 
@@ -106,8 +154,6 @@ describe("receitas", () => {
   const request = {
     foodIds: ["atum-lata-natural", "arroz-branco"],
     meal: "almoco",
-    postWorkout: false,
-    mealTargetG: 46,
     maxMinutes: 20,
     servings: 2,
     locale: "pt",
@@ -122,6 +168,8 @@ describe("receitas", () => {
       false,
     );
     expect(recipeRequestSchema.safeParse({ ...request, servings: 5 }).success).toBe(false);
+    // A meta da refeição e o treino vêm do perfil, nunca do pedido
+    expect(recipeRequestSchema.safeParse({ ...request, mealTargetG: 46 }).success).toBe(false);
   });
 
   it("a resposta é um id ou um código de erro", () => {

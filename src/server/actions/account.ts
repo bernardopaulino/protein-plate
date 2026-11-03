@@ -2,47 +2,34 @@
 
 import { cookies } from "next/headers";
 import { z } from "zod";
-import {
-  DEFAULT_PROFILE,
-  importGuestDataSchema,
-  profileInputSchema,
-  savePlanInputSchema,
-} from "@/domain/contracts/account";
-import { FOOD_INDEX } from "@/features/catalog/catalog";
+import { syncDayInputSchema } from "@/domain/contracts/account";
+import { preferencesInputSchema } from "@/domain/contracts/profile";
+import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { CONSENT_COOKIE, CONSENT_COOKIE_MAX_AGE } from "../auth/config";
 import { getSession } from "../auth/session";
 import { getDb } from "../db/client";
 import { getEnv } from "../env";
 import {
   exportUserData,
-  importGuestData,
   isRecipeSaved,
   listSavedRecipes,
   loadDay,
   recordConsent,
-  saveDay,
+  saveDayItems,
+  savePreferences,
   setRecipeSaved,
-  type ImportOutcome,
   type StoredDay,
 } from "../services/account";
 
 // Server Actions: o user ID vem sempre da sessão; tudo o que chega do cliente passa por Zod.
 
-type Result<T> = { ok: true; data: T } | { ok: false; code: "unauthorized" | "invalid" };
+type Result<T> =
+  { ok: true; data: T } | { ok: false; code: "unauthorized" | "invalid" | "liked_foods" };
 
 const unauthorized = { ok: false, code: "unauthorized" } as const;
 const invalid = { ok: false, code: "invalid" } as const;
 
-/** O dia sincronizado; owner é a conta dona da cópia local (tem de ser a da sessão). */
-const syncDaySchema = z
-  .object({
-    owner: z.string().min(1).max(64),
-    profile: profileInputSchema,
-    items: savePlanInputSchema.shape.items,
-  })
-  .strict();
-
-/** Ecrã "Criar conta": regista que a pessoa aceitou os termos (cookie curto lido pelo Better Auth). */
+/** "Entrar": ao continuar, a pessoa aceita os termos (cookie curto lido pelo Better Auth). */
 export async function acceptTermsAction(input: unknown): Promise<Result<null>> {
   const parsed = z
     .object({ accepted: z.literal(true) })
@@ -60,6 +47,22 @@ export async function acceptTermsAction(input: unknown): Promise<Result<null>> {
   return { ok: true, data: null };
 }
 
+/**
+ * /conta/bem-vindo, depois do login: regista o consentimento (contas novas) e devolve o dia
+ * guardado. Sem o formulário de boas-vindas concluído, `profile.onboardedAt` vem a null.
+ */
+export async function welcomeAction(): Promise<Result<StoredDay>> {
+  const session = await getSession();
+  if (!session) return unauthorized;
+  const db = getDb();
+  const jar = await cookies();
+  if (jar.get(CONSENT_COOKIE)) {
+    await recordConsent(db, session.user.id);
+    jar.delete(CONSENT_COOKIE);
+  }
+  return { ok: true, data: await loadDay(db, session.user.id) };
+}
+
 /** O dia guardado na conta (para a cópia local). */
 export async function loadDayAction(): Promise<Result<StoredDay>> {
   const session = await getSession();
@@ -67,44 +70,26 @@ export async function loadDayAction(): Promise<Result<StoredDay>> {
   return { ok: true, data: await loadDay(getDb(), session.user.id) };
 }
 
-/** Guarda meta, refeições e o dia (chamado pelo AccountSync, com debounce). Sem peso. */
+/** Guarda o dia (chamado pelo AccountSync, com debounce). */
 export async function syncDayAction(input: unknown): Promise<Result<null>> {
   const session = await getSession();
   if (!session) return unauthorized;
-  const parsed = syncDaySchema.safeParse(input);
+  const parsed = syncDayInputSchema.safeParse(input);
   if (!parsed.success) return invalid;
   // Uma cópia local de outra conta (aparelho partilhado) nunca escreve nesta
   if (parsed.data.owner !== session.user.id) return unauthorized;
-  await saveDay(getDb(), session.user.id, parsed.data, FOOD_INDEX);
-  return { ok: true, data: null };
+  const saved = await saveDayItems(getDb(), session.user.id, parsed.data.items, FOOD_INDEX);
+  return saved ? { ok: true, data: null } : invalid;
 }
 
-/** /conta/bem-vindo: consentimento (contas novas) e importação do estado de convidado. */
-export async function importGuestDataAction(input: unknown): Promise<Result<ImportOutcome>> {
+/** Formulário de boas-vindas e "As minhas preferências". */
+export async function savePreferencesAction(input: unknown): Promise<Result<StoredDay>> {
   const session = await getSession();
   if (!session) return unauthorized;
-  const parsed = importGuestDataSchema.safeParse(input);
+  const parsed = preferencesInputSchema.safeParse(input);
   if (!parsed.success) return invalid;
-  const db = getDb();
-  const jar = await cookies();
-  if (jar.get(CONSENT_COOKIE)) {
-    await recordConsent(db, session.user.id, parsed.data.profile);
-    jar.delete(CONSENT_COOKIE);
-  }
-  const outcome = await importGuestData(db, session.user.id, parsed.data, FOOD_INDEX);
-  return { ok: true, data: outcome };
-}
-
-/** Conta nova sem estado de convidado: regista o consentimento com uma meta por defeito. */
-export async function ensureConsentAction(): Promise<Result<null>> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  const jar = await cookies();
-  if (jar.get(CONSENT_COOKIE)) {
-    await recordConsent(getDb(), session.user.id, DEFAULT_PROFILE);
-    jar.delete(CONSENT_COOKIE);
-  }
-  return { ok: true, data: null };
+  const result = await savePreferences(getDb(), session.user.id, parsed.data, CATALOG, FOOD_INDEX);
+  return result.ok ? { ok: true, data: result.day } : { ok: false, code: result.code };
 }
 
 const recipeIdSchema = z.string().regex(/^[0-9a-zA-Z]{6,20}$/);

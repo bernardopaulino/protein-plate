@@ -2,14 +2,14 @@
 
 import { ChefHat, CloudCheck, Pencil, Plus, Shuffle, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SuggestionChip } from "@/components/protein/chips";
 import { GoalProgress } from "@/components/protein/goal-progress";
 import { MealSection } from "@/components/protein/meal-section";
 import { PortionStepper } from "@/components/protein/portion-stepper";
 import { ProteinNumber } from "@/components/protein/protein-number";
 import { Button } from "@/components/ui/button";
-import { findPortion } from "@/domain/food";
+import { findPortion, type Allergen } from "@/domain/food";
 import { mealTargets, sortMeals, type Meal } from "@/domain/meals";
 import {
   formatCount,
@@ -18,15 +18,34 @@ import {
   mealProtein,
   totalProtein,
 } from "@/domain/protein";
+import { allowedFoods, type Diet } from "@/domain/preferences";
 import { closeTheGoal } from "@/domain/suggestions";
 import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { AddFoodDrawer } from "./add-food-drawer";
+import { reconcileLocalDay, type ServerDay } from "./local-day";
 import { useDay } from "./use-day";
 
-/** "Hoje" (secção 10, ecrã 3): o dia da pessoa, guardado no browser (e sincronizado com conta). */
-export function DayView() {
+export interface DayPreferences {
+  diet: Diet;
+  allergies: Allergen[];
+  likedFoods: string[];
+}
+
+/**
+ * "Hoje" (secção 10, ecrã 3): o dia da pessoa. A cópia local (sincronizada com a D1) acerta-se
+ * primeiro com o dia que veio do servidor; só aparecem alimentos que a pessoa pode comer.
+ */
+export function DayView({
+  userId,
+  serverDay,
+  preferences,
+}: {
+  userId: string;
+  serverDay: ServerDay;
+  preferences: DayPreferences;
+}) {
   const t = useTranslations("today");
   const tm = useTranslations("meals");
   const tCommon = useTranslations("common");
@@ -35,8 +54,23 @@ export function DayView() {
   const { state, hydrated, add, setCount, remove, otherOptions } = useDay();
   const [drawerMeal, setDrawerMeal] = useState<Meal | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [reconciled, setReconciled] = useState(false);
 
-  if (!hydrated) {
+  useEffect(() => {
+    reconcileLocalDay(serverDay, userId);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- a cópia local só existe no browser
+    setReconciled(true);
+  }, [serverDay, userId]);
+
+  const personal = useMemo(
+    () => ({
+      foods: allowedFoods(CATALOG, preferences),
+      preferred: new Set(preferences.likedFoods),
+    }),
+    [preferences],
+  );
+
+  if (!hydrated || !reconciled) {
     return (
       <div aria-busy="true" className="flex flex-col gap-4">
         <div className="h-28 animate-pulse rounded-card bg-track" />
@@ -59,9 +93,11 @@ export function DayView() {
   }
 
   const target = state.target.grams;
-  const items = state.plan.items;
+  const allowedIds = new Set(personal.foods.map((f) => f.id));
+  const items = state.plan.items.filter((i) => allowedIds.has(i.foodId));
   const meals = sortMeals(state.meals);
   const post = state.postWorkoutMeal;
+  const pre = state.preWorkoutMeal;
   const targets = mealTargets(target, meals, post);
   const total = totalProtein(items, FOOD_INDEX);
   const close = closeTheGoal({
@@ -69,7 +105,7 @@ export function DayView() {
     items,
     meals,
     postWorkoutMeal: post,
-    foods: CATALOG,
+    foods: personal.foods,
     foodIndex: FOOD_INDEX,
   });
 
@@ -85,7 +121,7 @@ export function DayView() {
             </span>
           ) : null}
           <Button asChild variant="ghost" size="sm">
-            <Link href="/comecar">
+            <Link href="/conta/preferencias">
               <Pencil aria-hidden />
               {t("editGoal")}
             </Link>
@@ -105,7 +141,9 @@ export function DayView() {
             key={meal}
             id={`refeicao-${meal}`}
             title={tm(meal)}
-            postWorkoutLabel={meal === post ? tm("postWorkout") : undefined}
+            postWorkoutLabel={
+              meal === post ? tm("postWorkout") : meal === pre ? tm("preWorkout") : undefined
+            }
             total={mealProtein(items, meal, FOOD_INDEX)}
             targetLabel={t("mealTarget", { grams: formatProtein(targets.get(meal) ?? 0, lang) })}
             footer={
@@ -232,7 +270,7 @@ export function DayView() {
 
       <div className="flex flex-wrap items-center gap-3">
         {state.plan.isExample ? (
-          <Button variant="secondary" onClick={otherOptions}>
+          <Button variant="secondary" onClick={() => otherOptions(personal)}>
             <Shuffle aria-hidden />
             {t("otherOptions")}
           </Button>
@@ -242,7 +280,7 @@ export function DayView() {
             <Button
               size="sm"
               onClick={() => {
-                otherOptions();
+                otherOptions(personal);
                 setConfirmReset(false);
               }}
             >
@@ -260,15 +298,6 @@ export function DayView() {
         )}
       </div>
 
-      {!state.owner ? (
-        <section className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-surface p-4">
-          <p className="text-muted">{t("saveHint")}</p>
-          <Button asChild>
-            <Link href="/conta/criar">{t("save")}</Link>
-          </Button>
-        </section>
-      ) : null}
-
       <AddFoodDrawer
         meal={drawerMeal}
         open={drawerMeal !== null}
@@ -276,6 +305,8 @@ export function DayView() {
         onAdd={(foodId, portionId) => {
           if (drawerMeal) add({ meal: drawerMeal, foodId, portionId, count: 1 });
         }}
+        foods={personal.foods}
+        preferred={personal.preferred}
       />
     </div>
   );

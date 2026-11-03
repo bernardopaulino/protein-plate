@@ -201,7 +201,7 @@ export async function createAuth(
       },
       ...(options.waitUntil ? { backgroundTasks: { handler: options.waitUntil } } : {}),
     },
-    onAPIError: { errorURL: "/conta" },
+    onAPIError: { errorURL: "/entrar" },
     logger: {
       // Explícito: os registos "info" do Better Auth podem ter emails
       level: "warn",

@@ -15,6 +15,7 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  * lookaheads nos rewrites.
  */
 const APP_ROUTES = [
+  "entrar",
   "comecar",
   "alimentos",
   "o-meu-dia",
@@ -35,6 +36,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/pt", destination: "/", permanent: true },
       { source: "/pt/:path*", destination: "/:path*", permanent: true },
+      // Desde o login obrigatório, criar conta e entrar são a mesma página
+      { source: "/conta/criar", destination: "/entrar", permanent: true },
     ];
   },
   async rewrites() {

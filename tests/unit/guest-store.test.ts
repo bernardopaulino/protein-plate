@@ -18,13 +18,14 @@ function memoryStorage(initial: Record<string, string> = {}) {
 }
 
 const state: GuestState = {
-  version: 1,
+  version: 2,
   target: { grams: 160, intensity: "alta", weightKg: 80, manual: false },
   meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
   postWorkoutMeal: "lanche",
+  preWorkoutMeal: "almoco",
   plan: { items: [], seed: 0, isExample: true },
   updatedAt: 1,
-  owner: null,
+  owner: "u1",
 };
 
 describe("guest store", () => {
@@ -58,6 +59,9 @@ describe("guest store", () => {
     const read = readGuestState(storage);
     expect(read?.target.intensity).toBe("alta");
     expect(read?.plan.items).toHaveLength(1);
+    // A versão 1 passa a 2, sem refeição pré-treino
+    expect(read?.version).toBe(2);
+    expect(read?.preWorkoutMeal).toBeNull();
   });
 
   it("migra a versão 0 (sem versão) para a atual", () => {
@@ -66,7 +70,8 @@ describe("guest store", () => {
       meals: ["almoco", "jantar"],
       plan: { items: [] },
     }) as GuestState;
-    expect(migrated.version).toBe(1);
+    expect(migrated.version).toBe(2);
+    expect(migrated.preWorkoutMeal).toBeNull();
     expect(migrated.target).toMatchObject({ intensity: "base", manual: false, weightKg: null });
     expect(migrated.postWorkoutMeal).toBeNull();
   });

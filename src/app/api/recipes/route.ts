@@ -5,7 +5,7 @@ import { getSession } from "@/server/auth/session";
 import { getDb } from "@/server/db/client";
 import { getBindings, getEnv } from "@/server/env";
 import { generateRecipe } from "@/server/recipes/generate";
-import { verifyTurnstile } from "@/server/services/turnstile";
+import { loadProfile } from "@/server/services/account";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ function log(event: Record<string, unknown>) {
   console.log(JSON.stringify({ route: "/api/recipes", ...event }));
 }
 
-/** POST /api/recipes: contrato público (também para a futura app). */
+/** POST /api/recipes: contrato público (também para a futura app). Exige login e perfil. */
 export async function POST(request: Request) {
   const started = Date.now();
   const requestId = crypto.randomUUID();
@@ -38,22 +38,23 @@ export async function POST(request: Request) {
   const parsed = recipeRequestSchema.safeParse(raw);
   if (!parsed.success) return json({ ok: false, code: "invalid_request" }, 400);
 
+  const session = await getSession();
+  if (!session) return json({ ok: false, code: "unauthorized" }, 401);
+  const db = getDb();
+  const profile = await loadProfile(db, session.user.id);
+  if (!profile?.onboardedAt) return json({ ok: false, code: "onboarding_required" }, 403);
+
   const env = getEnv();
   const bindings = getBindings();
-  const session = await getSession();
-  const ip = request.headers.get("cf-connecting-ip");
-
   const result = await generateRecipe(
     parsed.data,
-    session ? { kind: "user", userId: session.user.id } : { kind: "guest", ip },
+    { userId: session.user.id, profile },
     {
-      db: getDb(),
+      db,
       env,
       foods: CATALOG,
       foodIndex: FOOD_INDEX,
       foodDataVersion: FOOD_DATA_VERSION,
-      verifyTurnstile: (token, remoteIp) =>
-        verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, remoteIp),
       rateLimit: async (key) => (await bindings.RECIPE_LIMITER.limit({ key })).success,
       log: (event) => log({ requestId, ...event }),
     },

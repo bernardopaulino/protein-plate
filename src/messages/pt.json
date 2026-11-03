@@ -46,7 +46,8 @@
     "lanche": "Lanche",
     "jantar": "Jantar",
     "ceia": "Ceia",
-    "postWorkout": "Pós-treino"
+    "postWorkout": "Pós-treino",
+    "preWorkout": "Pré-treino"
   },
   "intensity": {
     "base": {
@@ -102,21 +103,21 @@
     "eyebrow": "Protein without the diet",
     "title": "Proteína sem dieta.",
     "lead": "Chegar à tua meta de proteína é mais fácil do que parece. Com comida de verdade, em porções que reconheces, sem contar calorias.",
-    "cta": "Calcular a minha meta",
+    "cta": "Começar agora",
     "secondary": "Ver os alimentos",
-    "stepsTitle": "Três passos, menos de dois minutos",
+    "stepsTitle": "Três passos, dois minutos",
     "steps": {
       "goal": {
         "title": "Calcula a meta",
-        "body": "O teu peso e o quanto treinas dão a meta do dia. O peso fica só no teu browser."
+        "body": "O teu peso e o quanto treinas dão a meta do dia, distribuída pelas tuas refeições."
       },
       "day": {
-        "title": "Vê um dia que já chega lá",
-        "body": "Um dia completo com as tuas refeições e os alimentos mais fáceis."
+        "title": "Conta-nos o que gostas",
+        "body": "O que não comes, os teus alimentos favoritos e o que tens na cozinha."
       },
       "adjust": {
-        "title": "Ajusta ao teu gosto",
-        "body": "Troca alimentos, mexe nas porções e gera receitas com o que escolheste."
+        "title": "Come e cozinha",
+        "body": "Um dia que já chega à meta, com os teus alimentos, e receitas por IA feitas para ti."
       }
     },
     "exampleTitle": "Um dia de 160 g, assim",
@@ -134,11 +135,15 @@
       },
       "account": {
         "q": "Preciso de criar conta?",
-        "a": "Não. Tudo funciona sem conta. A conta só serve para guardar e sincronizar."
+        "a": "Sim: entras com o Google ou a Apple, num toque. Assim guardamos o teu plano e as tuas receitas em qualquer aparelho. Podes exportar ou apagar tudo quando quiseres."
       },
       "supplements": {
         "q": "Preciso de suplementos?",
         "a": "Não. O dia exemplo usa só comida de verdade. A whey está no catálogo, assinalada, para quem já a usa."
+      },
+      "allergies": {
+        "q": "E se tiver alergias ou não comer carne?",
+        "a": "Diz-nos no início. O teu dia e as receitas nunca incluem esses alimentos, e podes mudar isso quando quiseres."
       }
     }
   },
@@ -207,9 +212,7 @@
     "resetExample": "Recomeçar com um dia exemplo",
     "resetConfirm": "Trocar o teu dia por um dia exemplo novo?",
     "resetYes": "Sim, trocar",
-    "save": "Guardar o meu dia",
-    "saveHint": "Cria conta para guardar o dia e as receitas. É opcional.",
-    "editGoal": "Mudar meta ou refeições",
+    "editGoal": "Mudar preferências",
     "syncError": "Não conseguimos guardar. Vamos tentar outra vez.",
     "synced": "Guardado na tua conta.",
     "item": {
@@ -269,11 +272,10 @@
     "new": "Gerar uma receita",
     "saved": "Receitas guardadas",
     "savedEmpty": "Ainda não guardaste receitas.",
-    "guestSaved": "Cria conta para guardares receitas.",
     "form": {
       "title": "Nova receita",
       "foods": "Alimentos",
-      "foodsHint": "Escolhe 2 a 6. Os condimentos básicos (azeite, alho, limão) podem entrar sempre.",
+      "foodsHint": "Escolhe 2 a 6. Os teus favoritos aparecem primeiro; os condimentos básicos (azeite, alho, limão) podem entrar sempre.",
       "foodsCount": "{count} de 6",
       "addFoods": "Mais alimentos",
       "meal": "Refeição",
@@ -285,18 +287,20 @@
       "generatingHint": "Demora uns segundos.",
       "needsFoods": "Escolhe pelo menos 2 alimentos.",
       "tooMany": "No máximo 6 alimentos.",
-      "turnstile": "Verificação anti-robô",
-      "mealTarget": "Meta desta refeição: ≈ {grams} g por dose."
+      "mealTarget": "Meta desta refeição: ≈ {grams} g por dose.",
+      "preWorkout": "Pré-treino",
+      "restricted": "Só aparecem alimentos que cabem nas tuas restrições."
     },
     "errors": {
       "invalid_request": "Há algo no pedido que não percebemos. Revê as escolhas e tenta outra vez.",
       "unknown_food": "Um dos alimentos já não está no catálogo.",
-      "turnstile_failed": "A verificação anti-robô falhou. Tenta outra vez.",
       "rate_limited": "Muitos pedidos seguidos. Espera um minuto.",
       "quota_exceeded": "Já geraste as receitas novas de hoje. Amanhã há mais (as receitas já geradas continuam a abrir).",
-      "quota_guest": "Cria conta para gerares mais receitas por dia.",
       "generation_failed": "Não conseguimos uma receita boa com estes alimentos. Tenta trocar um ou mudar o tempo.",
-      "service_unavailable": "As receitas estão em pausa por hoje. As que já existem continuam a abrir."
+      "service_unavailable": "As receitas estão em pausa por hoje. As que já existem continuam a abrir.",
+      "restricted_food": "Um dos alimentos não cabe nas tuas restrições.",
+      "unauthorized": "A tua sessão terminou. Entra outra vez para gerar receitas.",
+      "onboarding_required": "Completa o teu plano antes de gerar receitas."
     },
     "detail": {
       "perServing": "por dose",
@@ -312,59 +316,47 @@
       "copied": "Link copiado.",
       "another": "Gerar outra",
       "postWorkout": "Pós-treino",
-      "loginToSave": "Cria conta para guardar"
+      "loginToSave": "Entra para guardar"
     }
   },
   "account": {
     "title": "Conta",
-    "lead": "A conta é opcional: guarda a meta, o dia e as receitas, e sincroniza entre aparelhos.",
+    "lead": "A tua meta, as tuas preferências e as receitas guardadas.",
     "signIn": "Entrar",
-    "signInWith": "Entrar com {provider}",
-    "noAccount": "Ainda não tens conta?",
-    "create": "Criar conta",
+    "signInWith": "Continuar com {provider}",
     "providersMissing": "O login ainda não está configurado neste ambiente.",
-    "error": "Não conseguimos entrar. Se ainda não tens conta, cria uma primeiro.",
+    "error": "Não conseguimos entrar. Tenta outra vez.",
     "hello": "Olá, {name}",
     "helloAnon": "Olá",
-    "goal": "Meta e refeições",
+    "goal": "Meta e preferências",
     "goalValue": "{grams} g por dia · {count} refeições",
     "editGoal": "Mudar",
     "export": "Exportar os meus dados",
-    "exportHint": "Um ficheiro JSON com a tua meta, o teu dia e as receitas guardadas.",
+    "exportHint": "Um ficheiro JSON com a tua meta, as tuas preferências, o teu dia e as receitas guardadas.",
     "signOut": "Sair",
     "delete": {
       "title": "Apagar conta",
-      "body": "Apaga a conta, a meta, o dia e as receitas guardadas. Não dá para desfazer.",
+      "body": "Apaga a conta, a meta, as preferências (incluindo o peso e as alergias), o dia e as receitas guardadas. Não dá para desfazer.",
       "reauth": "Por segurança, volta a entrar com {provider} antes de apagar.",
       "reauthButton": "Entrar outra vez com {provider}",
       "confirm": "Apagar a minha conta para sempre",
       "done": "A tua conta foi apagada."
     },
-    "createPage": {
-      "title": "Criar conta",
-      "lead": "Guarda a tua meta, o teu dia e as receitas. Usamos só o teu nome e email para a conta.",
-      "consent": "Tenho 16 anos ou mais e aceito os termos e a política de privacidade.",
-      "consentRequired": "Para criar conta, aceita os termos e a política de privacidade.",
-      "with": "Criar conta com {provider}",
-      "haveAccount": "Já tens conta?"
-    },
     "welcome": {
       "title": "Bem-vindo",
-      "importing": "A trazer o teu dia para a conta…",
-      "conflictTitle": "Já tens um dia guardado",
-      "conflictBody": "Qual queres manter?",
-      "keepGuest": "O deste aparelho",
-      "keepAccount": "O da conta",
       "done": "Está tudo guardado na tua conta.",
       "nothing": "A tua conta está pronta.",
-      "goToday": "Ir para o meu dia"
-    }
+      "goToday": "Ir para o meu dia",
+      "loading": "A preparar a tua conta…"
+    },
+    "preferences": "As minhas preferências",
+    "preferencesHint": "Meta, refeições, restrições, alimentos e cozinha."
   },
   "legal": {
     "privacyTitle": "Política de privacidade",
     "termsTitle": "Termos de utilização",
     "updated": "Última atualização: {date}",
-    "date": "2 de novembro de 2026",
+    "date": "3 de novembro de 2026",
     "draft": "Rascunho: este texto ainda vai ser revisto antes do lançamento.",
     "privacy": [
       {
@@ -372,28 +364,32 @@
         "body": "O Protein Plate é um projeto pessoal do Bernardo Paulino. Para qualquer questão sobre os teus dados, escreve para bernardo.sobral7@gmail.com."
       },
       {
-        "title": "Sem conta",
-        "body": "Sem conta, a tua meta, o teu peso e o teu dia ficam só neste browser (localStorage). Não os recebemos."
+        "title": "Conta",
+        "body": "Para usar a app entras com o Google ou a Apple. Guardamos o teu nome e o teu email. As sessões não guardam o teu IP nem o teu browser, e os tokens do Google e da Apple não ficam guardados (exceto o da Apple, cifrado, para a podermos desligar quando apagas a conta)."
       },
       {
-        "title": "Com conta",
-        "body": "Se criares conta com o Google ou a Apple, guardamos o teu nome, o teu email, a meta diária em gramas, as refeições, o teu dia e as receitas que guardares. O teu peso nunca sai do browser. As sessões não guardam o teu IP nem o teu browser."
+        "title": "O teu plano",
+        "body": "Guardamos a tua meta diária, a intensidade do treino, as refeições (incluindo as de antes e depois do treino), o tipo de alimentação, os alimentos de que gostas, o equipamento e o tempo que tens para cozinhar, o teu dia e as receitas que guardares. Usamos isto para personalizar o dia e as receitas (execução do contrato)."
+      },
+      {
+        "title": "Dados de saúde",
+        "body": "O teu peso e as tuas alergias e intolerâncias são dados de saúde. Só os guardamos com o teu consentimento explícito, dado no fim do formulário inicial, e só para calcular a meta e excluir alimentos. Podes retirar o consentimento a qualquer momento: escreve a meta à mão e tira as alergias nas preferências, ou apaga a conta."
       },
       {
         "title": "Receitas por IA",
-        "body": "Para gerar uma receita, enviamos ao modelo de IA (Anthropic) só os nomes dos alimentos escolhidos, a refeição, o tempo e as doses. Nunca enviamos dados teus."
+        "body": "Para gerar uma receita, enviamos ao modelo de IA (Anthropic) só os nomes dos alimentos escolhidos, a refeição, o tempo, as doses, o equipamento e o tipo de alimentação. Nunca enviamos o teu nome, o teu email, o teu peso nem as tuas alergias (os alimentos com alergénios simplesmente não entram na lista)."
       },
       {
         "title": "Limites de utilização",
-        "body": "Para evitar abusos, contamos as receitas geradas por dia com um código derivado do teu IP (HMAC com uma chave que muda todos os dias). O IP não é guardado e os contadores são apagados ao fim de 2 dias."
+        "body": "Para evitar abusos, contamos as receitas geradas por dia com um código derivado da tua conta (HMAC com uma chave que muda todos os dias). Os contadores são apagados ao fim de 2 dias."
       },
       {
         "title": "Onde ficam os dados",
-        "body": "Na Cloudflare (base de dados D1 na União Europeia). A verificação anti-robô usa o Cloudflare Turnstile. Não usamos analytics de terceiros nem cookies de publicidade."
+        "body": "Na Cloudflare (base de dados D1 na União Europeia). Não usamos analytics de terceiros nem cookies de publicidade. O responsável pelo serviço tem um painel de administração protegido para dar apoio e ver números agregados; o peso e as alergias de cada pessoa nunca aparecem nesse painel."
       },
       {
         "title": "Os teus direitos",
-        "body": "Em Conta podes exportar todos os teus dados (JSON) e apagar a conta a qualquer momento. Apagar a conta apaga o perfil, o dia, as receitas guardadas e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
+        "body": "Em Conta podes exportar todos os teus dados (JSON), mudar as tuas preferências e apagar a conta a qualquer momento. Apagar a conta apaga o perfil, as preferências, o dia, as receitas guardadas e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
       },
       {
         "title": "Idade",
@@ -403,7 +399,7 @@
     "terms": [
       {
         "title": "O que é",
-        "body": "O Protein Plate ajuda-te a chegar à tua meta de proteína com comida de verdade. É gratuito e funciona sem conta."
+        "body": "O Protein Plate ajuda-te a chegar à tua meta de proteína com comida de verdade. É gratuito e precisa de uma conta (Google ou Apple)."
       },
       {
         "title": "Informação geral",
@@ -436,5 +432,161 @@
     "title": "Algo correu mal",
     "body": "Não é contigo, é connosco. Tenta outra vez.",
     "retry": "Tentar outra vez"
+  },
+  "onboarding": {
+    "title": "Vamos montar o teu plano",
+    "editTitle": "As tuas preferências",
+    "stepOf": "Passo {step} de {total}",
+    "next": "Continuar",
+    "back": "Voltar",
+    "steps": {
+      "goal": "Meta",
+      "meals": "Refeições",
+      "restrictions": "Restrições",
+      "foods": "Alimentos",
+      "kitchen": "Cozinha",
+      "summary": "Plano"
+    },
+    "goal": {
+      "title": "Quanto pesas?",
+      "lead": "Com o teu peso e o quanto treinas calculamos a proteína de que precisas por dia.",
+      "weightLabel": "Peso",
+      "unit": "kg",
+      "invalid": "Escreve um peso entre 20 e 400 kg.",
+      "confirm": "Sim, o peso está certo",
+      "confirmHint": "Este peso está fora do habitual (35 a 250 kg). Confirma que está certo.",
+      "manualToggle": "Prefiro escrever a meta",
+      "weightToggle": "Calcular pelo peso",
+      "manualLabel": "Meta diária",
+      "manualInvalid": "Escreve uma meta entre 40 e 300 g.",
+      "intensityTitle": "Quanto treinas?",
+      "result": "A tua meta",
+      "perDay": "g de proteína por dia"
+    },
+    "meals": {
+      "title": "Como é o teu dia?",
+      "lead": "Escolhe as refeições que costumas fazer. Distribuímos a proteína por elas.",
+      "count": "Quantas refeições fazes?",
+      "which": "Quais?",
+      "min": "Escolhe pelo menos duas refeições.",
+      "trains": "Treinas?",
+      "yes": "Sim",
+      "no": "Não",
+      "pre": "Antes do treino",
+      "preHint": "Mais leve, com hidratos.",
+      "post": "Depois do treino",
+      "postHint": "Mais proteína e opções rápidas.",
+      "none": "Nenhuma",
+      "target": "≈ {grams} g"
+    },
+    "restrictions": {
+      "title": "Há alguma coisa que não comes?",
+      "lead": "O teu dia e as receitas nunca vão incluir estes alimentos.",
+      "diet": "Alimentação",
+      "diets": {
+        "omnivore": {
+          "label": "Como de tudo",
+          "detail": "Carne, peixe, ovos e lacticínios"
+        },
+        "pescatarian": {
+          "label": "Sem carne",
+          "detail": "Com peixe e marisco"
+        },
+        "vegetarian": {
+          "label": "Vegetariana",
+          "detail": "Com ovos e lacticínios"
+        },
+        "vegan": {
+          "label": "Vegana",
+          "detail": "Só origem vegetal"
+        }
+      },
+      "allergies": "Alergias e intolerâncias",
+      "allergiesHint": "Toca em todas as que se aplicam. Se não tens nenhuma, continua.",
+      "allergyNames": {
+        "milk": "Leite e lactose",
+        "gluten": "Glúten",
+        "egg": "Ovo",
+        "fish": "Peixe",
+        "shellfish": "Marisco",
+        "tree-nuts": "Frutos de casca rija",
+        "peanut": "Amendoim",
+        "soy": "Soja",
+        "sesame": "Sésamo",
+        "lupin": "Tremoço",
+        "mustard": "Mostarda"
+      },
+      "excluded": "{count, plural, =0 {Nenhum alimento excluído.} one {# alimento fica de fora.} other {# alimentos ficam de fora.}}",
+      "safety": "Confirma sempre os rótulos: a app ajuda, mas não substitui o teu cuidado."
+    },
+    "foods": {
+      "title": "Do que gostas?",
+      "lead": "Escolhe o que gostas e costumas ter em casa. Usamos isto no teu dia e nas receitas.",
+      "search": "Procurar alimento",
+      "selected": "{count, plural, =0 {Nada escolhido} one {# escolhido} other {# escolhidos}}",
+      "proteins": "{count} de {min} fontes de proteína",
+      "needProteins": "Escolhe pelo menos {min} fontes de proteína.",
+      "empty": "Nenhum alimento com esse nome.",
+      "groups": {
+        "protein": "Fontes de proteína",
+        "carb": "Hidratos e fruta",
+        "vegetable": "Legumes",
+        "fat": "Frutos secos e sementes"
+      },
+      "perPortion": "{grams} g por porção"
+    },
+    "kitchen": {
+      "title": "E na cozinha?",
+      "lead": "Assim as receitas cabem no teu tempo e no que tens em casa.",
+      "time": "Quanto tempo tens, normalmente?",
+      "times": {
+        "10": "Rapidinho",
+        "20": "O normal",
+        "30": "Com calma",
+        "45": "Gosto de cozinhar"
+      },
+      "minutes": "{minutes} min",
+      "equipment": "O que tens em casa?",
+      "equipmentNames": {
+        "stove": "Fogão",
+        "oven": "Forno",
+        "microwave": "Micro-ondas",
+        "airfryer": "Airfryer",
+        "blender": "Liquidificadora"
+      },
+      "equipmentMin": "Escolhe pelo menos um."
+    },
+    "summary": {
+      "title": "O teu plano está pronto",
+      "lead": "Revê e confirma. Podes mudar tudo mais tarde na tua conta.",
+      "target": "Meta diária",
+      "perMeal": "Por refeição",
+      "pre": "pré-treino",
+      "post": "pós-treino",
+      "diet": "Alimentação",
+      "allergies": "Sem",
+      "noAllergies": "Sem alergias",
+      "foods": "{count, plural, one {# alimento escolhido} other {# alimentos escolhidos}}",
+      "kitchen": "Até {minutes} min · {equipment}",
+      "edit": "Mudar",
+      "consent": "Autorizo o Protein Plate a guardar o meu peso e as minhas alergias para personalizar o meu plano. Posso apagá-los quando quiser.",
+      "consentRequired": "Para guardar o peso e as alergias precisamos da tua autorização. Se preferires, volta à meta e escreve-a à mão.",
+      "submit": "Criar o meu plano",
+      "save": "Guardar alterações",
+      "saving": "A preparar o teu dia…",
+      "likedError": "Escolhe pelo menos 3 fontes de proteína que possas comer.",
+      "done": "Tudo pronto!"
+    }
+  },
+  "signIn": {
+    "title": "Entra para começar",
+    "lead": "Em dois minutos tens a tua meta, um dia completo com o que gostas e receitas feitas para ti.",
+    "benefits": {
+      "goal": "A tua meta de proteína, calculada para ti",
+      "day": "Um dia que já lá chega, com os teus alimentos",
+      "recipes": "Receitas por IA com o que tens em casa"
+    },
+    "legal": "Ao continuar, confirmas que tens 16 anos ou mais e aceitas os <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy>.",
+    "error": "Não conseguimos entrar. Tenta outra vez."
   }
 }

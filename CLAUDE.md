@@ -1,6 +1,6 @@
 # Protein Plate
 
-**Protein Plate** — "Protein without the diet" — é uma web app (mobile no futuro) que mostra que atingir a meta diária de proteína é fácil com comida de verdade: a pessoa calcula a meta, vê um dia completo que já a atinge, ajusta porções reais e gera receitas por IA com os alimentos escolhidos. Sem dieta, sem contar calorias. Projeto de portefólio do Bernardo (procura de emprego em JS/React/Next.js).
+**Protein Plate** — "Protein without the diet" — é uma web app (mobile no futuro) que mostra que atingir a meta diária de proteína é fácil com comida de verdade: a pessoa entra (Google ou Apple), responde a um formulário curto (meta, refeições e treino, restrições, alimentos de que gosta, cozinha), vê um dia completo com os seus alimentos que já atinge a meta, ajusta porções reais e gera receitas por IA feitas para ela. Sem dieta, sem contar calorias. Projeto de portefólio do Bernardo (procura de emprego em JS/React/Next.js).
 
 ## Documentos do projeto
 
@@ -47,17 +47,18 @@ Antes de instalar, confirma as versões estáveis atuais e fixa-as no lockfile.
 ```text
 src/
   app/[locale]/(site)/      landing, privacidade, termos
-  app/[locale]/(app)/       comecar, alimentos, o-meu-dia, receitas, conta
+  app/[locale]/(app)/       entrar, comecar (formulário de boas-vindas), alimentos, o-meu-dia, receitas, conta
   app/api/auth/[...all]/    Better Auth
   app/api/recipes/          geração de receitas (POST)
   domain/                   funções puras + testes, SEM I/O
   domain/contracts/         schemas Zod partilhados
   server/                   import 'server-only': db, auth, ai, services, actions
-  features/                 UI por funcionalidade (goal, catalog, day, recipes, account)
+  features/                 UI por funcionalidade (onboarding, catalog, day, recipes, account, landing)
   components/ui/            shadcn/ui e componentes base
   lib/                      guest-store, format, env
   messages/                 pt.json, en.json
 content/foods/              fonte única dos alimentos (JSON)
+admin/                      backoffice (Worker próprio, Cloudflare Access)
 migrations/  scripts/  tests/  worker/  docs/
 ```
 
@@ -65,7 +66,7 @@ migrations/  scripts/  tests/  worker/  docs/
 
 1. **A proteína é sempre calculada pela app** a partir de `content/foods`. Nunca vem do modelo de IA.
 2. **User ID só da sessão.** Ownership verificada antes de cada escrita. Zod em todas as fronteiras, incluindo Server Actions.
-3. **O peso nunca sai do browser.** O servidor guarda só a meta em gramas.
+3. **Dados de saúde só com consentimento.** O peso e as alergias só se guardam com consentimento explícito, nunca vão para a IA nem aparecem por pessoa no backoffice.
 4. **Cliente Drizzle por pedido**, a partir de `getCloudflareContext().env.DB`; nunca global.
 5. **Sem dados pessoais nos logs** (corpos de pedidos, emails, IPs). O IP só existe como HMAC diário, para quotas.
 6. **Comida de verdade:** o catálogo não tem ultraprocessados, exceto os ids na lista de exceções (whey).

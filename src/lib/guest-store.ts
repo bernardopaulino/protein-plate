@@ -30,10 +30,16 @@ function intensityFromFactor(value: unknown): Intensity | unknown {
 export function migrateGuestState(raw: unknown): unknown {
   if (!isRecord(raw)) return raw;
   const version = raw.version ?? 0;
-  if (version === GUEST_STATE_VERSION) {
+  if (version === GUEST_STATE_VERSION) return raw;
+  if (version === 1) {
     const target = isRecord(raw.target) ? raw.target : {};
-    // O exemplo da especificação usa a intensidade numérica dentro da versão 1
-    return { ...raw, target: { ...target, intensity: intensityFromFactor(target.intensity) } };
+    // O exemplo da especificação usa a intensidade numérica dentro da versão 1; a 2 traz o pré-treino
+    return {
+      ...raw,
+      version: GUEST_STATE_VERSION,
+      target: { ...target, intensity: intensityFromFactor(target.intensity) },
+      preWorkoutMeal: null,
+    };
   }
   if (version === 0) {
     const target = isRecord(raw.target) ? raw.target : {};
@@ -47,6 +53,7 @@ export function migrateGuestState(raw: unknown): unknown {
         intensity: intensityFromFactor(target.intensity),
       },
       postWorkoutMeal: raw.postWorkoutMeal ?? null,
+      preWorkoutMeal: null,
       updatedAt: typeof raw.updatedAt === "number" ? raw.updatedAt : 0,
     };
   }

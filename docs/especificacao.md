@@ -12,30 +12,32 @@ A app prova que atingir a meta diária de proteína é fácil: escolhes alimento
 2. **Comida de verdade.** Catálogo de alimentos naturais, ingredientes culinários e processados simples. Única exceção ultraprocessada, assinalada: proteína whey.
 3. **Porções reais.** Números por porção que a pessoa reconhece; os 100 g ficam no detalhe.
 4. **Zero culpa.** Abaixo da meta é "faltam 23 g", nunca vermelho nem "falhaste".
-5. **Valor antes de registo.** Tudo funciona como convidado; a conta só guarda e sincroniza.
+5. **Personalizado desde o início.** Login obrigatório (Google ou Apple) e um formulário de boas-vindas curto; a página inicial e o catálogo continuam abertos. Decidido a 3/11/2026: a conta guarda as preferências que tornam o dia e as receitas da pessoa.
 6. **Números fiáveis.** A proteína vem sempre da base de dados curada, nunca da IA.
 7. **Simples por defeito.** Sem calorias, sem macros completos, sem registo diário obrigatório.
 
-**Critério de sucesso do MVP:** uma pessoa nova chega a um dia que atinge a meta em menos de 2 minutos, sem criar conta.
+**Critério de sucesso do MVP:** uma pessoa nova chega, em menos de 2 minutos depois de entrar, a um dia que atinge a meta com os alimentos de que gosta.
 
 **Fora do MVP:** calorias e macros completos, registo diário e histórico, produtos de marca, preços, lista de compras, notificações, app mobile.
 
-**Depois do MVP:** v1.1 — inglês, preferências alimentares (vegetariano, sem lactose, exclusões), vários "dias tipo", receitas em streaming. v2 — Open Food Facts, lista de compras, custo por grama de proteína, app Expo sobre o mesmo backend.
+**Depois do MVP:** v1.1 — inglês, vários "dias tipo", receitas em streaming, histórico do peso. v2 — Open Food Facts, lista de compras, custo por grama de proteína, app Expo sobre o mesmo backend.
 
 ## 2. Funcionalidades do MVP
 
 | Funcionalidade | O que inclui | Critério de aceitação |
 | --- | --- | --- |
-| Meta e refeições | Peso + intensidade dão a meta; número de refeições (2 a 6) e refeição pós-treino opcional | Definido em menos de 45 s, sem conta |
-| Catálogo | ~168 alimentos, proteína por porção, filtros por categoria, refeição e facilidade | "Snack sem preparação com mais proteína" em 2 toques |
+| Entrar | Google ou Apple numa só página (`/entrar`); contas novas aceitam os termos ao continuar | Sem sessão, as páginas da app levam a `/entrar` e voltam depois |
+| Formulário de boas-vindas | 6 passos (`/comecar`): meta, refeições (pré e pós-treino), restrições, alimentos de que gosta, cozinha, resumo | Obrigatório antes do dia e das receitas; menos de 2 minutos; editável em `/conta/preferencias` |
+| Catálogo | ~168 alimentos com ilustração, proteína por porção, filtros por categoria, refeição e facilidade | "Snack sem preparação com mais proteína" em 2 toques; público |
 | Detalhe do alimento | Porções, proteína por porção e por 100 g, ideias, fonte TCA | Adicionar ao dia a partir do detalhe |
-| Dia exemplo | Gerado com as refeições da pessoa e os alimentos mais fáceis | Para metas de 80 a 250 g, total entre 100% e 110% |
-| O meu dia ("Hoje") | Refeições, adicionar/remover, porções em passos de 0,5, barra de progresso | Total = soma exata das porções (testado) |
-| Fechar a meta | "Faltam X g" e 3 sugestões | Cada sugestão cobre o que falta com 1 ou 2 porções |
-| Receitas por IA | 2 a 6 alimentos, uma refeição da pessoa (com a sua meta), tempo máximo, doses | Ingredientes 100% da base de dados; resposta < 15 s |
+| Dia exemplo | Gerado com as refeições da pessoa, só com o que pode comer e os alimentos de que gosta primeiro | Para metas de 80 a 250 g, total entre 100% e 110% |
+| O meu dia ("Hoje") | Refeições, adicionar/remover, porções em passos de 0,5, barra de progresso | Total = soma exata das porções (testado); nunca mostra alimentos excluídos |
+| Fechar a meta | "Faltam X g" e 3 sugestões | Cada sugestão cobre o que falta com 1 ou 2 porções, das que a pessoa pode comer |
+| Receitas por IA | 2 a 6 alimentos, uma refeição da pessoa, tempo, doses; meta, treino, equipamento e dieta vêm do perfil | Ingredientes 100% da base de dados e dentro das restrições; resposta < 15 s |
 | Página da receita | URL público, Open Graph | Abre sem conta |
-| Conta opcional | Google e Apple; guardar meta, dia e receitas; importar dados de convidado | Sem duplicados depois do login |
-| Base técnica | PWA, PT (EN preparado), páginas legais, exportar e apagar conta | Lighthouse mobile ≥ 90 nas 4 categorias |
+| Conta | Preferências, receitas guardadas, exportar e apagar | Exportar inclui tudo o que a app guarda |
+| Backoffice | Painel, utilizadores, receitas, alimentos e duas ações (ver `docs/backoffice.md`) | Atrás do Cloudflare Access; sem dados de saúde por pessoa |
+| Base técnica | PWA, PT (EN preparado), páginas legais, motion com `prefers-reduced-motion` | Lighthouse mobile ≥ 90 nas 4 categorias |
 
 ## 3. Regras de domínio (`src/domain`)
 
@@ -53,17 +55,17 @@ Funções puras, sem I/O, 100% testadas. A UI e o servidor usam as mesmas funç�
 | maxima | 2,2 | "Ganhar massa" |
 
 - Peso aceite: 35 a 250 kg (fora disso, pedir confirmação).
-- Meta manual opcional: 40 a 300 g.
-- O peso fica só no browser.
+- Meta manual opcional: 40 a 300 g (sem peso).
+- O peso guarda-se na conta só com o consentimento explícito de dados de saúde (secção 9); a meta calcula-se no servidor.
 
 ### Refeições
 
 Seis tipos, sempre nesta ordem: `pequeno-almoco`, `meio-da-manha`, `almoco`, `lanche`, `jantar`, `ceia`.
 
-Onboarding com duas perguntas:
+No formulário de boas-vindas:
 
-1. "Quantas refeições fazes por dia?" (2 a 6) — pré-seleciona a combinação; a pessoa pode alterar.
-2. "Que refeição fazes a seguir ao treino?" (opcional) — marca uma das refeições escolhidas como pós-treino. Não cria refeição nova.
+1. "Quantas refeições fazes?" (2 a 6) — pré-seleciona a combinação; a pessoa pode alterar.
+2. "Treinas?" — se sim, marca (opcional) uma refeição antes do treino e outra depois. Não cria refeições novas; as duas têm de ser diferentes (se coincidirem, fica a pós-treino).
 
 | N.º | Combinação pré-selecionada |
 | --- | --- |
@@ -77,7 +79,15 @@ Onboarding com duas perguntas:
 
 `meta_refeicao = meta × peso_refeicao / soma_dos_pesos_escolhidos`
 
-Exemplo: 160 g, 4 refeições → sem pós-treino ≈ 46/46/23/46 g; com lanche pós-treino = 40 g cada. Numa refeição pós-treino, sugestões e receitas privilegiam opções rápidas (`ease` 1).
+Exemplo: 160 g, 4 refeições → sem pós-treino ≈ 46/46/23/46 g; com lanche pós-treino = 40 g cada. Numa refeição pós-treino, sugestões e receitas privilegiam opções rápidas (`ease` 1). A pré-treino não muda o peso: o dia exemplo escolhe hidratos e uma proteína rápida e leve (`ease` ≤ 2, gordura ≤ 10 g/100 g) e o prompt pede uma refeição leve.
+
+### Preferências (`src/domain/preferences.ts`)
+
+- **Dieta:** `omnivore`, `pescatarian` (sem carne), `vegetarian` (sem carne nem peixe), `vegan` (só origem vegetal). A origem vem da categoria (`carne`; `peixe`, `marisco`, `conservas`; `ovos`; `laticinios`, `suplementos`), com exceções na despensa (manteiga = laticínio, mel = animal).
+- **Alergias e intolerâncias:** `milk`, `gluten`, `egg`, `fish`, `shellfish` (crustáceos e moluscos), `tree-nuts`, `peanut`, `soy`, `sesame`, `lupin`, `mustard`. Cada alimento tem `allergens` (secção 4).
+- **As restrições são absolutas:** um alimento excluído nunca entra no dia, nas sugestões, na despensa das receitas nem na lista do modelo; o servidor volta a filtrar o que chega do cliente.
+- **Alimentos de que gosta:** ids do catálogo (sem a despensa), limpos das restrições; pelo menos 3 fontes de proteína (`MIN_LIKED_PROTEINS`).
+- **Cozinha:** tempo habitual (10, 20, 30, 45 min; pré-seleciona o tempo das receitas) e equipamento (`stove`, `oven`, `microwave`, `airfryer`, `blender`; pelo menos um).
 
 ### Proteína
 
@@ -93,13 +103,14 @@ Cada alimento tem `weightBasis`: `raw` (cru, para o que se cozinha), `cooked` ou
 
 ### Dia exemplo (determinístico)
 
+0. Só entram os alimentos que a pessoa pode comer; entre eles, os de que gosta vêm primeiro (os outros só quando faltam opções para uma refeição).
 1. Calcula a meta de cada refeição escolhida.
 2. Em cada refeição, escolhe a fonte de proteína mais fácil para esse momento (maior `exampleRank`, compatível com `moments`) e um acompanhamento (`carb` ou `vegetable`).
 3. Ajusta a fonte de proteína em passos de meia porção (1; 1,5; 2) até ao alvo da refeição.
 4. Total abaixo da meta → acrescenta o snack com mais proteína por porção; acima de 110% → reduz o maior passo.
 5. "Outras opções" troca as fontes com uma `seed`, mantendo o determinismo.
 
-Teste property-based: para todas as metas de 80 a 250 g (passos de 5) e todas as combinações de refeições, total entre 100% e 110%.
+Teste property-based: para todas as metas de 80 a 250 g (passos de 5) e todas as combinações de refeições, total entre 100% e 110%; e, por amostra, o mesmo com dietas, alergias, alimentos escolhidos e refeições de treino aleatórios.
 
 ### Fechar a meta
 
@@ -126,10 +137,13 @@ O JSON é a fonte única: gera o seed da D1 e um módulo TypeScript tipado para 
 | `moments` | lista | tipos de refeição onde faz sentido |
 | `ease` | 1 a 3 | 1 = sem preparação, 2 = rápido, 3 = cozinhar |
 | `exampleRank` | inteiro | prioridade no dia exemplo |
+| `allergens` | lista | alergénios (secção 3, "Preferências"); `[]` se não tiver |
 | `tcaCode` | texto | rastreabilidade |
 | `ideas` | `{ pt, en }` | ideias rápidas |
 
-**`content:check`** valida: campos obrigatórios, ids únicos, proteína 0–90 g/100 g, porções 5–500 g (1–500 g na despensa: uma pitada de sal tem 1 g), uma porção `default`, `ultra` só para exceções.
+**Ilustrações:** cada alimento tem uma ilustração (Microsoft Fluent Emoji 3D, MIT) em `public/images/foods`, gerada por `scripts/fetch-food-images.ts` (WebP 160 px, ~450 KB no total) com o mapa em `src/content/food-images.generated.ts`.
+
+**`content:check`** valida: campos obrigatórios, ids únicos, alergénios conhecidos e sem repetidos, proteína 0–90 g/100 g, porções 5–500 g (1–500 g na despensa: uma pitada de sal tem 1 g), uma porção `default`, `ultra` só para exceções.
 
 **Curadoria:** partir de `docs/alimentos.csv`; copiar valores da TCA com o código; definir porções reais; incrementar `FOOD_DATA_VERSION` a cada alteração. Começar pelos 40 alimentos mais usados para desbloquear a UI.
 
@@ -145,7 +159,7 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 | `food_portions` | `id`, `food_id`, `label_pt`, `label_en`, `grams`, `is_default` | FK `foods`; índice parcial único: uma `default` por alimento |
 | `food_moments` | `food_id`, `moment` | PK `(food_id, moment)` |
 | `user`, `session`, `account`, `verification` | Better Auth | sessões sem IP nem user agent |
-| `profiles` | `user_id`, `daily_target_g`, `intensity`, `meals` (JSON), `post_workout_meal`, `locale`, `consent_version`, `consented_at`, `last_import_id`, `updated_at` | PK `user_id`, FK cascade; **sem peso** |
+| `profiles` | `user_id`, `daily_target_g`, `intensity`, `weight_kg`, `manual_target`, `meals` (JSON), `pre_workout_meal`, `post_workout_meal`, `diet`, `allergies` (JSON), `liked_foods` (JSON), `equipment` (JSON), `cook_minutes`, `locale`, `consent_version`, `consented_at`, `health_consent_at`, `onboarded_at`, `last_import_id` (obsoleto), `updated_at` | PK `user_id`, FK cascade; preferências na migração 0002; `weight_kg` e `allergies` só com `health_consent_at` |
 | `day_plans` | `id`, `user_id`, `name`, `position`, `updated_at` | FK cascade; único `(user_id, name)`; v1 usa um plano |
 | `plan_items` | `id`, `plan_id`, `meal`, `food_id`, `portion_id`, `portion_count`, `position` | FK cascade para `day_plans`; `portion_count` 0,5–4 em passos de 0,5 (CHECK); ids gerados no servidor; sem FK para `foods` (o seed reescreve o catálogo e um alimento retirado não pode apagar dias) |
 | `recipes` | `id` (curto), `cache_key`, `locale`, `title`, `summary`, `meal`, `post_workout`, `servings`, `variant` (1–3, migração 0001), `prep_minutes`, `steps` (JSON), `protein_per_serving_g`, `meal_target_g`, `model`, `prompt_version`, `food_data_version`, `input_tokens`, `output_tokens`, `created_at` | `cache_key` único; imutável; sem dono |
@@ -155,16 +169,17 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 
 Apagar um utilizador apaga em cascata perfil, planos, itens, receitas guardadas, sessões e contas. As receitas geradas ficam (não têm dono).
 
-### Estado de convidado (`localStorage`)
+### Cópia local do dia (`localStorage`)
 
-Chave versionada (`protein-plate:guest`), validada com Zod ao ler (os contratos que chegam ao cliente — `common`, `plan`, `guest-state` — usam `zod/mini`, para o bundle levar só as verificações usadas); versão antiga → migra (ex.: a intensidade numérica `2.0` passa a `"alta"`); inválido → recomeça sem rebentar. A intensidade guarda-se pela chave (`base`, `moderada`, `alta`, `maxima`).
+Desde o login obrigatório, é a **cópia local do dia da conta** (chave `protein-plate:guest`, versão 2, com `owner` = id da conta). O `AccountSync` envia só os itens para a D1 (Server Action, debounce); a meta, as refeições e as preferências vêm sempre do perfil no servidor. Ao abrir o "Hoje", a cópia acerta-se com o dia que o servidor mandou (a mais recente ganha; se a meta ou as refeições mudaram noutro aparelho, atualizam-se). Validada com Zod ao ler (os contratos que chegam ao cliente — `common`, `plan`, `guest-state` — usam `zod/mini`); versões antigas migram (a 1 ganha `preWorkoutMeal: null`); inválido → recomeça sem rebentar. Sair da conta apaga a cópia.
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "target": { "grams": 160, "intensity": "alta", "weightKg": 80, "manual": false },
   "meals": ["pequeno-almoco", "almoco", "lanche", "jantar"],
-  "postWorkoutMeal": "lanche",
+  "preWorkoutMeal": "lanche",
+  "postWorkoutMeal": "jantar",
   "plan": {
     "items": [
       { "id": "b1", "meal": "pequeno-almoco", "foodId": "skyr-natural", "portionId": "skyr-natural:iogurte", "count": 1 }
@@ -172,19 +187,20 @@ Chave versionada (`protein-plate:guest`), validada com Zod ao ler (os contratos 
     "seed": 0,
     "isExample": true
   },
-  "updatedAt": 1793577600000
+  "updatedAt": 1793577600000,
+  "owner": "user-id"
 }
 ```
 
 ## 6. Receitas por IA (`POST /api/recipes`)
 
-**Pedido** (só campos fechados, sem texto livre): `foodIds` (2–6), `meal` (uma das refeições da pessoa), `postWorkout` (boolean), `mealTargetG`, `maxMinutes` (10, 20, 30, 45), `servings` (1–4), `locale`, `turnstileToken` (convidados).
+**Pedido** (só campos fechados, sem texto livre): `foodIds` (2–6), `meal` (uma das refeições da pessoa), `maxMinutes` (10, 20, 30, 45), `servings` (1–4), `locale`, `variant`. Exige sessão (401 `unauthorized`) e formulário concluído (403 `onboarding_required`). A meta da refeição, o pré/pós-treino, o equipamento e a dieta vêm do perfil, nunca do pedido.
 
 **Pipeline:**
 
-1. Validar com Zod.
-2. Turnstile (convidados), rate limiting (5/min por chave), quota diária.
-3. Cache: `cache_key` = SHA-256 de alimentos ordenados + refeição + pós-treino + meta da refeição (arredondada a 5 g) + tempo + doses + idioma + `PROMPT_VERSION` + modelo + `FOOD_DATA_VERSION` + variante (1–3, "Gerar outra"). Se existir, devolve sem custo.
+1. Validar com Zod; a refeição tem de ser da pessoa (`invalid_request`) e os alimentos têm de caber nas restrições (`restricted_food`). A despensa é filtrada pelas restrições.
+2. Rate limiting (5/min por chave), quota diária por conta.
+3. Cache: `cache_key` = SHA-256 de alimentos ordenados + refeição + pós-treino + pré-treino + meta da refeição (arredondada a 5 g) + despensa permitida + equipamento + tempo + doses + idioma + `PROMPT_VERSION` + modelo + `FOOD_DATA_VERSION` + variante (1–3, "Gerar outra"). Se existir, devolve sem custo.
 4. Modelo: `generateText` + `Output.object`, schema construído por pedido:
    - `title` ≤ 60, `summary` ≤ 140, `prepMinutes` ≤ `maxMinutes`
    - `ingredients`: 2–10 × `{ foodId: z.enum([...escolhidos, ...despensa]), grams }`
@@ -193,37 +209,39 @@ Chave versionada (`protein-plate:guest`), validada com Zod ao ler (os contratos 
 6. Falha → 1 nova tentativa com o erro descrito; segunda falha → erro amigável, não conta para a quota.
 7. Calcular proteína, guardar (`recipes` + `recipe_ingredients`), contar quota, devolver `id`.
 
-**Prompt** versionado em `src/server/ai/prompts/recipe.v1.ts`: alimentos com nome e base de peso; usar todas as fontes de proteína; não inventar ingredientes; quantidades para a receita completa; português de Portugal; sem alegações de saúde; aproximar a proteína por dose da meta da refeição; pós-treino → receita rápida. A UI mostra quanto a receita cobre da meta.
+**Prompt** versionado em `src/server/ai/prompts/recipe.v2.ts` (`PROMPT_VERSION` 2): alimentos com nome e base de peso; usar todas as fontes de proteína; não inventar ingredientes; quantidades para a receita completa; português de Portugal; sem alegações de saúde; aproximar a proteína por dose da meta da refeição; pós-treino → receita rápida; pré-treino → leve, com hidratos e pouca gordura; só o equipamento da pessoa; nota da dieta (sem carne, vegetariana, vegana). Nunca leva o nome, o peso nem as alergias (os alimentos com alergénios simplesmente não estão na lista). A UI mostra quanto a receita cobre da meta.
 
 **Modelo:** `AI_MODEL` (por defeito `claude-haiku-5-5`), timeout 20 s. `AI_MODE=mock` usa `MockLanguageModelV3` (local e testes).
 
-**Quotas** (configuráveis): convidado 3 receitas novas/dia (chave = HMAC do IP com chave diária derivada de `IP_HASH_SECRET` + data); com conta 15/dia; global `AI_DAILY_LIMIT` (acima, só cache).
+**Quotas** (configuráveis): 15 receitas novas/dia por conta (`QUOTA_USER`; chave = HMAC do id da conta com chave diária derivada de `IP_HASH_SECRET` + data); global `AI_DAILY_LIMIT` (acima, só cache). O Turnstile e a quota de convidados saíram com o login obrigatório.
 
 **Avaliações:** `eval:recipes` corre 20 combinações fixas e mede validade, ingredientes fora da lista, proteína plausível e latência. Corre antes de mudar prompt ou modelo; cada mudança incrementa `PROMPT_VERSION`.
 
-## 7. Autenticação e modo convidado
+## 7. Autenticação (login obrigatório)
 
 - Better Auth em `/api/auth/[...all]`; só os endpoints usados ficam acessíveis (allowlist).
+- **Login obrigatório** para a app (decidido a 3/11/2026). Públicos: `/`, `/alimentos`, `/alimentos/[id]`, `/receitas/[id]`, `/entrar`, páginas legais. As páginas com login usam `requireSession`/`requireProfile` (`src/server/auth/guard.ts`): sem sessão → `/entrar?next=…` (só caminhos internos); sem formulário concluído → `/comecar`.
 - **Google:** cliente OAuth Web; redirect `/api/auth/callback/google` por ambiente.
 - **Apple:** App ID + Services ID novos (Services ID = `clientId`); domínio e return URL `/api/auth/callback/apple` registados; client secret JWT ES256 gerado na configuração com `jose` (180 dias); `trustedOrigins: ['https://appleid.apple.com']`. Não funciona em localhost — testar em staging. O email só vem na primeira autorização.
-- **Regras de conta:** conta nova só a partir de "Criar conta", depois de aceitar termos e privacidade (versão guardada); sem ligação implícita entre contas com o mesmo email; apagar conta exige login recente com o mesmo provider; Apple revoga tokens.
-- **Sincronização:** a cópia local guarda `owner` (id da conta); o servidor só aceita a sincronização se `owner` for o utilizador da sessão, e sair da conta apaga a cópia local (aparelhos partilhados).
-- **Convidado → conta:** "Guardar o meu dia" → login → `/conta/bem-vindo` lê o estado local → Server Action `importGuestData` (Zod, ids existem, batch D1, idempotente com `importId`) → se já houver plano, perguntar qual manter → limpar estado local. O peso nunca é enviado.
+- **Entrar = criar conta:** uma só página; ao continuar, a pessoa aceita os termos (`CONSENT_VERSION` 2), o que põe o cookie curto que o Better Auth exige para criar a conta (`requestSignUp`; uma conta existente entra normalmente). Sem ligação implícita entre contas com o mesmo email; apagar conta exige login recente com o mesmo provider; Apple revoga tokens.
+- **Depois do login:** `/conta/bem-vindo` regista o consentimento (contas novas) e segue para `/comecar` (sem formulário concluído) ou para `next`, com a cópia local ligada à conta.
+- **Testes:** `scripts/dev-session.ts` cria uma pessoa e uma sessão na D1 local e devolve o cookie assinado (e2e e desenvolvimento; nunca toca em staging nem em produção).
 
 ## 8. Rotas e rendering
 
 | Rota | Rendering |
 | --- | --- |
-| `/` | Estático |
+| `/` | Estático (o dia exemplo anima-se no cliente) |
 | `/alimentos`, `/alimentos/[id]` | Estático, gerado do JSON no build; filtros no cliente |
-| `/comecar` | Estático + Client Component |
-| `/o-meu-dia` | Estático: o dia vive no browser (convidado) ou numa cópia local ligada à conta, que o `AccountSync` sincroniza com a D1 por Server Action (debounce); `/conta/bem-vindo` carrega a cópia da D1 |
-| `/receitas/nova` | Dinâmico (lê a sessão e a chave do Turnstile) + Client Component |
+| `/entrar` | Dinâmico (com sessão, segue para `next`) |
+| `/comecar` | Dinâmico, requer sessão; formulário de boas-vindas (Client Component) |
+| `/o-meu-dia` | Dinâmico, requer perfil: o servidor manda o dia e as preferências; a cópia local acerta-se e as mudanças são instantâneas (`AccountSync`) |
+| `/receitas`, `/receitas/nova` | Dinâmico, requer perfil |
 | `/receitas/[id]` | Dinâmico, sem nada da pessoa; o Worker acrescenta `Cache-Control` público longo ao HTML (não aos pedidos RSC). O estado "guardada" vem depois, por Server Action |
-| `/conta`, `/conta/bem-vindo` | Dinâmico, requer sessão |
+| `/conta`, `/conta/preferencias`, `/conta/bem-vindo` | Dinâmico, requer sessão (e perfil, exceto bem-vindo) |
 | `/privacidade`, `/termos` | Estático |
 
-Sem ISR (o catálogo muda com deploy): as páginas pré-renderizadas servem-se dos assets estáticos (`static-assets-incremental-cache` do OpenNext). Server Actions para mutações da UI; Route Handlers só onde há contrato público (`/api/recipes`, para a futura app) e `/api/health` (verificação do Worker).
+`/conta/criar` redireciona (308) para `/entrar`. Sem ISR (o catálogo muda com deploy): as páginas pré-renderizadas servem-se dos assets estáticos (`static-assets-incremental-cache` do OpenNext). Server Actions para mutações da UI; Route Handlers só onde há contrato público (`/api/recipes`, para a futura app) e `/api/health` (verificação do Worker).
 
 **Idiomas sem middleware:** o proxy do Next 16 corre em Node, que no Workers ainda é experimental. Os pedidos das rotas da app (lista explícita `APP_ROUTES`; o routing do OpenNext não aceita lookaheads) são reescritos para `/pt/...` no `next.config.ts` e `/pt/...` redireciona (308) para o endereço sem prefixo; `/en` fica para a v1.1 (`ENABLED_LOCALES`).
 
@@ -232,24 +250,26 @@ Sem ISR (o catálogo muda com deploy): as páginas pré-renderizadas servem-se d
 - User ID só da sessão; ownership antes de cada escrita; Zod em todas as fronteiras.
 - Cookies `HttpOnly`, `Secure`, `SameSite=Lax`; limites de tamanho de pedidos.
 - HSTS acrescentado pelo Worker só em HTTPS (o preview em `http://localhost` continua a funcionar).
-- Cabeçalhos: CSP restrita (próprio domínio + Turnstile + providers de login), HSTS, `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restritiva, `frame-ancestors 'none'`.
-- A IA só recebe ids e nomes de alimentos.
+- Cabeçalhos: CSP restrita (próprio domínio + providers de login; sem Turnstile desde o login obrigatório), HSTS, `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restritiva, `frame-ancestors 'none'`.
+- A IA só recebe ids e nomes de alimentos, a refeição, o equipamento e a dieta.
+- **Dados de saúde (RGPD, art. 9.º):** o peso e as alergias só se guardam com consentimento explícito (caixa no resumo do formulário, `health_consent_at`); sem consentimento, a pessoa escreve a meta à mão e não indica alergias. Exportar inclui-os; apagar a conta apaga-os. O backoffice nunca os mostra por pessoa (só contagens agregadas, com "<5" abaixo de 5).
 - Sem analytics de terceiros (opcional: Cloudflare Web Analytics, sem cookies). D1 na UE. Exportar dados (JSON) e apagar conta na app. Idade mínima 16 anos para conta.
 - **Avisos:** landing e meta — "Informação geral, não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína." Receitas — "Gerada por IA. A proteína é calculada a partir da TCA. Confirma alergénios e intolerâncias."
 
 ## 10. Ecrãs
 
-1. **Landing:** "Proteína sem dieta", 3 passos, exemplo de um dia, FAQ, aviso, CTA "Calcular a minha meta".
-2. **Começar:** peso, 4 cartões de intensidade, número de refeições com combinação pré-selecionada, pós-treino opcional, resultado ("A tua meta: 160 g por dia") e "Vê como é fácil".
-3. **Hoje:** barra de progresso fixa, refeições pela ordem do dia (etiqueta pós-treino), itens com stepper de meia porção, painel "Para fechar a meta", "Gerar receita com estes alimentos" por refeição, "Guardar o meu dia".
-4. **Adicionar alimento:** painel inferior com pesquisa, filtros e os mais fáceis para a refeição.
-5. **Catálogo:** pesquisa, chips de filtros, ordenação, cartões com proteína por porção em destaque.
-6. **Detalhe:** porções com proteína, valor por 100 g, ideias, fonte, "Adicionar ao meu dia".
-7. **Nova receita:** alimentos pré-selecionados, refeição, tempo, doses, Turnstile; estados a gerar / erro / quota esgotada.
-8. **Receita:** proteína por dose e quanto cobre da meta da refeição, tempo, ingredientes, passos, guardar, partilhar, gerar outra, aviso IA.
-9. **Conta:** login, meta e refeições, receitas guardadas, exportar, apagar.
+1. **Página inicial:** "Proteína sem dieta", 3 passos com ilustrações, o dia exemplo animado, FAQ, aviso, CTA "Começar agora".
+2. **Entrar:** benefícios, Google e Apple, "Ao continuar, aceitas os Termos e a Política de Privacidade".
+3. **Formulário de boas-vindas** (6 passos, barra de progresso, transições laterais, barra de ações fixa em baixo): meta (peso com o resultado ao vivo, intensidade em cartões; meta manual opcional), refeições (número, quais, treino com pré e pós), restrições (dieta em cartões, alergias), alimentos (grelha com ilustrações por grupo e pesquisa; 3 fontes de proteína no mínimo), cozinha (tempo e equipamento), resumo (meta, meta por refeição, tudo editável, consentimento de dados de saúde) → "Tudo pronto!" → Hoje. O mesmo formulário edita as preferências na conta.
+4. **Hoje:** barra de progresso fixa, refeições pela ordem do dia (etiquetas pré e pós-treino), itens com stepper de meia porção, painel "Para fechar a meta", "Gerar receita com estes alimentos" por refeição.
+5. **Adicionar alimento:** painel inferior com pesquisa, filtros, os favoritos e os mais fáceis para a refeição primeiro; só alimentos permitidos.
+6. **Catálogo:** pesquisa, chips de filtros, ordenação, cartões com proteína por porção em destaque.
+7. **Detalhe:** porções com proteína, valor por 100 g, ideias, fonte, "Adicionar ao meu dia".
+8. **Nova receita:** refeição, alimentos (favoritos primeiro, só permitidos), tempo (o habitual da pessoa), doses; estados a gerar / erro / quota esgotada.
+9. **Receita:** proteína por dose e quanto cobre da meta da refeição, tempo, ingredientes, passos, guardar, partilhar, gerar outra, aviso IA.
+10. **Conta:** "As minhas preferências", exportar, sair, apagar.
 
-Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta), superior no desktop. Tom: tu, frases curtas, sempre o próximo passo ("Faltam 23 g. Um skyr resolve.").
+Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; escondida no formulário e em Entrar), superior no desktop. Tom: tu, frases curtas, sempre o próximo passo ("Faltam 23 g. Um skyr resolve.").
 
 ## 11. Design
 
@@ -257,7 +277,8 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta), su
 - Tokens (claro / escuro): `--bg` #FBF8F3 / #12110F · `--surface` #FFFFFF / #1C1A17 · `--text` #1F1B16 / #F3EEE7 · `--text-muted` #6B6258 / #A99F93 · `--primary` #2F6B3A / #6FBF7A · `--accent` #F2B33D / #F5C25E (só fundo) · `--track` #EAE3D8 / #2A2723 · `--danger` #B3261E / #F2B8B5 (só erros técnicos).
 - Tipografia: Bricolage Grotesque (títulos, números) + Figtree (texto); escala 12/14/16/20/24/32/56; `tabular-nums`.
 - Componentes próprios: `ProteinNumber`, `GoalProgress`, `MealSection`, `PortionStepper`, `FoodCard`, `SuggestionChip`, `RecipeCard`, `FilterChips`, Drawer de adicionar.
-- Movimento 150–250 ms `ease-out`; nada com `prefers-reduced-motion`.
+- Ilustrações 3D (Fluent Emoji, MIT) nos alimentos, refeições, dietas, alergias, equipamento e passos.
+- Movimento com `motion` 14 (`LazyMotion` + `m`, só nas ilhas que o usam): transições de passo, cartões com mola ao escolher, números que contam, barras que enchem, o dia exemplo a entrar no ecrã. 150–350 ms `ease-out`; `MotionConfig reducedMotion="user"` e o CSS global param tudo com `prefers-reduced-motion`.
 - A11y: contraste ≥ 4,5:1, alvos ≥ 44 px, foco visível, teclado em tudo, `aria-live` para "Faltam X g", `lang="pt-PT"`.
 
 ## 12. Qualidade
@@ -266,11 +287,16 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta), su
 | --- | --- | --- |
 | Domínio | Vitest + fast-check | 100% de `src/domain` |
 | Conteúdo | Vitest | JSON válido, seed = módulo tipado |
-| Servidor | Vitest numa D1 local real | ownership com 2 utilizadores, importação idempotente, quotas, validação de receitas com modelo simulado |
-| E2E | Playwright contra `preview` | primeira utilização, ajustar o dia, gerar receita (mock) |
+| Servidor | Vitest numa D1 local real | ownership com 2 utilizadores, preferências e restrições, quotas por conta, validação de receitas com modelo simulado |
+| E2E | Playwright contra `preview`, com a sessão de `scripts/dev-session.ts` | login obrigatório, formulário de boas-vindas, ajustar o dia, gerar receita (mock) |
+| Backoffice | Vitest (`admin/test`) | acesso, privacidade dos dados de saúde, CSRF, ações |
 | A11y | axe-core + Lighthouse CI | páginas principais, claro e escuro |
 | IA | `eval:recipes` | antes de mudar prompt/modelo |
 
 **CI:** PR → lint, typecheck, content:check, testes, build OpenNext, e2e, Lighthouse. Merge em `main` → deploy staging + migrações. Produção → `workflow_dispatch` manual depois da checklist.
 
 **Observabilidade:** Workers Logs em JSON (id do pedido, rota, estado, duração, código de erro; sem PII); por geração: modelo, tokens, latência, resultado da validação.
+
+## 13. Backoffice
+
+Worker próprio (`admin/`, `admin.protein-plate.app`), com o mesmo modelo do Rejection Quest: Cloudflare Access + validação do token em cada pedido, lista de emails, HTML gerado no servidor sem JavaScript, leitura só com `SELECT` e duas ações com CSRF (terminar sessões, apagar conta). Mostra números agregados, utilizadores (sem peso nem alergias), receitas e alimentos. Detalhes e configuração em `docs/backoffice.md`.
