@@ -28,10 +28,10 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 ### Apple (conta de developer que já tens)
 
-- [ ] App ID novo com "Sign In with Apple" (a descrição aparece no ecrã de login).
-- [ ] Services ID novo (este é o `APPLE_CLIENT_ID`), associado ao App ID.
-- [ ] Domínios e return URLs: `https://staging.protein-plate.app/api/auth/callback/apple` e `https://protein-plate.app/api/auth/callback/apple`.
-- [ ] Chave "Sign In with Apple" (.p8, só se descarrega uma vez), Key ID e Team ID.
+- [x] App ID novo com "Sign In with Apple" (a descrição aparece no ecrã de login).
+- [x] Services ID novo (este é o `APPLE_CLIENT_ID`: `com.bernardopaulino.proteinplate.web`), associado ao App ID `com.bernardopaulino.proteinplate`.
+- [x] Domínios e return URLs: `https://staging.protein-plate.app/api/auth/callback/apple` e `https://protein-plate.app/api/auth/callback/apple`.
+- [x] Chave "Sign In with Apple" (.p8, só se descarrega uma vez), Key ID e Team ID.
 
 ### Anthropic
 
