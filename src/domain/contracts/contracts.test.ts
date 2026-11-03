@@ -1,67 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { FIXTURE_FOODS, fixtureFood } from "../__fixtures__/foods";
-import { syncDayInputSchema } from "./account";
+import { addToDayInputSchema, saveDayInputSchema } from "./account";
 import { mealsSchema, portionCountSchema } from "./common";
 import { TODO, checkCatalog, foodSchema, foodsMetaSchema } from "./food";
-import { guestStateSchema } from "./guest-state";
 import { planItemSchema } from "./plan";
 import { preferencesInputSchema } from "./profile";
 import { recipeRequestSchema, recipeResponseSchema } from "./recipe";
-
-const validState = {
-  version: 2,
-  target: { grams: 160, intensity: "alta", weightKg: 80 },
-  meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
-  postWorkoutMeal: "lanche",
-  plan: {
-    items: [
-      {
-        id: "b1",
-        meal: "pequeno-almoco",
-        foodId: "skyr-natural",
-        portionId: "skyr-natural:iogurte",
-        count: 1,
-      },
-    ],
-  },
-  updatedAt: 1793577600000,
-};
-
-describe("estado de convidado", () => {
-  it("aceita o exemplo da especificação e preenche os valores por defeito", () => {
-    const parsed = guestStateSchema.parse(validState);
-    expect(parsed.target.manual).toBe(false);
-    expect(parsed.plan.seed).toBe(0);
-    expect(parsed.plan.isExample).toBe(false);
-    expect(parsed.preWorkoutMeal).toBeNull();
-  });
-
-  it("a refeição pré-treino é uma das escolhidas e diferente da pós-treino", () => {
-    expect(guestStateSchema.safeParse({ ...validState, preWorkoutMeal: "almoco" }).success).toBe(
-      true,
-    );
-    expect(guestStateSchema.safeParse({ ...validState, preWorkoutMeal: "lanche" }).success).toBe(
-      false,
-    );
-    expect(guestStateSchema.safeParse({ ...validState, preWorkoutMeal: "ceia" }).success).toBe(
-      false,
-    );
-  });
-
-  it("recusa uma refeição pós-treino fora das escolhidas", () => {
-    expect(guestStateSchema.safeParse({ ...validState, postWorkoutMeal: "ceia" }).success).toBe(
-      false,
-    );
-  });
-
-  it("recusa versões desconhecidas e refeições repetidas", () => {
-    expect(guestStateSchema.safeParse({ ...validState, version: 3 }).success).toBe(false);
-    expect(guestStateSchema.safeParse({ ...validState, meals: ["almoco", "almoco"] }).success).toBe(
-      false,
-    );
-    expect(mealsSchema.safeParse(["almoco"]).success).toBe(false);
-  });
-});
 
 describe("itens do dia", () => {
   const item = {
@@ -83,6 +27,12 @@ describe("itens do dia", () => {
     expect(planItemSchema.safeParse({ ...item, portionId: "skyr-natural:iogurte" }).success).toBe(
       false,
     );
+  });
+
+  it("refeições: 2 a 6, sem repetidas", () => {
+    expect(mealsSchema.safeParse(["almoco"]).success).toBe(false);
+    expect(mealsSchema.safeParse(["almoco", "almoco"]).success).toBe(false);
+    expect(mealsSchema.safeParse(["almoco", "jantar"]).success).toBe(true);
   });
 
   it("recusa ids fora do formato", () => {
@@ -142,11 +92,20 @@ describe("conta", () => {
     expect(issues({ ...preferences, notes: "x" }).length).toBeGreaterThan(0);
   });
 
-  it("a sincronização do dia leva só o dono e os itens", () => {
-    expect(syncDayInputSchema.safeParse({ owner: "u1", items: [] }).success).toBe(true);
-    expect(syncDayInputSchema.safeParse({ owner: "u1", items: [], profile: {} }).success).toBe(
-      false,
-    );
+  it("gravar o dia leva só os itens", () => {
+    expect(saveDayInputSchema.safeParse({ items: [] }).success).toBe(true);
+    expect(saveDayInputSchema.safeParse({ items: [], profile: {} }).success).toBe(false);
+    expect(saveDayInputSchema.safeParse({ owner: "u1", items: [] }).success).toBe(false);
+  });
+
+  it("adicionar ao dia: refeição, alimento, porção dele e número de porções", () => {
+    const add = { meal: "almoco", foodId: "ovo", portionId: "ovo:ovo", count: 1 };
+    expect(addToDayInputSchema.safeParse(add).success).toBe(true);
+    expect(
+      addToDayInputSchema.safeParse({ ...add, portionId: "skyr-natural:iogurte" }).success,
+    ).toBe(false);
+    expect(addToDayInputSchema.safeParse({ ...add, count: 5 }).success).toBe(false);
+    expect(addToDayInputSchema.safeParse({ ...add, userId: "x" }).success).toBe(false);
   });
 });
 

@@ -3,6 +3,7 @@ import { CONSENT_VERSION, type PreferencesInput } from "@/domain/contracts/profi
 import type { PlanItemInput } from "@/domain/contracts/plan";
 import { buildExampleDay } from "@/domain/example-day";
 import { findPortion, type Allergen, type Food, type FoodIndex } from "@/domain/food";
+import { addItem, type NewItem } from "@/domain/plan";
 import { dailyTarget, type Intensity } from "@/domain/goal";
 import { normalizeTraining, sortMeals, type Meal } from "@/domain/meals";
 import {
@@ -144,6 +145,11 @@ async function loadItems(db: Db, userId: string) {
   };
 }
 
+/** Só os itens do dia (o perfil já vem do guarda da página). */
+export async function loadDayItems(db: Db, userId: string): Promise<PlanItemInput[]> {
+  return (await loadItems(db, userId)).items;
+}
+
 export async function loadDay(db: Db, userId: string): Promise<StoredDay> {
   const [row] = await db.select().from(profiles).where(eq(profiles.userId, userId));
   const { plan, items } = await loadItems(db, userId);
@@ -191,8 +197,8 @@ async function planIdFor(db: Db, userId: string): Promise<string> {
 }
 
 /**
- * Guarda o dia (chamado pelo AccountSync). Sem perfil concluído não guarda nada; os itens fora das
- * refeições ou das restrições da pessoa ficam de fora.
+ * Guarda o dia (o "Hoje" chama-o depois de cada mudança). Sem perfil concluído não guarda nada; os
+ * itens fora das refeições ou das restrições da pessoa ficam de fora.
  */
 export async function saveDayItems(
   db: Db,
@@ -208,6 +214,39 @@ export async function saveDayItems(
     replaceItemsQueries(db, userId, planId, itemsForProfile(items, profile, foods), now) as never,
   );
   return true;
+}
+
+export type AddDayItemResult = "ok" | "no_profile" | "not_allowed";
+
+/**
+ * "Adicionar ao meu dia" no catálogo: junta um alimento a uma refeição da pessoa (soma porções se
+ * já lá estiver). Alimentos fora das restrições ou refeições que a pessoa não tem não entram.
+ */
+export async function addDayItem(
+  db: Db,
+  userId: string,
+  item: NewItem,
+  foods: FoodIndex,
+  now = Date.now(),
+): Promise<AddDayItemResult> {
+  const profile = await loadProfile(db, userId);
+  if (!profile?.onboardedAt) return "no_profile";
+  const food = foods.get(item.foodId);
+  if (
+    !food ||
+    food.role === "pantry" ||
+    !findPortion(food, item.portionId) ||
+    !profile.meals.includes(item.meal) ||
+    !isAllowed(food, restrictionsOf(profile))
+  )
+    return "not_allowed";
+  const { items } = await loadItems(db, userId);
+  const next = addItem(items, item, crypto.randomUUID());
+  const planId = await planIdFor(db, userId);
+  await db.batch(
+    replaceItemsQueries(db, userId, planId, itemsForProfile(next, profile, foods), now) as never,
+  );
+  return "ok";
 }
 
 /** O dia exemplo da pessoa: só alimentos permitidos, com os de que gosta primeiro. */

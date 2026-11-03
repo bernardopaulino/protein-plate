@@ -35,6 +35,56 @@ test("primeira utilização: entrar → formulário de boas-vindas → um dia qu
   await expect(page).toHaveURL(/\/o-meu-dia$/);
 });
 
+test("o dia vive na conta: as mudanças ficam depois de recarregar e noutro browser", async ({
+  browser,
+  context,
+  page,
+  baseURL,
+}) => {
+  const email = "guardar@protein-plate.local";
+  await signIn(context, baseURL!, email, { fresh: true });
+  await completeOnboarding(page);
+
+  const breakfast = page.locator("#refeicao-pequeno-almoco");
+  const rows = breakfast.getByRole("listitem");
+  const before = await rows.count();
+  await breakfast
+    .getByRole("button", { name: /^Tirar / })
+    .first()
+    .click();
+  await expect(rows).toHaveCount(before - 1);
+  await expect(page.getByText("Guardado na tua conta.")).toBeVisible();
+
+  await page.reload();
+  await expect(page.locator("#refeicao-pequeno-almoco").getByRole("listitem")).toHaveCount(
+    before - 1,
+  );
+
+  // Outro browser (sem nada guardado localmente) vê o mesmo dia
+  const other = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+  await signIn(other, baseURL!, email);
+  const second = await other.newPage();
+  await second.goto("/o-meu-dia");
+  await expect(second.locator("#refeicao-pequeno-almoco").getByRole("listitem")).toHaveCount(
+    before - 1,
+  );
+  await other.close();
+});
+
+test("adicionar ao meu dia a partir do catálogo", async ({ context, page, baseURL }) => {
+  // Sem sessão, explica que é preciso entrar
+  await page.goto("/alimentos/skyr-natural");
+  await expect(page.getByRole("link", { name: "Entrar", exact: true })).toBeVisible();
+
+  await signIn(context, baseURL!, "catalogo@protein-plate.local", { fresh: true });
+  await completeOnboarding(page);
+  await page.goto("/alimentos/skyr-natural");
+  await page.getByRole("button", { name: "Adicionar", exact: true }).click();
+  await expect(page.getByText(/^Adicionado a /)).toBeVisible();
+  await page.getByRole("link", { name: "Ver o meu dia" }).click();
+  await expect(page.getByRole("link", { name: "Skyr natural" }).first()).toBeVisible();
+});
+
 test.describe("com o plano feito", () => {
   test.use({ storageState: ONBOARDED_STATE });
 

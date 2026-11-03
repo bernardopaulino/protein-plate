@@ -31,17 +31,15 @@ Um modelo de linguagem não é uma fonte fiável de valores nutricionais. Por is
 - O pedido só tem campos fechados (ids, refeição, tempo, doses), sem texto livre, o que fecha a porta à injeção de prompt.
 - **Cache por conteúdo**: a chave é um SHA-256 dos parâmetros normalizados, mais a versão do prompt, o modelo e a versão dos dados dos alimentos. Pedidos iguais não custam nada, e mudar o prompt invalida a cache sem migrações.
 
-### 2. O dia vive no browser
+### 2. Onde vive o dia
 
-Para não exigir conta, o estado da pessoa (meta, refeições, dia) vive no `localStorage`, numa chave versionada e validada com Zod ao ler. Se a versão for antiga, migra; se for inválida, recomeça sem rebentar. Os componentes subscrevem com `useSyncExternalStore`, o que mantém várias abas sincronizadas pelo evento `storage`.
+Na primeira versão, sem conta obrigatória, o dia vivia no `localStorage` (chave versionada, validada com Zod) e sincronizava com a D1 quando havia conta. Com o login obrigatório, essa cópia passou a ser um risco: um separador aberto com a versão anterior da app via a versão nova como inválida e apagava-a, e o "Hoje" ficava vazio para quem tinha o plano feito.
 
-Com conta, a mesma cópia local ganha um `owner` e um `AccountSync` envia-a para a D1 por Server Action, com debounce. O servidor ignora o `owner` para autorizar (usa sempre o utilizador da sessão) e recusa a sincronização se não coincidirem. Ao sair da conta, a cópia local é apagada, a pensar em aparelhos partilhados.
+Agora o dia vive só na D1. A página carrega-o do servidor; cada mudança aparece logo no ecrã e grava-se a seguir por Server Action, com debounce, um pedido de cada vez e sempre com o dia mais recente. O servidor usa o utilizador da sessão e volta a filtrar os itens pelas refeições e restrições da pessoa.
 
-A importação convidado → conta é **idempotente** (`importId`): um duplo clique ou uma rede instável não criam dias duplicados.
+### 3. Dados de saúde só com consentimento
 
-### 3. O peso nunca sai do browser
-
-A meta calcula-se a partir do peso, mas o servidor só guarda a meta em gramas. Os schemas das Server Actions são `strict`, por isso um campo a mais, como o peso, é recusado em vez de ignorado. Há testes que o garantem.
+O peso e as alergias são dados de saúde (RGPD, art. 9.º): só se guardam com consentimento explícito no fim do formulário, nunca vão para a IA e o backoffice só os mostra agregados. Os schemas das Server Actions são `strict`, por isso um campo a mais é recusado em vez de ignorado. Há testes que o garantem.
 
 ### 4. Domínio puro, testado por propriedades
 
@@ -77,7 +75,8 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 ## O que aprendi
 
 - **Validar à entrada não chega quando a saída vem de um modelo.** O schema do modelo restringe a *forma*, mas só uma segunda validação de domínio garante que a receita faz sentido (todas as proteínas presentes, doses plausíveis).
-- **O custo do Zod no cliente.** O estado de convidado é validado no browser e isso trazia o Zod clássico (cerca de 32 KB gzip) para as páginas com o dia. Os contratos que chegam ao cliente passaram para `zod/mini`, cuja API funcional só leva para o bundle as verificações usadas (−14 KB gzip). Os contratos só do servidor continuam no Zod clássico. No mesmo espírito, as fontes passaram a carregar só o subset `latin` (que já cobre o português), em vez de pré-carregar também o `latin-ext`.
+- **Uma cópia local é uma segunda fonte de verdade.** Versionar e migrar não chega quando duas versões da app correm ao mesmo tempo em separadores diferentes. Quando a conta passou a ser obrigatória, tirar a cópia foi mais simples e mais seguro do que torná-la compatível nos dois sentidos.
+- **O custo do Zod no cliente.** O estado de convidado era validado no browser e isso trazia o Zod clássico (cerca de 32 KB gzip) para as páginas com o dia. Os contratos que chegam ao cliente passaram para `zod/mini`, cuja API funcional só leva para o bundle as verificações usadas (−14 KB gzip). Os contratos só do servidor continuam no Zod clássico. No mesmo espírito, as fontes passaram a carregar só o subset `latin` (que já cobre o português), em vez de pré-carregar também o `latin-ext`.
 - **O runtime manda na arquitetura.** Escolher Workers em vez de um servidor Node teve consequências nas rotas (sem middleware), na base de dados (cliente por pedido) e nos testes (D1 local real em vez de mocks).
 
 ## Resultados

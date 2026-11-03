@@ -19,18 +19,25 @@ export async function generateMetadata({
 }
 
 /**
- * O dia da conta. O servidor manda o dia guardado e as preferências; no browser, a cópia local
- * (sincronizada pelo AccountSync) acerta-se com ele e as mudanças são instantâneas.
+ * O dia da conta: vem da D1 em cada visita; as mudanças gravam-se logo a seguir (saveDayAction).
+ * Só vai para o browser o que o ecrã precisa (o peso não).
  */
 export default async function TodayPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const { session, profile } = await requireProfile(locale, "/o-meu-dia");
-  const day = await loadDay(getDb(), session.user.id);
+  const { items } = await loadDay(getDb(), session.user.id);
   return (
     <DayView
-      userId={session.user.id}
-      serverDay={day}
+      day={{
+        profile: {
+          dailyTargetG: profile.dailyTargetG,
+          meals: profile.meals,
+          preWorkoutMeal: profile.preWorkoutMeal,
+          postWorkoutMeal: profile.postWorkoutMeal,
+        },
+        items,
+      }}
       preferences={{
         diet: profile.diet,
         allergies: profile.allergies,

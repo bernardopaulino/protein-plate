@@ -18,7 +18,7 @@ export async function generateMetadata({
   return { title: t("title"), robots: { index: false } };
 }
 
-/** Depois do login: consentimento, cópia local ligada à conta e o passo seguinte. */
+/** Depois do login: consentimento e o passo seguinte. */
 export default async function WelcomePage({
   params,
   searchParams,
@@ -33,7 +33,7 @@ export default async function WelcomePage({
   if (!session) redirect({ href: "/entrar", locale });
   return (
     <div className="mx-auto max-w-md pb-8">
-      <Welcome userId={session!.user.id} next={safeNext(query.next)} />
+      <Welcome next={safeNext(query.next)} />
     </div>
   );
 }

@@ -188,9 +188,6 @@
   },
   "today": {
     "title": "O meu dia",
-    "emptyTitle": "Ainda não tens uma meta",
-    "emptyBody": "Calcula a meta e vê um dia completo que já lá chega.",
-    "emptyCta": "Calcular a minha meta",
     "progressLabel": "Proteína do dia",
     "ofTarget": "de {target} g",
     "missing": "Faltam {grams} g.",
@@ -213,7 +210,7 @@
     "resetConfirm": "Trocar o teu dia por um dia exemplo novo?",
     "resetYes": "Sim, trocar",
     "editGoal": "Change preferences",
-    "syncError": "Não conseguimos guardar. Vamos tentar outra vez.",
+    "syncError": "Não conseguimos guardar.",
     "synced": "Guardado na tua conta.",
     "item": {
       "portions": "{count} × {portion}",
@@ -222,7 +219,8 @@
       "remove": "Tirar {food}",
       "count": "{count} porções",
       "unknown": "Alimento que já não está no catálogo"
-    }
+    },
+    "saving": "A guardar…"
   },
   "drawer": {
     "title": "Adicionar a {meal}",
@@ -261,10 +259,13 @@
     "addButton": "Adicionar",
     "added": "Adicionado a {meal}.",
     "seeDay": "Ver o meu dia",
-    "noGoal": "Calcula primeiro a tua meta para adicionares alimentos ao teu dia.",
-    "noGoalCta": "Calcular a minha meta",
+    "noGoal": "Responde primeiro ao formulário de boas-vindas para adicionares alimentos ao teu dia.",
+    "noGoalCta": "Fazer o meu plano",
     "back": "Todos os alimentos",
-    "metaDescription": "{name}: {protein} g de proteína em {portion}. Porções, valor por 100 g e ideias rápidas."
+    "metaDescription": "{name}: {protein} g de proteína em {portion}. Porções, valor por 100 g e ideias rápidas.",
+    "signInToAdd": "Entra para juntares este alimento ao teu dia.",
+    "signInCta": "Entrar",
+    "notForYou": "Este alimento não entra no teu plano, por causa do que disseste que não comes."
   },
   "recipes": {
     "title": "Receitas",

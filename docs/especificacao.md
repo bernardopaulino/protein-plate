@@ -169,9 +169,11 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 
 Apagar um utilizador apaga em cascata perfil, planos, itens, receitas guardadas, sessões e contas. As receitas geradas ficam (não têm dono).
 
-### Cópia local do dia (`localStorage`)
+### O dia (só na conta)
 
-Desde o login obrigatório, é a **cópia local do dia da conta** (chave `protein-plate:guest`, versão 2, com `owner` = id da conta). O `AccountSync` envia só os itens para a D1 (Server Action, debounce); a meta, as refeições e as preferências vêm sempre do perfil no servidor. Ao abrir o "Hoje", a cópia acerta-se com o dia que o servidor mandou (a mais recente ganha; se a meta ou as refeições mudaram noutro aparelho, atualizam-se). Validada com Zod ao ler (os contratos que chegam ao cliente — `common`, `plan`, `guest-state` — usam `zod/mini`); versões antigas migram (a 1 ganha `preWorkoutMeal: null`); inválido → recomeça sem rebentar. Sair da conta apaga a cópia.
+Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor em cada visita; cada mudança aparece logo no ecrã e grava-se a seguir com `saveDayAction` (só os itens, schema `strict`, debounce de 500 ms; um pedido de cada vez, sempre com o dia mais recente; grava logo ao esconder o separador). O ecrã mostra "A guardar…", "Guardado na tua conta." ou o erro com "Tentar outra vez". A meta, as refeições e as preferências vêm sempre do perfil. Não há cópia no browser: a chave antiga `protein-plate:guest` (que tinha o peso) é apagada ao abrir o "Hoje" e ao sair da conta. O "Adicionar ao meu dia" do catálogo usa `addToDayContextAction` (refeições da pessoa e se o alimento cabe nas restrições) e `addToDayAction` (soma porções se já lá estiver).
+
+> Porquê: com a cópia local, um separador aberto com uma versão anterior da app apagava a cópia nova (versão desconhecida → inválida) e o "Hoje" mostrava "Ainda não tens uma meta"; o envio para a D1 também tinha deixado de ser aceite. Com login obrigatório, a cópia já não trazia nada.
 
 ```json
 {
@@ -224,7 +226,7 @@ Desde o login obrigatório, é a **cópia local do dia da conta** (chave `protei
 - **Google:** cliente OAuth Web; redirect `/api/auth/callback/google` por ambiente.
 - **Apple:** App ID + Services ID novos (Services ID = `clientId`); domínio e return URL `/api/auth/callback/apple` registados; client secret JWT ES256 gerado na configuração com `jose` (180 dias); `trustedOrigins: ['https://appleid.apple.com']`. Não funciona em localhost — testar em staging. O email só vem na primeira autorização.
 - **Entrar = criar conta:** uma só página; ao continuar, a pessoa aceita os termos (`CONSENT_VERSION` 2), o que põe o cookie curto que o Better Auth exige para criar a conta (`requestSignUp`; uma conta existente entra normalmente). Sem ligação implícita entre contas com o mesmo email; apagar conta exige login recente com o mesmo provider; Apple revoga tokens.
-- **Depois do login:** `/conta/bem-vindo` regista o consentimento (contas novas) e segue para `/comecar` (sem formulário concluído) ou para `next`, com a cópia local ligada à conta.
+- **Depois do login:** `/conta/bem-vindo` regista o consentimento (contas novas) e segue para `/comecar` (sem formulário concluído) ou para `next`.
 - **Testes:** `scripts/dev-session.ts` cria uma pessoa e uma sessão na D1 local e devolve o cookie assinado (e2e e desenvolvimento; nunca toca em staging nem em produção).
 
 ## 8. Rotas e rendering
@@ -235,7 +237,7 @@ Desde o login obrigatório, é a **cópia local do dia da conta** (chave `protei
 | `/alimentos`, `/alimentos/[id]` | Estático, gerado do JSON no build; filtros no cliente |
 | `/entrar` | Dinâmico (com sessão, segue para `next`) |
 | `/comecar` | Dinâmico, requer sessão; formulário de boas-vindas (Client Component) |
-| `/o-meu-dia` | Dinâmico, requer perfil: o servidor manda o dia e as preferências; a cópia local acerta-se e as mudanças são instantâneas (`AccountSync`) |
+| `/o-meu-dia` | Dinâmico, requer perfil: o servidor manda o dia e as preferências; as mudanças aparecem logo e gravam-se na conta (`saveDayAction`) |
 | `/receitas`, `/receitas/nova` | Dinâmico, requer perfil |
 | `/receitas/[id]` | Dinâmico, sem nada da pessoa; o Worker acrescenta `Cache-Control` público longo ao HTML (não aos pedidos RSC). O estado "guardada" vem depois, por Server Action |
 | `/conta`, `/conta/preferencias`, `/conta/bem-vindo` | Dinâmico, requer sessão (e perfil, exceto bem-vindo) |

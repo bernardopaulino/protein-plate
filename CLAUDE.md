@@ -55,7 +55,7 @@ src/
   server/                   import 'server-only': db, auth, ai, services, actions
   features/                 UI por funcionalidade (onboarding, catalog, day, recipes, account, landing)
   components/ui/            shadcn/ui e componentes base
-  lib/                      guest-store, format, env
+  lib/                      format, env, auth-client
   messages/                 pt.json, en.json
 content/foods/              fonte única dos alimentos (JSON)
 admin/                      backoffice (Worker próprio, Cloudflare Access)

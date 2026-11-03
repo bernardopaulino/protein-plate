@@ -9,6 +9,7 @@ import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { account, session, user } from "@/server/db/auth-schema";
 import { dayPlans, foods, planItems, profiles, recipes, savedRecipes } from "@/server/db/schema";
 import {
+  addDayItem,
   exportUserData,
   isRecipeSaved,
   listSavedRecipes,
@@ -227,6 +228,59 @@ describe("dia (dois utilizadores)", () => {
       FOOD_INDEX,
     );
     expect((await loadDay(t.db, id)).items.map((i) => i.foodId)).toEqual(["peito-frango"]);
+  });
+
+  it("adicionar ao dia (catálogo): soma porções e respeita o perfil de cada pessoa", async () => {
+    const ana = await createUser(t.db, "Ana");
+    const rui = await createUser(t.db, "Rui");
+    await onboard(ana);
+    await onboard(rui, {
+      diet: "vegetarian",
+      likedFoods: ["tofu-firme", "grao-bico-lata", "iogurte-grego-natural"],
+    });
+    await saveDayItems(t.db, ana, [items[1]!], FOOD_INDEX);
+    const chicken = {
+      meal: "almoco",
+      foodId: "peito-frango",
+      portionId: "peito-frango:peito",
+    } as const;
+
+    expect(await addDayItem(t.db, ana, { ...chicken, count: 1 }, FOOD_INDEX)).toBe("ok");
+    const dayAna = await loadDay(t.db, ana);
+    expect(dayAna.items).toHaveLength(1);
+    expect(dayAna.items[0]?.count).toBe(2.5);
+
+    // Vegetariano: o frango não entra; nem refeições que a pessoa não tem
+    expect(await addDayItem(t.db, rui, { ...chicken, count: 1 }, FOOD_INDEX)).toBe("not_allowed");
+    expect(
+      await addDayItem(
+        t.db,
+        rui,
+        { meal: "ceia", foodId: "tofu-firme", portionId: "tofu-firme:meio-bloco", count: 1 },
+        FOOD_INDEX,
+      ),
+    ).toBe("not_allowed");
+    expect(
+      await addDayItem(
+        t.db,
+        rui,
+        { ...chicken, foodId: "nao-existe", portionId: "nao-existe:dose", count: 1 },
+        FOOD_INDEX,
+      ),
+    ).toBe("not_allowed");
+    expect(
+      await addDayItem(
+        t.db,
+        rui,
+        { meal: "almoco", foodId: "tofu-firme", portionId: "tofu-firme:meio-bloco", count: 1 },
+        FOOD_INDEX,
+      ),
+    ).toBe("ok");
+    // O dia da Ana não mudou com os pedidos do Rui
+    expect((await loadDay(t.db, ana)).items).toHaveLength(1);
+
+    const fresh = await createUser(t.db);
+    expect(await addDayItem(t.db, fresh, { ...chicken, count: 1 }, FOOD_INDEX)).toBe("no_profile");
   });
 
   it("a D1 recusa porções fora de 0,5–4 em passos de 0,5", async () => {

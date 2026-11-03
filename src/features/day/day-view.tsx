@@ -1,6 +1,15 @@
 "use client";
 
-import { ChefHat, CloudCheck, Pencil, Plus, Shuffle, Sparkles } from "lucide-react";
+import {
+  ChefHat,
+  CloudAlert,
+  CloudCheck,
+  Loader2,
+  Pencil,
+  Plus,
+  Shuffle,
+  Sparkles,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -19,15 +28,16 @@ import {
   itemProtein,
   mealProtein,
   totalProtein,
+  type PlanItem,
 } from "@/domain/protein";
 import { allowedFoods, type Diet } from "@/domain/preferences";
 import { closeTheGoal } from "@/domain/suggestions";
 import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
+import { clearLegacyStorage } from "@/lib/legacy-storage";
 import { AddFoodDrawer } from "./add-food-drawer";
-import { reconcileLocalDay, type ServerDay } from "./local-day";
-import { useDay } from "./use-day";
+import { useDay, type DayProfile, type SaveStatus } from "./use-day";
 
 export interface DayPreferences {
   diet: Diet;
@@ -35,17 +45,48 @@ export interface DayPreferences {
   likedFoods: string[];
 }
 
+/** Estado da gravação, sempre visível e anunciado aos leitores de ecrã. */
+function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () => void }) {
+  const t = useTranslations("today");
+  const tCommon = useTranslations("common");
+  return (
+    <p aria-live="polite" className="inline-flex items-center gap-1.5 text-sm text-muted">
+      {status === "saving" ? (
+        <>
+          <Loader2 aria-hidden className="size-4 animate-spin" />
+          {t("saving")}
+        </>
+      ) : status === "error" ? (
+        <>
+          <CloudAlert aria-hidden className="size-4" />
+          {t("syncError")}
+          <button
+            type="button"
+            onClick={onRetry}
+            className="font-semibold text-text underline underline-offset-4"
+          >
+            {tCommon("retry")}
+          </button>
+        </>
+      ) : (
+        <>
+          <CloudCheck aria-hidden className="size-4" />
+          {t("synced")}
+        </>
+      )}
+    </p>
+  );
+}
+
 /**
- * "Hoje" (secção 10, ecrã 3): o dia da pessoa. A cópia local (sincronizada com a D1) acerta-se
- * primeiro com o dia que veio do servidor; só aparecem alimentos que a pessoa pode comer.
+ * "Hoje" (secção 10, ecrã 3): o dia da pessoa, carregado da conta. As mudanças aparecem logo e
+ * gravam-se a seguir; só aparecem alimentos que a pessoa pode comer.
  */
 export function DayView({
-  userId,
-  serverDay,
+  day,
   preferences,
 }: {
-  userId: string;
-  serverDay: ServerDay;
+  day: { profile: DayProfile; items: PlanItem[] };
   preferences: DayPreferences;
 }) {
   const t = useTranslations("today");
@@ -53,16 +94,8 @@ export function DayView({
   const tCommon = useTranslations("common");
   const locale = useLocale() as Locale;
   const lang = HTML_LANG[locale];
-  const { state, hydrated, add, setCount, remove, otherOptions } = useDay();
   const [drawerMeal, setDrawerMeal] = useState<Meal | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
-  const [reconciled, setReconciled] = useState(false);
-
-  useEffect(() => {
-    reconcileLocalDay(serverDay, userId);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- a cópia local só existe no browser
-    setReconciled(true);
-  }, [serverDay, userId]);
 
   const personal = useMemo(
     () => ({
@@ -71,35 +104,27 @@ export function DayView({
     }),
     [preferences],
   );
+  const { profile } = day;
+  const {
+    items: allItems,
+    isExample,
+    status,
+    add,
+    setCount,
+    remove,
+    otherOptions,
+    retry,
+  } = useDay({ initialItems: day.items, profile, personal });
 
-  if (!hydrated || !reconciled) {
-    return (
-      <div aria-busy="true" className="flex flex-col gap-4">
-        <div className="h-28 animate-pulse rounded-card bg-track" />
-        <div className="h-48 animate-pulse rounded-card bg-track" />
-        <div className="h-48 animate-pulse rounded-card bg-track" />
-      </div>
-    );
-  }
+  // Versões antigas guardavam uma cópia do dia (com o peso) no browser: deixa de ser precisa
+  useEffect(() => clearLegacyStorage(), []);
 
-  if (!state) {
-    return (
-      <div className="mx-auto max-w-lg rounded-card border border-border bg-surface p-8 text-center">
-        <h1 className="text-2xl font-extrabold">{t("emptyTitle")}</h1>
-        <p className="mt-2 text-muted">{t("emptyBody")}</p>
-        <Button asChild size="lg" className="mt-6">
-          <Link href="/comecar">{t("emptyCta")}</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  const target = state.target.grams;
+  const target = profile.dailyTargetG;
   const allowedIds = new Set(personal.foods.map((f) => f.id));
-  const items = state.plan.items.filter((i) => allowedIds.has(i.foodId));
-  const meals = sortMeals(state.meals);
-  const post = state.postWorkoutMeal;
-  const pre = state.preWorkoutMeal;
+  const items = allItems.filter((i) => allowedIds.has(i.foodId));
+  const meals = sortMeals(profile.meals);
+  const post = profile.postWorkoutMeal;
+  const pre = profile.preWorkoutMeal;
   const targets = mealTargets(target, meals, post);
   const total = totalProtein(items, FOOD_INDEX);
   const close = closeTheGoal({
@@ -116,12 +141,7 @@ export function DayView({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-extrabold">{t("title")}</h1>
         <div className="flex items-center gap-2">
-          {state.owner ? (
-            <span className="inline-flex items-center gap-1 text-sm text-muted">
-              <CloudCheck aria-hidden className="size-4" />
-              {t("synced")}
-            </span>
-          ) : null}
+          <SaveIndicator status={status} onRetry={retry} />
           <Button asChild variant="ghost" size="sm">
             <Link href="/conta/preferencias">
               <Pencil aria-hidden />
@@ -281,8 +301,8 @@ export function DayView({
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
-        {state.plan.isExample ? (
-          <Button variant="secondary" onClick={() => otherOptions(personal)}>
+        {isExample ? (
+          <Button variant="secondary" onClick={otherOptions}>
             <Shuffle aria-hidden />
             {t("otherOptions")}
           </Button>
@@ -292,7 +312,7 @@ export function DayView({
             <Button
               size="sm"
               onClick={() => {
-                otherOptions(personal);
+                otherOptions();
                 setConfirmReset(false);
               }}
             >

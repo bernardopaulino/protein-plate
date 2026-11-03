@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FOOD_INDEX } from "@/features/catalog/catalog";
-import { mirrorFromServer } from "@/features/day/local-day";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import { savePreferencesAction } from "@/server/actions/account";
@@ -120,7 +119,6 @@ export function OnboardingWizard({
         setStatus("error");
         return;
       }
-      mirrorFromServer(result.data, userId);
       try {
         sessionStorage.removeItem(DRAFT_KEY);
       } catch {

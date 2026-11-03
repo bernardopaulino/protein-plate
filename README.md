@@ -38,7 +38,7 @@ admin/           backoffice (Worker próprio, Cloudflare Access, HTML sem JavaSc
 Decisões que vale a pena conhecer:
 
 - **Português sem prefixo, sem middleware.** O proxy do Next 16 corre em Node, que no Workers é experimental; as rotas são reescritas para `/pt/...` no `next.config.ts`.
-- **Login obrigatório, dia instantâneo.** As páginas da app exigem sessão e o formulário concluído (`src/server/auth/guard.ts`). O dia tem uma cópia local (`localStorage` versionado e validado com Zod, com `owner`) que sincroniza com a D1 por Server Action; o servidor recusa se `owner` não for o utilizador da sessão e volta a filtrar tudo pelas restrições da pessoa.
+- **Login obrigatório, dia instantâneo.** As páginas da app exigem sessão e o formulário concluído (`src/server/auth/guard.ts`). O dia vive só na D1: o ecrã muda logo e cada mudança grava-se por Server Action (debounce, um pedido de cada vez, sempre o dia mais recente); o servidor volta a filtrar tudo pelas refeições e restrições da pessoa.
 - **Receitas imutáveis e sem dono**, com cache pública longa acrescentada pelo Worker (só no HTML).
 - **Dados de saúde só com consentimento**: o peso e as alergias guardam-se só com consentimento explícito, nunca vão para a IA nem aparecem por pessoa no backoffice.
 - **Sem PII nos registos**: quotas por HMAC com chave diária; sessões sem IP nem user agent; tokens OAuth descartados (exceto o refresh token da Apple, cifrado, para a revogar ao apagar a conta).
@@ -71,4 +71,4 @@ npm run eval:recipes                             # contra o modelo real (ANTHROP
 
 - **Curadoria**: os 168 alimentos da lista estão no catálogo, mas com valores provisórios (`tcaCode: "TODO"`) até serem confirmados na TCA do INSA. O `content:check` sem `--allow-todo` (usado no deploy de produção) falha até lá.
 - **Contas e segredos**: Google e Apple a funcionar em staging; receitas com o modelo real em staging (`eval:recipes`: 20/20 válidas, mediana 6,9 s, menos de 0,001 $ por receita). Staging em `https://staging.protein-plate.app`, produção em `https://protein-plate.app`.
-- **Performance** (Lighthouse mobile contra staging, mediana de 3 corridas, 2026-11-03): performance 90–91 em `/`, `/comecar`, `/alimentos` e no detalhe dos alimentos, 89 em `/o-meu-dia` (o dia só aparece depois de ler o `localStorage`); acessibilidade e boas práticas 100; SEO 100 nas páginas indexáveis. O limite é o LCP (cerca de 3,5 s em 4G lento simulado).
+- **Performance** (Lighthouse mobile contra staging, mediana de 3 corridas, 2026-11-03): performance 90–91 em `/`, `/comecar`, `/alimentos` e no detalhe dos alimentos, 89 em `/o-meu-dia` (medido antes de o dia passar a vir do servidor); acessibilidade e boas práticas 100; SEO 100 nas páginas indexáveis. O limite é o LCP (cerca de 3,5 s em 4G lento simulado).

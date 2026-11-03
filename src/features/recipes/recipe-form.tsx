@@ -16,7 +16,6 @@ import {
   type RecipeErrorCode,
 } from "@/domain/recipe-options";
 import { FOOD_INDEX, LISTED_FOODS, foodName } from "@/features/catalog/catalog";
-import { useDay } from "@/features/day/use-day";
 import { useRouter } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 
@@ -42,6 +41,7 @@ export function RecipeForm({
   initialMinutes,
   initialServings,
   variant,
+  dayItems,
 }: {
   profile: RecipeProfile;
   initialMeal: string | null;
@@ -49,6 +49,8 @@ export function RecipeForm({
   initialMinutes: number | null;
   initialServings: number;
   variant: number;
+  /** O dia da pessoa (da conta), para sugerir os alimentos de cada refeição. */
+  dayItems: { meal: Meal; foodId: string }[];
 }) {
   const t = useTranslations("recipes.form");
   const te = useTranslations("recipes.errors");
@@ -56,7 +58,6 @@ export function RecipeForm({
   const locale = useLocale() as Locale;
   const lang = HTML_LANG[locale];
   const router = useRouter();
-  const { state } = useDay();
 
   const allowed = (id: string) => {
     const food = FOOD_INDEX.get(id);
@@ -81,7 +82,7 @@ export function RecipeForm({
 
   // Alimentos à escolha: os do link, os do dia, os favoritos para a refeição e os mais usados
   const options = useMemo(() => {
-    const dayIds = state?.plan.items.filter((i) => i.meal === meal).map((i) => i.foodId) ?? [];
+    const dayIds = dayItems.filter((i) => i.meal === meal).map((i) => i.foodId);
     const byRank = LISTED_FOODS.filter((f) => f.moments.includes(meal)).sort(
       (a, b) => b.exampleRank - a.exampleRank,
     );
@@ -95,7 +96,7 @@ export function RecipeForm({
       .slice(0, 30);
     // validInitial e o perfil vêm das props: só mudam com a navegação
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, meal]);
+  }, [dayItems, meal]);
 
   const post = profile.postWorkoutMeal;
   const pre = profile.preWorkoutMeal;

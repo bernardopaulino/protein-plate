@@ -4,15 +4,14 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { mirrorFromServer } from "@/features/day/local-day";
 import { useRouter } from "@/i18n/navigation";
 import { welcomeAction } from "@/server/actions/account";
 
 /**
- * /conta/bem-vindo, depois do login: regista o consentimento (contas novas), liga a cópia local do
- * dia à conta e segue para o formulário de boas-vindas ou para onde a pessoa ia.
+ * /conta/bem-vindo, depois do login: regista o consentimento (contas novas) e segue para o
+ * formulário de boas-vindas ou para onde a pessoa ia.
  */
-export function Welcome({ userId, next }: { userId: string; next: string }) {
+export function Welcome({ next }: { next: string }) {
   const t = useTranslations("account.welcome");
   const tc = useTranslations("common");
   const router = useRouter();
@@ -24,13 +23,7 @@ export function Welcome({ userId, next }: { userId: string; next: string }) {
     try {
       const result = await welcomeAction();
       if (!result.ok) throw new Error(result.code);
-      const day = result.data;
-      if (!day.profile?.onboardedAt) {
-        router.replace("/comecar");
-        return;
-      }
-      mirrorFromServer(day, userId);
-      router.replace(next);
+      router.replace(result.data.onboarded ? next : "/comecar");
     } catch {
       setFailed(true);
     }

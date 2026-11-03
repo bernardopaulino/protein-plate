@@ -8,7 +8,7 @@ import { formatProtein } from "@/domain/protein";
 import { Link, useRouter } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { PROVIDER_NAMES, authClient, type SocialProvider } from "@/lib/auth-client";
-import { removeGuestState } from "@/lib/guest-store";
+import { clearLegacyStorage } from "@/lib/legacy-storage";
 import { exportDataAction } from "@/server/actions/account";
 import { ProviderButtons } from "./provider-buttons";
 
@@ -73,8 +73,7 @@ export function AccountView({
   const signOut = async () => {
     setBusy(true);
     await authClient.signOut();
-    // A cópia local era da conta: sai com ela (aparelhos partilhados)
-    removeGuestState();
+    clearLegacyStorage();
     router.push("/");
     router.refresh();
   };
@@ -88,7 +87,7 @@ export function AccountView({
       setError(true);
       return;
     }
-    removeGuestState();
+    clearLegacyStorage();
     router.push("/");
     router.refresh();
   };
