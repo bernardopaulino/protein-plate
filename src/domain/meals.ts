@@ -42,6 +42,20 @@ export function normalizePostWorkout(
   return postWorkoutMeal && meals.includes(postWorkoutMeal) ? postWorkoutMeal : null;
 }
 
+/**
+ * Refeições à volta do treino: cada uma tem de ser uma das escolhidas e não podem ser a mesma
+ * (se coincidirem, fica só a pós-treino). A pré-treino não muda o peso da refeição.
+ */
+export function normalizeTraining(
+  meals: readonly Meal[],
+  preWorkoutMeal: Meal | null | undefined,
+  postWorkoutMeal: Meal | null | undefined,
+): { preWorkoutMeal: Meal | null; postWorkoutMeal: Meal | null } {
+  const post = normalizePostWorkout(meals, postWorkoutMeal);
+  const pre = normalizePostWorkout(meals, preWorkoutMeal);
+  return { preWorkoutMeal: pre !== null && pre !== post ? pre : null, postWorkoutMeal: post };
+}
+
 /** Peso de uma refeição: principal = 2, intermédia = 1; a pós-treino passa a valer 2. */
 export function mealWeight(meal: Meal, postWorkoutMeal: Meal | null = null): 1 | 2 {
   return MAIN_MEALS.has(meal) || meal === postWorkoutMeal ? 2 : 1;

@@ -35,6 +35,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com aveia e canela", "Batido com banana"],
@@ -69,6 +70,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 80,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com fruta e amêndoa", "Molho com pepino e alho"],
@@ -103,6 +105,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 90,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com morangos e aveia", "Com mel e canela"],
@@ -145,6 +148,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 70,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em pão com tomate", "Com mel e nozes"],
@@ -179,6 +183,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 65,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com doce de abóbora", "Em pão de mistura"],
@@ -213,6 +218,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com tomate e orégãos", "Em salada com grão"],
@@ -247,6 +253,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Tosta com fiambre de peru", "Em pão integral"],
@@ -281,6 +288,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 58,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com aveia"],
@@ -315,6 +323,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com fruta"],
@@ -349,6 +358,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 75,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com mirtilos e mel"],
@@ -383,6 +393,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Batido com fruta"],
@@ -417,6 +428,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "almoco", "lanche"],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em tosta com mel"],
@@ -451,6 +463,7 @@
     "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com tomate e manjericão"],
@@ -485,6 +498,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em pão de mistura"],
@@ -519,6 +533,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 20,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Por cima da massa"],
@@ -553,6 +568,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
     "ease": 1,
     "exampleRank": 25,
+    "allergens": ["milk"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com figos"],

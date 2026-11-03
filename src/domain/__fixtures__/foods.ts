@@ -20,6 +20,7 @@ export function fixtureFood(
     moments: ["almoco", "jantar"] as Meal[],
     ease: 2,
     exampleRank: 50,
+    allergens: [],
     tcaCode: "T001",
     ideas: { pt: [], en: [] },
     ...partial,

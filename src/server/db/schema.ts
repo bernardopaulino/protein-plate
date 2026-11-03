@@ -10,9 +10,10 @@ import {
   unique,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import type { Category, Ease, Processing, Role, WeightBasis } from "@/domain/food";
+import type { Allergen, Category, Ease, Processing, Role, WeightBasis } from "@/domain/food";
 import type { Intensity } from "@/domain/goal";
 import type { Meal } from "@/domain/meals";
+import type { Diet, Equipment } from "@/domain/preferences";
 import { user } from "./auth-schema";
 
 // Datas em epoch ms (integer), booleanos em integer, JSON em text validado com Zod ao ler.
@@ -76,7 +77,7 @@ export const foodMoments = sqliteTable(
   (t) => [primaryKey({ columns: [t.foodId, t.moment] })],
 );
 
-/* ---------------------------------------------------------------- Conta (sem peso) */
+/* ---------------------------------------------------------------- Conta e preferências */
 
 export const profiles = sqliteTable("profiles", {
   userId: text("user_id")
@@ -84,11 +85,36 @@ export const profiles = sqliteTable("profiles", {
     .references(() => user.id, { onDelete: "cascade" }),
   dailyTargetG: integer("daily_target_g").notNull(),
   intensity: text("intensity").$type<Intensity>().notNull(),
+  /** Peso (kg) para calcular a meta; só com o consentimento de dados de saúde (migração 0002). */
+  weightKg: real("weight_kg"),
+  /** Meta escrita à mão (sem peso). */
+  manualTarget: integer("manual_target", { mode: "boolean" }).notNull().default(false),
   meals: text("meals", { mode: "json" }).$type<Meal[]>().notNull(),
+  preWorkoutMeal: text("pre_workout_meal").$type<Meal>(),
   postWorkoutMeal: text("post_workout_meal").$type<Meal>(),
+  diet: text("diet").$type<Diet>().notNull().default("omnivore"),
+  /** Alergénios excluídos (dados de saúde: só com consentimento explícito). */
+  allergies: text("allergies", { mode: "json" })
+    .$type<Allergen[]>()
+    .notNull()
+    .default(sql`'[]'`),
+  /** Alimentos de que gosta e tem no dia a dia (ids do catálogo). */
+  likedFoods: text("liked_foods", { mode: "json" })
+    .$type<string[]>()
+    .notNull()
+    .default(sql`'[]'`),
+  equipment: text("equipment", { mode: "json" })
+    .$type<Equipment[]>()
+    .notNull()
+    .default(sql`'["stove","microwave"]'`),
+  cookMinutes: integer("cook_minutes").notNull().default(20),
   locale: text("locale").$type<"pt" | "en">().notNull().default("pt"),
   consentVersion: integer("consent_version"),
   consentedAt: integer("consented_at"),
+  /** Consentimento explícito para guardar o peso e as alergias (RGPD, art. 9.º). */
+  healthConsentAt: integer("health_consent_at"),
+  /** Formulário de boas-vindas concluído (sem isto, a app pede-o antes de tudo o resto). */
+  onboardedAt: integer("onboarded_at"),
   lastImportId: text("last_import_id"),
   updatedAt: integer("updated_at").notNull(),
 });

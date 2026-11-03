@@ -35,6 +35,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 95,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhado com limão e orégãos", "Em tiras, salteado com legumes"],
@@ -77,6 +78,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 75,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Bife na frigideira em 6 minutos", "Em cubos, no caril"],
@@ -119,6 +121,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 70,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Bolonhesa com massa", "Hambúrguer caseiro no forno"],
@@ -153,6 +156,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 72,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["No forno com batata e limão"],
@@ -187,6 +191,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 62,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Almôndegas com tomate"],
@@ -221,6 +226,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 68,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Na frigideira com alho"],
@@ -255,6 +261,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhado com salada"],
@@ -289,6 +296,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 58,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Assado com laranja"],
@@ -323,6 +331,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 56,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhadas com alho e colorau"],
@@ -357,6 +366,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Estufado com vinho branco"],
@@ -391,6 +401,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["No forno com alecrim"],
@@ -425,6 +436,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 20,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Iscas com cebola"],
@@ -459,6 +471,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com laranja e arroz"],
@@ -493,6 +506,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche"],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em pão com tomate"],

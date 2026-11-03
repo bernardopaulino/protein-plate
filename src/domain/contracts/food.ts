@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  ALLERGENS,
   CATEGORIES,
   PROCESSING_EXCEPTIONS,
   PROCESSING_LEVELS,
@@ -48,6 +49,7 @@ export const foodSchema = z
     moments: z.array(z.enum(MEALS)).min(1),
     ease: z.union([z.literal(1), z.literal(2), z.literal(3)]),
     exampleRank: z.number().int().min(0).max(100),
+    allergens: z.array(z.enum(ALLERGENS)).max(6),
     tcaCode: z.string().min(1).max(20),
     ideas: z
       .object({
@@ -95,6 +97,9 @@ export const foodSchema = z
     }
     if (new Set(food.moments).size !== food.moments.length) {
       ctx.addIssue({ code: "custom", path: ["moments"], message: "momentos repetidos" });
+    }
+    if (new Set(food.allergens).size !== food.allergens.length) {
+      ctx.addIssue({ code: "custom", path: ["allergens"], message: "alergénios repetidos" });
     }
   });
 

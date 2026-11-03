@@ -27,6 +27,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 45,
+    "allergens": ["soy"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em cubos, salteado com soja e alho", "No forno com legumes"],
@@ -61,6 +62,7 @@
     "moments": ["almoco", "lanche", "jantar"],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": ["soy"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com sal e limão", "Em salada de arroz"],
@@ -95,6 +97,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": ["soy"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salteado com legumes"],
@@ -129,6 +132,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 25,
+    "allergens": ["soy"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em salada morna"],

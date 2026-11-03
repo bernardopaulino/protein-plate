@@ -35,6 +35,25 @@ export type Processing = (typeof PROCESSING_LEVELS)[number];
 /** Os únicos ultraprocessados aceites no catálogo (assinalados na UI). */
 export const PROCESSING_EXCEPTIONS: readonly string[] = ["whey-sem-sabor"];
 
+/**
+ * Alergénios e intolerâncias que a pessoa pode excluir (os 14 da UE, agrupados como as pessoas
+ * os conhecem: crustáceos e moluscos ficam em "marisco"; aipo e sulfitos não existem no catálogo).
+ */
+export const ALLERGENS = [
+  "milk",
+  "gluten",
+  "egg",
+  "fish",
+  "shellfish",
+  "tree-nuts",
+  "peanut",
+  "soy",
+  "sesame",
+  "lupin",
+  "mustard",
+] as const;
+export type Allergen = (typeof ALLERGENS)[number];
+
 /** 1 = sem preparação, 2 = rápido, 3 = cozinhar. */
 export const EASE_LEVELS = [1, 2, 3] as const;
 export type Ease = (typeof EASE_LEVELS)[number];
@@ -67,6 +86,8 @@ export interface Food {
   moments: Meal[];
   ease: Ease;
   exampleRank: number;
+  /** Alergénios que o alimento contém (exclui-o para quem os tem nas restrições). */
+  allergens: Allergen[];
   tcaCode: string;
   ideas: Localized<string[]>;
 }

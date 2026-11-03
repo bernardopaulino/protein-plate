@@ -35,6 +35,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salada com atum e cebola", "Húmus caseiro"],
@@ -77,6 +78,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com arroz e ovo", "Chili rápido"],
@@ -111,6 +113,7 @@
     "moments": ["meio-da-manha", "lanche"],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": ["lupin"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Petisco de meio da tarde", "Em salada"],
@@ -145,6 +148,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com bacalhau e ovo"],
@@ -179,6 +183,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 38,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com arroz"],
@@ -213,6 +218,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 36,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Chili caseiro"],
@@ -247,6 +253,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 36,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em sopa"],
@@ -281,6 +288,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salada com atum"],
@@ -315,6 +323,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Estufadas com legumes"],
@@ -349,6 +358,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 38,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Caril de lentilhas"],
@@ -383,6 +393,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com ovos escalfados"],
@@ -417,6 +428,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 20,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Guisadas com coentros"],
@@ -451,6 +463,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com tomate e manjericão"],

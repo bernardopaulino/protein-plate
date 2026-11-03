@@ -27,6 +27,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 70,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Cozida com bacalhau", "No forno com alecrim"],
@@ -61,6 +62,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 65,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Assada com salmão", "Em puré com canela"],
@@ -95,6 +97,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],

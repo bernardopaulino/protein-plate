@@ -27,6 +27,7 @@
     "moments": ["meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": ["tree-nuts"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com iogurte grego", "Petisco de bolso"],
@@ -61,6 +62,7 @@
     "moments": ["pequeno-almoco", "lanche"],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": ["peanut"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em tosta com banana", "Nas papas de aveia"],
@@ -95,6 +97,7 @@
     "moments": ["pequeno-almoco", "meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 38,
+    "allergens": ["tree-nuts"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -129,6 +132,7 @@
     "moments": ["meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 42,
+    "allergens": ["peanut"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -163,6 +167,7 @@
     "moments": ["meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 32,
+    "allergens": ["tree-nuts"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -197,6 +202,7 @@
     "moments": ["meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": ["tree-nuts"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -231,6 +237,7 @@
     "moments": ["meio-da-manha", "lanche", "ceia"],
     "ease": 1,
     "exampleRank": 34,
+    "allergens": ["tree-nuts"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],

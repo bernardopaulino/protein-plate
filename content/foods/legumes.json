@@ -27,6 +27,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Ao vapor em 5 minutos", "Salteados com alho"],
@@ -61,6 +62,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 50,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salteados com ovo", "Crus em salada"],
@@ -95,6 +97,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salada com orégãos", "Em tosta com azeite"],
@@ -129,6 +132,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -163,6 +167,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -197,6 +202,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -231,6 +237,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -265,6 +272,7 @@
     "moments": ["almoco", "lanche", "jantar"],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -299,6 +307,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -333,6 +342,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -367,6 +377,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -401,6 +412,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -435,6 +447,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -469,6 +482,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -503,6 +517,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -537,6 +552,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -571,6 +587,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -605,6 +622,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -639,6 +657,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -673,6 +692,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],

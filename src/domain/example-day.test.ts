@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { FOODS } from "@/content/foods.generated";
 import { FIXTURE_FOODS, fixtureFood } from "./__fixtures__/foods";
 import { EXAMPLE_DAY_BAND, buildExampleDay } from "./example-day";
-import { indexFoods, type Food } from "./food";
+import { ALLERGENS, indexFoods, type Food } from "./food";
+import { DIETS, MIN_LIKED_PROTEINS, allowedFoods, type Restrictions } from "./preferences";
 import { DEFAULT_COMBINATIONS, MEALS, sortMeals, type Meal } from "./meals";
 import { isValidPortionCount, totalProtein } from "./protein";
 
@@ -236,5 +237,84 @@ describe("dia exemplo: regras", () => {
     ];
     const items = expectInBand(foods, 100, ["almoco", "jantar"], null);
     expect(items.map((i) => `${i.foodId}×${i.count}`)).toEqual(["a×2", "b×1.5"]);
+  });
+});
+
+describe("dia exemplo personalizado (preferências)", () => {
+  const index = indexFoods(FOODS);
+  const proteinsFor = (r: Restrictions) =>
+    allowedFoods(FOODS, r)
+      .filter((f) => f.role === "protein" && f.processing !== "ultra")
+      .map((f) => f.id);
+
+  it("com as restrições aplicadas, o total fica entre 100% e 110% (amostra property-based)", () => {
+    const restrictions = fc.record({
+      diet: fc.constantFrom(...DIETS),
+      allergies: fc.subarray([...ALLERGENS]),
+    });
+    fc.assert(
+      fc.property(
+        fc.constantFrom(...TARGETS),
+        fc.constantFrom(...Object.values(DEFAULT_COMBINATIONS)),
+        restrictions,
+        fc.nat({ max: 1000 }),
+        fc.nat({ max: 6 }),
+        fc.nat({ max: 6 }),
+        (target, combo, r, pick, preIndex, postIndex) => {
+          const meals = [...combo];
+          const foods = allowedFoods(FOODS, r);
+          const proteins = proteinsFor(r);
+          fc.pre(proteins.length >= MIN_LIKED_PROTEINS);
+          // Uma escolha da pessoa: 3 a 8 fontes de proteína do que pode comer
+          const preferred = new Set(
+            proteins.filter((_, i) => (i * 7 + pick) % 3 === 0).slice(0, 8),
+          );
+          for (const id of proteins.slice(0, 3)) preferred.add(id);
+          const items = buildExampleDay({
+            target,
+            meals,
+            foods,
+            preferred,
+            preWorkoutMeal: meals[preIndex] ?? null,
+            postWorkoutMeal: meals[postIndex] ?? null,
+          });
+          const total = totalProtein(items, index);
+          expect(total).toBeGreaterThanOrEqual(target - 1e-9);
+          expect(total).toBeLessThanOrEqual(target * EXAMPLE_DAY_BAND.max + 1e-9);
+          // Nunca um alimento excluído
+          for (const item of items) expect(foods.some((f) => f.id === item.foodId)).toBe(true);
+        },
+      ),
+      { numRuns: 300 },
+    );
+  }, 60_000);
+
+  it("usa primeiro as fontes de proteína escolhidas pela pessoa", () => {
+    const preferred = new Set(["tofu-firme", "grao-bico-lata", "iogurte-grego-natural"]);
+    const items = buildExampleDay({
+      target: 120,
+      meals: ["pequeno-almoco", "almoco", "jantar"],
+      foods: FOODS,
+      preferred,
+    });
+    const sources = items
+      .filter((i) => index.get(i.foodId)?.role === "protein")
+      .map((i) => i.foodId);
+    expect(sources.length).toBeGreaterThan(0);
+    for (const id of sources.slice(0, 3)) expect(preferred.has(id), id).toBe(true);
+  });
+
+  it("antes do treino escolhe hidratos e uma proteína rápida e leve", () => {
+    const items = buildExampleDay({
+      target: 160,
+      meals: ["pequeno-almoco", "almoco", "lanche", "jantar"],
+      foods: FOODS,
+      preWorkoutMeal: "lanche",
+    });
+    const snack = items.filter((i) => i.meal === "lanche").map((i) => index.get(i.foodId)!);
+    expect(snack.some((f) => f.role === "carb")).toBe(true);
+    const source = snack.find((f) => f.role === "protein");
+    expect(source?.ease).toBeLessThanOrEqual(2);
+    expect(source?.fatPer100g).toBeLessThanOrEqual(10);
   });
 });

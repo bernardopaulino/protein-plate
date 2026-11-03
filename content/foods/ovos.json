@@ -35,6 +35,7 @@
     "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
     "ease": 2,
     "exampleRank": 85,
+    "allergens": ["egg"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Cozido (10 minutos) para levar", "Mexido com espinafres"],
@@ -69,6 +70,7 @@
     "moments": ["pequeno-almoco", "almoco", "jantar"],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": ["egg"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Omelete com um ovo inteiro", "Panquecas de aveia"],
@@ -103,6 +105,7 @@
     "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": ["egg"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Cozidos, em salada"],

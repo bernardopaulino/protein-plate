@@ -35,6 +35,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 50,
+    "allergens": ["shellfish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salteado com alho em 5 minutos", "Com massa e limão"],
@@ -69,6 +70,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": ["shellfish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Salada de polvo"],
@@ -103,6 +105,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 38,
+    "allergens": ["shellfish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhadas com alho"],
@@ -137,6 +140,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 36,
+    "allergens": ["shellfish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhado com batata"],
@@ -171,6 +175,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": ["shellfish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["À bulhão pato"],
@@ -205,6 +210,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 28,
+    "allergens": ["shellfish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["À bulhão pato"],

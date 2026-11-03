@@ -35,6 +35,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 82,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["No forno com batata-doce", "Na frigideira, pele para baixo"],
@@ -77,6 +78,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 65,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Cozida com legumes e um fio de azeite", "No forno com tomate"],
@@ -119,6 +121,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 55,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Cozido com grão e ovo", "Lascas com espinafres"],
@@ -153,6 +156,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Selado com sésamo"],
@@ -187,6 +191,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 50,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Assadas com pimentos"],
@@ -221,6 +226,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 45,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhado com batata cozida"],
@@ -255,6 +261,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 42,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["No forno com limão"],
@@ -289,6 +296,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 52,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Grelhada com legumes"],
@@ -323,6 +331,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 50,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["No forno com batata-doce"],
@@ -357,6 +366,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 38,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Com banana, à madeirense"],
@@ -391,6 +401,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Em arroz de tamboril"],
@@ -425,6 +436,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["Na frigideira com limão"],
@@ -459,6 +471,7 @@
     "moments": ["almoco", "jantar"],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": ["fish"],
     "tcaCode": "TODO",
     "ideas": {
       "pt": ["No forno com amêndoa"],

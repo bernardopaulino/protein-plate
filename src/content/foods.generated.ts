@@ -1,7 +1,7 @@
 // Gerado por scripts/content-build.ts a partir de content/foods. Não editar.
 import type { Food } from "@/domain/food";
 
-export const FOOD_DATA_VERSION = 2;
+export const FOOD_DATA_VERSION = 3;
 
 export const FOOD_SOURCE = "TCA, INSA (Tabela da Composição de Alimentos)";
 
@@ -37,6 +37,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 68,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -78,6 +79,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -119,6 +121,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 62,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -168,6 +171,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 70,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -211,6 +215,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -252,6 +257,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 72,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -293,6 +299,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 56,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -334,6 +341,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 20,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -375,6 +383,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 58,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -424,6 +433,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 95,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -467,6 +477,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -516,6 +527,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 75,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -559,6 +571,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -601,6 +614,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -642,6 +656,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -691,6 +708,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 55,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -734,6 +754,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 45,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -775,6 +798,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 42,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -816,6 +842,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 52,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -857,6 +886,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -898,6 +930,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 38,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -947,6 +982,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 65,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -990,6 +1028,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 50,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1039,6 +1080,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 82,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1082,6 +1126,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 50,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1123,6 +1170,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1164,6 +1214,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1205,6 +1258,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 28,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1254,6 +1310,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 50,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1297,6 +1356,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 36,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1338,6 +1400,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 38,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1379,6 +1444,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1420,6 +1488,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1462,6 +1533,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 70,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1511,6 +1585,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 78,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1555,6 +1632,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1597,6 +1677,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [
+      "shellfish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1640,6 +1723,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1684,6 +1770,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": [
+      "fish"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1728,6 +1817,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": [
+      "egg"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1781,6 +1873,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 85,
+    "allergens": [
+      "egg"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1826,6 +1921,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [
+      "egg"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1869,6 +1967,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 80,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1914,6 +2015,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -1957,6 +2061,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2000,6 +2107,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 58,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2051,6 +2161,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2096,6 +2209,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2137,6 +2253,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 20,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2180,6 +2299,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 75,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2222,6 +2344,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 25,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2266,6 +2391,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2310,6 +2438,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2363,6 +2494,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 70,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2407,6 +2541,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2450,6 +2587,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 65,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2495,6 +2635,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2538,6 +2681,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 90,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2583,6 +2729,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 10,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2627,6 +2776,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [
+      "soy"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2670,6 +2822,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 25,
+    "allergens": [
+      "soy"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2711,6 +2866,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": [
+      "soy"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2752,6 +2910,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 45,
+    "allergens": [
+      "soy"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2795,6 +2956,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2836,6 +2998,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 20,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2877,6 +3040,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 36,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2918,6 +3082,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 36,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -2959,6 +3124,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3008,6 +3174,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3051,6 +3218,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 38,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3092,6 +3260,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3141,6 +3310,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3184,6 +3354,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3225,6 +3396,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 38,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3266,6 +3438,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3307,6 +3480,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": [
+      "lupin"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3350,6 +3526,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 90,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3393,6 +3570,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3431,6 +3609,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 85,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3477,6 +3658,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3514,6 +3698,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3551,6 +3738,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 55,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3592,6 +3782,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3629,6 +3822,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 85,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3673,6 +3869,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3711,6 +3910,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 80,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3755,6 +3957,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 75,
+    "allergens": [
+      "gluten"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3792,6 +3997,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 55,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3833,6 +4039,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3870,6 +4077,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 70,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3913,6 +4121,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 65,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -3956,6 +4165,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -3994,6 +4204,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [
+      "tree-nuts"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -4038,6 +4251,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 42,
+    "allergens": [
+      "peanut"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4076,6 +4292,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [
+      "tree-nuts"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4114,6 +4333,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 32,
+    "allergens": [
+      "tree-nuts"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4151,6 +4373,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": [
+      "peanut"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -4196,6 +4421,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 38,
+    "allergens": [
+      "tree-nuts"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4234,6 +4462,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 34,
+    "allergens": [
+      "tree-nuts"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4274,6 +4505,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4313,6 +4545,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4351,6 +4584,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 28,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4391,6 +4625,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4428,6 +4663,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 22,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4465,6 +4701,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 15,
+    "allergens": [
+      "sesame"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4503,6 +4742,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 20,
+    "allergens": [
+      "sesame"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4542,6 +4784,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -4585,6 +4828,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4624,6 +4868,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4662,6 +4907,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 75,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -4707,6 +4953,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4746,6 +4993,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4785,6 +5033,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4824,6 +5073,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4863,6 +5113,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4902,6 +5153,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 70,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4941,6 +5193,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -4980,6 +5233,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5019,6 +5273,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 35,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5058,6 +5313,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5097,6 +5353,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5136,6 +5393,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5175,6 +5433,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5214,6 +5473,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 20,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5253,6 +5513,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5292,6 +5553,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5331,6 +5593,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5368,6 +5631,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5405,6 +5669,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 50,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5442,6 +5707,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5479,6 +5745,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5516,6 +5783,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 60,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -5559,6 +5827,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 25,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5597,6 +5866,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5634,6 +5904,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5671,6 +5942,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5708,6 +5980,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5745,6 +6018,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 45,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5782,6 +6056,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5819,6 +6094,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 3,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5856,6 +6132,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 30,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5893,6 +6170,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 50,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -5936,6 +6214,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -5973,6 +6252,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6010,6 +6290,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 2,
     "exampleRank": 35,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6047,6 +6328,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 40,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6084,6 +6366,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 55,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [
@@ -6127,6 +6410,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6164,6 +6448,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6202,6 +6487,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6242,6 +6528,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6279,6 +6566,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6316,6 +6604,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6353,6 +6642,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6390,6 +6680,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6427,6 +6718,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6464,6 +6756,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6503,6 +6796,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6540,6 +6834,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6578,6 +6873,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [
+      "milk"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6618,6 +6916,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6655,6 +6954,9 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [
+      "mustard"
+    ],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6692,6 +6994,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6729,6 +7032,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6766,6 +7070,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6803,6 +7108,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6840,6 +7146,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],
@@ -6877,6 +7184,7 @@ export const FOODS: readonly Food[] = [
     ],
     "ease": 1,
     "exampleRank": 0,
+    "allergens": [],
     "tcaCode": "TODO",
     "ideas": {
       "pt": [],

@@ -189,6 +189,13 @@ describe("alimentos (content/foods)", () => {
     expect(issues({ ...valid, price: 3 }).length).toBeGreaterThan(0);
   });
 
+  it("recusa alergénios repetidos ou desconhecidos", () => {
+    expect(issues({ ...valid, allergens: ["milk", "milk"] }).join()).toContain(
+      "alergénios repetidos",
+    );
+    expect(issues({ ...valid, allergens: ["celery"] }).length).toBeGreaterThan(0);
+  });
+
   it("checkCatalog: ids únicos e TODO só com allowTodo", () => {
     const todo = fixtureFood({ id: "novo", tcaCode: TODO });
     expect(checkCatalog([valid, valid], { allowTodo: true })).toEqual([
