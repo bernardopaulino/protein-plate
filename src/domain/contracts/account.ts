@@ -17,8 +17,8 @@ export const profileInputSchema = z
     dailyTargetG: dailyTargetSchema,
     intensity: intensitySchema,
     meals: mealsSchema,
-    postWorkoutMeal: mealSchema.nullable(),
-    locale: localeSchema.default("pt"),
+    postWorkoutMeal: z.nullable(mealSchema),
+    locale: z._default(localeSchema, "pt"),
   })
   .strict()
   .refine((p) => p.postWorkoutMeal === null || p.meals.includes(p.postWorkoutMeal), {

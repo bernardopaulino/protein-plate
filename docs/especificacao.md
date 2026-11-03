@@ -157,7 +157,7 @@ Apagar um utilizador apaga em cascata perfil, planos, itens, receitas guardadas,
 
 ### Estado de convidado (`localStorage`)
 
-Chave versionada (`protein-plate:guest`), validada com Zod ao ler; versão antiga → migra (ex.: a intensidade numérica `2.0` passa a `"alta"`); inválido → recomeça sem rebentar. A intensidade guarda-se pela chave (`base`, `moderada`, `alta`, `maxima`).
+Chave versionada (`protein-plate:guest`), validada com Zod ao ler (os contratos que chegam ao cliente — `common`, `plan`, `guest-state` — usam `zod/mini`, para o bundle levar só as verificações usadas); versão antiga → migra (ex.: a intensidade numérica `2.0` passa a `"alta"`); inválido → recomeça sem rebentar. A intensidade guarda-se pela chave (`base`, `moderada`, `alta`, `maxima`).
 
 ```json
 {

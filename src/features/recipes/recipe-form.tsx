@@ -5,12 +5,12 @@ import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { FilterChips } from "@/components/protein/chips";
 import { Button } from "@/components/ui/button";
+import type { RecipeResponse } from "@/domain/contracts/recipe";
 import {
   MAX_MINUTES_OPTIONS,
   type MaxMinutes,
   type RecipeErrorCode,
-  type RecipeResponse,
-} from "@/domain/contracts/recipe";
+} from "@/domain/recipe-options";
 import { MEALS, isMeal, mealTargets, type Meal } from "@/domain/meals";
 import { formatProtein } from "@/domain/protein";
 import { useDay } from "@/features/day/use-day";

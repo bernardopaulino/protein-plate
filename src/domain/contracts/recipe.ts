@@ -1,8 +1,14 @@
 import { z } from "zod";
 import { localeSchema, mealSchema, slugSchema } from "./common";
 
-export const MAX_MINUTES_OPTIONS = [10, 20, 30, 45] as const;
-export type MaxMinutes = (typeof MAX_MINUTES_OPTIONS)[number];
+import { MAX_MINUTES_OPTIONS, RECIPE_ERROR_CODES } from "../recipe-options";
+
+export {
+  MAX_MINUTES_OPTIONS,
+  RECIPE_ERROR_CODES,
+  type MaxMinutes,
+  type RecipeErrorCode,
+} from "../recipe-options";
 
 export const RECIPE_VARIANTS = [1, 2, 3] as const;
 
@@ -35,17 +41,6 @@ export const recipeRequestSchema = z
   .strict();
 
 export type RecipeRequest = z.infer<typeof recipeRequestSchema>;
-
-export const RECIPE_ERROR_CODES = [
-  "invalid_request",
-  "unknown_food",
-  "turnstile_failed",
-  "rate_limited",
-  "quota_exceeded",
-  "generation_failed",
-  "service_unavailable",
-] as const;
-export type RecipeErrorCode = (typeof RECIPE_ERROR_CODES)[number];
 
 export const recipeResponseSchema = z.union([
   z.object({ ok: z.literal(true), id: z.string(), cached: z.boolean() }),

@@ -65,6 +65,6 @@ npm run eval:recipes                             # contra o modelo real (ANTHROP
 
 ## Estado e próximos passos
 
-- **Curadoria**: os 40 alimentos mais usados estão no catálogo com valores provisórios (`tcaCode: "TODO"`); faltam os valores da TCA e os restantes 128 da lista. O `content:check` sem `--allow-todo` (usado no deploy de produção) falha até lá.
-- **Contas e segredos**: Google, Apple, Anthropic e Turnstile por configurar (`docs/setup.md`). Staging (`protein-plate-staging.bernardo-sobral7.workers.dev`) está publicado mas responde 503 até ter segredos.
-- **Performance**: acessibilidade 100, boas práticas 96 e SEO 100 no Lighthouse mobile; a performance simulada no Worker local fica em 0,71–0,88. Próximo passo: tirar o Zod do bundle do cliente (`zod/mini` no guest store) e medir contra staging.
+- **Curadoria**: os 168 alimentos da lista estão no catálogo, mas com valores provisórios (`tcaCode: "TODO"`) até serem confirmados na TCA do INSA. O `content:check` sem `--allow-todo` (usado no deploy de produção) falha até lá.
+- **Contas e segredos**: Google configurado em staging; Apple a meio; Anthropic e Turnstile real por configurar (`docs/setup.md`). Staging: `protein-plate-staging.bernardo-sobral7.workers.dev` (até haver domínio).
+- **Performance**: acessibilidade 100, boas práticas 96 e SEO 100 no Lighthouse mobile; a performance simulada no Worker local ficava em 0,71–0,88. Os contratos do cliente passaram para `zod/mini` (−14 KB gzip em /comecar, /o-meu-dia e nas páginas de alimentos); falta medir contra staging.
