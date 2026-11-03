@@ -120,3 +120,9 @@ Feito. Lê as secções 1, 3 ("Preferências"), 5, 6, 7 e 10 de docs/especificac
 ```text
 Lê a secção 13 de docs/especificacao.md e docs/backoffice.md. Worker admin/ com Cloudflare Access, painel, utilizadores (sem dados de saúde por pessoa), receitas, alimentos e as ações de terminar sessões e apagar conta, no padrão do backoffice do Rejection Quest.
 ```
+
+## 16. Feedback do staging: dia na conta, alimentos por grupos, receitas e responsive (3/11/2026)
+
+```text
+Feito. O dia passa a viver só na D1 (sem localStorage; saveDayAction com debounce), "Adicionar ao meu dia" grava na conta. Alimentos de que gosta por 5 secções e 25 subgrupos com "Como de tudo" e ilustração por subgrupo (src/domain/food-groups.ts). Receitas com alimentos opcionais: a app completa a base (src/domain/recipe-base.ts); formulário com "Quero usar alimentos que tenho" e "Mais opções". Segurança: Origin e Content-Length em /api/recipes, overrides de glob e tmp. Responsive de 320 a 2560 px (app-container, "Hoje" com coluna lateral fixa).
+```
