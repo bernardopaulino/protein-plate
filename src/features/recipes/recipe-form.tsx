@@ -173,7 +173,7 @@ export function RecipeForm({
                   <Button
                     type="button"
                     variant="secondary"
-                    className="self-start"
+                    className="h-auto min-h-11 self-start py-2 text-left whitespace-normal"
                     onClick={() => setPicking(true)}
                   >
                     {t("pickFoods")}
@@ -218,7 +218,7 @@ export function RecipeForm({
                   <Button
                     type="button"
                     variant="ghost"
-                    className="mt-3"
+                    className="mt-3 h-auto min-h-11 py-2 text-left whitespace-normal"
                     onClick={() => {
                       setPicking(false);
                       setSelected([]);
