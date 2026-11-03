@@ -122,7 +122,15 @@ describe("receitas", () => {
     expect(recipeRequestSchema.parse(request).variant).toBe(1);
     expect(recipeRequestSchema.safeParse({ ...request, notes: "sem glúten" }).success).toBe(false);
     expect(recipeRequestSchema.safeParse({ ...request, maxMinutes: 25 }).success).toBe(false);
-    expect(recipeRequestSchema.safeParse({ ...request, foodIds: ["a-b"] }).success).toBe(false);
+    // Os alimentos são opcionais (a app completa a base), até 6
+    expect(recipeRequestSchema.safeParse({ ...request, foodIds: [] }).success).toBe(true);
+    expect(
+      recipeRequestSchema.safeParse({
+        ...request,
+        foodIds: ["a", "b", "c", "d", "e", "f", "g"],
+      }).success,
+    ).toBe(false);
+    expect(recipeRequestSchema.safeParse({ ...request, foodIds: ["Atum!"] }).success).toBe(false);
     expect(recipeRequestSchema.safeParse({ ...request, foodIds: ["atum", "atum"] }).success).toBe(
       false,
     );

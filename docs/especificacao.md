@@ -33,7 +33,7 @@ A app prova que atingir a meta diária de proteína é fácil: escolhes alimento
 | Dia exemplo | Gerado com as refeições da pessoa, só com o que pode comer e os alimentos de que gosta primeiro | Para metas de 80 a 250 g, total entre 100% e 110% |
 | O meu dia ("Hoje") | Refeições, adicionar/remover, porções em passos de 0,5, barra de progresso | Total = soma exata das porções (testado); nunca mostra alimentos excluídos |
 | Fechar a meta | "Faltam X g" e 3 sugestões | Cada sugestão cobre o que falta com 1 ou 2 porções, das que a pessoa pode comer |
-| Receitas por IA | 2 a 6 alimentos, uma refeição da pessoa, tempo, doses; meta, treino, equipamento e dieta vêm do perfil | Ingredientes 100% da base de dados e dentro das restrições; resposta < 15 s |
+| Receitas por IA | Uma refeição da pessoa; alimentos opcionais (0 a 6, a app completa a base com o que a pessoa gosta), tempo, doses; meta, treino, equipamento e dieta vêm do perfil | Ingredientes 100% da base de dados e dentro das restrições; resposta < 15 s |
 | Página da receita | URL público, Open Graph | Abre sem conta |
 | Conta | Preferências, receitas guardadas, exportar e apagar | Exportar inclui tudo o que a app guarda |
 | Backoffice | Painel, utilizadores, receitas, alimentos e duas ações (ver `docs/backoffice.md`) | Atrás do Cloudflare Access; sem dados de saúde por pessoa |
@@ -86,7 +86,7 @@ Exemplo: 160 g, 4 refeições → sem pós-treino ≈ 46/46/23/46 g; com lanche 
 - **Dieta:** `omnivore`, `pescatarian` (sem carne), `vegetarian` (sem carne nem peixe), `vegan` (só origem vegetal). A origem vem da categoria (`carne`; `peixe`, `marisco`, `conservas`; `ovos`; `laticinios`, `suplementos`), com exceções na despensa (manteiga = laticínio, mel = animal).
 - **Alergias e intolerâncias:** `milk`, `gluten`, `egg`, `fish`, `shellfish` (crustáceos e moluscos), `tree-nuts`, `peanut`, `soy`, `sesame`, `lupin`, `mustard`. Cada alimento tem `allergens` (secção 4).
 - **As restrições são absolutas:** um alimento excluído nunca entra no dia, nas sugestões, na despensa das receitas nem na lista do modelo; o servidor volta a filtrar o que chega do cliente.
-- **Alimentos de que gosta:** ids do catálogo (sem a despensa), limpos das restrições; pelo menos 3 fontes de proteína (`MIN_LIKED_PROTEINS`).
+- **Alimentos de que gosta:** ids do catálogo (sem a despensa), limpos das restrições; pelo menos 3 fontes de proteína (`MIN_LIKED_PROTEINS`). Escolhem-se por grupos (`src/domain/food-groups.ts`): 5 secções (proteína, hidratos, fruta, legumes, frutos secos e sementes) e 25 subgrupos (aves, carne, peixe, conservas, marisco, ovos, leite e iogurtes, queijos, leguminosas, soja e tofu; pão, arroz e massa, aveia e cereais, batata e tubérculos; fruta do dia a dia, frutos vermelhos, de verão e tropical, outras; folhas, brócolos e couves, para salada, para cozinhar; frutos secos, amendoim, sementes e tahini). O subgrupo vem da categoria, com exceções por id; cada alimento fora da despensa tem um (teste).
 - **Cozinha:** tempo habitual (10, 20, 30, 45 min; pré-seleciona o tempo das receitas) e equipamento (`stove`, `oven`, `microwave`, `airfryer`, `blender`; pelo menos um).
 
 ### Proteína
@@ -196,20 +196,21 @@ Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor e
 
 ## 6. Receitas por IA (`POST /api/recipes`)
 
-**Pedido** (só campos fechados, sem texto livre): `foodIds` (2–6), `meal` (uma das refeições da pessoa), `maxMinutes` (10, 20, 30, 45), `servings` (1–4), `locale`, `variant`. Exige sessão (401 `unauthorized`) e formulário concluído (403 `onboarding_required`). A meta da refeição, o pré/pós-treino, o equipamento e a dieta vêm do perfil, nunca do pedido.
+**Pedido** (só campos fechados, sem texto livre): `foodIds` (0–6, opcional), `meal` (uma das refeições da pessoa), `maxMinutes` (10, 20, 30, 45), `servings` (1–4), `locale`, `variant`. Exige sessão (401 `unauthorized`) e formulário concluído (403 `onboarding_required`). A meta da refeição, o pré/pós-treino, o equipamento e a dieta vêm do perfil, nunca do pedido.
 
 **Pipeline:**
 
 1. Validar com Zod; a refeição tem de ser da pessoa (`invalid_request`) e os alimentos têm de caber nas restrições (`restricted_food`). A despensa é filtrada pelas restrições.
-2. Rate limiting (5/min por chave), quota diária por conta.
-3. Cache: `cache_key` = SHA-256 de alimentos ordenados + refeição + pós-treino + pré-treino + meta da refeição (arredondada a 5 g) + despensa permitida + equipamento + tempo + doses + idioma + `PROMPT_VERSION` + modelo + `FOOD_DATA_VERSION` + variante (1–3, "Gerar outra"). Se existir, devolve sem custo.
-4. Modelo: `generateText` + `Output.object`, schema construído por pedido:
+2. **Base** (`src/domain/recipe-base.ts`): o que a pessoa escolheu, completado pela app com uma fonte de proteína (leve antes do treino) e, se houver espaço, hidratos e legumes ao almoço e ao jantar ou hidratos (podem ser fruta) nas outras refeições; escolhe primeiro entre os alimentos de que a pessoa gosta e que servem para a refeição. Com alimentos escolhidos, a base é estável (muda com a variante, a cache funciona); sem nada escolhido, cada pedido usa uma seed aleatória e traz outra combinação.
+3. Rate limiting (5/min por chave), quota diária por conta.
+4. Cache: `cache_key` = SHA-256 de alimentos ordenados + refeição + pós-treino + pré-treino + meta da refeição (arredondada a 5 g) + despensa permitida + equipamento + tempo + doses + idioma + `PROMPT_VERSION` + modelo + `FOOD_DATA_VERSION` + variante (1–3, "Gerar outra"). Se existir, devolve sem custo.
+5. Modelo: `generateText` + `Output.object`, schema construído por pedido:
    - `title` ≤ 60, `summary` ≤ 140, `prepMinutes` ≤ `maxMinutes`
    - `ingredients`: 2–10 × `{ foodId: z.enum([...escolhidos, ...despensa]), grams }`
    - `steps`: 2–8, ≤ 240 caracteres
-5. Validar: todas as fontes de proteína escolhidas presentes; gramas por dose ≤ 3 × porção `default`; proteína por dose (calculada pela app) entre 1 e 120 g.
-6. Falha → 1 nova tentativa com o erro descrito; segunda falha → erro amigável, não conta para a quota.
-7. Calcular proteína, guardar (`recipes` + `recipe_ingredients`), contar quota, devolver `id`.
+6. Validar: todas as fontes de proteína escolhidas presentes; gramas por dose ≤ 3 × porção `default`; proteína por dose (calculada pela app) entre 1 e 120 g.
+7. Falha → 1 nova tentativa com o erro descrito; segunda falha → erro amigável, não conta para a quota.
+8. Calcular proteína, guardar (`recipes` + `recipe_ingredients`), contar quota, devolver `id`.
 
 **Prompt** versionado em `src/server/ai/prompts/recipe.v2.ts` (`PROMPT_VERSION` 2): alimentos com nome e base de peso; usar todas as fontes de proteína; não inventar ingredientes; quantidades para a receita completa; português de Portugal; sem alegações de saúde; aproximar a proteína por dose da meta da refeição; pós-treino → receita rápida; pré-treino → leve, com hidratos e pouca gordura; só o equipamento da pessoa; nota da dieta (sem carne, vegetariana, vegana). Nunca leva o nome, o peso nem as alergias (os alimentos com alergénios simplesmente não estão na lista). A UI mostra quanto a receita cobre da meta.
 
@@ -262,12 +263,12 @@ Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor e
 
 1. **Página inicial:** "Proteína sem dieta", 3 passos com ilustrações, o dia exemplo animado, FAQ, aviso, CTA "Começar agora".
 2. **Entrar:** benefícios, Google e Apple, "Ao continuar, aceitas os Termos e a Política de Privacidade".
-3. **Formulário de boas-vindas** (6 passos, barra de progresso, transições laterais, barra de ações fixa em baixo): meta (peso com o resultado ao vivo, intensidade em cartões; meta manual opcional), refeições (número, quais, treino com pré e pós), restrições (dieta em cartões, alergias), alimentos (grelha com ilustrações por grupo e pesquisa; 3 fontes de proteína no mínimo), cozinha (tempo e equipamento), resumo (meta, meta por refeição, tudo editável, consentimento de dados de saúde) → "Tudo pronto!" → Hoje. O mesmo formulário edita as preferências na conta.
+3. **Formulário de boas-vindas** (6 passos, barra de progresso, transições laterais, barra de ações fixa em baixo): meta (peso com o resultado ao vivo, intensidade em cartões; meta manual opcional), refeições (número, quais, treino com pré e pós), restrições (dieta em cartões, alergias), alimentos ("Como de tudo", secções em separadores, subgrupos com ilustração própria que se escolhem inteiros e abrem para afinar alimento a alimento, pesquisa; 3 fontes de proteína no mínimo, com um aviso só se faltarem), cozinha (tempo e equipamento), resumo (meta, meta por refeição, tudo editável, consentimento de dados de saúde) → "Tudo pronto!" → Hoje. O mesmo formulário edita as preferências na conta.
 4. **Hoje:** barra de progresso fixa, refeições pela ordem do dia (etiquetas pré e pós-treino), itens com stepper de meia porção, painel "Para fechar a meta", "Gerar receita com estes alimentos" por refeição.
 5. **Adicionar alimento:** painel inferior com pesquisa, filtros, os favoritos e os mais fáceis para a refeição primeiro; só alimentos permitidos.
 6. **Catálogo:** pesquisa, chips de filtros, ordenação, cartões com proteína por porção em destaque.
 7. **Detalhe:** porções com proteína, valor por 100 g, ideias, fonte, "Adicionar ao meu dia".
-8. **Nova receita:** refeição, alimentos (favoritos primeiro, só permitidos), tempo (o habitual da pessoa), doses; estados a gerar / erro / quota esgotada.
+8. **Nova receita:** refeição e "Gerar receita" chegam (a app escolhe a base); opcional "Quero usar alimentos que tenho" (o mesmo seletor por grupos, até 6); "Mais opções" com o tempo (o habitual da pessoa) e as doses; estados a gerar / erro / quota esgotada.
 9. **Receita:** proteína por dose e quanto cobre da meta da refeição, tempo, ingredientes, passos, guardar, partilhar, gerar outra, aviso IA.
 10. **Conta:** "As minhas preferências", exportar, sair, apagar.
 

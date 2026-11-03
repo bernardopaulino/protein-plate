@@ -29,7 +29,7 @@ export async function signIn(
   await context.addCookies([{ name, value, url: baseURL, httpOnly: true, sameSite: "Lax" }]);
 }
 
-/** Preenche o formulário de boas-vindas com o mínimo (80 kg, 4 refeições, 4 favoritos). */
+/** Preenche o formulário de boas-vindas com o mínimo (80 kg, 4 refeições, aves e ovos). */
 export async function completeOnboarding(page: Page) {
   await page.goto("/comecar");
   await page.getByLabel("Peso").fill("80");
@@ -42,9 +42,10 @@ export async function completeOnboarding(page: Page) {
   await expect(page.getByRole("heading", { name: "Há alguma coisa que não comes?" })).toBeVisible();
   await next.click();
   await expect(page.getByRole("heading", { name: "Do que gostas?" })).toBeVisible();
-  const tiles = page.locator("button[aria-pressed]");
-  for (let i = 0; i < 4; i++) await tiles.nth(i).click();
-  await expect(page.getByText("3 de 3 fontes de proteína")).toBeVisible();
+  await expect(page.getByText(/Escolhe pelo menos 3 fontes de proteína/)).toBeVisible();
+  await page.getByRole("button", { name: "Escolher todos: Aves" }).click();
+  await page.getByRole("button", { name: "Escolher todos: Ovos" }).click();
+  await expect(page.getByText(/Escolhe pelo menos 3 fontes de proteína/)).toBeHidden();
   await next.click();
   await expect(page.getByRole("heading", { name: "E na cozinha?" })).toBeVisible();
   await next.click();

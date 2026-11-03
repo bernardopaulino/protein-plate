@@ -75,6 +75,7 @@ function person(userId: string, profile: Partial<Actor["profile"]> = {}): Actor 
       diet: "omnivore",
       allergies: [],
       equipment: ["stove", "microwave"],
+      likedFoods: ["peito-frango", "atum-lata-natural", "ovo", "arroz-branco", "brocolos"],
       ...profile,
     },
   };
@@ -159,6 +160,53 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
       ok: false,
       code: "invalid_request",
     });
+  });
+
+  it("sem alimentos escolhidos: a app escolhe a base entre os de que a pessoa gosta", async () => {
+    const userId = await createUser(t.db);
+    const me = person(userId, { likedFoods: ["salmao", "batata-doce", "brocolos"] });
+    const result = await generateRecipe(request({ foodIds: [] }), me, deps({ random: () => 0 }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const saved = await getRecipe(t.db, result.id);
+    expect(saved!.ingredients.map((i) => i.foodId)).toEqual(
+      expect.arrayContaining(["salmao", "batata-doce", "brocolos"]),
+    );
+  });
+
+  it("sem nada escolhido, cada pedido pode trazer outra base; vegetariano nunca leva carne", async () => {
+    const userId = await createUser(t.db);
+    const me = person(userId, {
+      diet: "vegetarian",
+      likedFoods: ["tofu-firme", "ovo", "grao-bico-lata", "lentilhas-castanhas"],
+    });
+    const ids = new Set<string>();
+    for (const r of [0, 1e-6, 2e-6, 3e-6]) {
+      const result = await generateRecipe(request({ foodIds: [] }), me, deps({ random: () => r }));
+      expect(result.ok).toBe(true);
+      if (!result.ok) continue;
+      ids.add(result.id);
+      const saved = await getRecipe(t.db, result.id);
+      for (const i of saved!.ingredients) {
+        expect(FOOD_INDEX.get(i.foodId)!.category, i.foodId).not.toMatch(/carne|peixe|marisco/);
+      }
+    }
+    expect(ids.size).toBeGreaterThan(1);
+  });
+
+  it("com um alimento escolhido, completa com uma proteína e o pedido repetido vem da cache", async () => {
+    const userId = await createUser(t.db);
+    const me = person(userId);
+    const req = request({ foodIds: ["brocolos"] });
+    const first = await generateRecipe(req, me, deps({ random: () => 0.1 }));
+    const again = await generateRecipe(req, me, deps({ random: () => 0.9 }));
+    expect(first.ok).toBe(true);
+    expect(again).toMatchObject({ ok: true, cached: true });
+    if (!first.ok) return;
+    const saved = await getRecipe(t.db, first.id);
+    const foods = saved!.ingredients.map((i) => FOOD_INDEX.get(i.foodId)!);
+    expect(foods.some((f) => f.id === "brocolos")).toBe(true);
+    expect(foods.some((f) => f.role === "protein")).toBe(true);
   });
 
   it("o prompt leva o equipamento, o pré-treino e só a despensa que a pessoa pode comer", async () => {

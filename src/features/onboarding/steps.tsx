@@ -1,11 +1,10 @@
 "use client";
 
-import { Search } from "lucide-react";
 import { AnimatePresence, m } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useId, useMemo, useState, type ReactNode } from "react";
-import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
-import { ALLERGENS, type Food, type Role } from "@/domain/food";
+import { useId, useMemo, type ReactNode } from "react";
+import { UI_IMAGES } from "@/content/food-images.generated";
+import { ALLERGENS } from "@/domain/food";
 import { INTENSITY_KEYS, MANUAL_TARGET_LIMITS } from "@/domain/goal";
 import {
   DEFAULT_COMBINATIONS,
@@ -25,17 +24,12 @@ import {
 } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
 import { MAX_MINUTES_OPTIONS } from "@/domain/recipe-options";
-import {
-  CATALOG,
-  FOOD_INDEX,
-  defaultPortionProtein,
-  foodName,
-  matchesSearch,
-} from "@/features/catalog/catalog";
+import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import { goalState, likedForDraft, training, type Draft } from "./draft";
-import { AnimatedNumber, CheckBadge, Illustration, OptionCard, Segmented } from "./ui";
+import { FoodPicker } from "./food-picker";
+import { AnimatedNumber, Illustration, OptionCard, Segmented } from "./ui";
 
 export interface StepProps {
   draft: Draft;
@@ -435,127 +429,35 @@ export function RestrictionsStep({ draft, update }: StepProps) {
 
 /* ------------------------------------------------------------------ 4. Alimentos */
 
-const FOOD_GROUPS: readonly Exclude<Role, "pantry">[] = ["protein", "carb", "vegetable", "fat"];
-
 export function FoodsStep({ draft, update }: StepProps) {
   const t = useTranslations("onboarding.foods");
-  const locale = useLocale() as Locale;
-  const lang = HTML_LANG[locale];
-  const [query, setQuery] = useState("");
-  const [group, setGroup] = useState<(typeof FOOD_GROUPS)[number]>("protein");
-  const searchId = useId();
-
-  const allowed = useMemo(
+  const foods = useMemo(
     () => allowedFoods(CATALOG, draft).filter((f) => f.role !== "pantry"),
     [draft],
   );
   const liked = likedForDraft(draft, FOOD_INDEX);
   const proteins = proteinCount(liked, FOOD_INDEX);
-  const searching = query.trim() !== "";
-  const visible = allowed
-    .filter((f) => (searching ? matchesSearch(f, query) : f.role === group))
-    .sort((a, b) => b.exampleRank - a.exampleRank || a.id.localeCompare(b.id));
-
-  const toggle = (food: Food) =>
-    update({
-      likedFoods: draft.likedFoods.includes(food.id)
-        ? draft.likedFoods.filter((id) => id !== food.id)
-        : [...draft.likedFoods, food.id],
-    });
 
   return (
     <div>
       <StepHeader title={t("title")} lead={t("lead")} />
-
-      <div className="sticky top-[4.25rem] z-10 -mx-4 bg-bg/95 px-4 pt-1 pb-3 backdrop-blur">
-        <div className="relative">
-          <Search
-            aria-hidden
-            className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted"
-          />
-          <label htmlFor={searchId} className="sr-only">
-            {t("search")}
-          </label>
-          <input
-            id={searchId}
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("search")}
-            className="h-12 w-full rounded-full border border-border bg-surface pr-4 pl-11 outline-none focus:border-primary"
-          />
-        </div>
-        {!searching ? (
-          <div className="mt-3">
-            <Segmented
-              label={t("search")}
-              layoutId="food-group"
-              options={FOOD_GROUPS}
-              value={group}
-              onChange={setGroup}
-              render={(g) => <span className="text-sm">{t(`groups.${g}`)}</span>}
-            />
-          </div>
-        ) : null}
-        <p aria-live="polite" className="mt-3 flex flex-wrap justify-between gap-2 text-sm">
-          <span
-            className={cn(
-              "font-semibold",
-              proteins >= MIN_LIKED_PROTEINS ? "text-primary" : "text-text",
-            )}
-          >
-            {t("proteins", {
-              count: Math.min(proteins, MIN_LIKED_PROTEINS),
-              min: MIN_LIKED_PROTEINS,
-            })}
-          </span>
-          <span className="text-muted">{t("selected", { count: liked.length })}</span>
-        </p>
-      </div>
-
-      {visible.length === 0 ? (
-        <p className="py-8 text-center text-muted">{t("empty")}</p>
-      ) : (
-        <m.ul
-          key={searching ? "search" : group}
-          initial="hidden"
-          animate="shown"
-          variants={{ shown: { transition: { staggerChildren: 0.02 } } }}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3"
-        >
-          {visible.map((food) => {
-            const on = draft.likedFoods.includes(food.id);
-            return (
-              <m.li
-                key={food.id}
-                variants={{ hidden: { opacity: 0, y: 8 }, shown: { opacity: 1, y: 0 } }}
-              >
-                <m.button
-                  type="button"
-                  aria-pressed={on}
-                  onClick={() => toggle(food)}
-                  whileTap={{ scale: 0.95 }}
-                  className={cn(
-                    "relative flex h-full w-full flex-col items-center gap-2 rounded-card border-2 bg-surface px-2 pt-4 pb-3 text-center transition-[border-color,background-color] duration-200",
-                    on ? "border-primary bg-primary-soft" : "border-border hover:border-primary/50",
-                  )}
-                >
-                  <CheckBadge on={on} className="absolute top-2 right-2" />
-                  <Illustration src={foodImage(food.id)} size={56} />
-                  <span className="text-sm leading-tight font-semibold">
-                    {foodName(food, locale)}
-                  </span>
-                  {food.role === "protein" ? (
-                    <span className="text-xs text-muted tabular">
-                      {t("perPortion", { grams: formatProtein(defaultPortionProtein(food), lang) })}
-                    </span>
-                  ) : null}
-                </m.button>
-              </m.li>
-            );
-          })}
-        </m.ul>
-      )}
+      <FoodPicker
+        foods={foods}
+        selected={liked}
+        onChange={(likedFoods) => update({ likedFoods })}
+        everything
+        stickyClassName="top-[4.25rem]"
+        status={
+          <p className="flex flex-wrap justify-between gap-2">
+            <span className="font-semibold">{t("selected", { count: liked.length })}</span>
+            {proteins < MIN_LIKED_PROTEINS ? (
+              <span className="text-muted">
+                {t("needProteins", { min: MIN_LIKED_PROTEINS, count: proteins })}
+              </span>
+            ) : null}
+          </p>
+        }
+      />
     </div>
   );
 }

@@ -3,10 +3,12 @@
 import { m } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, type ReactNode } from "react";
-import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
+import { UI_IMAGES } from "@/content/food-images.generated";
+import { summarizeLiked } from "@/domain/food-groups";
 import { mealTargets } from "@/domain/meals";
+import { allowedFoods } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
-import { FOOD_INDEX, foodName } from "@/features/catalog/catalog";
+import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { goalState, hasHealthData, likedForDraft, training, type Step } from "./draft";
 import { StepHeader, type StepProps } from "./steps";
@@ -50,6 +52,7 @@ export function SummaryStep({
   const tr = useTranslations("onboarding.restrictions");
   const tk = useTranslations("onboarding.kitchen");
   const tm = useTranslations("meals");
+  const tf = useTranslations("onboarding.foods");
   const locale = useLocale() as Locale;
   const lang = HTML_LANG[locale];
   const consentId = useId();
@@ -57,6 +60,10 @@ export function SummaryStep({
   const { preWorkoutMeal, postWorkoutMeal } = training(draft);
   const targets = mealTargets(target, draft.meals, postWorkoutMeal);
   const liked = likedForDraft(draft, FOOD_INDEX);
+  const likedSummary = summarizeLiked(
+    liked,
+    allowedFoods(CATALOG, draft).filter((f) => f.role !== "pantry"),
+  );
   const needsConsent = hasHealthData(draft);
 
   return (
@@ -129,26 +136,37 @@ export function SummaryStep({
           onEdit={() => onEdit("foods")}
           editLabel={t("edit")}
         >
-          <ul className="flex flex-wrap gap-1.5" aria-label={t("foods", { count: liked.length })}>
-            {liked.slice(0, 14).map((id) => {
-              const food = FOOD_INDEX.get(id)!;
-              return (
+          {likedSummary.everything ? (
+            <p className="flex items-center gap-2 font-semibold">
+              <Illustration src={UI_IMAGES["misc:all"]} size={28} />
+              {tf("everything")}
+            </p>
+          ) : (
+            <ul className="flex flex-wrap gap-1.5" aria-label={t("foods", { count: liked.length })}>
+              {likedSummary.groups.map((g) => (
                 <li
-                  key={id}
-                  title={foodName(food, locale)}
+                  key={g}
                   className="flex items-center gap-1 rounded-full bg-primary-soft py-1 pr-3 pl-1 text-sm font-semibold"
                 >
-                  <Illustration src={foodImage(id)} size={22} />
-                  {foodName(food, locale)}
+                  <Illustration src={UI_IMAGES[`group:${g}`]} size={22} />
+                  {tf(`subgroups.${g}`)}
                 </li>
-              );
-            })}
-            {liked.length > 14 ? (
-              <li className="rounded-full bg-primary-soft px-3 py-1 text-sm font-semibold">
-                +{liked.length - 14}
-              </li>
-            ) : null}
-          </ul>
+              ))}
+              {likedSummary.foods.slice(0, 12).map((id) => (
+                <li
+                  key={id}
+                  className="rounded-full border border-border bg-surface px-3 py-1 text-sm font-semibold"
+                >
+                  {foodName(FOOD_INDEX.get(id)!, locale)}
+                </li>
+              ))}
+              {likedSummary.foods.length > 12 ? (
+                <li className="rounded-full border border-border bg-surface px-3 py-1 text-sm font-semibold">
+                  +{likedSummary.foods.length - 12}
+                </li>
+              ) : null}
+            </ul>
+          )}
         </Row>
 
         <Row title={tk("title")} onEdit={() => onEdit("kitchen")} editLabel={t("edit")}>

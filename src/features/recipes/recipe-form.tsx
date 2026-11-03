@@ -1,23 +1,27 @@
 "use client";
 
-import { ChefHat, Loader2 } from "lucide-react";
+import { ChefHat, ChevronDown, Loader2, Sparkles, X } from "lucide-react";
+import { LazyMotion, MotionConfig, domMax } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { FilterChips } from "@/components/protein/chips";
 import { Button } from "@/components/ui/button";
 import type { RecipeResponse } from "@/domain/contracts/recipe";
 import type { Allergen } from "@/domain/food";
 import { isMeal, mealTargets, type Meal } from "@/domain/meals";
-import { isAllowed, type Diet } from "@/domain/preferences";
+import { allowedFoods, type Diet } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
+import { RECIPE_MAX_CHOSEN } from "@/domain/recipe-base";
 import {
   MAX_MINUTES_OPTIONS,
   type MaxMinutes,
   type RecipeErrorCode,
 } from "@/domain/recipe-options";
-import { FOOD_INDEX, LISTED_FOODS, foodName } from "@/features/catalog/catalog";
+import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
+import { FoodPicker } from "@/features/onboarding/food-picker";
 import { useRouter } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
+import { cn } from "@/lib/cn";
 
 export interface RecipeProfile {
   dailyTargetG: number;
@@ -31,8 +35,9 @@ export interface RecipeProfile {
 }
 
 /**
- * Nova receita (ecrã 7): alimentos (os favoritos primeiro, só os que a pessoa pode comer),
- * refeição, tempo e doses. A meta da refeição e o treino vêm do perfil, no servidor.
+ * Nova receita (ecrã 7): por defeito basta escolher a refeição; a app escolhe a base entre os
+ * alimentos de que a pessoa gosta. Escolher alimentos é opcional ("tenho isto em casa"), e o tempo
+ * e as doses ficam em "Mais opções", já com o que a pessoa disse no formulário.
  */
 export function RecipeForm({
   profile,
@@ -41,7 +46,6 @@ export function RecipeForm({
   initialMinutes,
   initialServings,
   variant,
-  dayItems,
 }: {
   profile: RecipeProfile;
   initialMeal: string | null;
@@ -49,8 +53,6 @@ export function RecipeForm({
   initialMinutes: number | null;
   initialServings: number;
   variant: number;
-  /** O dia da pessoa (da conta), para sugerir os alimentos de cada refeição. */
-  dayItems: { meal: Meal; foodId: string }[];
 }) {
   const t = useTranslations("recipes.form");
   const te = useTranslations("recipes.errors");
@@ -58,56 +60,40 @@ export function RecipeForm({
   const locale = useLocale() as Locale;
   const lang = HTML_LANG[locale];
   const router = useRouter();
+  const optionsId = useId();
 
-  const allowed = (id: string) => {
-    const food = FOOD_INDEX.get(id);
-    return Boolean(food && food.role !== "pantry" && isAllowed(food, profile));
-  };
+  const foods = useMemo(
+    () => allowedFoods(CATALOG, profile).filter((f) => f.role !== "pantry"),
+    [profile],
+  );
+  const allowedIds = useMemo(() => new Set(foods.map((f) => f.id)), [foods]);
   const meals = profile.meals;
   const [meal, setMeal] = useState<Meal>(
     initialMeal && isMeal(initialMeal) && meals.includes(initialMeal)
       ? initialMeal
       : (meals[0] ?? "almoco"),
   );
-  const validInitial = initialFoods.filter(allowed);
-  const [selected, setSelected] = useState<string[]>(validInitial.slice(0, 6));
+  const [selected, setSelected] = useState<string[]>(() =>
+    [...new Set(initialFoods)].filter((id) => allowedIds.has(id)).slice(0, RECIPE_MAX_CHOSEN),
+  );
+  const [picking, setPicking] = useState(selected.length > 0);
   const [minutes, setMinutes] = useState<MaxMinutes>(
     initialMinutes !== null && (MAX_MINUTES_OPTIONS as readonly number[]).includes(initialMinutes)
       ? (initialMinutes as MaxMinutes)
       : profile.cookMinutes,
   );
   const [servings, setServings] = useState(Math.min(4, Math.max(1, Math.round(initialServings))));
+  const [moreOpen, setMoreOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [error, setError] = useState<RecipeErrorCode | null>(null);
-
-  // Alimentos à escolha: os do link, os do dia, os favoritos para a refeição e os mais usados
-  const options = useMemo(() => {
-    const dayIds = dayItems.filter((i) => i.meal === meal).map((i) => i.foodId);
-    const byRank = LISTED_FOODS.filter((f) => f.moments.includes(meal)).sort(
-      (a, b) => b.exampleRank - a.exampleRank,
-    );
-    const liked = new Set(profile.likedFoods);
-    const likedForMeal = byRank.filter((f) => liked.has(f.id)).map((f) => f.id);
-    const others = byRank.filter((f) => !liked.has(f.id)).map((f) => f.id);
-    return [
-      ...new Set([...validInitial, ...dayIds, ...likedForMeal, ...profile.likedFoods, ...others]),
-    ]
-      .filter(allowed)
-      .slice(0, 30);
-    // validInitial e o perfil vêm das props: só mudam com a navegação
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dayItems, meal]);
 
   const post = profile.postWorkoutMeal;
   const pre = profile.preWorkoutMeal;
   const mealTarget = mealTargets(profile.dailyTargetG, meals, post).get(meal) ?? 0;
 
-  const tooFew = selected.length < 2;
-  const tooMany = selected.length > 6;
-
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (tooFew || tooMany || status === "loading") return;
+    if (status === "loading") return;
     setStatus("loading");
     setError(null);
     try {
@@ -115,7 +101,7 @@ export function RecipeForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          foodIds: selected,
+          foodIds: picking ? selected : [],
           meal,
           maxMinutes: minutes,
           servings,
@@ -140,96 +126,175 @@ export function RecipeForm({
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5" aria-busy={status === "loading"}>
-      <fieldset className="rounded-card border border-border bg-surface p-5">
-        <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
-        <FilterChips
-          className="mt-2"
-          label={t("meal")}
-          options={meals.map((m) => ({
-            value: m,
-            label:
-              m === post
-                ? `${tm(m)} · ${tm("postWorkout")}`
-                : m === pre
-                  ? `${tm(m)} · ${tm("preWorkout")}`
-                  : tm(m),
-          }))}
-          selected={[meal]}
-          onChange={(next) => next[0] && setMeal(next[0])}
-        />
-        <p className="mt-2 text-sm text-muted">
-          {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
-        </p>
-      </fieldset>
+    <LazyMotion features={domMax} strict>
+      <MotionConfig reducedMotion="user">
+        <form onSubmit={submit} className="flex flex-col gap-5" aria-busy={status === "loading"}>
+          <fieldset className="rounded-card border border-border bg-surface p-5">
+            <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
+            <FilterChips
+              className="mt-2"
+              label={t("meal")}
+              options={meals.map((m) => ({
+                value: m,
+                label:
+                  m === post
+                    ? `${tm(m)} · ${tm("postWorkout")}`
+                    : m === pre
+                      ? `${tm(m)} · ${tm("preWorkout")}`
+                      : tm(m),
+              }))}
+              selected={[meal]}
+              onChange={(next) => next[0] && setMeal(next[0])}
+            />
+            <p className="mt-2 text-sm text-muted">
+              {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
+            </p>
+          </fieldset>
 
-      <fieldset className="rounded-card border border-border bg-surface p-5">
-        <legend className="px-1 font-display text-lg font-bold">{t("foods")}</legend>
-        <p className="text-sm text-muted">{t("foodsHint")}</p>
-        <FilterChips
-          className="mt-3"
-          label={t("foods")}
-          options={options.map((id) => ({
-            value: id,
-            label: foodName(FOOD_INDEX.get(id)!, locale),
-          }))}
-          selected={selected}
-          onChange={(next) => setSelected(next.slice(0, 6))}
-          multiple
-          wrap
-        />
-        <p aria-live="polite" className="mt-2 text-sm text-muted tabular">
-          {t("foodsCount", { count: selected.length })}
-          {tooFew ? ` · ${t("needsFoods")}` : ""}
-        </p>
-        {profile.diet !== "omnivore" || profile.allergies.length > 0 ? (
-          <p className="mt-1 text-sm text-muted">{t("restricted")}</p>
-        ) : null}
-      </fieldset>
+          <section
+            aria-labelledby={`${optionsId}-foods`}
+            className="rounded-card border border-border bg-surface p-5"
+          >
+            <h2 id={`${optionsId}-foods`} className="font-display text-lg font-bold">
+              {t("foods")}
+            </h2>
+            {!picking ? (
+              <div className="mt-2 flex flex-col gap-3">
+                <p className="flex gap-2 text-muted">
+                  <Sparkles aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
+                  {t("autoFoods")}
+                </p>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="self-start"
+                  onClick={() => setPicking(true)}
+                >
+                  {t("pickFoods")}
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-2">
+                <p className="text-sm text-muted">{t("pickHint", { max: RECIPE_MAX_CHOSEN })}</p>
+                {selected.length > 0 ? (
+                  <ul className="mt-3 flex flex-wrap gap-2" aria-label={t("chosen")}>
+                    {selected.map((id) => (
+                      <li key={id}>
+                        <button
+                          type="button"
+                          onClick={() => setSelected(selected.filter((x) => x !== id))}
+                          className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-primary px-3.5 text-sm font-semibold text-on-primary"
+                          aria-label={t("removeFood", {
+                            food: foodName(FOOD_INDEX.get(id)!, locale),
+                          })}
+                        >
+                          {foodName(FOOD_INDEX.get(id)!, locale)}
+                          <X aria-hidden className="size-4" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                <div className="mt-4">
+                  <FoodPicker
+                    foods={foods}
+                    selected={selected}
+                    onChange={(next) => setSelected(next.slice(0, RECIPE_MAX_CHOSEN))}
+                    max={RECIPE_MAX_CHOSEN}
+                    stickyClassName="top-16"
+                    status={
+                      <p className="text-muted tabular">
+                        {t("foodsCount", { count: selected.length, max: RECIPE_MAX_CHOSEN })}
+                      </p>
+                    }
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="mt-3"
+                  onClick={() => {
+                    setPicking(false);
+                    setSelected([]);
+                  }}
+                >
+                  {t("autoInstead")}
+                </Button>
+              </div>
+            )}
+          </section>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <fieldset className="rounded-card border border-border bg-surface p-5">
-          <legend className="px-1 font-display text-lg font-bold">{t("time")}</legend>
-          <FilterChips
-            className="mt-2"
-            label={t("time")}
-            options={MAX_MINUTES_OPTIONS.map((m) => ({
-              value: String(m),
-              label: t("minutes", { minutes: m }),
-            }))}
-            selected={[String(minutes)]}
-            onChange={(next) => next[0] && setMinutes(Number(next[0]) as MaxMinutes)}
-          />
-        </fieldset>
-        <fieldset className="rounded-card border border-border bg-surface p-5">
-          <legend className="px-1 font-display text-lg font-bold">{t("servings")}</legend>
-          <FilterChips
-            className="mt-2"
-            label={t("servings")}
-            options={["1", "2", "3", "4"].map((s) => ({ value: s, label: s }))}
-            selected={[String(servings)]}
-            onChange={(next) => next[0] && setServings(Number(next[0]))}
-          />
-        </fieldset>
-      </div>
+          <div className="rounded-card border border-border bg-surface">
+            <button
+              type="button"
+              aria-expanded={moreOpen}
+              aria-controls={`${optionsId}-more`}
+              onClick={() => setMoreOpen((o) => !o)}
+              className="flex min-h-14 w-full items-center justify-between gap-3 px-5 text-left"
+            >
+              <span>
+                <span className="font-display text-lg font-bold">{t("more")}</span>
+                <span className="block text-sm text-muted">
+                  {t("moreSummary", { minutes, servings })}
+                </span>
+              </span>
+              <ChevronDown
+                aria-hidden
+                className={cn("size-5 transition-transform duration-200", moreOpen && "rotate-180")}
+              />
+            </button>
+            <div
+              id={`${optionsId}-more`}
+              hidden={!moreOpen}
+              className="grid gap-5 border-t border-border p-5 sm:grid-cols-2"
+            >
+              <fieldset>
+                <legend className="font-semibold">{t("time")}</legend>
+                <FilterChips
+                  className="mt-2"
+                  label={t("time")}
+                  options={MAX_MINUTES_OPTIONS.map((m) => ({
+                    value: String(m),
+                    label: t("minutes", { minutes: m }),
+                  }))}
+                  selected={[String(minutes)]}
+                  onChange={(next) => next[0] && setMinutes(Number(next[0]) as MaxMinutes)}
+                />
+              </fieldset>
+              <fieldset>
+                <legend className="font-semibold">{t("servings")}</legend>
+                <FilterChips
+                  className="mt-2"
+                  label={t("servings")}
+                  options={["1", "2", "3", "4"].map((s) => ({ value: s, label: s }))}
+                  selected={[String(servings)]}
+                  onChange={(next) => next[0] && setServings(Number(next[0]))}
+                />
+              </fieldset>
+            </div>
+          </div>
 
-      <div aria-live="assertive">
-        {error ? (
-          <p className="rounded-card border border-border bg-surface p-4">{te(error)}</p>
-        ) : null}
-      </div>
+          <div aria-live="assertive">
+            {error ? (
+              <p className="rounded-card border border-border bg-surface p-4">{te(error)}</p>
+            ) : null}
+          </div>
 
-      <div className="flex flex-wrap items-center gap-4">
-        <Button type="submit" size="lg" disabled={tooFew || tooMany || status === "loading"}>
-          {status === "loading" ? (
-            <Loader2 aria-hidden className="animate-spin" />
-          ) : (
-            <ChefHat aria-hidden />
-          )}
-          {status === "loading" ? t("generating") : t("submit")}
-        </Button>
-        {status === "loading" ? <p className="text-sm text-muted">{t("generatingHint")}</p> : null}
-      </div>
-    </form>
+          <div className="flex flex-wrap items-center gap-4">
+            <Button type="submit" size="lg" disabled={status === "loading"}>
+              {status === "loading" ? (
+                <Loader2 aria-hidden className="animate-spin" />
+              ) : (
+                <ChefHat aria-hidden />
+              )}
+              {status === "loading" ? t("generating") : t("submit")}
+            </Button>
+            {status === "loading" ? (
+              <p className="text-sm text-muted">{t("generatingHint")}</p>
+            ) : null}
+          </div>
+        </form>
+      </MotionConfig>
+    </LazyMotion>
   );
 }

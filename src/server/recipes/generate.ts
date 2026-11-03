@@ -3,7 +3,8 @@ import { eq } from "drizzle-orm";
 import type { RecipeErrorCode, RecipeRequest } from "@/domain/contracts/recipe";
 import type { Food, FoodIndex } from "@/domain/food";
 import { mealTarget } from "@/domain/meals";
-import { isAllowed } from "@/domain/preferences";
+import { allowedFoods, isAllowed } from "@/domain/preferences";
+import { recipeBase } from "@/domain/recipe-base";
 import type { AppEnv } from "@/lib/env";
 import { AI_TIMEOUT_MS, languageModel, mockModel } from "../ai/model";
 import { PROMPT_VERSION, buildRecipePrompt } from "../ai/prompts/recipe.v2";
@@ -33,6 +34,7 @@ export interface Actor {
     | "diet"
     | "allergies"
     | "equipment"
+    | "likedFoods"
   >;
 }
 
@@ -50,6 +52,8 @@ export interface GenerateDeps {
   /** Modelo a usar (os testes injetam um simulado) */
   model?: (prompt: { chosen: readonly Food[]; pantry: readonly Food[] }) => LanguageModel;
   now?: () => number;
+  /** Para variar a base quando a pessoa não escolhe alimentos (os testes fixam-na). */
+  random?: () => number;
   log?: (event: Record<string, unknown>) => void;
 }
 
@@ -60,12 +64,13 @@ const fail = (code: RecipeErrorCode, status: number): GenerateResult => ({
 });
 
 /**
- * Pipeline das receitas (secção 6): validação (refeição da pessoa, alimentos permitidos) → rate
- * limiting → cache → quotas → modelo (uma nova tentativa com o erro descrito) → proteína calculada
- * pela app → D1.
+ * Pipeline das receitas (secção 6): validação (refeição da pessoa, alimentos permitidos) → base
+ * completada pela app (o que a pessoa escolheu, ou nada, mais uma proteína e acompanhamentos de que
+ * gosta) → rate limiting → cache → quotas → modelo (uma nova tentativa com o erro descrito) →
+ * proteína calculada pela app → D1.
  */
 export async function generateRecipe(
-  request: RecipeRequest,
+  input: RecipeRequest,
   actor: Actor,
   deps: GenerateDeps,
 ): Promise<GenerateResult> {
@@ -74,14 +79,29 @@ export async function generateRecipe(
   const { db, env } = deps;
 
   const { profile } = actor;
-  if (!profile.meals.includes(request.meal)) return fail("invalid_request", 400);
+  if (!profile.meals.includes(input.meal)) return fail("invalid_request", 400);
 
   // Alimentos: todos têm de existir e caber nas restrições; a despensa entra sempre como opcional
   const restrictions = restrictionsOf(profile);
-  const chosen = request.foodIds.map((id) => deps.foodIndex.get(id));
-  if (chosen.some((f) => !f || f.role === "pantry")) return fail("unknown_food", 400);
-  const chosenFoods = chosen as Food[];
-  if (chosenFoods.some((f) => !isAllowed(f, restrictions))) return fail("restricted_food", 400);
+  const picked = input.foodIds.map((id) => deps.foodIndex.get(id));
+  if (picked.some((f) => !f || f.role === "pantry")) return fail("unknown_food", 400);
+  if ((picked as Food[]).some((f) => !isAllowed(f, restrictions)))
+    return fail("restricted_food", 400);
+  const chosenFoods = recipeBase({
+    meal: input.meal,
+    chosen: picked as Food[],
+    foods: allowedFoods(deps.foods, restrictions).filter((f) => f.role !== "pantry"),
+    preferred: new Set(profile.likedFoods),
+    preWorkout: input.meal === profile.preWorkoutMeal,
+    // Com alimentos escolhidos, a base é estável (a cache funciona) e muda com a variante; sem
+    // nada escolhido, cada pedido traz uma combinação nova
+    seed:
+      input.foodIds.length > 0
+        ? input.variant - 1
+        : Math.floor((deps.random ?? Math.random)() * 1_000_000),
+  });
+  if (!chosenFoods.some((f) => f.role === "protein")) return fail("invalid_request", 400);
+  const request: RecipeRequest = { ...input, foodIds: chosenFoods.map((f) => f.id) };
   const pantry = deps.foods.filter(
     (f) => f.role === "pantry" && !request.foodIds.includes(f.id) && isAllowed(f, restrictions),
   );

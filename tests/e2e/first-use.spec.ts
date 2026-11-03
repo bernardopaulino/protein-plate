@@ -45,29 +45,29 @@ test("o dia vive na conta: as mudanças ficam depois de recarregar e noutro brow
   await signIn(context, baseURL!, email, { fresh: true });
   await completeOnboarding(page);
 
-  const breakfast = page.locator("#refeicao-pequeno-almoco");
-  const rows = breakfast.getByRole("listitem");
-  const before = await rows.count();
-  await breakfast
-    .getByRole("button", { name: /^Tirar / })
+  const firstRow = () =>
+    page.locator("#refeicao-pequeno-almoco").getByRole("listitem").first().locator("p").nth(1);
+  const before = await firstRow().innerText();
+  await page
+    .locator("#refeicao-pequeno-almoco")
+    .getByRole("button", { name: /^Mais meia porção/ })
     .first()
     .click();
-  await expect(rows).toHaveCount(before - 1);
+  await expect(firstRow()).not.toHaveText(before);
+  const after = await firstRow().innerText();
   await expect(page.getByText("Guardado na tua conta.")).toBeVisible();
 
   await page.reload();
-  await expect(page.locator("#refeicao-pequeno-almoco").getByRole("listitem")).toHaveCount(
-    before - 1,
-  );
+  await expect(firstRow()).toHaveText(after);
 
   // Outro browser (sem nada guardado localmente) vê o mesmo dia
   const other = await browser.newContext({ storageState: { cookies: [], origins: [] } });
   await signIn(other, baseURL!, email);
   const second = await other.newPage();
   await second.goto("/o-meu-dia");
-  await expect(second.locator("#refeicao-pequeno-almoco").getByRole("listitem")).toHaveCount(
-    before - 1,
-  );
+  await expect(
+    second.locator("#refeicao-pequeno-almoco").getByRole("listitem").first().locator("p").nth(1),
+  ).toHaveText(after);
   await other.close();
 });
 

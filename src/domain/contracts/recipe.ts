@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { localeSchema, mealSchema, slugSchema } from "./common";
 
+import { RECIPE_MAX_CHOSEN } from "../recipe-base";
 import { MAX_MINUTES_OPTIONS, RECIPE_ERROR_CODES } from "../recipe-options";
 
 export {
@@ -15,10 +16,10 @@ export const RECIPE_VARIANTS = [1, 2, 3] as const;
 /** Pedido de receita: só campos fechados, sem texto livre; exige login (secção 6). */
 export const recipeRequestSchema = z
   .object({
+    /** Opcional: o que a pessoa quer usar (a app completa com o que ela gosta). */
     foodIds: z
       .array(slugSchema)
-      .min(2)
-      .max(6)
+      .max(RECIPE_MAX_CHOSEN)
       .refine((ids) => new Set(ids).size === ids.length, "alimentos repetidos"),
     /** Uma das refeições da pessoa; a meta da refeição e o treino vêm do perfil. */
     meal: mealSchema,

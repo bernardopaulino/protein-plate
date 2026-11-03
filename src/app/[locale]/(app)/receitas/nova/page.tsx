@@ -3,8 +3,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RecipeForm } from "@/features/recipes/recipe-form";
 import type { Locale } from "@/i18n/routing";
 import { requireProfile } from "@/server/auth/guard";
-import { getDb } from "@/server/db/client";
-import { loadDayItems } from "@/server/services/account";
 
 export const dynamic = "force-dynamic";
 
@@ -30,8 +28,7 @@ export default async function NewRecipePage({
   const query = await searchParams;
   const t = await getTranslations("recipes");
   const td = await getTranslations("disclaimer");
-  const { session, profile } = await requireProfile(locale, "/receitas/nova");
-  const dayItems = await loadDayItems(getDb(), session.user.id);
+  const { profile } = await requireProfile(locale, "/receitas/nova");
 
   const meal = typeof query.refeicao === "string" ? query.refeicao : null;
   const foods =
@@ -60,7 +57,6 @@ export default async function NewRecipePage({
           initialMinutes={Number(query.tempo) || null}
           initialServings={Number(query.doses) || 1}
           variant={Number(query.variante) || 1}
-          dayItems={dayItems.map(({ meal, foodId }) => ({ meal, foodId }))}
         />
       </div>
       <p className="mt-6 text-sm text-muted">{td("recipe")}</p>
