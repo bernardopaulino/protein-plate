@@ -47,8 +47,8 @@
       "vars": {
         "APP_ENV": "staging",
         "BETTER_AUTH_URL": "https://staging.protein-plate.app",
-        // Simulada até haver ANTHROPIC_API_KEY de staging (wrangler secret put ANTHROPIC_API_KEY --env staging)
-        "AI_MODE": "mock",
+        // Modelo real (ANTHROPIC_API_KEY em wrangler secret); AI_DAILY_LIMIT trava o custo
+        "AI_MODE": "live",
         "AI_MODEL": "claude-haiku-5-5",
         "AI_DAILY_LIMIT": "50",
         "QUOTA_GUEST": "3",
