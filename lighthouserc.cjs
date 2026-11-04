@@ -15,11 +15,11 @@ module.exports = {
       settings: { chromeFlags: "--headless=new --no-sandbox" },
     },
     assert: {
-      // Com várias corridas, conta a mediana
-      aggregationMethod: "median-run",
+      // Com várias corridas, conta a mediana (com assertMatrix, a opção vai em cada entrada)
       assertMatrix: [
         {
           matchingUrlPattern: ".*",
+          aggregationMethod: "median-run",
           assertions: {
             "categories:performance": ["error", { minScore: 0.9 }],
             "categories:accessibility": ["error", { minScore: 0.9 }],
@@ -29,6 +29,7 @@ module.exports = {
         // O SEO só conta nas páginas indexáveis (o dia da pessoa tem noindex)
         {
           matchingUrlPattern: "^(?!.*o-meu-dia).*$",
+          aggregationMethod: "median-run",
           assertions: { "categories:seo": ["error", { minScore: 0.9 }] },
         },
       ],
