@@ -15,6 +15,16 @@ describe("mensagens", () => {
     expect(keys(en).sort()).toEqual(keys(pt).sort());
   });
 
+  it("só textos (as mensagens são compiladas no build e não aceitam listas nem números)", () => {
+    const leaves = (value: unknown): unknown[] =>
+      value && typeof value === "object" && !Array.isArray(value)
+        ? Object.values(value).flatMap(leaves)
+        : [value];
+    for (const messages of [pt, en]) {
+      expect(leaves(messages).every((v) => typeof v === "string")).toBe(true);
+    }
+  });
+
   it("sem 'falhaste' nem culpa nos textos", () => {
     const text = JSON.stringify(pt).toLowerCase();
     for (const word of ["falhaste", "falhou a meta", "culpa", "fracass"]) {

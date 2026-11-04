@@ -3,7 +3,13 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import { securityHeaders } from "./src/lib/security-headers";
 
-const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: "./src/i18n/request.ts",
+  experimental: {
+    // Mensagens ICU compiladas no build: o browser deixa de receber o parser (~10 KB gz por página)
+    messages: { path: "./src/messages", format: "json", locales: "infer", precompile: true },
+  },
+});
 
 /**
  * Português sem prefixo, sem middleware: os pedidos sem idioma são reescritos para /pt/... (o

@@ -348,70 +348,70 @@
     "updated": "Última atualização: {date}",
     "date": "3 November 2026",
     "draft": "Rascunho: este texto ainda vai ser revisto antes do lançamento.",
-    "privacy": [
-      {
+    "privacy": {
+      "who": {
         "title": "Who we are",
         "body": "Protein Plate is a personal project by Bernardo Paulino. For any question about your data, write to bernardo.sobral7@gmail.com."
       },
-      {
+      "account": {
         "title": "Account",
         "body": "To use the app you sign in with Google or Apple. We store your name and email. Sessions don't store your IP or browser, and Google and Apple tokens aren't kept (except Apple's, encrypted, so we can disconnect it when you delete your account)."
       },
-      {
+      "plan": {
         "title": "Your plan",
         "body": "We store your daily goal, training intensity, meals (including before and after training), diet, the foods you like, your kitchen equipment and cooking time, your day and the recipes you save. We use this to personalise your day and recipes (performance of contract)."
       },
-      {
+      "health": {
         "title": "Health data",
         "body": "Your weight and your allergies and intolerances are health data. We only store them with your explicit consent, given at the end of the initial form, and only to work out your goal and exclude foods. You can withdraw consent at any time: type your goal manually and remove allergies in preferences, or delete your account."
       },
-      {
+      "ai": {
         "title": "AI recipes",
         "body": "To generate a recipe, we send the AI model (Anthropic) only the names of the chosen foods, the meal, time, servings, equipment and diet. We never send your name, email, weight or allergies (foods with allergens are simply not in the list)."
       },
-      {
+      "limits": {
         "title": "Usage limits",
         "body": "To prevent abuse, we count recipes generated per day with a code derived from your account (HMAC with a key that changes daily). Counters are deleted after 2 days."
       },
-      {
+      "storage": {
         "title": "Where the data lives",
         "body": "On Cloudflare (D1 database in the European Union). We don't use third-party analytics or advertising cookies. The service owner has a protected admin panel for support and aggregate numbers; each person's weight and allergies never appear there."
       },
-      {
+      "rights": {
         "title": "Your rights",
         "body": "Em Conta podes exportar todos os teus dados (JSON), mudar as tuas preferências e apagar a conta a qualquer momento. Guardamos também as últimas 50 receitas que geraste (para as encontrares em Receitas), as que marcaste como favoritas e a receita que puseste em cada refeição do teu dia. Apagar a conta apaga o perfil, as preferências, o dia, as receitas guardadas, o histórico e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
       },
-      {
+      "age": {
         "title": "Age",
         "body": "You must be at least 16 to create an account."
       }
-    ],
-    "terms": [
-      {
+    },
+    "terms": {
+      "what": {
         "title": "What it is",
         "body": "Protein Plate helps you reach your protein goal with real food. It's free and needs an account (Google or Apple)."
       },
-      {
+      "general": {
         "title": "Informação geral",
         "body": "A informação é geral e não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína."
       },
-      {
+      "numbers": {
         "title": "Números",
         "body": "Os valores nutricionais vêm da Tabela da Composição de Alimentos do INSA. Enquanto a curadoria não estiver concluída, alguns valores são provisórios e estão assinalados."
       },
-      {
+      "ai": {
         "title": "Receitas geradas por IA",
         "body": "As receitas são geradas por IA e podem ter erros. A proteína é calculada pela app a partir da TCA. Confirma sempre alergénios, intolerâncias e tempos de cozedura."
       },
-      {
+      "fairUse": {
         "title": "Utilização justa",
         "body": "Há limites diários de receitas novas. Não uses a app de forma automatizada nem para sobrecarregar o serviço."
       },
-      {
+      "account": {
         "title": "Conta",
         "body": "Podes apagar a conta quando quiseres. Podemos suspender contas usadas para abuso."
       }
-    ]
+    }
   },
   "notFound": {
     "title": "Esta página não existe",
