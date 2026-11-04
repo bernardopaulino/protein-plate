@@ -1,5 +1,5 @@
 import { ChevronRight, Plus } from "lucide-react";
-import Image from "next/image";
+import { Illustration } from "@/components/illustration";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { ProteinNumber } from "./protein-number";
@@ -40,7 +40,7 @@ export function FoodCard({
     <>
       {image ? (
         <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary-soft">
-          <Image src={image} alt="" aria-hidden width={32} height={32} />
+          <Illustration src={image} size={32} />
         </span>
       ) : null}
       <div className="min-w-0 flex-1">

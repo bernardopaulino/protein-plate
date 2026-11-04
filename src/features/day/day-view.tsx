@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
+import { Illustration } from "@/components/illustration";
 import { useEffect, useMemo, useState } from "react";
 import { SuggestionChip } from "@/components/protein/chips";
 import { GoalProgress } from "@/components/protein/goal-progress";
@@ -319,16 +319,7 @@ export function DayView({
                       const name = food ? foodName(food, locale) : t("item.unknown");
                       return (
                         <li key={item.id} className="flex items-center gap-3 py-2.5">
-                          {food ? (
-                            <Image
-                              src={foodImage(food.id)}
-                              alt=""
-                              aria-hidden
-                              width={32}
-                              height={32}
-                              className="shrink-0"
-                            />
-                          ) : null}
+                          {food ? <Illustration src={foodImage(food.id)} size={32} /> : null}
                           <div className="min-w-0 flex-1">
                             <p className="truncate font-semibold">
                               {food ? (

@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { Illustration } from "@/components/illustration";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
@@ -93,7 +93,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
             <li key={key} className="rounded-card border border-border bg-surface p-5">
               <span className="flex items-center gap-3">
                 <span className="grid size-14 place-items-center rounded-2xl bg-primary-soft">
-                  {image ? <Image src={image} alt="" width={40} height={40} /> : null}
+                  <Illustration src={image} size={40} />
                 </span>
                 <span className="font-display text-sm font-bold text-muted tabular">
                   {index + 1}

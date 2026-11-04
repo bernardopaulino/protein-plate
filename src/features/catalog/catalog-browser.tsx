@@ -2,7 +2,7 @@
 
 import { ChevronDown, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
+import { Illustration } from "@/components/illustration";
 import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
 import { FoodCard } from "@/components/protein/food-card";
@@ -164,7 +164,7 @@ function GroupHeading({
     <h2 id={id} className="flex items-center gap-3 text-lg font-bold">
       {image ? (
         <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft">
-          <Image src={image} alt="" aria-hidden width={28} height={28} />
+          <Illustration src={image} size={28} />
         </span>
       ) : null}
       <span>{title}</span>
@@ -343,12 +343,9 @@ export function CatalogBrowser() {
                     className="absolute inset-0 animate-in rounded-card bg-primary-soft duration-200 fade-in-0 zoom-in-95"
                   />
                 ) : null}
-                <Image
-                  src={SECTION_IMAGES[s]!}
-                  alt=""
-                  aria-hidden
-                  width={40}
-                  height={40}
+                <Illustration
+                  src={SECTION_IMAGES[s]}
+                  size={40}
                   className="relative size-9 sm:size-10"
                 />
                 <span className="relative text-sm leading-tight font-semibold text-balance">
