@@ -207,21 +207,21 @@ Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor e
 2. **Base** (`src/domain/recipe-base.ts`): o que a pessoa escolheu, completado pela app com uma fonte de proteína (leve antes do treino) e, se houver espaço, hidratos e legumes ao almoço e ao jantar ou hidratos (podem ser fruta) nas outras refeições; escolhe primeiro entre os alimentos de que a pessoa gosta e que servem para a refeição. Com alimentos escolhidos, a base é estável (muda com a variante, a cache funciona); sem nada escolhido, cada pedido usa uma seed aleatória e traz outra combinação.
 3. Rate limiting (5/min por chave), quota diária por conta.
 4. Cache: `cache_key` = SHA-256 de alimentos ordenados + refeição + pós-treino + pré-treino + meta da refeição (arredondada a 5 g) + despensa permitida + equipamento + tempo + doses + idioma + `PROMPT_VERSION` + modelo + `FOOD_DATA_VERSION` + variante (1–3, "Gerar outra"). Se existir, devolve sem custo.
-5. Modelo: `generateText` + `Output.object`, schema construído por pedido:
-   - `title` ≤ 60, `summary` ≤ 140, `prepMinutes` ≤ `maxMinutes`
-   - `ingredients`: 2–10 × `{ foodId: z.enum([...escolhidos, ...despensa]), grams }`
+5. Modelo (`src/server/recipes/model-call.ts`, partilhado com `eval:recipes`): `generateText` + `Output.object` com um **schema fixo**, igual em todos os pedidos (a API compila uma gramática por schema e guarda-a 24 h; um schema por pedido pagava essa compilação em cada receita):
+   - `title` ≤ 60, `summary` ≤ 140, `prepMinutes` ≤ 45
+   - `ingredients`: 2–10 × `{ foodId: string, grams }`
    - `steps`: 2–8, ≤ 240 caracteres
-6. Validar: todas as fontes de proteína escolhidas presentes; gramas por dose ≤ 3 × porção `default`; proteína por dose (calculada pela app) entre 1 e 120 g.
-7. Falha → 1 nova tentativa com o erro descrito; segunda falha → erro amigável, não conta para a quota.
+6. Ingredientes repetidos: a app junta-os (soma as gramas), sem nova chamada. Validar: só ids da lista enviada (escolhidos + despensa permitida); `prepMinutes` ≤ `maxMinutes`; todas as fontes de proteína escolhidas presentes; gramas por dose ≤ 3 × porção `default`; proteína por dose (calculada pela app) entre 1 e 120 g.
+7. Falha → 1 nova tentativa com o erro descrito, só se ainda faltarem ≥ 5 s do prazo total de 14 s (cada tentativa tem como timeout o tempo que falta). Sem receita dentro do prazo → erro amigável, não conta para a quota.
 8. Calcular proteína, guardar (`recipes` + `recipe_ingredients`), contar quota, devolver `id`.
 
 **Prompt** versionado em `src/server/ai/prompts/recipe.v2.ts` (`PROMPT_VERSION` 2): alimentos com nome e base de peso; usar todas as fontes de proteína; não inventar ingredientes; quantidades para a receita completa; português de Portugal; sem alegações de saúde; aproximar a proteína por dose da meta da refeição; pós-treino → receita rápida; pré-treino → leve, com hidratos e pouca gordura; só o equipamento da pessoa; nota da dieta (sem carne, vegetariana, vegana). Nunca leva o nome, o peso nem as alergias (os alimentos com alergénios simplesmente não estão na lista). A UI mostra quanto a receita cobre da meta.
 
-**Modelo:** `AI_MODEL` (por defeito `claude-haiku-5-5`), timeout 20 s. `AI_MODE=mock` usa `MockLanguageModelV3` (local e testes).
+**Modelo:** `AI_MODEL` (por defeito `claude-haiku-5-5`), effort `low` e thinking desligado (`src/server/ai/model.ts`), prazo total de 14 s por receita. Medido a 4/11/2026: p50 ≈ 3 s, p95 ≈ 6–7 s, contra 8 s / 12,5 s com o thinking por defeito. `AI_MODE=mock` usa `MockLanguageModelV3` (local e testes).
 
 **Quotas** (configuráveis): 15 receitas novas/dia por conta (`QUOTA_USER`; chave = HMAC do id da conta com chave diária derivada de `IP_HASH_SECRET` + data); global `AI_DAILY_LIMIT` (acima, só cache). O Turnstile e a quota de convidados saíram com o login obrigatório.
 
-**Avaliações:** `eval:recipes` corre 20 combinações fixas e mede validade, ingredientes fora da lista, proteína plausível e latência. Corre antes de mudar prompt ou modelo; cada mudança incrementa `PROMPT_VERSION`.
+**Avaliações:** `eval:recipes` corre 20 combinações fixas com a mesma chamada do servidor e mede validade, ingredientes fora da lista, proteína plausível, latência (p50/p95) e tokens; guarda o texto de cada receita em `eval-results/` para rever à mão. Critério: ≥ 18 válidas e p95 < 15 s. Corre antes de mudar prompt, modelo, effort ou thinking; cada mudança do prompt incrementa `PROMPT_VERSION`.
 
 ## 7. Autenticação (login obrigatório)
 

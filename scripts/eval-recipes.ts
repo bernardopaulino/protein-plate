@@ -10,17 +10,14 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { Output, generateText } from "ai";
 import { FOODS } from "../src/content/foods.generated";
 import type { MaxMinutes } from "../src/domain/contracts/recipe";
 import { indexFoods } from "../src/domain/food";
 import type { Meal } from "../src/domain/meals";
-import { PROMPT_VERSION, buildRecipePrompt } from "../src/server/ai/prompts/recipe.v2";
-import {
-  proteinPerServing,
-  recipeOutputSchema,
-  recipeProblem,
-} from "../src/server/recipes/recipe-rules";
+import { AI_EFFORT, AI_THINKING } from "../src/server/ai/model";
+import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v2";
+import { callRecipeModel } from "../src/server/recipes/model-call";
+import { proteinPerServing, type RecipeOutput } from "../src/server/recipes/recipe-rules";
 
 interface Case {
   foods: string[];
@@ -183,14 +180,16 @@ interface Row {
   protein: number | null;
   targetRatio: number | null;
   latencyMs: number;
+  inputTokens: number;
+  outputTokens: number;
   problem: string | null;
+  /** O texto, para rever à mão (o eval só mede regras e números) */
+  recipe: RecipeOutput | null;
 }
 
 const rows: Row[] = [];
 for (const [i, c] of CASES.entries()) {
   const chosen = c.foods.map((id) => index.get(id)!);
-  const allowed = [...chosen, ...pantry].map((f) => f.id) as [string, ...string[]];
-  const proteinIds = chosen.filter((f) => f.role === "protein").map((f) => f.id);
   const request = {
     meal: c.meal,
     maxMinutes: c.minutes,
@@ -205,38 +204,17 @@ for (const [i, c] of CASES.entries()) {
     equipment: ["stove", "microwave"] as const,
     diet: "omnivore" as const,
   };
-  const started = Date.now();
-  let problem: string | null = "sem resposta";
-  let attempts = 0;
-  let outOfList = 0;
-  let protein: number | null = null;
-  for (let attempt = 1; attempt <= 2 && problem; attempt++) {
-    attempts = attempt;
-    const { system, prompt } = buildRecipePrompt({
-      request,
-      context,
-      chosen,
-      pantry,
-      previousError: attempt > 1 ? problem : undefined,
-    });
-    try {
-      // O schema fecha os ids: um ingrediente fora da lista conta como resposta fora do schema
-      const { output } = await generateText({
-        model,
-        system,
-        prompt,
-        output: Output.object({ schema: recipeOutputSchema(allowed, c.minutes) }),
-        maxRetries: 0,
-        timeout: 20_000,
-      });
-      problem = recipeProblem(output, { proteinIds, servings: c.servings, foods: index });
-      protein = proteinPerServing(output.ingredients, c.servings, index);
-    } catch (err) {
-      problem = err instanceof Error ? err.name : "erro";
-      if (problem.includes("NoObjectGenerated")) outOfList += 1;
-    }
-  }
-  const latencyMs = Date.now() - started;
+  // A mesma chamada do servidor: schema fixo, effort, repetidos juntos, prazo e nova tentativa
+  const result = await callRecipeModel({
+    model,
+    prompt: { request, context, chosen, pantry },
+    foods: index,
+  });
+  const { attempts, latencyMs, problem } = result;
+  const outOfList = result.problems.filter((p) => p.includes("não estão na lista")).length;
+  const protein = result.output
+    ? proteinPerServing(result.output.ingredients, c.servings, index)
+    : null;
   rows.push({
     case: i + 1,
     valid: problem === null,
@@ -245,7 +223,10 @@ for (const [i, c] of CASES.entries()) {
     protein,
     targetRatio: protein !== null ? protein / c.target : null,
     latencyMs,
+    inputTokens: result.inputTokens,
+    outputTokens: result.outputTokens,
     problem,
+    recipe: result.output,
   });
   console.log(
     `#${String(i + 1).padStart(2)} ${problem === null ? "ok " : "NOK"} tentativas=${attempts} proteína=${protein?.toFixed(1) ?? "-"} g (meta ${c.target}) ${latencyMs} ms${problem ? ` — ${problem}` : ""}`,
@@ -261,15 +242,20 @@ const nearTarget = valid.filter(
 ).length;
 const summary = {
   model: modelId,
+  effort: AI_EFFORT,
+  thinking: AI_THINKING.type,
   promptVersion: PROMPT_VERSION,
   cases: rows.length,
   valid: valid.length,
   validFirstTry: firstTry,
-  /** Respostas fora do schema (ids inventados, campos em falta) */
+  /** Tentativas com ingredientes fora da lista (ids inventados) */
   outOfListIngredients: rows.reduce((s, r) => s + r.outOfList, 0),
   proteinNearTarget: nearTarget,
   latencyP50Ms: latencies[Math.floor(latencies.length / 2)] ?? 0,
   latencyP95Ms: p95,
+  /** Tokens médios por receita (todas as tentativas) */
+  avgInputTokens: Math.round(rows.reduce((s, r) => s + r.inputTokens, 0) / rows.length),
+  avgOutputTokens: Math.round(rows.reduce((s, r) => s + r.outputTokens, 0) / rows.length),
 };
 console.log("\nResumo:", summary);
 

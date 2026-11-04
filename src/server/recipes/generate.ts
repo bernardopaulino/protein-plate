@@ -1,4 +1,4 @@
-import { Output, generateText, type LanguageModel } from "ai";
+import type { LanguageModel } from "ai";
 import { eq } from "drizzle-orm";
 import type { RecipeErrorCode, RecipeRequest } from "@/domain/contracts/recipe";
 import type { Food, FoodIndex } from "@/domain/food";
@@ -6,21 +6,15 @@ import { mealTarget } from "@/domain/meals";
 import { allowedFoods, isAllowed } from "@/domain/preferences";
 import { recipeBase } from "@/domain/recipe-base";
 import type { AppEnv } from "@/lib/env";
-import { AI_TIMEOUT_MS, languageModel, mockModel } from "../ai/model";
-import { PROMPT_VERSION, buildRecipePrompt } from "../ai/prompts/recipe.v2";
+import { languageModel, mockModel } from "../ai/model";
+import { PROMPT_VERSION } from "../ai/prompts/recipe.v2";
 import type { Db } from "../db/client-core";
 import { recipeIngredients, recipes } from "../db/schema";
 import { restrictionsOf, type Profile } from "../services/account";
 import { GLOBAL_KEY, countUsage, quotaKey, usageCount } from "../services/quota";
 import { mockRecipe } from "./mock-recipe";
-import {
-  proteinPerServing,
-  recipeCacheKey,
-  recipeOutputSchema,
-  recipeProblem,
-  shortId,
-  type RecipeOutput,
-} from "./recipe-rules";
+import { callRecipeModel } from "./model-call";
+import { proteinPerServing, recipeCacheKey, shortId } from "./recipe-rules";
 
 /** Quem pede: sempre uma conta com o formulário de boas-vindas concluído. */
 export interface Actor {
@@ -148,64 +142,21 @@ export async function generateRecipe(
   if (usedGlobal >= env.AI_DAILY_LIMIT) return fail("service_unavailable", 503);
   if (used >= limit) return fail("quota_exceeded", 429);
 
-  const allowedIds = [...chosenFoods, ...pantry].map((f) => f.id) as [string, ...string[]];
-  const schema = recipeOutputSchema(allowedIds, request.maxMinutes);
-  const proteinIds = chosenFoods.filter((f) => f.role === "protein").map((f) => f.id);
   const model =
     deps.model?.({ chosen: chosenFoods, pantry }) ??
     languageModel(env, () =>
       mockModel(() => JSON.stringify(mockRecipe(request, chosenFoods, pantry)), "mock"),
     );
 
-  let output: RecipeOutput | null = null;
-  let previousError: string | undefined;
-  let inputTokens = 0;
-  let outputTokens = 0;
-  const started = now();
-  for (let attempt = 1; attempt <= 2 && !output; attempt++) {
-    const { system, prompt } = buildRecipePrompt({
-      request,
-      context,
-      chosen: chosenFoods,
-      pantry,
-      previousError,
-    });
-    try {
-      const result = await generateText({
-        model,
-        system,
-        prompt,
-        output: Output.object({ schema }),
-        maxRetries: 0,
-        timeout: AI_TIMEOUT_MS,
-      });
-      inputTokens += result.usage.inputTokens ?? 0;
-      outputTokens += result.usage.outputTokens ?? 0;
-      const problem = recipeProblem(result.output, {
-        proteinIds,
-        servings: request.servings,
-        foods: deps.foodIndex,
-      });
-      if (problem) previousError = problem;
-      else output = result.output;
-    } catch (err) {
-      previousError = "a resposta não seguiu o formato pedido";
-      log({
-        msg: "recipe_attempt_error",
-        attempt,
-        name: err instanceof Error ? err.name : "unknown",
-      });
-    }
-    log({
-      msg: "recipe_attempt",
-      attempt,
-      valid: output !== null,
-      problem: output ? null : previousError,
-    });
-  }
-  const latencyMs = now() - started;
+  const { output, inputTokens, outputTokens, latencyMs } = await callRecipeModel({
+    model,
+    prompt: { request, context, chosen: chosenFoods, pantry },
+    foods: deps.foodIndex,
+    now,
+    log,
+  });
 
-  // Segunda falha: erro amigável, não conta para a quota
+  // Falhou dentro do prazo: erro amigável, não conta para a quota
   if (!output) {
     log({ msg: "recipe_failed", model: modelId, latencyMs, inputTokens, outputTokens });
     return fail("generation_failed", 422);

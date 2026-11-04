@@ -1,34 +1,54 @@
 import { z } from "zod";
-import { RECIPE_LIMITS, type MaxMinutes } from "@/domain/contracts/recipe";
+import { MAX_MINUTES_OPTIONS, RECIPE_LIMITS, type MaxMinutes } from "@/domain/contracts/recipe";
 import { defaultPortion, type FoodIndex } from "@/domain/food";
 import { proteinForGrams } from "@/domain/protein";
 
-/** Schema da resposta do modelo, construído por pedido (ids fechados aos alimentos permitidos). */
-export function recipeOutputSchema(
-  allowedIds: readonly [string, ...string[]],
-  maxMinutes: MaxMinutes,
-) {
-  return z.object({
-    title: z.string().min(3).max(RECIPE_LIMITS.title),
-    summary: z.string().min(3).max(RECIPE_LIMITS.summary),
-    prepMinutes: z.number().int().min(1).max(maxMinutes),
-    ingredients: z
-      .array(
-        z.object({
-          foodId: z.enum(allowedIds),
-          grams: z.number().positive().max(5000),
-        }),
-      )
-      .min(RECIPE_LIMITS.ingredientsMin)
-      .max(RECIPE_LIMITS.ingredientsMax),
-    steps: z
-      .array(z.string().min(3).max(RECIPE_LIMITS.step))
-      .min(RECIPE_LIMITS.stepsMin)
-      .max(RECIPE_LIMITS.stepsMax),
-  });
-}
+/**
+ * Schema da resposta do modelo, IGUAL em todos os pedidos (secção 6). A API compila uma gramática
+ * por schema e guarda-a 24 h: um schema por pedido (ids ou tempo máximo dentro do schema) pagava
+ * essa compilação em cada receita. Os ids permitidos e o tempo máximo verificam-se depois, em
+ * `recipeProblem`.
+ */
+export const recipeOutputSchema = z.object({
+  title: z.string().min(3).max(RECIPE_LIMITS.title),
+  summary: z.string().min(3).max(RECIPE_LIMITS.summary),
+  prepMinutes: z
+    .number()
+    .int()
+    .min(1)
+    .max(Math.max(...MAX_MINUTES_OPTIONS)),
+  ingredients: z
+    .array(
+      z.object({
+        foodId: z.string().min(1).max(64),
+        grams: z.number().positive().max(5000),
+      }),
+    )
+    .min(RECIPE_LIMITS.ingredientsMin)
+    .max(RECIPE_LIMITS.ingredientsMax),
+  steps: z
+    .array(z.string().min(3).max(RECIPE_LIMITS.step))
+    .min(RECIPE_LIMITS.stepsMin)
+    .max(RECIPE_LIMITS.stepsMax),
+});
 
-export type RecipeOutput = z.infer<ReturnType<typeof recipeOutputSchema>>;
+export type RecipeOutput = z.infer<typeof recipeOutputSchema>;
+
+/**
+ * Junta os ingredientes repetidos (soma as gramas, mantém a ordem da primeira vez). É um erro que a
+ * app corrige sem custo, em vez de gastar uma segunda chamada ao modelo.
+ */
+export function mergeDuplicateIngredients(output: RecipeOutput): RecipeOutput {
+  const merged = new Map<string, number>();
+  for (const { foodId, grams } of output.ingredients) {
+    merged.set(foodId, (merged.get(foodId) ?? 0) + grams);
+  }
+  if (merged.size === output.ingredients.length) return output;
+  return {
+    ...output,
+    ingredients: [...merged].map(([foodId, grams]) => ({ foodId, grams })),
+  };
+}
 
 /** Proteína por dose, calculada pela app a partir da TCA (nunca pela IA). */
 export function proteinPerServing(
@@ -44,15 +64,30 @@ export function proteinPerServing(
 }
 
 /**
- * Validação depois do modelo (secção 6): todas as fontes de proteína escolhidas presentes, sem
- * ingredientes repetidos, gramas por dose ≤ 3 × porção default, proteína por dose entre 1 e 120 g.
- * Devolve a descrição do problema (para a segunda tentativa) ou null.
+ * Validação depois do modelo (secção 6): só ingredientes da lista enviada, tempo dentro do pedido,
+ * todas as fontes de proteína escolhidas presentes, sem ingredientes repetidos, gramas por dose
+ * ≤ 3 × porção default, proteína por dose entre 1 e 120 g. Devolve a descrição do problema (para a
+ * segunda tentativa) ou null.
  */
 export function recipeProblem(
   output: RecipeOutput,
-  context: { proteinIds: readonly string[]; servings: number; foods: FoodIndex },
+  context: {
+    /** Os ids enviados ao modelo (base + despensa permitida). */
+    allowedIds: ReadonlySet<string>;
+    maxMinutes: MaxMinutes;
+    proteinIds: readonly string[];
+    servings: number;
+    foods: FoodIndex;
+  },
 ): string | null {
   const ids = output.ingredients.map((i) => i.foodId);
+  const outside = ids.filter((id) => !context.allowedIds.has(id));
+  if (outside.length > 0) {
+    return `os ingredientes ${outside.join(", ")} não estão na lista; usa só os ids da lista`;
+  }
+  if (output.prepMinutes > context.maxMinutes) {
+    return `prepMinutes (${output.prepMinutes}) passa o tempo máximo de ${context.maxMinutes} minutos`;
+  }
   if (new Set(ids).size !== ids.length) return "há ingredientes repetidos; junta as quantidades";
   const missing = context.proteinIds.filter((id) => !ids.includes(id));
   if (missing.length > 0) return `faltam as fontes de proteína ${missing.join(", ")}`;

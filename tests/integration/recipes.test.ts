@@ -297,6 +297,82 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     expect(prompts[1]).toContain("faltam as fontes de proteína atum-lata-natural");
   });
 
+  it("ingredientes repetidos: a app junta-os sem gastar outra chamada ao modelo", async () => {
+    const userId = await createUser(t.db);
+    const req = request();
+    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const good = mockRecipe(req, chosen, []);
+    const atum = good.ingredients.find((i) => i.foodId === "atum-lata-natural")!;
+    const split = {
+      ...good,
+      ingredients: [
+        ...good.ingredients.filter((i) => i !== atum),
+        { foodId: atum.foodId, grams: atum.grams / 2 },
+        { foodId: atum.foodId, grams: atum.grams / 2 },
+      ],
+    };
+    const respond = vi.fn(() => JSON.stringify(split));
+    const result = await generateRecipe(
+      req,
+      person(userId),
+      deps({ model: () => mockModel(respond) }),
+    );
+    expect(result.ok).toBe(true);
+    expect(respond).toHaveBeenCalledTimes(1);
+    if (!result.ok) return;
+    const saved = await getRecipe(t.db, result.id);
+    const atumRows = saved!.ingredients.filter((i) => i.foodId === "atum-lata-natural");
+    expect(atumRows).toHaveLength(1);
+    expect(atumRows[0]!.grams).toBeCloseTo(atum.grams, 9);
+  });
+
+  it("ingrediente fora da lista enviada: nova tentativa a dizer qual é", async () => {
+    const userId = await createUser(t.db);
+    const req = request();
+    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const good = mockRecipe(req, chosen, []);
+    const invented = {
+      ...good,
+      ingredients: [...good.ingredients, { foodId: "lagosta-inventada", grams: 100 }],
+    };
+    const prompts: string[] = [];
+    const respond = vi.fn((prompt: string) => {
+      prompts.push(prompt);
+      return JSON.stringify(prompts.length === 1 ? invented : good);
+    });
+    const result = await generateRecipe(
+      req,
+      person(userId),
+      deps({ model: () => mockModel(respond) }),
+    );
+    expect(result.ok).toBe(true);
+    expect(respond).toHaveBeenCalledTimes(2);
+    expect(prompts[1]).toContain("lagosta-inventada não estão na lista");
+  });
+
+  it("prazo total: se a primeira tentativa gastou o tempo, não há segunda", async () => {
+    const userId = await createUser(t.db);
+    let clock = 1_000_000;
+    // A primeira resposta (inválida) demora 10 s; ficam 4 s, menos do que a segunda precisa
+    const respond = vi.fn(() => {
+      clock += 10_000;
+      return JSON.stringify({ title: "x" });
+    });
+    const logs: Record<string, unknown>[] = [];
+    const result = await generateRecipe(
+      request(),
+      person(userId),
+      deps({
+        model: () => mockModel(respond),
+        now: () => clock,
+        log: (event) => logs.push(event),
+      }),
+    );
+    expect(result).toMatchObject({ ok: false, code: "generation_failed" });
+    expect(respond).toHaveBeenCalledTimes(1);
+    expect(logs).toContainEqual(expect.objectContaining({ msg: "recipe_retry_skipped" }));
+  });
+
   it("segunda falha: erro amigável e não conta para a quota", async () => {
     const userId = await createUser(t.db);
     const respond = vi.fn(() => JSON.stringify({ title: "x" }));
