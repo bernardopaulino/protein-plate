@@ -163,14 +163,14 @@ jobs:
         run: npm run deploy:staging
 
   lighthouse-staging:
-    # Depois do deploy: mínimo de 90 nas 4 categorias em mobile, mediana de 3 corridas por página
+    # Depois do deploy: mínimo de 90 nas 4 categorias em mobile, mediana de 5 corridas por página (com 3, o ruído do runner decidia)
     needs: deploy-staging
     if: needs.deploy-staging.outputs.deployed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       LHCI_BASE_URL: https://staging.protein-plate.app
-      LHCI_RUNS: 3
+      LHCI_RUNS: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

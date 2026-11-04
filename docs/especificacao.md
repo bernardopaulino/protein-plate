@@ -303,7 +303,7 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; esc
 | A11y | axe-core + Lighthouse CI | páginas principais, claro e escuro |
 | IA | `eval:recipes` | antes de mudar prompt/modelo |
 
-**CI:** PR → lint, typecheck, content:check, testes, build OpenNext, e2e, Lighthouse no Worker local (indicativo: o `wrangler dev` não comprime as respostas). Merge em `main` → deploy staging + migrações → Lighthouse contra o staging (mediana de 3 corridas; bloqueia abaixo de 90 em qualquer categoria). Produção → `workflow_dispatch` manual depois da checklist.
+**CI:** PR → lint, typecheck, content:check, testes, build OpenNext, e2e, Lighthouse no Worker local (indicativo: o `wrangler dev` não comprime as respostas). Merge em `main` → deploy staging + migrações → Lighthouse contra o staging (mediana de 5 corridas; bloqueia abaixo de 90 em qualquer categoria). Produção → `workflow_dispatch` manual depois da checklist.
 
 **Performance:** as páginas públicas (landing, `/entrar`, `/alimentos`, detalhe) não carregam a biblioteca de motion; as entradas são CSS (`tw-animate-css`, transições) e o texto principal é visível desde o primeiro paint (é o LCP). A motion fica nas páginas da app (formulário de boas-vindas, receitas).
 
