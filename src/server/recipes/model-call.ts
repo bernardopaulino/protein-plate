@@ -17,6 +17,8 @@ export interface RecipeModelResult {
   /** Os problemas de todas as tentativas, por ordem (para as avaliações). */
   problems: string[];
   attempts: number;
+  /** A segunda tentativa não arrancou por já faltar pouco para o fim do prazo. */
+  retrySkipped: boolean;
   inputTokens: number;
   outputTokens: number;
   latencyMs: number;
@@ -53,12 +55,14 @@ export async function callRecipeModel(params: {
   let problem: string | null = null;
   const problems: string[] = [];
   let attempts = 0;
+  let retrySkipped = false;
   let inputTokens = 0;
   let outputTokens = 0;
   for (let attempt = 1; attempt <= 2 && !output; attempt++) {
     const remaining = AI_DEADLINE_MS - (now() - started);
     if (attempt > 1 && remaining < AI_MIN_RETRY_MS) {
       log({ msg: "recipe_retry_skipped", remainingMs: remaining });
+      retrySkipped = true;
       break;
     }
     attempts = attempt;
@@ -97,6 +101,7 @@ export async function callRecipeModel(params: {
     problem: output ? null : problem,
     problems,
     attempts,
+    retrySkipped,
     inputTokens,
     outputTokens,
     latencyMs: now() - started,

@@ -1,9 +1,15 @@
-import { recipeRequestSchema, type RecipeResponse } from "@/domain/contracts/recipe";
+import {
+  recipeRequestSchema,
+  type RecipeErrorCode,
+  type RecipeResponse,
+} from "@/domain/contracts/recipe";
+import { once, recipeOutcomeMetric } from "@/domain/ops-metrics";
 import { FOOD_DATA_VERSION } from "@/content/foods.generated";
 import { CATALOG, FOOD_INDEX } from "@/features/catalog/catalog";
 import { getSession } from "@/server/auth/session";
 import { getDb } from "@/server/db/client";
 import { getBindings, getEnv } from "@/server/env";
+import { countRequestOps } from "@/server/ops";
 import { isCrossOrigin } from "@/server/origin";
 import { generateRecipe } from "@/server/recipes/generate";
 import { loadProfile, recordRecipeHistory } from "@/server/services/account";
@@ -22,36 +28,52 @@ function log(event: Record<string, unknown>) {
   console.log(JSON.stringify({ route: "/api/recipes", ...event }));
 }
 
+/** Recusado antes do pipeline (que conta os seus próprios resultados). */
+function reject(code: RecipeErrorCode, status: number) {
+  countRequestOps(once(recipeOutcomeMetric({ ok: false, code })));
+  return json({ ok: false, code }, status);
+}
+
 /** POST /api/recipes: contrato público (também para a futura app). Exige login e perfil. */
 export async function POST(request: Request) {
-  const started = Date.now();
   const requestId = crypto.randomUUID();
-  const env = getEnv();
-  if (isCrossOrigin(request)) {
-    return json({ ok: false, code: "invalid_request" }, 403);
+  try {
+    return await handle(request, requestId);
+  } catch (err) {
+    // Erro inesperado: conta e regista só o nome (a mensagem pode trazer dados do pedido); a
+    // resposta continua a ser a do Next (o contrato não tem um código para isto)
+    countRequestOps({ "recipes.5xx": 1 });
+    log({ requestId, msg: "recipe_unhandled", name: err instanceof Error ? err.name : "unknown" });
+    throw err;
   }
+}
+
+async function handle(request: Request, requestId: string) {
+  const started = Date.now();
+  const env = getEnv();
+  if (isCrossOrigin(request)) return reject("invalid_request", 403);
   // Corpo grande recusado antes de o ler (e outra vez depois, para pedidos sem Content-Length)
   if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX_BYTES) {
-    return json({ ok: false, code: "invalid_request" }, 413);
+    return reject("invalid_request", 413);
   }
   const text = await request.text();
   if (new TextEncoder().encode(text).length > BODY_MAX_BYTES) {
-    return json({ ok: false, code: "invalid_request" }, 413);
+    return reject("invalid_request", 413);
   }
   let raw: unknown;
   try {
     raw = JSON.parse(text);
   } catch {
-    return json({ ok: false, code: "invalid_request" }, 400);
+    return reject("invalid_request", 400);
   }
   const parsed = recipeRequestSchema.safeParse(raw);
-  if (!parsed.success) return json({ ok: false, code: "invalid_request" }, 400);
+  if (!parsed.success) return reject("invalid_request", 400);
 
   const session = await getSession();
-  if (!session) return json({ ok: false, code: "unauthorized" }, 401);
+  if (!session) return reject("unauthorized", 401);
   const db = getDb();
   const profile = await loadProfile(db, session.user.id);
-  if (!profile?.onboardedAt) return json({ ok: false, code: "onboarding_required" }, 403);
+  if (!profile?.onboardedAt) return reject("onboarding_required", 403);
 
   const bindings = getBindings();
   const result = await generateRecipe(
@@ -65,6 +87,7 @@ export async function POST(request: Request) {
       foodDataVersion: FOOD_DATA_VERSION,
       rateLimit: async (key) => (await bindings.RECIPE_LIMITER.limit({ key })).success,
       log: (event) => log({ requestId, ...event }),
+      count: countRequestOps,
     },
   );
 

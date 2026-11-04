@@ -265,3 +265,21 @@ export const usageCounters = sqliteTable(
   },
   (t) => [primaryKey({ columns: [t.keyHash, t.day] }), index("usage_counters_day_idx").on(t.day)],
 );
+
+/* ---------------------------------------------------------------- Funcionamento (backoffice) */
+
+/**
+ * Contadores diários do funcionamento (migração 0004): só nomes de `OPS_METRICS`
+ * (src/domain/ops-metrics.ts) e totais por dia, sem dados pessoais. O cron apaga-os após 90 dias.
+ */
+export const opsCounters = sqliteTable(
+  "ops_counters",
+  {
+    /** AAAA-MM-DD (UTC) */
+    day: text("day").notNull(),
+    /** ex.: "recipes.ok.new", "auth.429" */
+    metric: text("metric").notNull(),
+    count: integer("count").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.day, t.metric] })],
+);

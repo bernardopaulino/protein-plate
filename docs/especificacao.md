@@ -169,6 +169,7 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 | `user_recipes` | `user_id`, `recipe_id`, `created_at` | Histórico ("Recentes"): gravado em cada receita gerada ou servida da cache; só as últimas 50 por pessoa; FK cascade |
 | `meal_recipes` | `user_id`, `meal`, `recipe_id`, `used_at` | A receita posta numa refeição do dia (PK `user_id, meal`); desaparece quando a refeição fica vazia; FK cascade |
 | `usage_counters` | `key_hash`, `day`, `count` | PK `(key_hash, day)`; chaves sempre HMAC com chave diária (IP do convidado ou id do utilizador) ou `global`; cron apaga após 2 dias |
+| `ops_counters` | `day` (AAAA-MM-DD, UTC), `metric`, `count` | PK `(day, metric)`; contadores do funcionamento para o backoffice (migração 0004), só nomes de `OPS_METRICS` (secção 12); upsert que soma; cron apaga após 90 dias |
 
 Apagar um utilizador apaga em cascata perfil, planos, itens, receitas guardadas, histórico de receitas, receitas das refeições, sessões e contas. As receitas geradas ficam (não têm dono).
 
@@ -259,6 +260,7 @@ Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor e
 - Cabeçalhos: CSP restrita (próprio domínio + providers de login; sem Turnstile desde o login obrigatório), HSTS, `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restritiva, `frame-ancestors 'none'`.
 - A IA só recebe ids e nomes de alimentos, a refeição, o equipamento e a dieta.
 - **Dados de saúde (RGPD, art. 9.º):** o peso e as alergias só se guardam com consentimento explícito (caixa no resumo do formulário, `health_consent_at`); sem consentimento, a pessoa escreve a meta à mão e não indica alergias. Exportar inclui-os; apagar a conta apaga-os. O backoffice nunca os mostra por pessoa (só contagens agregadas, com "<5" abaixo de 5).
+- Os contadores do funcionamento (`ops_counters`) são só nomes de um conjunto fixo e totais por dia: nunca o utilizador, o email, o IP, os alimentos ou o corpo de um pedido.
 - Sem analytics de terceiros (opcional: Cloudflare Web Analytics, sem cookies). D1 na UE. Exportar dados (JSON) e apagar conta na app. Idade mínima 16 anos para conta.
 - **Avisos:** landing e meta — "Informação geral, não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína." Receitas — "Gerada por IA. A proteína é calculada a partir da TCA. Confirma alergénios e intolerâncias."
 
@@ -307,6 +309,14 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; esc
 
 **Observabilidade:** Workers Logs em JSON (id do pedido, rota, estado, duração, código de erro; sem PII); por geração: modelo, tokens, latência, resultado da validação.
 
+**Contadores do funcionamento** (`ops_counters`, lidos pelo backoffice; padrão do Rejection Quest): gravam-se depois da resposta (`waitUntil`), num só batch com o que estiver pendente. Os que podem vir em rajadas (4xx do login, ações recusadas) ficam em memória por isolate e gravam-se no máximo uma vez por minuto; os outros (receitas, erros do servidor) gravam-se logo, porque com pouco tráfego um isolate pode morrer sem outro pedido que grave o pendente. Sem `ExecutionContext`, gravam logo. Uma falha a gravá-los nunca afeta o pedido (são indicativos). Os nomes são um contrato fixo (`OPS_METRICS` em `src/domain/ops-metrics.ts`):
+
+- `recipes.ok.new` (receita nova do modelo), `recipes.ok.cached` (da cache);
+- `recipes.error.<código>`, um por código de `RECIPE_ERROR_CODES` (`invalid_request`, `unknown_food`, `restricted_food`, `unauthorized`, `onboarding_required`, `rate_limited`, `quota_exceeded`, `generation_failed`, `service_unavailable`);
+- `recipes.retry` (houve segunda tentativa), `recipes.retry_skipped` (não arrancou por causa do prazo de 14 s), `recipes.slow` (receita nova com mais de 10 s de modelo), `recipes.5xx` (exceção em `POST /api/recipes`; a resposta continua a ser a do Next);
+- `auth.400`, `auth.401`, `auth.403`, `auth.404`, `auth.413`, `auth.429` e `auth.5xx` (respostas de `/api/auth/*`, os 5xx e as exceções juntos);
+- `actions.rejected` (Server Action devolveu `ok: false`) e `actions.error` (lançou uma exceção), via `countedAction`.
+
 ## 13. Backoffice
 
-Worker próprio (`admin/`, `admin.protein-plate.app`), com o mesmo modelo do Rejection Quest: Cloudflare Access + validação do token em cada pedido, lista de emails, HTML gerado no servidor sem JavaScript, leitura só com `SELECT` e duas ações com CSRF (terminar sessões, apagar conta). Mostra números agregados, utilizadores (sem peso nem alergias), receitas e alimentos. Detalhes e configuração em `docs/backoffice.md`.
+Worker próprio (`admin/`, `admin.protein-plate.app`), com o mesmo modelo do Rejection Quest: Cloudflare Access + validação do token em cada pedido, lista de emails, HTML gerado no servidor sem JavaScript, leitura só com `SELECT` e três ações com CSRF (terminar sessões, apagar os dados de saúde a pedido, apagar conta). O Painel tem "Precisa de ti", os números principais com a variação face aos 7 dias anteriores, o funcionamento (contadores `ops_counters`, período de 7 a 90 dias), o crescimento (12 a 52 semanas), as pessoas ativas, a retenção por semana de registo e o funil de ativação, todos a partir do que já está na base, sem rastreio novo. Utilizadores com ficha em separadores (sem peso nem alergias), receitas com pesquisa, filtros e ordem, e alimentos com pesquisa e página própria. Detalhes e configuração em `docs/backoffice.md`.

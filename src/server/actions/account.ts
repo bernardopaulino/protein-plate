@@ -12,6 +12,7 @@ import { CONSENT_COOKIE, CONSENT_COOKIE_MAX_AGE } from "../auth/config";
 import { getSession } from "../auth/session";
 import { getDb } from "../db/client";
 import { getEnv } from "../env";
+import { countedAction } from "../ops";
 import {
   addDayItem,
   applyRecipeToDay,
@@ -28,6 +29,7 @@ import {
 } from "../services/account";
 
 // Server Actions: o user ID vem sempre da sessão; tudo o que chega do cliente passa por Zod.
+// Todas passam por `countedAction` (contadores do funcionamento: recusas e exceções).
 
 type Result<T> =
   | { ok: true; data: T }
@@ -40,7 +42,7 @@ const unauthorized = { ok: false, code: "unauthorized" } as const;
 const invalid = { ok: false, code: "invalid" } as const;
 
 /** "Entrar": ao continuar, a pessoa aceita os termos (cookie curto lido pelo Better Auth). */
-export async function acceptTermsAction(input: unknown): Promise<Result<null>> {
+export const acceptTermsAction = countedAction(async (input: unknown): Promise<Result<null>> => {
   const parsed = z
     .object({ accepted: z.literal(true) })
     .strict()
@@ -55,13 +57,13 @@ export async function acceptTermsAction(input: unknown): Promise<Result<null>> {
     maxAge: CONSENT_COOKIE_MAX_AGE,
   });
   return { ok: true, data: null };
-}
+});
 
 /**
  * /conta/bem-vindo, depois do login: regista o consentimento (contas novas) e diz se a pessoa já
  * concluiu o formulário de boas-vindas.
  */
-export async function welcomeAction(): Promise<Result<{ onboarded: boolean }>> {
+export const welcomeAction = countedAction(async (): Promise<Result<{ onboarded: boolean }>> => {
   const session = await getSession();
   if (!session) return unauthorized;
   const db = getDb();
@@ -72,17 +74,17 @@ export async function welcomeAction(): Promise<Result<{ onboarded: boolean }>> {
   }
   const profile = await loadProfile(db, session.user.id);
   return { ok: true, data: { onboarded: Boolean(profile?.onboardedAt) } };
-}
+});
 
 /** Guarda o dia do "Hoje" (com debounce no browser). */
-export async function saveDayAction(input: unknown): Promise<Result<null>> {
+export const saveDayAction = countedAction(async (input: unknown): Promise<Result<null>> => {
   const session = await getSession();
   if (!session) return unauthorized;
   const parsed = saveDayInputSchema.safeParse(input);
   if (!parsed.success) return invalid;
   const saved = await saveDayItems(getDb(), session.user.id, parsed.data.items, FOOD_INDEX);
   return saved ? { ok: true, data: null } : { ok: false, code: "no_profile" };
-}
+});
 
 export type AddToDayContext =
   | { signedIn: false }
@@ -90,62 +92,74 @@ export type AddToDayContext =
   | { signedIn: true; onboarded: true; meals: Meal[]; allowed: boolean };
 
 /** "Adicionar ao meu dia" no detalhe de um alimento (página pública): as refeições da pessoa. */
-export async function addToDayContextAction(input: unknown): Promise<Result<AddToDayContext>> {
-  const parsed = z.object({ foodId: slugSchema }).strict().safeParse(input);
-  if (!parsed.success) return invalid;
-  const session = await getSession();
-  if (!session) return { ok: true, data: { signedIn: false } };
-  const profile = await loadProfile(getDb(), session.user.id);
-  if (!profile?.onboardedAt) return { ok: true, data: { signedIn: true, onboarded: false } };
-  const food = FOOD_INDEX.get(parsed.data.foodId);
-  return {
-    ok: true,
-    data: {
-      signedIn: true,
-      onboarded: true,
-      meals: profile.meals,
-      allowed: Boolean(food && isAllowed(food, restrictionsOf(profile))),
-    },
-  };
-}
+export const addToDayContextAction = countedAction(
+  async (input: unknown): Promise<Result<AddToDayContext>> => {
+    const parsed = z.object({ foodId: slugSchema }).strict().safeParse(input);
+    if (!parsed.success) return invalid;
+    const session = await getSession();
+    if (!session) return { ok: true, data: { signedIn: false } };
+    const profile = await loadProfile(getDb(), session.user.id);
+    if (!profile?.onboardedAt) return { ok: true, data: { signedIn: true, onboarded: false } };
+    const food = FOOD_INDEX.get(parsed.data.foodId);
+    return {
+      ok: true,
+      data: {
+        signedIn: true,
+        onboarded: true,
+        meals: profile.meals,
+        allowed: Boolean(food && isAllowed(food, restrictionsOf(profile))),
+      },
+    };
+  },
+);
 
-export async function addToDayAction(input: unknown): Promise<Result<null>> {
+export const addToDayAction = countedAction(async (input: unknown): Promise<Result<null>> => {
   const session = await getSession();
   if (!session) return unauthorized;
   const parsed = addToDayInputSchema.safeParse(input);
   if (!parsed.success) return invalid;
   const result = await addDayItem(getDb(), session.user.id, parsed.data, FOOD_INDEX);
   return result === "ok" ? { ok: true, data: null } : { ok: false, code: result };
-}
+});
 
 /** Formulário de boas-vindas e "As minhas preferências". */
-export async function savePreferencesAction(input: unknown): Promise<Result<null>> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  const parsed = preferencesInputSchema.safeParse(input);
-  if (!parsed.success) return invalid;
-  const result = await savePreferences(getDb(), session.user.id, parsed.data, CATALOG, FOOD_INDEX);
-  return result.ok ? { ok: true, data: null } : { ok: false, code: result.code };
-}
+export const savePreferencesAction = countedAction(
+  async (input: unknown): Promise<Result<null>> => {
+    const session = await getSession();
+    if (!session) return unauthorized;
+    const parsed = preferencesInputSchema.safeParse(input);
+    if (!parsed.success) return invalid;
+    const result = await savePreferences(
+      getDb(),
+      session.user.id,
+      parsed.data,
+      CATALOG,
+      FOOD_INDEX,
+    );
+    return result.ok ? { ok: true, data: null } : { ok: false, code: result.code };
+  },
+);
 
 const recipeIdSchema = z.string().regex(/^[0-9a-zA-Z]{6,20}$/);
 
-export async function setRecipeSavedAction(input: unknown): Promise<Result<boolean>> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  const parsed = z
-    .object({ recipeId: recipeIdSchema, saved: z.boolean() })
-    .strict()
-    .safeParse(input);
-  if (!parsed.success) return invalid;
-  const saved = await setRecipeSaved(
-    getDb(),
-    session.user.id,
-    parsed.data.recipeId,
-    parsed.data.saved,
-  );
-  return { ok: true, data: saved };
-}
+export const setRecipeSavedAction = countedAction(
+  async (input: unknown): Promise<Result<boolean>> => {
+    const session = await getSession();
+    if (!session) return unauthorized;
+    const parsed = z
+      .object({ recipeId: recipeIdSchema, saved: z.boolean() })
+      .strict()
+      .safeParse(input);
+    if (!parsed.success) return invalid;
+    const saved = await setRecipeSaved(
+      getDb(),
+      session.user.id,
+      parsed.data.recipeId,
+      parsed.data.saved,
+    );
+    return { ok: true, data: saved };
+  },
+);
 
 export type RecipeState =
   | { signedIn: false }
@@ -158,71 +172,78 @@ export type RecipeState =
     };
 
 /** O estado de uma receita para quem a vê (a página é pública e igual para toda a gente). */
-export async function recipeStateAction(input: unknown): Promise<Result<RecipeState>> {
-  const parsed = z.object({ recipeId: recipeIdSchema }).strict().safeParse(input);
-  if (!parsed.success) return invalid;
-  const session = await getSession();
-  if (!session) return { ok: true, data: { signedIn: false } };
-  const db = getDb();
-  const [state, profile] = await Promise.all([
-    recipeStateFor(db, session.user.id, parsed.data.recipeId),
-    loadProfile(db, session.user.id),
-  ]);
-  return {
-    ok: true,
-    data: { signedIn: true, ...state, meals: profile?.onboardedAt ? profile.meals : [] },
-  };
-}
+export const recipeStateAction = countedAction(
+  async (input: unknown): Promise<Result<RecipeState>> => {
+    const parsed = z.object({ recipeId: recipeIdSchema }).strict().safeParse(input);
+    if (!parsed.success) return invalid;
+    const session = await getSession();
+    if (!session) return { ok: true, data: { signedIn: false } };
+    const db = getDb();
+    const [state, profile] = await Promise.all([
+      recipeStateFor(db, session.user.id, parsed.data.recipeId),
+      loadProfile(db, session.user.id),
+    ]);
+    return {
+      ok: true,
+      data: { signedIn: true, ...state, meals: profile?.onboardedAt ? profile.meals : [] },
+    };
+  },
+);
 
-export async function setRecipeFavoriteAction(
-  input: unknown,
-): Promise<Result<{ saved: boolean; favorite: boolean }>> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  const parsed = z
-    .object({ recipeId: recipeIdSchema, favorite: z.boolean() })
-    .strict()
-    .safeParse(input);
-  if (!parsed.success) return invalid;
-  return {
-    ok: true,
-    data: await setRecipeFavorite(
+export const setRecipeFavoriteAction = countedAction(
+  async (input: unknown): Promise<Result<{ saved: boolean; favorite: boolean }>> => {
+    const session = await getSession();
+    if (!session) return unauthorized;
+    const parsed = z
+      .object({ recipeId: recipeIdSchema, favorite: z.boolean() })
+      .strict()
+      .safeParse(input);
+    if (!parsed.success) return invalid;
+    return {
+      ok: true,
+      data: await setRecipeFavorite(
+        getDb(),
+        session.user.id,
+        parsed.data.recipeId,
+        parsed.data.favorite,
+      ),
+    };
+  },
+);
+
+/** "Usar no meu almoço": os alimentos da refeição passam a ser os da receita. */
+export const applyRecipeToDayAction = countedAction(
+  async (input: unknown): Promise<Result<null>> => {
+    const session = await getSession();
+    if (!session) return unauthorized;
+    const parsed = z
+      .object({ recipeId: recipeIdSchema, meal: mealSchema })
+      .strict()
+      .safeParse(input);
+    if (!parsed.success) return invalid;
+    const result = await applyRecipeToDay(
       getDb(),
       session.user.id,
       parsed.data.recipeId,
-      parsed.data.favorite,
-    ),
-  };
-}
+      parsed.data.meal,
+      FOOD_INDEX,
+    );
+    return result === "ok" ? { ok: true, data: null } : { ok: false, code: result };
+  },
+);
 
-/** "Usar no meu almoço": os alimentos da refeição passam a ser os da receita. */
-export async function applyRecipeToDayAction(input: unknown): Promise<Result<null>> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  const parsed = z.object({ recipeId: recipeIdSchema, meal: mealSchema }).strict().safeParse(input);
-  if (!parsed.success) return invalid;
-  const result = await applyRecipeToDay(
-    getDb(),
-    session.user.id,
-    parsed.data.recipeId,
-    parsed.data.meal,
-    FOOD_INDEX,
-  );
-  return result === "ok" ? { ok: true, data: null } : { ok: false, code: result };
-}
+export const listRecentRecipesAction = countedAction(
+  async (): Promise<Result<Awaited<ReturnType<typeof listRecentRecipes>>>> => {
+    const session = await getSession();
+    if (!session) return unauthorized;
+    return { ok: true, data: await listRecentRecipes(getDb(), session.user.id) };
+  },
+);
 
-export async function listRecentRecipesAction(): Promise<
-  Result<Awaited<ReturnType<typeof listRecentRecipes>>>
-> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  return { ok: true, data: await listRecentRecipes(getDb(), session.user.id) };
-}
-
-export async function exportDataAction(): Promise<
-  Result<Awaited<ReturnType<typeof exportUserData>>>
-> {
-  const session = await getSession();
-  if (!session) return unauthorized;
-  return { ok: true, data: await exportUserData(getDb(), session.user.id) };
-}
+export const exportDataAction = countedAction(
+  async (): Promise<Result<Awaited<ReturnType<typeof exportUserData>>>> => {
+    const session = await getSession();
+    if (!session) return unauthorized;
+    return { ok: true, data: await exportUserData(getDb(), session.user.id) };
+  },
+);

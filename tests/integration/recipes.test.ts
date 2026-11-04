@@ -2,6 +2,7 @@ import { count, eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { FOODS, FOOD_DATA_VERSION } from "@/content/foods.generated";
 import type { RecipeRequest } from "@/domain/contracts/recipe";
+import type { OpsCounts } from "@/domain/ops-metrics";
 import { FOOD_INDEX } from "@/features/catalog/catalog";
 import { parseEnv, type AppEnv } from "@/lib/env";
 import { mockModel } from "@/server/ai/model";
@@ -56,6 +57,17 @@ function deps(overrides: Partial<GenerateDeps> = {}): GenerateDeps {
     rateLimit: async () => true,
     ...overrides,
   };
+}
+
+/** Soma o que o pipeline contou para os contadores do funcionamento (sem os zeros). */
+function counter() {
+  const totals: Record<string, number> = {};
+  const count = (metrics: OpsCounts) => {
+    for (const [metric, n] of Object.entries(metrics)) {
+      if (n) totals[metric] = (totals[metric] ?? 0) + n;
+    }
+  };
+  return { totals, count };
 }
 
 let targetCounter = 0;
@@ -385,6 +397,78 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     expect(result).toMatchObject({ ok: false, code: "generation_failed" });
     expect(respond).toHaveBeenCalledTimes(2);
     expect(await t.db.select().from(usageCounters)).toEqual(before);
+  });
+
+  it("contadores: receita nova, da cache e quota esgotada", async () => {
+    const userId = await createUser(t.db);
+    const { totals, count } = counter();
+    const small = { ...env, QUOTA_USER: 1 };
+    const req = request();
+    const me = person(userId);
+    await generateRecipe(req, me, deps({ env: small, count }));
+    await generateRecipe(req, me, deps({ env: small, count }));
+    await generateRecipe(request(), person(userId), deps({ env: small, count }));
+    expect(totals).toEqual({
+      "recipes.ok.new": 1,
+      "recipes.ok.cached": 1,
+      "recipes.error.quota_exceeded": 1,
+    });
+  });
+
+  it("contadores: nova tentativa, tentativa saltada pelo prazo e receita lenta", async () => {
+    const userId = await createUser(t.db);
+    const req = request();
+    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const good = mockRecipe(req, chosen, []);
+    const bad = {
+      ...good,
+      ingredients: good.ingredients.filter((i) => i.foodId !== "atum-lata-natural"),
+    };
+
+    // A primeira resposta não passa; a segunda sim
+    const retried = counter();
+    let calls = 0;
+    const badThenGood = () => JSON.stringify(++calls === 1 ? bad : good);
+    expect(
+      await generateRecipe(
+        req,
+        person(userId),
+        deps({ model: () => mockModel(badThenGood), count: retried.count }),
+      ),
+    ).toMatchObject({ ok: true, cached: false });
+    expect(retried.totals).toEqual({ "recipes.retry": 1, "recipes.ok.new": 1 });
+
+    // A primeira (inválida) demora 10 s: a segunda não arranca
+    const skipped = counter();
+    let clock = 1_000_000;
+    const slowBad = () => {
+      clock += 10_000;
+      return JSON.stringify({ title: "x" });
+    };
+    await generateRecipe(
+      request(),
+      person(userId),
+      deps({ model: () => mockModel(slowBad), now: () => clock, count: skipped.count }),
+    );
+    expect(skipped.totals).toEqual({
+      "recipes.retry_skipped": 1,
+      "recipes.error.generation_failed": 1,
+    });
+
+    // Válida à primeira, mas com 11 s de modelo
+    const slow = counter();
+    const slowGood = () => {
+      clock += 11_000;
+      return JSON.stringify(good);
+    };
+    expect(
+      await generateRecipe(
+        req,
+        person(userId),
+        deps({ model: () => mockModel(slowGood), now: () => clock, count: slow.count }),
+      ),
+    ).toMatchObject({ ok: true, cached: false });
+    expect(slow.totals).toEqual({ "recipes.slow": 1, "recipes.ok.new": 1 });
   });
 
   it("recusa quantidades irreais (mais de 3 porções por dose) e proteína fora de 1–120 g", async () => {

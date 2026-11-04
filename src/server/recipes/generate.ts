@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import type { RecipeErrorCode, RecipeRequest } from "@/domain/contracts/recipe";
 import type { Food, FoodIndex } from "@/domain/food";
 import { mealTarget } from "@/domain/meals";
+import { RECIPE_SLOW_MS, once, recipeOutcomeMetric, type OpsCounts } from "@/domain/ops-metrics";
 import { allowedFoods, isAllowed } from "@/domain/preferences";
 import { recipeBase } from "@/domain/recipe-base";
 import type { AppEnv } from "@/lib/env";
@@ -49,6 +50,8 @@ export interface GenerateDeps {
   /** Para variar a base quando a pessoa não escolhe alimentos (os testes fixam-na). */
   random?: () => number;
   log?: (event: Record<string, unknown>) => void;
+  /** Contadores do funcionamento (resultado, novas tentativas, lentas); por defeito, nenhum. */
+  count?: (metrics: OpsCounts) => void;
 }
 
 const fail = (code: RecipeErrorCode, status: number): GenerateResult => ({
@@ -61,12 +64,25 @@ const fail = (code: RecipeErrorCode, status: number): GenerateResult => ({
  * Pipeline das receitas (secção 6): validação (refeição da pessoa, alimentos permitidos) → base
  * completada pela app (o que a pessoa escolheu, ou nada, mais uma proteína e acompanhamentos de que
  * gosta) → rate limiting → cache → quotas → modelo (uma nova tentativa com o erro descrito) →
- * proteína calculada pela app → D1.
+ * proteína calculada pela app → D1. Conta o resultado de cada pedido (`recipes.ok.*` ou
+ * `recipes.error.<código>`).
  */
 export async function generateRecipe(
   input: RecipeRequest,
   actor: Actor,
   deps: GenerateDeps,
+): Promise<GenerateResult> {
+  const count = deps.count ?? (() => {});
+  const result = await pipeline(input, actor, deps, count);
+  count(once(recipeOutcomeMetric(result)));
+  return result;
+}
+
+async function pipeline(
+  input: RecipeRequest,
+  actor: Actor,
+  deps: GenerateDeps,
+  count: (metrics: OpsCounts) => void,
 ): Promise<GenerateResult> {
   const now = deps.now ?? Date.now;
   const log = deps.log ?? (() => {});
@@ -148,13 +164,19 @@ export async function generateRecipe(
       mockModel(() => JSON.stringify(mockRecipe(request, chosenFoods, pantry)), "mock"),
     );
 
-  const { output, inputTokens, outputTokens, latencyMs } = await callRecipeModel({
-    model,
-    prompt: { request, context, chosen: chosenFoods, pantry },
-    foods: deps.foodIndex,
-    now,
-    log,
-  });
+  const { output, attempts, retrySkipped, inputTokens, outputTokens, latencyMs } =
+    await callRecipeModel({
+      model,
+      prompt: { request, context, chosen: chosenFoods, pantry },
+      foods: deps.foodIndex,
+      now,
+      log,
+    });
+  const modelOps: OpsCounts = {};
+  if (attempts > 1) modelOps["recipes.retry"] = 1;
+  if (retrySkipped) modelOps["recipes.retry_skipped"] = 1;
+  if (output && latencyMs > RECIPE_SLOW_MS) modelOps["recipes.slow"] = 1;
+  count(modelOps);
 
   // Falhou dentro do prazo: erro amigável, não conta para a quota
   if (!output) {
