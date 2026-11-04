@@ -2,54 +2,40 @@
 
 import { ChevronDown, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+  type SyntheticEvent,
+} from "react";
 import { Illustration } from "@/components/illustration";
-import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
-import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
 import { FoodCard } from "@/components/protein/food-card";
 import { Button } from "@/components/ui/button";
-import { defaultPortion, type Food } from "@/domain/food";
-import {
-  FOOD_SECTIONS,
-  foodSubgroup,
-  groupFoods,
-  subgroupSection,
-  type FoodSection,
-} from "@/domain/food-groups";
+import type { FoodSection } from "@/domain/food-groups";
 import { MEALS, type Meal } from "@/domain/meals";
-import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import {
-  LISTED_FOODS,
-  defaultPortionProtein,
-  foodName,
-  matchesSearch,
-  portionLabel,
-} from "./catalog";
+  catalogImage,
+  type CatalogGroup,
+  type CatalogItem,
+  type CatalogSection,
+} from "./catalog-types";
+import { normalizeSearch } from "./search";
 
 type Sort = "protein" | "ease" | "name";
-type Ease = "1" | "2" | "3";
+type EaseFilter = "1" | "2" | "3";
 type SectionFilter = FoodSection | "all";
 
-const SORTERS: Record<Sort, (locale: Locale) => (a: Food, b: Food) => number> = {
-  protein: () => (a, b) => defaultPortionProtein(b) - defaultPortionProtein(a),
-  ease: () => (a, b) => a.ease - b.ease || defaultPortionProtein(b) - defaultPortionProtein(a),
-  name: (locale) => (a, b) => foodName(a, locale).localeCompare(foodName(b, locale), locale),
-};
-
-/** Ilustração de cada secção (as mesmas do formulário de boas-vindas). */
-const SECTION_IMAGES: Record<SectionFilter, string | undefined> = {
-  all: UI_IMAGES["misc:all"],
-  protein: UI_IMAGES["group:aves"],
-  carb: UI_IMAGES["group:pao"],
-  fruit: UI_IMAGES["group:fruta-dia"],
-  vegetable: UI_IMAGES["group:couves"],
-  nuts: UI_IMAGES["group:frutos-secos"],
-};
-
-const sectionOf = (food: Food): FoodSection | null => {
-  const sub = foodSubgroup(food);
-  return sub ? subgroupSection(sub) : null;
+const SORTERS: Record<Sort, (locale: Locale) => (a: CatalogItem, b: CatalogItem) => number> = {
+  protein: () => (a, b) => b.protein - a.protein,
+  ease: () => (a, b) => a.ease - b.ease || b.protein - a.protein,
+  name: (locale) => (a, b) => a.name.localeCompare(b.name, locale),
 };
 
 /** Filtros de hoje guardados na sessão: ao voltar do detalhe, o catálogo está como estava. */
@@ -57,7 +43,7 @@ const STATE_KEY = "protein-plate:catalog";
 interface SavedState {
   section: SectionFilter;
   meal: Meal | "";
-  ease: Ease | "";
+  ease: EaseFilter | "";
   sort: Sort;
 }
 
@@ -107,46 +93,78 @@ function SelectPill<T extends string>({
 }
 
 function FoodGrid({
-  foods,
+  items,
+  basePath,
   children,
   showCategory = true,
 }: {
-  foods: Food[];
+  items: CatalogItem[];
+  /** "/alimentos" (ou "/en/alimentos"): o cartão leva a basePath/id */
+  basePath: string;
   children?: ReactNode;
   /** Dentro de um subgrupo a categoria repete o título: só a preparação. */
   showCategory?: boolean;
 }) {
-  const tc = useTranslations("categories");
   const te = useTranslations("ease");
-  const locale = useLocale() as Locale;
   return (
     <ul
       className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
       aria-label={typeof children === "string" ? children : undefined}
     >
-      {foods.map((food) => (
-        <li key={food.id} className="min-w-0">
+      {items.map((item) => (
+        // Fora do ecrã, o browser não calcula nem pinta o cartão (são 168)
+        <li
+          key={item.id}
+          className="min-w-0 [contain-intrinsic-size:auto_5.5rem] [content-visibility:auto]"
+        >
           <FoodCard
-            image={foodImage(food.id)}
-            name={foodName(food, locale)}
-            portionLabel={portionLabel(defaultPortion(food), locale)}
-            protein={defaultPortionProtein(food)}
+            image={catalogImage(item)}
+            name={item.name}
+            portionLabel={item.portion}
+            protein={item.protein}
             meta={
               showCategory
-                ? `${tc(food.category)} · ${te(String(food.ease) as Ease)}`
-                : te(String(food.ease) as Ease)
+                ? `${item.category} · ${te(String(item.ease) as EaseFilter)}`
+                : te(String(item.ease) as EaseFilter)
             }
-            href={`/alimentos/${food.id}`}
+            href={`${basePath}/${item.id}`}
             renderLink={({ href, className, children: content }) => (
-              <Link href={href} className={className}>
+              <a href={href} className={className} data-soft-nav="">
                 {content}
-              </Link>
+              </a>
             )}
           />
         </li>
       ))}
     </ul>
   );
+}
+
+/**
+ * Navegação sem recarregar para os links dos cartões, com um só handler para a lista inteira: um
+ * Link do Next por cartão eram 168 componentes a hidratar e a pré-carregar quando entram no ecrã.
+ * Aqui pré-carrega-se o alimento quando o rato passa, o dedo toca ou o teclado foca o cartão.
+ * Cliques com modificadores (abrir num separador) ficam com o browser.
+ */
+function useSoftNavigation() {
+  const router = useRouter();
+  const prefetched = useRef(new Set<string>());
+  const linkOf = (e: SyntheticEvent) =>
+    e.target instanceof Element ? e.target.closest<HTMLAnchorElement>("a[data-soft-nav]") : null;
+  const prefetch = (e: SyntheticEvent) => {
+    const href = linkOf(e)?.getAttribute("href");
+    if (!href || prefetched.current.has(href)) return;
+    prefetched.current.add(href);
+    router.prefetch(href);
+  };
+  const onClick = (e: MouseEvent) => {
+    const href = linkOf(e)?.getAttribute("href");
+    if (!href || e.defaultPrevented || e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    router.push(href);
+  };
+  return { onClick, onPointerOver: prefetch, onTouchStart: prefetch, onFocus: prefetch };
 }
 
 function GroupHeading({
@@ -178,9 +196,18 @@ function GroupHeading({
  * refeição, preparação e ordem numa barra com nomes; os resultados agrupados por subgrupo (ou por
  * secção em "Todos"), com os de mais proteína primeiro.
  */
-export function CatalogBrowser() {
+export function CatalogBrowser({
+  items,
+  sections: sectionList,
+  allImage,
+  basePath,
+}: {
+  items: CatalogItem[];
+  sections: CatalogSection[];
+  allImage: string | undefined;
+  basePath: string;
+}) {
   const t = useTranslations("catalog");
-  const tf = useTranslations("onboarding.foods");
   const tm = useTranslations("meals");
   const te = useTranslations("ease");
   const locale = useLocale() as Locale;
@@ -190,7 +217,7 @@ export function CatalogBrowser() {
   const [query, setQuery] = useState("");
   const [section, setSection] = useState<SectionFilter>("all");
   const [meal, setMeal] = useState<Meal | "">("");
-  const [ease, setEase] = useState<Ease | "">("");
+  const [ease, setEase] = useState<EaseFilter | "">("");
   const [sort, setSort] = useState<Sort>("protein");
 
   useEffect(() => {
@@ -198,7 +225,7 @@ export function CatalogBrowser() {
       const saved = JSON.parse(sessionStorage.getItem(STATE_KEY) ?? "null") as SavedState | null;
       if (!saved) return;
       /* eslint-disable react-hooks/set-state-in-effect -- só existe no browser, depois da hidratação */
-      if (saved.section === "all" || FOOD_SECTIONS.includes(saved.section as FoodSection))
+      if (saved.section === "all" || sectionList.some((x) => x.id === saved.section))
         setSection(saved.section);
       if (saved.meal === "" || MEALS.includes(saved.meal as Meal)) setMeal(saved.meal);
       if (["", "1", "2", "3"].includes(saved.ease)) setEase(saved.ease);
@@ -207,6 +234,7 @@ export function CatalogBrowser() {
     } catch {
       // armazenamento bloqueado ou valor estragado: começa do zero
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- só ao montar
   }, []);
 
   useEffect(() => {
@@ -217,15 +245,20 @@ export function CatalogBrowser() {
     }
   }, [section, meal, ease, sort]);
 
+  const sectionOf = useMemo(() => {
+    const by = new Map<string, FoodSection>();
+    for (const s of sectionList) for (const g of s.subgroups) by.set(g.id, s.id);
+    return (item: CatalogItem) => by.get(item.subgroup);
+  }, [sectionList]);
+
   // Refeição e preparação valem para tudo (também para as contagens das secções)
-  const filtered = useMemo(
-    () =>
-      LISTED_FOODS.filter(
-        (f) =>
-          (meal === "" || f.moments.includes(meal)) && (ease === "" || String(f.ease) === ease),
-      ),
-    [meal, ease],
-  );
+  const filtered = useMemo(() => {
+    const mealBit = meal === "" ? 0 : 1 << MEALS.indexOf(meal);
+    return items.filter(
+      (f) =>
+        (mealBit === 0 || (f.meals & mealBit) !== 0) && (ease === "" || String(f.ease) === ease),
+    );
+  }, [items, meal, ease]);
   const counts = useMemo(() => {
     const by = new Map<SectionFilter, number>([["all", filtered.length]]);
     for (const f of filtered) {
@@ -233,37 +266,45 @@ export function CatalogBrowser() {
       if (s) by.set(s, (by.get(s) ?? 0) + 1);
     }
     return by;
-  }, [filtered]);
+  }, [filtered, sectionOf]);
 
   const searching = query.trim() !== "";
-  const sorter = SORTERS[sort](locale);
-  const results = useMemo(
+  // O texto da pesquisa de cada alimento (nome nos dois idiomas), só quando há pesquisa
+  const searchText = useMemo(
     () =>
-      (searching
-        ? filtered.filter((f) => matchesSearch(f, query))
-        : filtered.filter((f) => section === "all" || sectionOf(f) === section)
-      ).sort(sorter),
-    [filtered, query, searching, section, sorter],
+      searching ? new Map(items.map((f) => [f.id, `${normalizeSearch(f.name)} ${f.en}`])) : null,
+    [items, searching],
   );
+  const sorter = SORTERS[sort](locale);
+  const results = useMemo(() => {
+    const q = normalizeSearch(query);
+    return (
+      searchText
+        ? filtered.filter((f) => searchText.get(f.id)?.includes(q))
+        : filtered.filter((f) => section === "all" || sectionOf(f) === section)
+    ).sort(sorter);
+  }, [filtered, query, searchText, section, sectionOf, sorter]);
 
   // Grupos: por subgrupo dentro de uma secção; por secção em "Todos"; sem grupos na pesquisa
-  const groups = useMemo(() => {
+  const groups = useMemo((): (CatalogGroup & { items: CatalogItem[] })[] | null => {
     if (searching) return null;
     if (section === "all") {
-      return FOOD_SECTIONS.map((s) => ({
-        key: s,
-        title: tf(`sections.${s}`),
-        image: SECTION_IMAGES[s],
-        foods: results.filter((f) => sectionOf(f) === s),
-      })).filter((g) => g.foods.length > 0);
+      return sectionList
+        .map((s) => ({ ...s, items: results.filter((f) => sectionOf(f) === s.id) }))
+        .filter((g) => g.items.length > 0);
     }
-    return groupFoods(results, section).map((g) => ({
-      key: g.id,
-      title: tf(`subgroups.${g.id}`),
-      image: UI_IMAGES[`group:${g.id}`],
-      foods: [...g.foods].sort(sorter),
-    }));
-  }, [results, searching, section, sorter, tf]);
+    const subgroups = sectionList.find((s) => s.id === section)?.subgroups ?? [];
+    return subgroups
+      .map((g) => ({
+        ...g,
+        items: results
+          .filter((f) => f.subgroup === g.id)
+          .sort((a, b) => b.rank - a.rank || a.id.localeCompare(b.id))
+          .sort(sorter),
+      }))
+      .filter((g) => g.items.length > 0);
+  }, [results, searching, section, sectionList, sectionOf, sorter]);
+  const softNav = useSoftNavigation();
 
   const hasFilters = meal !== "" || ease !== "";
   const clearAll = () => {
@@ -273,7 +314,11 @@ export function CatalogBrowser() {
     setSection("all");
   };
 
-  const sections: SectionFilter[] = ["all", ...FOOD_SECTIONS];
+  const sections: SectionFilter[] = ["all", ...sectionList.map((s) => s.id)];
+  const sectionInfo = (s: SectionFilter) =>
+    s === "all"
+      ? { title: t("all"), image: allImage }
+      : (sectionList.find((x) => x.id === s) ?? { title: s, image: undefined });
 
   return (
     <div className="flex flex-col gap-6">
@@ -344,12 +389,12 @@ export function CatalogBrowser() {
                   />
                 ) : null}
                 <Illustration
-                  src={SECTION_IMAGES[s]}
+                  src={sectionInfo(s).image}
                   size={40}
                   className="relative size-9 sm:size-10"
                 />
                 <span className="relative text-sm leading-tight font-semibold text-balance">
-                  {s === "all" ? t("all") : tf(`sections.${s}`)}
+                  {sectionInfo(s).title}
                 </span>
                 <span className="relative text-xs text-muted tabular">{counts.get(s) ?? 0}</span>
               </button>
@@ -420,23 +465,22 @@ export function CatalogBrowser() {
         <div
           key={searching ? "search" : section}
           className="flex animate-in flex-col gap-10 duration-200 ease-out fade-in-0 slide-in-from-bottom-2"
+          {...softNav}
         >
           {groups === null ? (
-            <FoodGrid foods={results}>{t("results")}</FoodGrid>
+            <FoodGrid items={results} basePath={basePath}>
+              {t("results")}
+            </FoodGrid>
           ) : (
             groups.map((g) => (
-              <section
-                key={g.key}
-                aria-labelledby={`grupo-${g.key}`}
-                className="flex flex-col gap-4"
-              >
+              <section key={g.id} aria-labelledby={`grupo-${g.id}`} className="flex flex-col gap-4">
                 <GroupHeading
-                  id={`grupo-${g.key}`}
+                  id={`grupo-${g.id}`}
                   image={g.image}
                   title={g.title}
-                  count={t("groupCount", { count: g.foods.length })}
+                  count={t("groupCount", { count: g.items.length })}
                 />
-                <FoodGrid foods={g.foods} showCategory={section === "all"} />
+                <FoodGrid items={g.items} basePath={basePath} showCategory={section === "all"} />
               </section>
             ))
           )}

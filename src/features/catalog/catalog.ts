@@ -2,6 +2,9 @@ import { FOODS } from "@/content/foods.generated";
 import { defaultPortion, indexFoods, type Food, type Portion } from "@/domain/food";
 import { portionProtein } from "@/domain/protein";
 import type { Locale } from "@/i18n/routing";
+import { normalizeSearch } from "./search";
+
+export { normalizeSearch };
 
 /** O catálogo tipado (gerado de content/foods no build) e o índice por id. */
 export const CATALOG: readonly Food[] = FOODS;
@@ -22,15 +25,6 @@ export function defaultPortionProtein(food: Food): number {
 
 /** Alimentos que aparecem no catálogo e no "Adicionar" (a despensa só entra nas receitas). */
 export const LISTED_FOODS: readonly Food[] = FOODS.filter((f) => f.role !== "pantry");
-
-/** Normaliza para pesquisa: minúsculas e sem acentos ("grao" encontra "grão"). */
-export function normalizeSearch(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase()
-    .trim();
-}
 
 export function matchesSearch(food: Food, query: string): boolean {
   const q = normalizeSearch(query);
