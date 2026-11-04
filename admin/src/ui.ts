@@ -1,6 +1,6 @@
 import { hbar, icon, type IconName } from "./charts";
 import { num } from "./format";
-import { escapeHtml } from "./html";
+import { escapeHtml, srOnly } from "./html";
 
 /**
  * As peças comuns das páginas (adaptadas do backoffice do Rejection Quest): estados, pílulas,
@@ -13,6 +13,17 @@ import { escapeHtml } from "./html";
 export type Status = "ok" | "attention" | "info";
 
 const STATUS_ICON: Record<Status, IconName> = { ok: "ok", attention: "attention", info: "info" };
+
+const STATUS_WORD: Record<Status, string> = {
+  ok: "Normal",
+  attention: "Atenção",
+  info: "Informativo",
+};
+
+/** Um estado: um ícone e uma palavra, nunca só a cor. */
+export function statusChip(status: Status, word = STATUS_WORD[status]): string {
+  return `<p class="status status-${status}">${icon(STATUS_ICON[status])}<span>${escapeHtml(word)}</span></p>`;
+}
 
 /** O tom de uma pílula: o ponto à esquerda reforça a palavra, nunca a substitui. */
 export type Tone = "ok" | "attention" | "neutral" | "quiet";
@@ -131,12 +142,55 @@ export function emptyState(iconName: IconName, title: string, text: string): str
   return `<div class="empty"><span class="empty-icon">${icon(iconName)}</span><p class="empty-title">${escapeHtml(title)}</p><p class="empty-text">${escapeHtml(text)}</p></div>`;
 }
 
-/** Um bloco do painel: o título na página e, por baixo, os cartões (`subHtml` já escapado). */
-export function row(id: string, title: string, subHtml: string, body: string): string {
+/**
+ * Um bloco do painel: o título na página e, por baixo, os cartões (`subHtml` já escapado). À
+ * direita do título, `asideHtml`: o período do bloco e o estado (HTML já feito).
+ */
+export function row(
+  id: string,
+  title: string,
+  subHtml: string,
+  body: string,
+  asideHtml = "",
+): string {
   return `<section class="row" id="${id}" aria-labelledby="h-${id}">
-<div class="row-head"><h2 id="h-${id}">${escapeHtml(title)}</h2>${subHtml ? `<p class="row-sub">${subHtml}</p>` : ""}</div>
+<div class="row-head"><div class="row-title"><h2 id="h-${id}">${escapeHtml(title)}</h2>${subHtml ? `<p class="row-sub">${subHtml}</p>` : ""}</div>${asideHtml ? `<div class="row-aside">${asideHtml}</div>` : ""}</div>
 ${body}
 </section>`;
+}
+
+/**
+ * O período de um bloco ("Últimos 7 · 14 · 30 · 90 dias"): links com o escolhido marcado
+ * (aria-current), sem JavaScript.
+ */
+export function rangeControl(
+  id: string,
+  label: string,
+  unit: string,
+  options: readonly number[],
+  selected: number,
+  href: (value: number) => string,
+): string {
+  const links = options
+    .map((value) => {
+      const current = value === selected;
+      return `<li><a href="${escapeHtml(href(value))}"${current ? ' aria-current="true"' : ""}>${value}${srOnly(` ${unit}`)}</a></li>`;
+    })
+    .join("");
+  return `<div class="range" role="group" aria-labelledby="${id}"><span class="range-label" id="${id}">${escapeHtml(label)}</span><ul class="segmented">${links}</ul><span class="range-unit" aria-hidden="true">${escapeHtml(unit)}</span></div>`;
+}
+
+/** Os separadores de uma ficha: links, com o atual marcado (aria-current). */
+export function tabs(
+  label: string,
+  items: readonly { label: string; href: string; current: boolean; count?: number }[],
+): string {
+  return `<nav class="tabs" aria-label="${escapeHtml(label)}"><ul>${items
+    .map(
+      (t) =>
+        `<li><a href="${escapeHtml(t.href)}"${t.current ? ' aria-current="page"' : ""}>${escapeHtml(t.label)}${t.count === undefined ? "" : ` <span class="tab-count">${num(t.count)}</span>`}</a></li>`,
+    )
+    .join("")}</ul></nav>`;
 }
 
 /** Quando uma leitura falha, o resto da página aparece na mesma. */

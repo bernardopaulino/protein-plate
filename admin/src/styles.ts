@@ -29,6 +29,8 @@ export const STYLES = `:root {
   --attention-text: #7a4f00;
   --attention-soft: #fcf0d6;
   --danger-soft: #fbe9e7;
+  /* As colunas que pedem atenção (âmbar escuro: 4,5:1 no branco) */
+  --attention-mark: #a26c0a;
   --radius-card: 16px;
   --radius-inner: 10px;
   --control: 36px;
@@ -1444,5 +1446,362 @@ table.list th a:hover {
 }
 .message p {
   color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------ Adaptado do Rejection Quest */
+
+/* O cabeçalho de um bloco: o título e a nota à esquerda, o período e o estado à direita */
+.row-head {
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.row-title {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.row-aside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+/* O período de um bloco: links lado a lado, o escolhido em verde */
+.range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.segmented {
+  display: flex;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.segmented a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-decoration: none;
+}
+.segmented a:hover {
+  background: var(--surface-sunken);
+}
+.segmented a[aria-current="true"] {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+@media (pointer: coarse) {
+  .segmented a {
+    min-width: 44px;
+    min-height: 40px;
+  }
+}
+
+/* Um estado: o ícone e a palavra (nunca só a cor) */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px 2px 7px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-ok {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.status-attention {
+  background: var(--attention-soft);
+  color: var(--attention-text);
+}
+.status-info {
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+
+/* "Precisa de ti" */
+.todo li {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+}
+.todo li + li {
+  border-top: 1px solid var(--track);
+}
+.todo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+.todo-attention .todo-dot {
+  background: var(--attention-mark);
+}
+.todo-attention > .icon {
+  color: var(--attention-text);
+}
+.todo-ok > .icon {
+  color: var(--primary);
+}
+.todo-title {
+  font-weight: 600;
+  line-height: 1.35;
+}
+.todo-sub {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* O funcionamento: quatro indicadores com o estado, o número, a razão, as colunas e a regra */
+.grid-health {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 720px) {
+  .grid-health {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1400px) {
+  .grid-health {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.tile {
+  display: grid;
+  gap: 8px;
+  padding: 14px 18px 16px;
+}
+.tile-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+}
+.tile-head h3 {
+  font-size: 14.5px;
+  font-weight: 650;
+}
+.code {
+  margin-left: 2px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.figure-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+.figure {
+  font-size: 26px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.unit,
+.rule {
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+.reason {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.spark .axis {
+  margin-top: 4px;
+}
+/* O arredondado de baixo das colunas fica dentro da área (não passa da linha de base) */
+.spark .columns {
+  overflow: hidden;
+}
+.columns .mark.attention {
+  fill: var(--attention-mark);
+}
+.columns g:hover .mark.attention {
+  fill: var(--attention-text);
+}
+.card-pad {
+  padding: 16px 18px;
+}
+
+/* A tabela completa por dia, aberta a pedido */
+.data-panel > summary {
+  padding: 12px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.data-panel > .table-scroll {
+  border-top: 1px solid var(--track);
+}
+.meanings {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 4px 14px;
+  padding: 14px 18px 16px;
+  border-top: 1px solid var(--track);
+  font-size: 13px;
+}
+.meanings dt {
+  font-weight: 600;
+}
+.meanings dd {
+  color: var(--text-muted);
+}
+.tag-partial {
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* A retenção: um mapa de calor em verde (o texto escuro até ao 3.º degrau, branco depois) */
+.heatmap td.heat {
+  min-width: 52px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.heat-0 {
+  background: var(--surface);
+  color: var(--text-muted);
+}
+.heat-1 {
+  background: #eef5ec;
+}
+.heat-2 {
+  background: #d6e8d4;
+}
+.heat-3 {
+  background: #b2d2ae;
+}
+.heat-4 {
+  background: #3f7a4a;
+  color: #ffffff;
+}
+.heat-5 {
+  background: var(--primary);
+  color: #ffffff;
+}
+.heat.is-pending {
+  color: var(--track);
+}
+
+/* A ativação: um passo por linha, com a barra da parte das contas */
+.funnel-steps {
+  display: grid;
+  gap: 12px;
+}
+.step-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 52px;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.step-label {
+  font-weight: 600;
+}
+.step-count,
+.step-share {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.step-share {
+  color: var(--text-muted);
+}
+.funnel > .note {
+  margin-top: 12px;
+}
+
+/* As listas curtas do Painel: o número à direita */
+.short-value {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Os separadores de uma ficha */
+.tabs {
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.tabs ul {
+  display: flex;
+  gap: 4px;
+}
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--control);
+  padding: 0 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tabs a:hover {
+  color: var(--text);
+}
+.tabs a[aria-current="page"] {
+  border-bottom-color: var(--primary);
+  color: var(--text);
+}
+.tab-count {
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* As refeições do dia de uma pessoa */
+.meal-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  padding: 10px 18px;
+}
+.meal-list li + li {
+  border-top: 1px solid var(--track);
+}
+.meal-name {
+  font-weight: 600;
+}
+.meal-protein {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+.meal-items {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 13px;
 }
 `;

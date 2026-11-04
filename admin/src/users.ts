@@ -1,4 +1,5 @@
 import { isId, jsonStrings, type AdminDb, type SqlValue } from "./db";
+import { ACTIVITY } from "./usage";
 
 /**
  * As contas, uma a uma: a lista com pesquisa e a ficha de cada pessoa. As consultas daqui nunca
@@ -11,7 +12,10 @@ export const USERS_PAGE_SIZE = 25;
 /** A ficha mostra no máximo estas receitas guardadas (as mais recentes). */
 export const SAVED_LIMIT = 50;
 
-export const USER_SORTS = ["recentes", "antigas"] as const;
+/** A ficha mostra no máximo estas receitas pedidas (as mais recentes). */
+export const HISTORY_LIMIT = 20;
+
+export const USER_SORTS = ["recentes", "antigas", "atividade", "receitas"] as const;
 export type UserSort = (typeof USER_SORTS)[number];
 
 /** O texto da pesquisa, limpo e curto; vazio: sem filtro. */
@@ -63,7 +67,10 @@ export interface UserListItem {
   providers: string[];
   onboardedAt: number | null;
   savedRecipes: number;
-  lastSessionAt: number | null;
+  /** Receitas pedidas (novas ou da cache). */
+  requestedRecipes: number;
+  /** A última coisa feita na app (usage.ts: ACTIVITY), ou null. */
+  lastActiveAt: number | null;
 }
 
 export interface UserList {
@@ -86,6 +93,8 @@ function searchFilter(q: string): { where: string; params: SqlValue[] } {
 const ORDER: Record<UserSort, string> = {
   recentes: "u.created_at desc, u.id",
   antigas: "u.created_at asc, u.id",
+  atividade: "coalesce(last_active, 0) desc, u.created_at desc, u.id",
+  receitas: "requested desc, saved desc, u.created_at desc, u.id",
 };
 
 export async function listUsers(db: AdminDb, { q, sort, page }: UserListParams): Promise<UserList> {
@@ -105,13 +114,15 @@ export async function listUsers(db: AdminDb, { q, sort, page }: UserListParams):
     providers: string | null;
     onboarded_at: number | null;
     saved: number;
-    last_session: number | null;
+    requested: number;
+    last_active: number | null;
   }>(
     `select u.id as id, u.name as name, u.email as email, u.created_at as created_at,
       (select group_concat(a.provider_id) from account a where a.user_id = u.id) as providers,
       p.onboarded_at as onboarded_at,
       (select count(*) from saved_recipes s where s.user_id = u.id) as saved,
-      (select max(s.created_at) from session s where s.user_id = u.id) as last_session
+      (select count(*) from user_recipes h where h.user_id = u.id) as requested,
+      (select max(a.at) from ${ACTIVITY} a where a.user_id = u.id) as last_active
     from "user" u
     left join profiles p on p.user_id = u.id
     where ${where}
@@ -133,7 +144,8 @@ export async function listUsers(db: AdminDb, { q, sort, page }: UserListParams):
       providers: r.providers ? [...new Set(r.providers.split(","))].sort() : [],
       onboardedAt: r.onboarded_at === null ? null : Number(r.onboarded_at),
       savedRecipes: Number(r.saved ?? 0),
-      lastSessionAt: r.last_session === null ? null : Number(r.last_session),
+      requestedRecipes: Number(r.requested ?? 0),
+      lastActiveAt: r.last_active === null ? null : Number(r.last_active),
     })),
   };
 }
@@ -165,6 +177,31 @@ export interface SavedRecipe {
   savedAt: number;
 }
 
+/** Uma receita pedida (o histórico "Recentes" da pessoa). */
+export interface RequestedRecipe {
+  id: string;
+  title: string;
+  meal: string;
+  proteinPerServingG: number;
+  requestedAt: number;
+}
+
+/** Um alimento do dia guardado da pessoa. */
+export interface DayItem {
+  meal: string;
+  foodId: string;
+  portionId: string;
+  count: number;
+}
+
+/** A receita posta numa refeição do dia ("Pôr no meu dia"). */
+export interface MealRecipe {
+  meal: string;
+  recipeId: string;
+  title: string;
+  usedAt: number;
+}
+
 export interface UserDetail {
   id: string;
   name: string;
@@ -179,6 +216,15 @@ export interface UserDetail {
   savedTotal: number;
   /** Os alimentos do dia guardado (o que o apagar leva). */
   planItems: number;
+  /** O dia guardado, pela ordem das refeições e dos alimentos. */
+  dayItems: DayItem[];
+  /** A última mudança do dia (null: sem dia guardado). */
+  dayUpdatedAt: number | null;
+  mealRecipes: MealRecipe[];
+  history: RequestedRecipe[];
+  historyTotal: number;
+  /** A última coisa feita na app (usage.ts: ACTIVITY), ou null. */
+  lastActiveAt: number | null;
 }
 
 export async function userDetail(db: AdminDb, id: string, now: number): Promise<UserDetail | null> {
@@ -188,64 +234,103 @@ export async function userDetail(db: AdminDb, id: string, now: number): Promise<
     id,
   );
   if (!account) return null;
-  const [providers, sessions, profile, saved, counts] = await Promise.all([
-    db.all<{ provider_id: string; created_at: number }>(
-      "select provider_id, created_at from account where user_id = ? order by created_at",
-      id,
-    ),
-    db.first<{ n: number; last_created: number | null; last_seen: number | null }>(
-      `select count(*) as n, max(created_at) as last_created, max(updated_at) as last_seen
+  const [providers, sessions, profile, saved, counts, day, mealRecipes, history] =
+    await Promise.all([
+      db.all<{ provider_id: string; created_at: number }>(
+        "select provider_id, created_at from account where user_id = ? order by created_at",
+        id,
+      ),
+      db.first<{ n: number; last_created: number | null; last_seen: number | null }>(
+        `select count(*) as n, max(created_at) as last_created, max(updated_at) as last_seen
       from session where user_id = ? and expires_at > ?`,
-      id,
-      now,
-    ),
-    // As colunas uma a uma: nunca weight_kg, allergies nem intensity
-    db.first<{
-      daily_target_g: number;
-      meals: string;
-      pre_workout_meal: string | null;
-      post_workout_meal: string | null;
-      diet: string;
-      equipment: string;
-      cook_minutes: number;
-      liked_foods: string;
-      locale: string;
-      consent_version: number | null;
-      consented_at: number | null;
-      health_consent_at: number | null;
-      onboarded_at: number | null;
-      updated_at: number;
-    }>(
-      `select daily_target_g, meals, pre_workout_meal, post_workout_meal, diet, equipment,
+        id,
+        now,
+      ),
+      // As colunas uma a uma: nunca weight_kg, allergies nem intensity
+      db.first<{
+        daily_target_g: number;
+        meals: string;
+        pre_workout_meal: string | null;
+        post_workout_meal: string | null;
+        diet: string;
+        equipment: string;
+        cook_minutes: number;
+        liked_foods: string;
+        locale: string;
+        consent_version: number | null;
+        consented_at: number | null;
+        health_consent_at: number | null;
+        onboarded_at: number | null;
+        updated_at: number;
+      }>(
+        `select daily_target_g, meals, pre_workout_meal, post_workout_meal, diet, equipment,
         cook_minutes, liked_foods, locale, consent_version, consented_at, health_consent_at,
         onboarded_at, updated_at
       from profiles where user_id = ?`,
-      id,
-    ),
-    db.all<{
-      id: string;
-      title: string;
-      meal: string;
-      protein_per_serving_g: number;
-      saved_at: number;
-    }>(
-      `select r.id as id, r.title as title, r.meal as meal,
+        id,
+      ),
+      db.all<{
+        id: string;
+        title: string;
+        meal: string;
+        protein_per_serving_g: number;
+        saved_at: number;
+      }>(
+        `select r.id as id, r.title as title, r.meal as meal,
         r.protein_per_serving_g as protein_per_serving_g, s.saved_at as saved_at
       from saved_recipes s join recipes r on r.id = s.recipe_id
       where s.user_id = ?
       order by s.saved_at desc
       limit ?`,
-      id,
-      SAVED_LIMIT,
-    ),
-    db.first<{ saved: number; items: number }>(
-      `select (select count(*) from saved_recipes where user_id = ?) as saved,
+        id,
+        SAVED_LIMIT,
+      ),
+      db.first<{
+        saved: number;
+        items: number;
+        history: number;
+        day_updated: number | null;
+        last_active: number | null;
+      }>(
+        `select (select count(*) from saved_recipes where user_id = ?) as saved,
         (select count(*) from plan_items i join day_plans d on d.id = i.plan_id
-          where d.user_id = ?) as items`,
-      id,
-      id,
-    ),
-  ]);
+          where d.user_id = ?) as items,
+        (select count(*) from user_recipes where user_id = ?) as history,
+        (select max(updated_at) from day_plans where user_id = ?) as day_updated,
+        (select max(a.at) from ${ACTIVITY} a where a.user_id = ?) as last_active`,
+        id,
+        id,
+        id,
+        id,
+        id,
+      ),
+      db.all<{ meal: string; food_id: string; portion_id: string; portion_count: number }>(
+        `select i.meal as meal, i.food_id as food_id, i.portion_id as portion_id,
+        i.portion_count as portion_count
+      from plan_items i join day_plans d on d.id = i.plan_id
+      where d.user_id = ? order by d.position, i.position`,
+        id,
+      ),
+      db.all<{ meal: string; recipe_id: string; title: string; used_at: number }>(
+        `select m.meal as meal, m.recipe_id as recipe_id, r.title as title, m.used_at as used_at
+      from meal_recipes m join recipes r on r.id = m.recipe_id where m.user_id = ?`,
+        id,
+      ),
+      db.all<{
+        id: string;
+        title: string;
+        meal: string;
+        protein_per_serving_g: number;
+        created_at: number;
+      }>(
+        `select r.id as id, r.title as title, r.meal as meal,
+        r.protein_per_serving_g as protein_per_serving_g, h.created_at as created_at
+      from user_recipes h join recipes r on r.id = h.recipe_id
+      where h.user_id = ? order by h.created_at desc limit ?`,
+        id,
+        HISTORY_LIMIT,
+      ),
+    ]);
   return {
     id: account.id,
     name: account.name,
@@ -284,6 +369,28 @@ export async function userDetail(db: AdminDb, id: string, now: number): Promise<
     })),
     savedTotal: Number(counts?.saved ?? 0),
     planItems: Number(counts?.items ?? 0),
+    dayItems: day.map((i) => ({
+      meal: i.meal,
+      foodId: i.food_id,
+      portionId: i.portion_id,
+      count: Number(i.portion_count),
+    })),
+    dayUpdatedAt: counts?.day_updated == null ? null : Number(counts.day_updated),
+    mealRecipes: mealRecipes.map((m) => ({
+      meal: m.meal,
+      recipeId: m.recipe_id,
+      title: m.title,
+      usedAt: Number(m.used_at),
+    })),
+    history: history.map((h) => ({
+      id: h.id,
+      title: h.title,
+      meal: h.meal,
+      proteinPerServingG: Number(h.protein_per_serving_g),
+      requestedAt: Number(h.created_at),
+    })),
+    historyTotal: Number(counts?.history ?? 0),
+    lastActiveAt: counts?.last_active == null ? null : Number(counts.last_active),
   };
 }
 

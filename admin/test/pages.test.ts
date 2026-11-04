@@ -94,10 +94,10 @@ describe("Painel", () => {
     expect(page).toMatch(/Onboarding feito<\/span><\/h3>\s*<p class="strip-figure">33%<\/p>/);
     expect(page).toContain("1 de 3 contas");
     expect(page).toMatch(/Ativos \(7 dias\)<\/span><\/h3>\s*<p class="strip-figure">1<\/p>/);
-    // Receitas: r1 hoje, r2 há 3 dias (7 dias = 2), r3 há 60 dias (total 3)
-    expect(page).toMatch(/Receitas geradas<\/span><\/h3>\s*<p class="strip-figure">2<\/p>/);
-    expect(page).toContain("<strong>1</strong> hoje");
-    expect(page).toContain("2 em 30 dias · 3 desde o início");
+    // Receitas: r1 hoje, r2 há 3 dias (7 dias = 2, nenhuma nos 7 anteriores), r3 há 60 dias
+    expect(page).toMatch(/Receitas novas<\/span><\/h3>\s*<p class="strip-figure">2<\/p>/);
+    expect(page).toContain("nos últimos 7 dias · 0 nos 7 dias anteriores");
+    expect(page).toContain("<strong>1</strong> hoje · 3 desde o início");
   });
 
   it("estima o custo com os preços do Haiku e não dá preço ao mock", async () => {
@@ -112,9 +112,20 @@ describe("Painel", () => {
   it("mostra os gráficos por semana e por dia, com as tabelas dos dados", async () => {
     const page = await html("/");
     expect(page).toContain('aria-label="Contas novas por semana, nas últimas 12 semanas"');
-    expect(page).toContain('aria-label="Receitas geradas por dia, nos últimos 30 dias"');
+    expect(page).toContain('aria-label="Receitas novas por semana, nas últimas 12 semanas"');
     expect(page).toContain("<caption>Contas novas por semana, da mais recente</caption>");
-    expect(page).toMatch(/<title>[^<]*\(hoje\): 1 receita<\/title>/);
+    expect(page).toMatch(/<title>Semana de [^<]*\(em curso\): \d+ receitas? novas?<\/title>/);
+    expect(page).toContain('aria-label="Pessoas ativas por dia, nos últimos 30 dias"');
+  });
+
+  it("o período muda os gráficos e só aceita os valores da lista", async () => {
+    const page = await html("/?semanas=26&dias=30");
+    expect(page).toContain('aria-label="Contas novas por semana, nas últimas 26 semanas"');
+    expect(page).toMatch(/<a href="\/\?dias=30&amp;semanas=26#crescimento" aria-current="true">26/);
+    expect(page).toContain("Funcionamento dos últimos 30 dias");
+    const fallback = await html("/?semanas=13&dias=abc");
+    expect(fallback).toContain('aria-label="Contas novas por semana, nas últimas 12 semanas"');
+    expect(fallback).toContain("Funcionamento dos últimos 14 dias");
   });
 
   it("mostra as preferências de quem fez o onboarding e os alimentos pelo nome", async () => {
@@ -127,12 +138,16 @@ describe("Painel", () => {
     expect(page).toContain("Air fryer");
     expect(page).toMatch(/<p class="big-figure">100%<\/p>/);
     // Os alimentos escolhidos: o ovo por 2 pessoas, pelo nome do catálogo
-    expect(page).toMatch(/bar-name">Ovo<\/span>.*?<span class="bar-value">2 pessoas</);
+    expect(page).toMatch(
+      /bar-name"><a href="\/alimentos\/ovo">Ovo<\/a><\/span>.*?<span class="bar-value">2 pessoas</,
+    );
     expect(page).toContain("Tofu firme");
     expect(page).toContain("id-retirado");
     expect(page).toContain("Fora do catálogo");
     // Nas receitas: o peito de frango em 2
-    expect(page).toMatch(/bar-name">Peito de frango<\/span>.*?<span class="bar-value">2 receitas</);
+    expect(page).toMatch(
+      /bar-name"><a href="\/alimentos\/peito-frango">Peito de frango<\/a><\/span>.*?<span class="bar-value">2 receitas</,
+    );
     expect(page).toContain("Receitas guardadas");
   });
 
@@ -160,11 +175,12 @@ describe("Utilizadores", () => {
   it("a ficha mostra a conta, as sessões, as preferências e as receitas guardadas", async () => {
     const page = await html("/utilizadores/u1");
     expectSafe(page);
+    expect(page).toContain('<nav class="tabs" aria-label="Secções da ficha">');
+    expect(page).toMatch(/href="\/utilizadores\/u1" aria-current="page">Visão geral/);
     expect(page).toContain("ana@example.test");
     expect(page).toContain("Google <span");
     expect(page).toContain("Apple <span");
-    expect(page).toMatch(/Sessões ativas<\/dt><dd>2<\/dd>/);
-    expect(page).toContain("Última entrada");
+    expect(page).toContain("Última atividade");
     expect(page).toContain("<strong>140 g</strong> de proteína");
     expect(page).toContain('Lanche <span class="muted">(pré-treino)</span>');
     expect(page).toContain('Jantar <span class="muted">(pós-treino)</span>');
@@ -173,20 +189,44 @@ describe("Utilizadores", () => {
     expect(page).toContain("Até 30 min");
     expect(page).toContain(">Grão-de-bico</li>");
     expect(page).toContain(">id-retirado</li>");
-    // A receita guardada, com o link para a ficha da receita, escapada
-    expect(page).toContain('href="/receitas/r1"');
-    expect(page).toContain("&lt;img src=x onerror=alert(1)&gt; Frango &amp; arroz");
     expect(page).toContain("Sem dados de saúde");
-    expect(page).toContain('action="/utilizadores/u1/sessoes"');
+
+    // Dia e receitas: o dia com a proteína calculada pela app e a receita guardada, escapada
+    const day = await html("/utilizadores/u1?separador=dia");
+    expectSafe(day);
+    expect(day).toMatch(/aria-current="page">Dia e receitas/);
+    expect(day).toContain('<ul class="meal-list">');
+    expect(day).toContain("Ovo");
+    expect(day).toContain('href="/receitas/r1"');
+    expect(day).toContain("&lt;img src=x onerror=alert(1)&gt; Frango &amp; arroz");
+
+    // Gestão: as sessões e as ações
+    const manage = await html("/utilizadores/u1?separador=gestao");
+    expectSafe(manage);
+    expect(manage).toMatch(/Sessões ativas<\/dt><dd>2<\/dd>/);
+    expect(manage).toContain("Última entrada");
+    expect(manage).toContain('action="/utilizadores/u1/sessoes"');
+    expect(manage).toContain("Sem dados de saúde: nada a apagar.");
+    // Sem dados de saúde, não há botão para os apagar
+    expect(manage).not.toContain('action="/utilizadores/u1/saude"');
+  });
+
+  it("um separador desconhecido abre a visão geral", async () => {
+    const page = await html("/utilizadores/u1?separador=<x>");
+    expect(page).toMatch(/aria-current="page">Visão geral/);
   });
 
   it("a ficha de uma conta sem perfil diz que ainda não há perfil", async () => {
     const page = await html("/utilizadores/u3");
     expect(page).toContain("ainda não tem perfil");
-    expect(page).toContain("Sem receitas guardadas.");
-    expect(page).toMatch(/Sessões ativas<\/dt><dd>0<\/dd>/);
+    const day = await html("/utilizadores/u3?separador=dia");
+    expect(day).toContain("Sem receitas guardadas.");
+    expect(day).toContain("Sem dia guardado.");
+    expect(day).toContain("Ainda não pediu receitas.");
+    const manage = await html("/utilizadores/u3?separador=gestao");
+    expect(manage).toMatch(/Sessões ativas<\/dt><dd>0<\/dd>/);
     // Sem sessões, não há botão para as terminar
-    expect(page).not.toContain('action="/utilizadores/u3/sessoes"');
+    expect(manage).not.toContain('action="/utilizadores/u3/sessoes"');
   });
 
   it("a confirmação do apagar diz o que sai e pede o email", async () => {
@@ -251,16 +291,16 @@ describe("Receitas", () => {
 describe("Alimentos", () => {
   /** A ordem dos nomes na tabela. */
   const order = (page: string, names: readonly string[]) =>
-    names.map((name) => page.indexOf(`<th scope="row">${name}</th>`));
+    names.map((name) => page.indexOf(`>${name}</a></th>`));
 
   it("conta as pessoas que gostam, os dias e as receitas de cada alimento", async () => {
     const page = await html("/alimentos");
     expectSafe(page);
     expect(page).toMatch(
-      /<th scope="row">Ovo<\/th><td>Ovos<\/td><td class="num">2<\/td><td class="num">1<\/td>/,
+      /<th scope="row"><a href="\/alimentos\/ovo">Ovo<\/a><\/th><td>Ovos<\/td><td class="num">2<\/td><td class="num">1<\/td>/,
     );
     expect(page).toMatch(
-      /<th scope="row">Tofu firme<\/th><td>Soja<\/td><td class="num">1<\/td><td class="num">1<\/td><td class="num">1<\/td>/,
+      /<th scope="row"><a href="\/alimentos\/tofu-firme">Tofu firme<\/a><\/th><td>Soja<\/td><td class="num">1<\/td><td class="num">1<\/td><td class="num">1<\/td>/,
     );
     expect(page).toMatch(/<th scope="row">id-retirado <span class="muted">\(fora do catálogo\)/);
   });

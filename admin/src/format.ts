@@ -123,3 +123,16 @@ export const plural = (count: number, one: string, many: string) => (count === 1
 /** O texto de uma contagem com o nome no singular ou no plural ("1 receita", "3 receitas"). */
 export const counted = (count: number, one: string, many: string) =>
   `${num(count)} ${plural(count, one, many)}`;
+
+/** Um dia em UTC como texto AAAA-MM-DD (o formato dos contadores do funcionamento). */
+export const isoDay = (ms: number) => new Date(ms).toISOString().slice(0, 10);
+
+/** O início (00:00 UTC) de um dia AAAA-MM-DD, em ms. */
+export const isoDayMs = (day: string) => Date.parse(`${day}T00:00:00Z`);
+
+/** Uma variação com sinal, em percentagem inteira ("+12%", "−40%", "0%"). */
+export function signedPct(ratio: number): string {
+  const rounded = Math.round(ratio * 100);
+  if (rounded === 0) return "0%";
+  return `${rounded > 0 ? "+" : "−"}${integer.format(Math.abs(rounded))}%`;
+}

@@ -84,10 +84,12 @@ describe("entradas do endereço", () => {
 
   it("os filtros dos alimentos são de uma lista fechada", () => {
     expect(parseFoodFilters({ ordem: "receitas", categoria: "soja" })).toEqual({
+      q: "",
       sort: "receitas",
       category: "soja",
     });
     expect(parseFoodFilters({ ordem: "x", categoria: "toString" })).toEqual({
+      q: "",
       sort: "gostam",
       category: "",
     });
@@ -120,6 +122,7 @@ describe("dados guardados", () => {
       recipes: 0,
     });
     const sorted = sortFoods([stat("b", 1), stat("a", 1), stat("c", 3)], {
+      q: "",
       sort: "gostam",
       category: "",
     });

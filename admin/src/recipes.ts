@@ -1,4 +1,6 @@
-import { isId, jsonStrings, type AdminDb } from "./db";
+import { MEALS } from "../../src/domain/meals";
+import { isId, jsonStrings, type AdminDb, type SqlValue } from "./db";
+import { likePattern } from "./users";
 
 /**
  * As receitas geradas (imutáveis e sem dono: não dizem quem as pediu). O texto vem do modelo de
@@ -67,17 +69,104 @@ const LIST_COLUMNS = `r.id as id, r.title as title, r.meal as meal, r.post_worko
   r.protein_per_serving_g as protein_per_serving_g, r.created_at as created_at,
   (select count(*) from saved_recipes s where s.recipe_id = r.id) as saved`;
 
-export async function listRecipes(db: AdminDb, page: number): Promise<RecipeList> {
-  const counted = await db.first<{ n: number }>("select count(*) as n from recipes");
+export const RECIPE_SORTS = ["recentes", "guardadas", "proteina", "tokens"] as const;
+export type RecipeSort = (typeof RECIPE_SORTS)[number];
+
+/** A pesquisa, os filtros, a ordem e a página da lista (?q=, ?refeicao=, …). */
+export interface RecipeFilters {
+  /** Parte do título (já limpo com cleanQuery). */
+  q: string;
+  /** Vazio: todas as refeições. */
+  meal: string;
+  /** Vazio: todos os modelos. */
+  model: string;
+  /** null: todas as versões do prompt. */
+  prompt: number | null;
+  /** Vazio: todas; "sim": só pós-treino; "nao": sem as de pós-treino. */
+  post: "" | "sim" | "nao";
+  sort: RecipeSort;
+  page: number;
+}
+
+/** Os valores válidos de cada filtro (outro texto fica sem filtro, sem erro). */
+export function parseRecipeFilters(query: {
+  q: string;
+  refeicao?: string | undefined;
+  modelo?: string | undefined;
+  prompt?: string | undefined;
+  posTreino?: string | undefined;
+  ordem?: string | undefined;
+  page: number;
+}): RecipeFilters {
+  const meal = (MEALS as readonly string[]).includes(query.refeicao ?? "") ? query.refeicao! : "";
+  const model = /^[A-Za-z0-9._:-]{1,64}$/.test(query.modelo ?? "") ? query.modelo! : "";
+  const prompt = /^\d{1,3}$/.test(query.prompt ?? "") ? Number(query.prompt) : null;
+  const post = query.posTreino === "sim" || query.posTreino === "nao" ? query.posTreino : "";
+  const sort = RECIPE_SORTS.find((s) => s === query.ordem) ?? "recentes";
+  return { q: query.q, meal, model, prompt, post, sort, page: query.page };
+}
+
+/** Há algum filtro ou pesquisa (a ordem e a página não contam). */
+export const hasRecipeFilters = (f: RecipeFilters) =>
+  f.q !== "" || f.meal !== "" || f.model !== "" || f.prompt !== null || f.post !== "";
+
+const RECIPE_ORDER: Record<RecipeSort, string> = {
+  recentes: "r.created_at desc, r.id",
+  guardadas: "saved desc, r.created_at desc, r.id",
+  proteina: "r.protein_per_serving_g desc, r.created_at desc, r.id",
+  tokens:
+    "coalesce(r.input_tokens, 0) + coalesce(r.output_tokens, 0) desc, r.created_at desc, r.id",
+};
+
+function recipeWhere(f: RecipeFilters): { where: string; params: SqlValue[] } {
+  const clauses: string[] = [];
+  const params: SqlValue[] = [];
+  if (f.q !== "") {
+    clauses.push("(r.title like ? escape '\\' or r.id = ?)");
+    params.push(likePattern(f.q), f.q);
+  }
+  if (f.meal !== "") {
+    clauses.push("r.meal = ?");
+    params.push(f.meal);
+  }
+  if (f.model !== "") {
+    clauses.push("r.model = ?");
+    params.push(f.model);
+  }
+  if (f.prompt !== null) {
+    clauses.push("r.prompt_version = ?");
+    params.push(f.prompt);
+  }
+  if (f.post !== "") clauses.push(f.post === "sim" ? "r.post_workout = 1" : "r.post_workout = 0");
+  return { where: clauses.length ? clauses.join(" and ") : "1 = 1", params };
+}
+
+export async function listRecipes(db: AdminDb, f: RecipeFilters): Promise<RecipeList> {
+  const { where, params } = recipeWhere(f);
+  const counted = await db.first<{ n: number }>(
+    `select count(*) as n from recipes r where ${where}`,
+    ...params,
+  );
   const total = Number(counted?.n ?? 0);
   const pages = Math.max(1, Math.ceil(total / RECIPES_PAGE_SIZE));
-  const current = Math.min(Math.max(1, page), pages);
+  const current = Math.min(Math.max(1, f.page), pages);
   const rows = await db.all<RecipeRow>(
-    `select ${LIST_COLUMNS} from recipes r order by r.created_at desc, r.id limit ? offset ?`,
+    `select ${LIST_COLUMNS} from recipes r where ${where}
+    order by ${RECIPE_ORDER[f.sort]} limit ? offset ?`,
+    ...params,
     RECIPES_PAGE_SIZE,
     (current - 1) * RECIPES_PAGE_SIZE,
   );
   return { total, page: current, pages, items: rows.map(listItem) };
+}
+
+/** Os modelos e as versões do prompt que já geraram receitas (as opções dos filtros). */
+export async function recipeFacets(db: AdminDb): Promise<{ models: string[]; prompts: number[] }> {
+  const [models, prompts] = await Promise.all([
+    db.all<{ model: string }>("select distinct model from recipes order by model"),
+    db.all<{ v: number }>("select distinct prompt_version as v from recipes order by 1 desc"),
+  ]);
+  return { models: models.map((m) => m.model), prompts: prompts.map((v) => Number(v.v)) };
 }
 
 export interface RecipeDetail extends RecipeListItem {

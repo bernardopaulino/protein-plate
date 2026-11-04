@@ -18,6 +18,8 @@ export interface Column {
   title: string;
   /** Dia ou semana ainda a decorrer: mais claro. */
   partial?: boolean;
+  /** Pede atenção (o funcionamento): na cor de aviso. */
+  attention?: boolean;
 }
 
 /** O raio do topo das colunas; a base fica reta (o arredondado de baixo sai da área e é cortado). */
@@ -29,6 +31,7 @@ export function columnChart(
   {
     height,
     fill = 0.62,
+    grid = true,
     label,
   }: {
     /** Altura da área do gráfico, em píxeis. */
@@ -37,6 +40,8 @@ export function columnChart(
     fill?: number;
     /** O que o gráfico mostra, para os leitores de ecrã. */
     label: string;
+    /** A linha tracejada no topo da escala (sem ela nos gráficos pequenos do funcionamento). */
+    grid?: boolean;
   },
 ): string {
   const top = Math.max(1, ...columns.map((c) => c.value));
@@ -48,13 +53,20 @@ export function columnChart(
       if (column.value > 0) {
         // Altura exata; um valor acima de zero nunca desaparece (no mínimo 2 px)
         const h = Math.max((column.value / top) * height, 2);
-        bar = `<rect class="mark${column.partial ? " partial" : ""}" x="${fmt(i * slot + (slot - width) / 2)}%" y="${fmt(height - h)}" width="${fmt(width)}%" height="${fmt(h + TOP_RADIUS)}" rx="${TOP_RADIUS}"/>`;
+        const classes = [
+          "mark",
+          column.partial ? "partial" : "",
+          column.attention ? "attention" : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
+        bar = `<rect class="${classes}" x="${fmt(i * slot + (slot - width) / 2)}%" y="${fmt(height - h)}" width="${fmt(width)}%" height="${fmt(h + TOP_RADIUS)}" rx="${TOP_RADIUS}"/>`;
       }
       // A área que responde ao rato é o intervalo inteiro, não só a coluna
       return `<g><title>${escapeHtml(column.title)}</title><rect class="hit" x="${fmt(i * slot)}%" y="0" width="${fmt(slot)}%" height="${height}"/>${bar}</g>`;
     })
     .join("");
-  return `<svg class="columns" width="100%" height="${height}" role="img" aria-label="${escapeHtml(label)}"><line class="gridline" x1="0" y1="0.5" x2="100%" y2="0.5"/>${marks}<line class="baseline" x1="0" y1="${fmt(height - 0.5)}" x2="100%" y2="${fmt(height - 0.5)}"/></svg>`;
+  return `<svg class="columns" width="100%" height="${height}" role="img" aria-label="${escapeHtml(label)}">${grid ? `<line class="gridline" x1="0" y1="0.5" x2="100%" y2="0.5"/>` : ""}${marks}<line class="baseline" x1="0" y1="${fmt(height - 0.5)}" x2="100%" y2="${fmt(height - 0.5)}"/></svg>`;
 }
 
 /** Uma barra horizontal sobre a sua calha (a calha inteira é o máximo da lista). */
@@ -82,7 +94,10 @@ export type IconName =
   | "arrow-down"
   | "external"
   | "search"
-  | "logout";
+  | "logout"
+  | "server"
+  | "clock"
+  | "gauge";
 
 /** O traço dos ícones de linha (os da moldura, das listas e das ações). */
 const LINE = `fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"`;
@@ -97,6 +112,9 @@ const ICONS: Record<IconName, string> = {
   recipe: `<g ${LINE}><path d="M2 7.5h12a6 6 0 0 1-12 0Z"/><path d="M5.5 5.2c0-1 .9-1.2.9-2.2M8.5 5.2c0-1 .9-1.2.9-2.2"/></g>`,
   food: `<g ${LINE}><path d="M3 13c0-5.5 3.5-9.2 10-10-.4 6.4-4.3 10-10 10Z"/><path d="M3 13 9 7"/></g>`,
   spark: `<g ${LINE}><path d="M8 1.8v3M8 11.2v3M1.8 8h3M11.2 8h3"/><path d="M8 5.2 9 7l1.8 1L9 9l-1 1.8L7 9 5.2 8 7 7Z"/></g>`,
+  server: `<g ${LINE}><rect x="2.25" y="2.5" width="11.5" height="4.5" rx="1.2"/><rect x="2.25" y="9" width="11.5" height="4.5" rx="1.2"/><path d="M5 4.75h.01M5 11.25h.01"/></g>`,
+  clock: `<g ${LINE}><circle cx="8" cy="8" r="6"/><path d="M8 4.6V8l2.3 1.5"/></g>`,
+  gauge: `<g ${LINE}><path d="M2.4 11.6a6 6 0 1 1 11.2 0"/><path d="M8 9.2 10.8 5.6"/><circle cx="8" cy="9.6" r=".6"/></g>`,
   heart: `<path d="M8 13.4S2.2 10 2.2 6a3 3 0 0 1 5.8-1.2A3 3 0 0 1 13.8 6C13.8 10 8 13.4 8 13.4Z" ${LINE}/>`,
   menu: `<path d="M2.5 4h11M2.5 8h11M2.5 12h11" ${LINE}/>`,
   close: `<path d="M4 4l8 8M12 4l-8 8" ${LINE}/>`,

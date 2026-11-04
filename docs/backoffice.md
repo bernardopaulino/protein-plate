@@ -12,11 +12,24 @@ O padrão é o do backoffice do Rejection Quest (`rejection-quest-api/admin`): H
 
 ## O que mostra
 
-- **Painel** (`/`): utilizadores (total, novos nos últimos 7 e 30 dias, contas novas por semana nas últimas 12 semanas), onboarding feito (número e %), ativos (contas com uma sessão criada nos últimos 7 dias), receitas geradas (hoje, 7 e 30 dias, por dia nos últimos 30), tokens de entrada e de saída e custo estimado por modelo (30 dias e desde o início), receitas guardadas, a distribuição das preferências de quem fez o onboarding (alimentação, refeições por dia, % que treina com pré e pós-treino, tempo para cozinhar e equipamento), os 15 alimentos mais escolhidos e os 15 mais usados nas receitas, e as alergias só agregadas (ver abaixo).
-- **Utilizadores** (`/utilizadores`): lista com pesquisa por nome, email ou ID exato, ordem pela data de criação e páginas de 25. A **ficha** (`/utilizadores/:id`) tem o nome, o email, a data de criação, as formas de entrar (Google, Apple), as sessões ativas e a última entrada, o onboarding, a meta diária, as refeições (com o pré e o pós-treino), a alimentação, o equipamento, o tempo para cozinhar, os alimentos de que gosta (pelo nome) e as receitas guardadas (com link para a ficha de cada receita).
-- **Receitas** (`/receitas`): as mais recentes primeiro (título, refeição, doses, proteína por dose, modelo, versão do prompt, tokens, quantas pessoas a guardaram e data). A ficha (`/receitas/:id`) tem os ingredientes pelo nome do catálogo, em gramas, os passos e o link para a página pública na app (`APP_URL/receitas/<id>`).
-- **Alimentos** (`/alimentos`): todo o catálogo com quantas pessoas o escolheram no onboarding, em quantos dias guardados aparece e quantas receitas o usam; ordena por cada coluna e filtra pela categoria. Os ids que já não estão no catálogo aparecem no fim, marcados.
-- **Ações** (as únicas escritas): terminar todas as sessões de uma conta e apagar uma conta (ver "Ações").
+- **Painel** (`/`), pela ordem do Rejection Quest:
+  - **Precisa de ti**: o que pede uma ação (os indicadores do funcionamento em atenção, modelos sem preço em `pricing.ts`, alimentos com valores provisórios da TCA); sem nada, "Tudo em ordem".
+  - **Números principais**: utilizadores (novos nos últimos 7 dias e nos 7 anteriores), onboarding feito, ativos nos últimos 7 dias, receitas novas (com a variação face aos 7 dias anteriores) e custo da IA em 30 dias.
+  - **Listas curtas**: as receitas mais guardadas e as mais postas no dia.
+  - **Funcionamento** (período `?dias=7|14|30|90`): quatro indicadores a partir dos contadores diários da app (`ops_counters`): erros do servidor (atenção com algum desde ontem), receitas que falharam (atenção acima de 5% das pedidas ao modelo), receitas lentas (> 10 s; atenção acima de 10%) e o limite global (atenção se foi atingido desde ontem), cada um com o estado, o número, a razão, as colunas por dia (a âmbar os dias que pedem atenção) e a regra; e a tabela completa por dia, com o que cada coluna conta.
+  - **Crescimento** (período `?semanas=12|26|52`): contas novas e receitas novas por semana.
+  - **Pessoas ativas**: por dia nos últimos 30 dias, média diária, 7 e 30 dias. "Ativa" é ter feito alguma coisa na app que fica na base: entrar ou usar a app com sessão, pedir ou guardar uma receita, mudar o dia (incluindo pôr uma receita no dia e guardar as preferências). Sem rastreio novo.
+  - **Retenção**: as contas de cada uma das últimas 8 semanas, semana a semana (mapa de calor).
+  - **Ativação**: das contas com 14 dias ou mais, quantas fizeram o formulário, pediram uma receita, guardaram uma ou puseram-na no dia, e voltaram na 2.ª semana.
+  - **IA e receitas**: tokens e custo estimado por modelo (30 dias e desde o início) e receitas guardadas.
+  - **Preferências** de quem fez o onboarding, **alimentos** mais escolhidos e mais usados (com link para cada um) e **alergias** só agregadas (ver abaixo).
+- **Utilizadores** (`/utilizadores`): lista com pesquisa por nome, email ou ID exato, ordem pela data de criação, pela última atividade ou pelas receitas pedidas, páginas de 25 e o menu "⋯" em cada linha. A **ficha** (`/utilizadores/:id`) tem três separadores (`?separador=`):
+  - **Visão geral**: o nome, o email, a data de criação, as formas de entrar, a última atividade, o onboarding, os termos, se há dados de saúde (nunca quais), a meta diária, as refeições (com o pré e o pós-treino), a alimentação, o equipamento, o tempo para cozinhar e os alimentos de que gosta.
+  - **Dia e receitas**: o dia guardado por refeição, com a proteína calculada pela app e a receita posta em cada refeição; as receitas pedidas (as 20 mais recentes) e as guardadas.
+  - **Gestão**: as sessões (terminar), os dados de saúde (apagar a pedido) e o apagar a conta.
+- **Receitas** (`/receitas`): pesquisa pelo título ou ID, filtros por refeição, modelo, versão do prompt e pós-treino, e ordem pela data, pelas mais guardadas, pela proteína por dose ou pelos tokens. A ficha (`/receitas/:id`) tem os ingredientes pelo nome do catálogo, em gramas, os passos e o link para a página pública na app (`APP_URL/receitas/<id>`).
+- **Alimentos** (`/alimentos`): todo o catálogo com quantas pessoas o escolheram no onboarding, em quantos dias guardados aparece e quantas receitas o usam; pesquisa pelo nome (sem acentos), ordena por cada coluna e filtra pela categoria. Os ids que já não estão no catálogo aparecem no fim, marcados. A página de cada alimento (`/alimentos/:id`) tem os dados do catálogo (proteína, porções, base do peso, processamento, código da TCA ou "valores provisórios"), o uso em contagens e as 10 receitas mais recentes que o usam.
+- **Ações** (as únicas escritas): terminar todas as sessões de uma conta, apagar os dados de saúde de uma conta e apagar uma conta (ver "Ações").
 
 Os nomes dos alimentos vêm de `src/content/foods.generated.ts` (o mesmo catálogo da app, no momento do deploy do backoffice). O custo usa os preços de `admin/src/pricing.ts` (Claude Haiku 5.5: $0,10 por 1M de tokens de entrada e $0,50 por 1M de saída); um modelo sem preço (o `mock` do local) aparece como "sem preço". Muda o preço aí quando mudares o modelo ou a Anthropic mudar a tabela.
 
@@ -29,7 +42,7 @@ A base legal é gerir o serviço e dar apoio a quem o pede. Por isso o backoffic
 - **Alergias só agregadas, e só a partir de 5 pessoas.** No Painel, quantas pessoas têm cada alergénio (só perfis com o consentimento de dados de saúde); abaixo de 5, incluindo o zero, aparece "<5". O total de pessoas com alguma alergia segue a mesma regra.
 - **Sem IP nem dispositivo**: as sessões não os guardam e a ficha não os pede.
 - **As receitas não têm dono**: a lista de receitas não diz quem as pediu (só quantas pessoas guardaram cada uma).
-- **Registos**: sem registos automáticos de pedidos (`invocation_logs: false`); as ações registam só o nome da ação (`end_sessions`, `delete_account`), nunca o ID, o email nem o corpo do pedido, e os erros só o nome do erro.
+- **Registos**: sem registos automáticos de pedidos (`invocation_logs: false`); as ações registam só o nome da ação (`end_sessions`, `remove_health_data`, `delete_account`), nunca o ID, o email nem o corpo do pedido, e os erros só o nome do erro.
 
 Sugestão para a política de privacidade (`/privacidade`): dizer que o responsável vê os dados da conta e as preferências para gerir o serviço e dar apoio, e que os dados de saúde nunca aparecem por pessoa.
 
@@ -45,7 +58,8 @@ Sugestão para a política de privacidade (`/privacidade`): dizer que o respons�
 ## Ações
 
 - **Terminar as sessões**: apaga todas as sessões da conta; no próximo pedido, a app pede para entrar de novo. Os dados ficam.
-- **Apagar a conta**: os mesmos passos do "Apagar conta" da app (o `deleteUser` do Better Auth): as sessões, as ligações ao Google e à Apple e a conta, num só batch; o perfil, os dias, os itens dos dias e as receitas guardadas saem em cascata pelas chaves estrangeiras. Ficam:
+- **Apagar os dados de saúde** (a pedido da pessoa, art. 9.º e 17.º do RGPD): apaga o peso, as alergias e o consentimento sem os mostrar e sem apagar a conta, como quando a pessoa os tira nas preferências. A meta diária fica a que estava e passa a manual. Só aparece quando há dados de saúde.
+- **Apagar a conta**: os mesmos passos do "Apagar conta" da app (o `deleteUser` do Better Auth): as sessões, as ligações ao Google e à Apple e a conta, num só batch; o perfil, os dias, os itens dos dias, as receitas guardadas, as pedidas e as postas no dia saem em cascata pelas chaves estrangeiras. Um teste confirma que nenhuma tabela com `user_id` fica com linhas da conta (se uma tabela nova com `user_id` aparecer, o teste falha até se decidir o que lhe acontece). Ficam:
   - as receitas geradas (não têm dono);
   - os contadores das quotas (HMAC com `IP_HASH_SECRET`, que o backoffice não tem e que não se ligam à pessoa; o cron apaga-os em 2 dias);
   - numa conta da Apple, a ligação ao Apple ID: a revogação precisa do token cifrado com o segredo do Better Auth, por isso só a app a faz (a pessoa pode tirá-la nas definições do iPhone);

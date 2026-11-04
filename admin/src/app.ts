@@ -2,12 +2,13 @@ import { Hono, type Context } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { secureHeaders } from "hono/secure-headers";
 import type { KeySource } from "./access";
-import { deleteAccount, endSessions } from "./actions";
+import { deleteAccount, endSessions, removeHealthData } from "./actions";
 import { CSRF_FIELD, csrfToken, validCsrf } from "./csrf";
 import { dashboardPage, type DashboardData } from "./dashboard-page";
 import { adminDb, isId, type AdminDb } from "./db";
 import { FAVICON_SVG } from "./favicon";
 import { foodStats, parseFoodFilters, sortFoods } from "./food-stats";
+import { foodDetail, foodPage } from "./food-detail";
 import { foodsPage } from "./foods-page";
 import { messagePage } from "./layout";
 import {
@@ -15,10 +16,20 @@ import {
   preferencesMetrics,
   recipesMetrics,
   topFoodsMetrics,
+  topRecipesMetrics,
   usersMetrics,
 } from "./metrics";
+import { opsMetrics } from "./ops";
+import { parseRange, type Range } from "./range";
+import { activeMetrics, cohortMetrics, funnelMetrics } from "./usage";
 import { setNotice, takeNotice } from "./notice";
-import { listRecipes, publicRecipeUrl, recipeDetail } from "./recipes";
+import {
+  listRecipes,
+  parseRecipeFilters,
+  publicRecipeUrl,
+  recipeDetail,
+  recipeFacets,
+} from "./recipes";
 import { recipePage, recipesPage } from "./recipes-page";
 import { requireAccess } from "./require-access";
 import { STYLES } from "./styles";
@@ -32,7 +43,7 @@ import {
   userDetail,
   type UserSort,
 } from "./users";
-import { deletePage, userHref, userPage, usersPage } from "./users-page";
+import { deletePage, parseUserTab, userHref, userPage, usersPage } from "./users-page";
 
 /**
  * Cada fonte do Painel lê-se à parte: se uma falhar, o resto aparece e o que dependia dela diz
@@ -51,15 +62,25 @@ async function load<T>(source: string, read: () => Promise<T>): Promise<Loaded<T
   }
 }
 
-export async function loadDashboard(db: AdminDb, now: number): Promise<DashboardData> {
-  const [users, recipes, preferences, foods, health] = await Promise.all([
-    load("utilizadores", () => usersMetrics(db, now)),
-    load("receitas", () => recipesMetrics(db, now)),
-    load("preferencias", () => preferencesMetrics(db)),
-    load("alimentos", () => topFoodsMetrics(db)),
-    load("saude", () => healthMetrics(db)),
-  ]);
-  return { users, recipes, preferences, foods, health };
+export async function loadDashboard(
+  db: AdminDb,
+  now: number,
+  range: Range,
+): Promise<DashboardData> {
+  const [users, recipes, topRecipes, ops, active, cohorts, funnel, preferences, foods, health] =
+    await Promise.all([
+      load("utilizadores", () => usersMetrics(db, now, range.weeks)),
+      load("receitas", () => recipesMetrics(db, now, range.weeks)),
+      load("receitas-top", () => topRecipesMetrics(db)),
+      load("funcionamento", () => opsMetrics(db, now, range.days)),
+      load("ativos", () => activeMetrics(db, now)),
+      load("retencao", () => cohortMetrics(db, now)),
+      load("ativacao", () => funnelMetrics(db, now)),
+      load("preferencias", () => preferencesMetrics(db)),
+      load("alimentos", () => topFoodsMetrics(db)),
+      load("saude", () => healthMetrics(db)),
+    ]);
+  return { users, recipes, topRecipes, ops, active, cohorts, funnel, preferences, foods, health };
 }
 
 const notFound = (c: Context<AdminEnv>) =>
@@ -122,11 +143,13 @@ export function createAdminApp({ getKeys }: { getKeys?: KeySource } = {}) {
     .use(requireAccess(getKeys))
     .get("/", async (c) => {
       const now = Date.now();
+      const range = parseRange({ dias: c.req.query("dias"), semanas: c.req.query("semanas") });
       return c.html(
         dashboardPage({
           adminEmail: c.get("adminEmail"),
           now,
-          data: await loadDashboard(adminDb(c.env.DB), now),
+          range,
+          data: await loadDashboard(adminDb(c.env.DB), now, range),
         }),
       );
     })
@@ -159,6 +182,7 @@ export function createAdminApp({ getKeys }: { getKeys?: KeySource } = {}) {
           now,
           user,
           csrf: csrfToken(c),
+          tab: parseUserTab(c.req.query("separador")),
           notice: takeNotice(c, { userId: user.id }),
         }),
       );
@@ -178,7 +202,17 @@ export function createAdminApp({ getKeys }: { getKeys?: KeySource } = {}) {
       // Sem o ID nem o email: quem e o quê ficam no Access e no próprio pedido
       console.log("admin_action", { action: "end_sessions" });
       setNotice(c, { kind: "sessions", userId: id, count: Math.min(ended, 9999) });
-      return c.redirect(userHref(id), 303);
+      return c.redirect(userHref(id, "gestao"), 303);
+    })
+    .post("/utilizadores/:id/saude", smallForm, async (c) => {
+      const id = c.req.param("id");
+      const body = await c.req.parseBody();
+      if (!validCsrf(c, field(body, CSRF_FIELD))) return forbiddenForm(c);
+      if (!isId(id) || (await accountEmail(adminDb(c.env.DB), id)) === null) return notFound(c);
+      const removed = await removeHealthData(c.env.DB, id, Date.now());
+      console.log("admin_action", { action: "remove_health_data" });
+      setNotice(c, { kind: "health", userId: id, removed });
+      return c.redirect(userHref(id, "gestao"), 303);
     })
     .post("/utilizadores/:id/apagar", smallForm, async (c) => {
       const id = c.req.param("id");
@@ -209,8 +243,20 @@ export function createAdminApp({ getKeys }: { getKeys?: KeySource } = {}) {
       return c.redirect("/utilizadores", 303);
     })
     .get("/receitas", async (c) => {
-      const list = await listRecipes(adminDb(c.env.DB), parsePage(c.req.query("pagina")));
-      return c.html(recipesPage({ adminEmail: c.get("adminEmail"), now: Date.now(), list }));
+      const db = adminDb(c.env.DB);
+      const filters = parseRecipeFilters({
+        q: cleanQuery(c.req.query("q")),
+        refeicao: c.req.query("refeicao"),
+        modelo: c.req.query("modelo"),
+        prompt: c.req.query("prompt"),
+        posTreino: c.req.query("posTreino"),
+        ordem: c.req.query("ordem"),
+        page: parsePage(c.req.query("pagina")),
+      });
+      const [list, facets] = await Promise.all([listRecipes(db, filters), recipeFacets(db)]);
+      return c.html(
+        recipesPage({ adminEmail: c.get("adminEmail"), now: Date.now(), list, filters, facets }),
+      );
     })
     .get("/receitas/:id", async (c) => {
       const recipe = await recipeDetail(adminDb(c.env.DB), c.req.param("id"));
@@ -226,6 +272,7 @@ export function createAdminApp({ getKeys }: { getKeys?: KeySource } = {}) {
     })
     .get("/alimentos", async (c) => {
       const filters = parseFoodFilters({
+        q: cleanQuery(c.req.query("q")),
         ordem: c.req.query("ordem"),
         categoria: c.req.query("categoria"),
       });
@@ -239,6 +286,11 @@ export function createAdminApp({ getKeys }: { getKeys?: KeySource } = {}) {
           filters,
         }),
       );
+    })
+    .get("/alimentos/:id", async (c) => {
+      const detail = await foodDetail(adminDb(c.env.DB), c.req.param("id"));
+      if (!detail) return notFound(c);
+      return c.html(foodPage({ adminEmail: c.get("adminEmail"), now: Date.now(), detail }));
     })
     .get("/styles.css", (c) => c.body(STYLES, 200, { "Content-Type": "text/css; charset=utf-8" }))
     // Sem ele, cada página pedia /favicon.ico e recebia um 404

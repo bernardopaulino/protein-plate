@@ -14,12 +14,15 @@ export const FOOD_SORTS = ["gostam", "dias", "receitas", "nome"] as const;
 export type FoodSort = (typeof FOOD_SORTS)[number];
 
 export interface FoodFilters {
+  /** Parte do nome ou do id (sem diferença de acentos nem maiúsculas); vazio: todos. */
+  q: string;
   sort: FoodSort;
   /** Vazio: todas as categorias. */
   category: Category | "";
 }
 
 export function parseFoodFilters(query: {
+  q?: string;
   ordem?: string | undefined;
   categoria?: string | undefined;
 }): FoodFilters {
@@ -27,7 +30,7 @@ export function parseFoodFilters(query: {
   const category = Object.hasOwn(CATEGORY_LABEL, query.categoria ?? "")
     ? (query.categoria as Category)
     : "";
-  return { sort, category };
+  return { q: query.q ?? "", sort, category };
 }
 
 export interface FoodStat {
@@ -78,8 +81,23 @@ export async function foodStats(db: AdminDb): Promise<FoodStat[]> {
 const COLLATOR = new Intl.Collator("pt-PT", { sensitivity: "base" });
 
 /** A lista filtrada e ordenada (do maior para o menor; o nome por ordem alfabética). */
-export function sortFoods(all: readonly FoodStat[], { sort, category }: FoodFilters): FoodStat[] {
-  const shown = category === "" ? [...all] : all.filter((f) => f.category === category);
+/** Sem acentos nem maiúsculas, para a pesquisa ("grao" encontra "Grão-de-bico"). */
+const fold = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+export function sortFoods(
+  all: readonly FoodStat[],
+  { q, sort, category }: FoodFilters,
+): FoodStat[] {
+  const needle = fold(q);
+  const shown = all.filter(
+    (f) =>
+      (category === "" || f.category === category) &&
+      (needle === "" || fold(f.name).includes(needle) || f.id.includes(needle)),
+  );
   const byName = (a: FoodStat, b: FoodStat) => COLLATOR.compare(a.name, b.name);
   const key: Record<Exclude<FoodSort, "nome">, (f: FoodStat) => number> = {
     gostam: (f) => f.likedBy,

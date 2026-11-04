@@ -4,12 +4,27 @@ import { counted, num } from "./format";
 import { escapeHtml } from "./html";
 import { CATEGORY_LABEL } from "./labels";
 import { pageShell } from "./layout";
-import { DASH, card, emptyState, selectField, sortHeader, tableScroll, toolbar } from "./ui";
+import {
+  DASH,
+  card,
+  emptyState,
+  searchField,
+  selectField,
+  sortHeader,
+  tableScroll,
+  toolbar,
+} from "./ui";
+import { QUERY_MAX_CHARS } from "./users";
 
 /** A lista dos alimentos com as três contagens, ordenada pelos cabeçalhos das colunas. */
 
-export function foodsHref({ sort, category }: Partial<FoodFilters>): string {
+export function foodHref(id: string): string {
+  return `/alimentos/${encodeURIComponent(id)}`;
+}
+
+export function foodsHref({ q, sort, category }: Partial<FoodFilters>): string {
   const query = new URLSearchParams();
+  if (q) query.set("q", q);
   if (category) query.set("categoria", category);
   if (sort && sort !== "gostam") query.set("ordem", sort);
   const text = query.toString();
@@ -54,12 +69,16 @@ export function foodsPage({
   const rows = shown
     .map(
       (f) =>
-        `<tr><th scope="row">${escapeHtml(f.name)}${f.category === null ? ` <span class="muted">(fora do catálogo)</span>` : ""}</th><td>${f.category === null ? DASH : escapeHtml(CATEGORY_LABEL[f.category])}</td>${cell(f.likedBy)}${cell(f.dayPlans)}${cell(f.recipes)}</tr>`,
+        `<tr><th scope="row">${f.category === null ? escapeHtml(f.name) : `<a href="${escapeHtml(foodHref(f.id))}">${escapeHtml(f.name)}</a>`}${f.category === null ? ` <span class="muted">(fora do catálogo)</span>` : ""}</th><td>${f.category === null ? DASH : escapeHtml(CATEGORY_LABEL[f.category])}</td>${cell(f.likedBy)}${cell(f.dayPlans)}${cell(f.recipes)}</tr>`,
     )
     .join("");
   const table =
     shown.length === 0
-      ? emptyState("food", "Nenhum alimento", "Nenhum alimento nesta categoria.")
+      ? emptyState(
+          "food",
+          "Nenhum alimento",
+          filters.q ? "Nenhum alimento com esse nome." : "Nenhum alimento nesta categoria.",
+        )
       : tableScroll(
           "Alimentos",
           `<table class="list wide"><caption class="visually-hidden">Alimentos, ${escapeHtml(SORT_LABEL[filters.sort])}</caption>${head}<tbody>${rows}</tbody></table>`,
@@ -67,6 +86,7 @@ export function foodsPage({
   const filtersBar = toolbar({
     action: "/alimentos",
     fields: [
+      searchField("Procurar pelo nome", filters.q, QUERY_MAX_CHARS),
       selectField(
         "categoria",
         "Categoria",
@@ -77,7 +97,10 @@ export function foodsPage({
         filters.category,
       ),
     ],
-    clear: filters.category !== "" || filters.sort !== "gostam" ? "/alimentos" : undefined,
+    clear:
+      filters.q !== "" || filters.category !== "" || filters.sort !== "gostam"
+        ? "/alimentos"
+        : undefined,
     hidden: filters.sort === "gostam" ? [] : [{ name: "ordem", value: filters.sort }],
     count: `${shown.length === all.length ? "" : `${num(shown.length)} de `}${counted(all.length, "alimento", "alimentos")}`,
   });

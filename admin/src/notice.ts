@@ -7,29 +7,42 @@ import type { AdminEnv } from "./types";
 /**
  * O aviso depois de uma ação (POST, 303, GET): vai num cookie de uso único (cookies.ts) que só
  * um POST válido cria, e nunca no endereço, para um link de fora não conseguir mostrar um aviso
- * falso. Leva só o tipo do aviso, a conta e o número de sessões, de uma lista fechada; dura um
+ * falso. Leva só o tipo do aviso, a conta e o número de sessões (ou se havia dados de saúde a
+ * apagar), de uma lista fechada; dura um
  * minuto e sai na primeira página que o lê.
  */
 
 export const NOTICE_COOKIE = "pp-admin-notice";
 
-export type Notice = { kind: "sessions"; userId: string; count: number } | { kind: "deleted" };
+export type Notice =
+  | { kind: "sessions"; userId: string; count: number }
+  | { kind: "health"; userId: string; removed: boolean }
+  | { kind: "deleted" };
 
-const VALUE = /^(?:sessions\.(\d{1,4})\.([A-Za-z0-9_-]{1,64})|(deleted))$/;
+const VALUE =
+  /^(?:sessions\.(\d{1,4})\.([A-Za-z0-9_-]{1,64})|(deleted)|health\.([01])\.([A-Za-z0-9_-]{1,64}))$/;
 
 function encode(notice: Notice): string {
-  return notice.kind === "sessions" ? `sessions.${notice.count}.${notice.userId}` : "deleted";
+  if (notice.kind === "sessions") return `sessions.${notice.count}.${notice.userId}`;
+  if (notice.kind === "health") return `health.${notice.removed ? 1 : 0}.${notice.userId}`;
+  return "deleted";
 }
 
 function decode(value: string): Notice | null {
   const m = VALUE.exec(value);
   if (!m) return null;
   if (m[1] && m[2]) return { kind: "sessions", count: Number(m[1]), userId: m[2] };
+  if (m[4] && m[5]) return { kind: "health", removed: m[4] === "1", userId: m[5] };
   return m[3] ? { kind: "deleted" } : null;
 }
 
 function text(notice: Notice): string {
   if (notice.kind === "deleted") return "Conta apagada, com todos os dados.";
+  if (notice.kind === "health") {
+    return notice.removed
+      ? "Dados de saúde apagados: o peso, as alergias e o consentimento."
+      : "A conta não tinha dados de saúde.";
+  }
   if (notice.count === 0) return "A conta não tinha sessões ativas.";
   return notice.count === 1 ? "1 sessão terminada." : `${notice.count} sessões terminadas.`;
 }

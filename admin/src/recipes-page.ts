@@ -5,13 +5,31 @@ import { escapeHtml } from "./html";
 import { CATEGORY_LABEL, mealLabel } from "./labels";
 import { pageShell } from "./layout";
 import { estimatedCost } from "./pricing";
+import { MEALS } from "../../src/domain/meals";
 import {
   RECIPES_PAGE_SIZE,
+  hasRecipeFilters,
   type RecipeDetail,
+  type RecipeFilters,
   type RecipeList,
   type RecipeListItem,
+  type RecipeSort,
 } from "./recipes";
-import { DASH, card, detailsGrid, emptyState, note, pager, pill, tableScroll } from "./ui";
+import {
+  DASH,
+  card,
+  detailsGrid,
+  emptyState,
+  note,
+  pager,
+  pill,
+  searchField,
+  selectField,
+  sortHeader,
+  tableScroll,
+  toolbar,
+} from "./ui";
+import { QUERY_MAX_CHARS } from "./users";
 
 /**
  * As receitas geradas: a lista, da mais recente, e a ficha de cada uma (os ingredientes com os
@@ -23,9 +41,26 @@ export function recipeHref(id: string): string {
   return `/receitas/${encodeURIComponent(id)}`;
 }
 
-export function recipesHref(page: number): string {
-  return page > 1 ? `/receitas?pagina=${page}` : "/receitas";
+/** O endereço da lista com estes filtros (os valores por omissão não aparecem). */
+export function recipesHref(f: Partial<RecipeFilters>): string {
+  const query = new URLSearchParams();
+  if (f.q) query.set("q", f.q);
+  if (f.meal) query.set("refeicao", f.meal);
+  if (f.model) query.set("modelo", f.model);
+  if (f.prompt != null) query.set("prompt", String(f.prompt));
+  if (f.post) query.set("posTreino", f.post);
+  if (f.sort && f.sort !== "recentes") query.set("ordem", f.sort);
+  if (f.page && f.page > 1) query.set("pagina", String(f.page));
+  const text = query.toString();
+  return text ? `/receitas?${text}` : "/receitas";
 }
+
+const SORT_CAPTION: Record<RecipeSort, string> = {
+  recentes: "da mais recente",
+  guardadas: "das mais guardadas",
+  proteina: "das com mais proteína por dose",
+  tokens: "das que gastaram mais tokens",
+};
 
 const tokensText = (r: RecipeListItem) =>
   r.inputTokens === null || r.outputTokens === null
@@ -39,10 +74,14 @@ export function recipesPage({
   adminEmail,
   now,
   list,
+  filters,
+  facets,
 }: {
   adminEmail: string;
   now: number;
   list: RecipeList;
+  filters: RecipeFilters;
+  facets: { models: string[]; prompts: number[] };
 }): string {
   const first = (list.page - 1) * RECIPES_PAGE_SIZE + 1;
   const last = first + list.items.length - 1;
@@ -61,30 +100,88 @@ export function recipesPage({
 </tr>`,
     )
     .join("");
+  const filtered = hasRecipeFilters(filters);
+  const sortHref = (sort: RecipeSort) => recipesHref({ ...filters, sort, page: 1 });
+  const th = (label: string, sort: RecipeSort) =>
+    sortHeader(label, sortHref(sort), filters.sort === sort, { numeric: sort !== "recentes" });
+  const head = `<thead><tr><th scope="col">Receita</th><th scope="col">Refeição</th><th scope="col" class="num">Doses</th>${th("Proteína por dose", "proteina")}<th scope="col">Modelo</th><th scope="col" class="num">Prompt</th>${th("Tokens (entrada / saída)", "tokens")}${th("Guardada por", "guardadas")}${th("Criada (UTC)", "recentes")}</tr></thead>`;
   const table =
     list.items.length === 0
-      ? emptyState("recipe", "Ainda sem receitas", "Aparecem aqui quando a app gerar as primeiras.")
+      ? filtered
+        ? emptyState("recipe", "Nenhuma receita encontrada", "Nenhuma receita com estes filtros.")
+        : emptyState(
+            "recipe",
+            "Ainda sem receitas",
+            "Aparecem aqui quando a app gerar as primeiras.",
+          )
       : tableScroll(
           "Receitas",
-          `<table class="list wide"><caption class="visually-hidden">Receitas geradas, da mais recente</caption><thead><tr><th scope="col">Receita</th><th scope="col">Refeição</th><th scope="col" class="num">Doses</th><th scope="col" class="num">Proteína por dose</th><th scope="col">Modelo</th><th scope="col" class="num">Prompt</th><th scope="col" class="num">Tokens (entrada / saída)</th><th scope="col" class="num">Guardada por</th><th scope="col">Criada (UTC)</th></tr></thead><tbody>${rows}</tbody></table>`,
+          `<table class="list wide"><caption class="visually-hidden">Receitas geradas, ${SORT_CAPTION[filters.sort]}</caption>${head}<tbody>${rows}</tbody></table>`,
         );
   const count =
     list.total === 0
       ? ""
-      : `<p class="result-count">${list.pages > 1 ? `${num(first)}–${num(last)} de ` : ""}${counted(list.total, "receita", "receitas")}</p>`;
+      : `${list.pages > 1 ? `${num(first)}–${num(last)} de ` : ""}${counted(list.total, "receita", "receitas")}`;
+  const filtersBar = toolbar({
+    action: "/receitas",
+    fields: [
+      searchField("Procurar pelo título ou ID", filters.q, QUERY_MAX_CHARS),
+      selectField(
+        "refeicao",
+        "Refeição",
+        [
+          { value: "", label: "Todas as refeições" },
+          ...MEALS.map((m) => ({ value: m, label: mealLabel(m) })),
+        ],
+        filters.meal,
+      ),
+      selectField(
+        "modelo",
+        "Modelo",
+        [
+          { value: "", label: "Todos os modelos" },
+          ...facets.models.map((m) => ({ value: m, label: m })),
+        ],
+        filters.model,
+      ),
+      selectField(
+        "prompt",
+        "Versão do prompt",
+        [
+          { value: "", label: "Todas as versões do prompt" },
+          ...facets.prompts.map((v) => ({ value: String(v), label: `Prompt v${v}` })),
+        ],
+        filters.prompt === null ? "" : String(filters.prompt),
+      ),
+      selectField(
+        "posTreino",
+        "Pós-treino",
+        [
+          { value: "", label: "Com e sem pós-treino" },
+          { value: "sim", label: "Só pós-treino" },
+          { value: "nao", label: "Sem pós-treino" },
+        ],
+        filters.post,
+      ),
+    ],
+    submit: "Aplicar",
+    clear: filtered || filters.sort !== "recentes" ? "/receitas" : undefined,
+    hidden: filters.sort === "recentes" ? [] : [{ name: "ordem", value: filters.sort }],
+    count,
+  });
   return pageShell({
     title: "Receitas",
     section: "receitas",
     adminEmail,
     now,
     heading: "Receitas",
-    sub: "As receitas geradas pela IA, da mais recente.",
+    sub: "As receitas geradas pela IA, com pesquisa, filtros e ordem.",
     about:
       "<p>As receitas não têm dono: a lista não diz quem as pediu. A proteína por dose é a que a app calculou a partir da TCA (nunca vem do modelo). “Guardada por” conta as pessoas que a guardaram.</p>",
     wide: true,
-    body: `<div class="toolbar">${count}</div>
+    body: `${filtersBar}
 <section class="card card-flush" aria-label="Lista de receitas">${table}</section>
-${pager(list.page, list.pages, recipesHref)}`,
+${pager(list.page, list.pages, (page) => recipesHref({ ...filters, page }))}`,
   });
 }
 

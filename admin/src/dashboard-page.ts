@@ -1,9 +1,29 @@
+import { FOODS } from "../../src/content/foods.generated";
+import { TODO } from "../../src/domain/contracts/food";
 import { ALLERGENS } from "../../src/domain/food";
-import { columnChart, type Column } from "./charts";
+import { columnChart, icon, type Column, type IconName } from "./charts";
 import { catalogFood, foodName } from "./foods";
-import { DAY_MS, counted, dayLabel, dayOf, num, pct, tokens, usd, weekStartDay } from "./format";
+import {
+  DAY_MS,
+  counted,
+  dayLabel,
+  num,
+  pct,
+  plural,
+  signedPct,
+  tokens,
+  usd,
+  weekStartDay,
+} from "./format";
 import { escapeHtml } from "./html";
-import { ALLERGEN_LABEL, CATEGORY_LABEL, DIET_LABEL, EQUIPMENT_LABEL, labelOf } from "./labels";
+import {
+  ALLERGEN_LABEL,
+  CATEGORY_LABEL,
+  DIET_LABEL,
+  EQUIPMENT_LABEL,
+  labelOf,
+  mealLabel,
+} from "./labels";
 import { pageShell } from "./layout";
 import type {
   Bucket,
@@ -12,10 +32,16 @@ import type {
   RecipesMetrics,
   TokenWindow,
   TopFoodsMetrics,
+  TopRecipe,
+  TopRecipesMetrics,
   UsersMetrics,
+  Window,
 } from "./metrics";
+import { healthRow, healthTiles, type OpsMetrics } from "./ops";
 import { AI_PRICES_USD_PER_MTOK } from "./pricing";
 import { MIN_GROUP, healthCount } from "./privacy";
+import { GROWTH_WEEKS, HEALTH_DAYS, rangeHref, type Range } from "./range";
+import { recipeHref } from "./recipes-page";
 import type { Loaded } from "./types";
 import {
   FAILED_NOTE,
@@ -27,20 +53,143 @@ import {
   dataTable,
   emptyState,
   note,
+  rangeControl,
   row,
   strip,
   stripCell,
   tableScroll,
   type BarItem,
 } from "./ui";
+import type { ActiveMetrics, Cohort, FunnelMetrics } from "./usage";
+import { activeRow, funnelRow, retentionRow } from "./usage-sections";
 
 /** Tudo o que o Painel mostra, lido de uma vez (app.ts); cada fonte pode falhar sozinha. */
 export interface DashboardData {
   users: Loaded<UsersMetrics>;
   recipes: Loaded<RecipesMetrics>;
+  topRecipes: Loaded<TopRecipesMetrics>;
+  ops: Loaded<OpsMetrics>;
+  active: Loaded<ActiveMetrics>;
+  cohorts: Loaded<Cohort[]>;
+  funnel: Loaded<FunnelMetrics>;
   preferences: Loaded<PreferencesMetrics>;
   foods: Loaded<TopFoodsMetrics>;
   health: Loaded<HealthMetrics>;
+}
+
+/* ---------------------------------------------------------------- Períodos */
+
+/** O período do funcionamento, em dias; o link mantém as semanas e volta ao bloco. */
+export function daysControl(range: Range): string {
+  return rangeControl(
+    "periodo-dias",
+    "Últimos",
+    "dias",
+    HEALTH_DAYS,
+    range.days,
+    (days) => `${rangeHref({ ...range, days: days as Range["days"] })}#funcionamento`,
+  );
+}
+
+/** O período do crescimento, em semanas; o link mantém os dias e volta ao bloco. */
+export function weeksControl(range: Range): string {
+  return rangeControl(
+    "periodo-semanas",
+    "Últimas",
+    "semanas",
+    GROWTH_WEEKS,
+    range.weeks,
+    (weeks) => `${rangeHref({ ...range, weeks: weeks as Range["weeks"] })}#crescimento`,
+  );
+}
+
+/* ---------------------------------------------------------------- Precisa de ti */
+
+interface Todo {
+  tone: "attention" | "ok";
+  iconName: IconName;
+  title: string;
+  sub: string;
+  link?: { href: string; label: string };
+}
+
+/** Os alimentos do catálogo ainda com valores provisórios (a curadoria da TCA por fazer). */
+export const PROVISIONAL_FOODS = FOODS.filter((f) => f.tcaCode === TODO).length;
+
+/**
+ * "Precisa de ti": o que pede uma ação, primeiro na página. Os indicadores do funcionamento em
+ * atenção, os modelos sem preço (o custo fica por baixo) e os alimentos com valores provisórios;
+ * sem nada disso, uma só linha a dizê-lo.
+ */
+export function needsYou(data: DashboardData, range: Range): string {
+  const todos: Todo[] = [];
+  if (data.ops.ok) {
+    for (const tile of healthTiles(data.ops.value)) {
+      if (tile.status !== "attention") continue;
+      todos.push({
+        tone: "attention",
+        iconName: tile.iconName,
+        title: tile.title,
+        sub: tile.reason,
+        link: { href: "#funcionamento", label: "Ver" },
+      });
+    }
+  } else {
+    todos.push({
+      tone: "attention",
+      iconName: "server",
+      title: "Funcionamento por ler",
+      sub: "Não foi possível ler os contadores da app. Recarrega a página.",
+    });
+  }
+  if (data.recipes.ok) {
+    const unpriced = data.recipes.value.last30.byModel.filter(
+      (m) => m.cost === null && m.model !== "mock",
+    );
+    if (unpriced.length > 0) {
+      todos.push({
+        tone: "attention",
+        iconName: "spark",
+        title: `${plural(unpriced.length, "Modelo sem preço", "Modelos sem preço")}: ${unpriced.map((m) => m.model).join(", ")}`,
+        sub: "As receitas destes modelos não entram no custo. Acrescenta o preço em admin/src/pricing.ts.",
+        link: { href: "#ia", label: "Ver" },
+      });
+    }
+  }
+  if (PROVISIONAL_FOODS > 0) {
+    todos.push({
+      tone: "attention",
+      iconName: "food",
+      title: counted(
+        PROVISIONAL_FOODS,
+        "alimento com valores provisórios",
+        "alimentos com valores provisórios",
+      ),
+      sub: "A curadoria da TCA do INSA ainda não está feita: a proteína destes alimentos é provisória.",
+      link: { href: "/alimentos", label: "Ver" },
+    });
+  }
+  if (todos.length === 0) {
+    todos.push({
+      tone: "ok",
+      iconName: "ok",
+      title: "Tudo em ordem",
+      sub: "Nenhum indicador do funcionamento pede atenção, todos os modelos têm preço e o catálogo está curado.",
+    });
+  }
+  const items = todos
+    .map(
+      (t) =>
+        `<li class="todo-${t.tone}"><span class="todo-dot" aria-hidden="true"></span>${icon(t.iconName)}<div class="todo-text"><p class="todo-title">${escapeHtml(t.title)}</p><p class="todo-sub">${escapeHtml(t.sub)}</p></div>${t.link ? arrowLink(t.link.href, t.link.label) : ""}</li>`,
+    )
+    .join("");
+  return card({
+    id: "precisa",
+    title: "Precisa de ti",
+    aside: cardMeta(`Funcionamento dos últimos ${num(range.days)} dias`),
+    body: `<ul class="todo">${items}</ul>`,
+    flush: true,
+  });
 }
 
 /* ---------------------------------------------------------------- Faixa de números */
@@ -48,9 +197,17 @@ export interface DashboardData {
 const failedCell = (id: string, label: string, iconName: "users" | "ok" | "recipe" | "spark") =>
   stripCell({ id, iconName, label, figure: "—", lines: ["Não foi possível ler estes dados."] });
 
+/** A variação face aos 7 dias anteriores ("+25% face aos 7 dias anteriores (8)"). */
+function change(w: Window): string {
+  return w.previous > 0
+    ? `<strong>${escapeHtml(signedPct((w.recent - w.previous) / w.previous))}</strong> face aos 7 dias anteriores (${num(w.previous)})`
+    : `${num(w.previous)} nos 7 dias anteriores`;
+}
+
 function kpis(data: DashboardData): string {
   const u = data.users.ok ? data.users.value : null;
   const r = data.recipes.ok ? data.recipes.value : null;
+  const a = data.active.ok ? data.active.value : null;
   const cells = [
     u
       ? stripCell({
@@ -59,10 +216,10 @@ function kpis(data: DashboardData): string {
           label: "Utilizadores",
           figure: num(u.total),
           lines: [
-            u.new7 === 0
+            u.created.recent === 0
               ? "Nenhum novo nos últimos 7 dias"
-              : `<strong>+${num(u.new7)}</strong> nos últimos 7 dias`,
-            `+${num(u.new30)} nos últimos 30 dias`,
+              : `<strong>+${num(u.created.recent)}</strong> nos últimos 7 dias`,
+            `${num(u.created.previous)} nos 7 dias anteriores · +${num(u.new30)} em 30 dias`,
           ],
         })
       : failedCell("kpi-contas", "Utilizadores", "users"),
@@ -75,15 +232,15 @@ function kpis(data: DashboardData): string {
           lines: [`${num(u.onboarded)} de ${counted(u.total, "conta", "contas")}`],
         })
       : failedCell("kpi-onboarding", "Onboarding feito", "ok"),
-    u
+    a
       ? stripCell({
           id: "kpi-ativos",
           iconName: "users",
           label: "Ativos (7 dias)",
-          figure: num(u.active7),
+          figure: num(a.weekly),
           lines: [
-            "com uma sessão nova nos últimos 7 dias",
-            u.total > 0 ? `${pct(u.active7 / u.total)} das contas` : "",
+            "fizeram alguma coisa na app nos últimos 7 dias",
+            u && u.total > 0 ? `${pct(a.weekly / u.total)} das contas` : "",
           ].filter(Boolean),
         })
       : failedCell("kpi-ativos", "Ativos (7 dias)", "users"),
@@ -91,14 +248,14 @@ function kpis(data: DashboardData): string {
       ? stripCell({
           id: "kpi-receitas",
           iconName: "recipe",
-          label: "Receitas geradas",
-          figure: num(r.d7),
+          label: "Receitas novas",
+          figure: num(r.created.recent),
           lines: [
-            `nos últimos 7 dias · <strong>${num(r.today)}</strong> hoje`,
-            `${num(r.d30)} em 30 dias · ${num(r.total)} desde o início`,
+            `nos últimos 7 dias · ${change(r.created)}`,
+            `<strong>${num(r.today)}</strong> hoje · ${num(r.total)} desde o início`,
           ],
         })
-      : failedCell("kpi-receitas", "Receitas geradas", "recipe"),
+      : failedCell("kpi-receitas", "Receitas novas", "recipe"),
     r
       ? stripCell({
           id: "kpi-custo",
@@ -113,6 +270,44 @@ function kpis(data: DashboardData): string {
       : failedCell("kpi-custo", "Custo da IA (30 dias)", "spark"),
   ];
   return strip(cells, "Números principais");
+}
+
+/* ---------------------------------------------------------------- Listas curtas */
+
+function recipeList(
+  id: string,
+  title: string,
+  loaded: Loaded<TopRecipesMetrics>,
+  pick: (m: TopRecipesMetrics) => TopRecipe[],
+  empty: [string, string],
+): string {
+  const aside = arrowLink("/receitas?ordem=guardadas", "Todas");
+  if (!loaded.ok) return card({ id, title, aside, body: FAILED_NOTE });
+  const items = pick(loaded.value);
+  const body =
+    items.length === 0
+      ? emptyState("recipe", empty[0], empty[1])
+      : `<ul class="short-list">${items
+          .map(
+            (r) =>
+              `<li><a href="${escapeHtml(recipeHref(r.id))}"><span class="short-main"><span class="short-title">${escapeHtml(r.title)}</span><span class="short-sub">${escapeHtml(mealLabel(r.meal))}</span></span><span class="short-value">${num(r.n)} <span class="muted">${plural(r.n, "pessoa", "pessoas")}</span></span></a></li>`,
+          )
+          .join("")}</ul>`;
+  return card({ id, title, aside, body, flush: items.length > 0 });
+}
+
+function shortLists(loaded: Loaded<TopRecipesMetrics>): string {
+  return `<div class="grid grid-2">${recipeList(
+    "mais-guardadas",
+    "Receitas mais guardadas",
+    loaded,
+    (m) => m.saved,
+    ["Ainda sem receitas guardadas", "Aparecem quando alguém guardar uma receita."],
+  )}
+${recipeList("mais-no-dia", "Mais postas no dia", loaded, (m) => m.inDay, [
+  "Ainda ninguém pôs uma receita no dia",
+  "Aparecem com o “Pôr no meu dia” das receitas.",
+])}</div>`;
 }
 
 /* ---------------------------------------------------------------- Gráficos */
@@ -151,95 +346,90 @@ function peak(values: readonly number[], keys: readonly number[], label: (key: n
     : `Máximo: <strong>${num(values[best] ?? 0)}</strong>, ${escapeHtml(label(key))}.`;
 }
 
-function usersChart(u: UsersMetrics, now: number): string {
+/** Um gráfico de colunas por semana (as contas novas ou as receitas novas). */
+function weeklyChart({
+  id,
+  title,
+  weeks,
+  values,
+  now,
+  noun,
+  empty,
+}: {
+  id: string;
+  title: string;
+  weeks: readonly number[];
+  values: readonly number[];
+  now: number;
+  noun: [string, string];
+  empty: string;
+}): string {
   const current = weekStartDay(now);
-  const columns: Column[] = u.weeks.map((week, i) => {
-    const value = u.createdPerWeek[i] ?? 0;
+  const columns: Column[] = weeks.map((week, i) => {
+    const value = values[i] ?? 0;
     const partial = week === current;
     return {
       value,
       partial,
-      title: `Semana de ${dayLabel(week * DAY_MS)}${partial ? " (em curso)" : ""}: ${counted(value, "conta nova", "contas novas")}`,
+      title: `Semana de ${dayLabel(week * DAY_MS)}${partial ? " (em curso)" : ""}: ${counted(value, noun[0], noun[1])}`,
     };
   });
   const weekText = (week: number) =>
     week === current ? "esta semana" : dayLabel(week * DAY_MS, true);
-  const sub =
-    peak(u.createdPerWeek, u.weeks, (w) => `na semana de ${dayLabel(w * DAY_MS)}`) ??
-    "Nenhuma conta nova nestas semanas.";
-  const first = u.weeks[0] ?? current;
-  const middle = u.weeks[Math.floor((u.weeks.length - 1) / 2)] ?? current;
+  const sub = peak(values, weeks, (w) => `na semana de ${dayLabel(w * DAY_MS)}`) ?? empty;
+  const first = weeks[0] ?? current;
+  const middle = weeks[Math.floor((weeks.length - 1) / 2)] ?? current;
   return chartPanel(
-    "grafico-contas",
-    "Contas novas por semana",
+    id,
+    title,
     `${sub} A semana em curso, mais clara.`,
     plot(
       columns,
-      `Contas novas por semana, nas últimas ${u.weeks.length} semanas`,
+      `${title}, nas últimas ${weeks.length} semanas`,
       120,
       axis([dayLabel(first * DAY_MS), dayLabel(middle * DAY_MS), "esta semana"]),
     ),
     dataTable(
-      "Contas novas por semana, da mais recente",
-      ["Semana de", "Contas novas"],
-      u.weeks
-        .map((week, i) => ({
-          head: escapeHtml(weekText(week)),
-          cells: [u.createdPerWeek[i] ?? 0],
-        }))
+      `${title}, da mais recente`,
+      ["Semana de", noun[1].charAt(0).toUpperCase() + noun[1].slice(1)],
+      weeks
+        .map((week, i) => ({ head: escapeHtml(weekText(week)), cells: [values[i] ?? 0] }))
         .reverse(),
     ),
   );
 }
 
-function recipesChart(r: RecipesMetrics, now: number): string {
-  const today = dayOf(now);
-  const columns: Column[] = r.days.map((day, i) => {
-    const value = r.perDay[i] ?? 0;
-    const partial = day === today;
-    return {
-      value,
-      partial,
-      title: `${dayLabel(day * DAY_MS)}${partial ? " (hoje)" : ""}: ${counted(value, "receita", "receitas")}`,
-    };
-  });
-  const sub =
-    peak(r.perDay, r.days, (d) => `a ${dayLabel(d * DAY_MS)}`) ??
-    "Nenhuma receita gerada nestes dias.";
-  const first = r.days[0] ?? today;
-  const middle = r.days[Math.floor((r.days.length - 1) / 2)] ?? today;
-  return chartPanel(
-    "grafico-receitas",
-    "Receitas geradas por dia",
-    `${sub} Hoje, mais claro.`,
-    plot(
-      columns,
-      `Receitas geradas por dia, nos últimos ${r.days.length} dias`,
-      120,
-      axis([dayLabel(first * DAY_MS), dayLabel(middle * DAY_MS), "hoje"]),
-    ),
-    dataTable(
-      "Receitas geradas por dia, do mais recente",
-      ["Dia", "Receitas"],
-      r.days
-        .map((day, i) => ({
-          head: escapeHtml(day === today ? "hoje" : dayLabel(day * DAY_MS, true)),
-          cells: [r.perDay[i] ?? 0],
-        }))
-        .reverse(),
-    ),
-  );
-}
-
-function growthRow(data: DashboardData, now: number): string {
+function growthRow(data: DashboardData, now: number, filterHtml: string): string {
   const failed = (title: string) =>
     `<article class="card chart"><div class="card-head"><h3>${escapeHtml(title)}</h3></div><div class="chart-body">${FAILED_NOTE}</div></article>`;
+  const users = data.users.ok
+    ? weeklyChart({
+        id: "grafico-contas",
+        title: "Contas novas por semana",
+        weeks: data.users.value.weeks,
+        values: data.users.value.createdPerWeek,
+        now,
+        noun: ["conta nova", "contas novas"],
+        empty: "Nenhuma conta nova nestas semanas.",
+      })
+    : failed("Contas novas por semana");
+  const recipes = data.recipes.ok
+    ? weeklyChart({
+        id: "grafico-receitas",
+        title: "Receitas novas por semana",
+        weeks: data.recipes.value.weeks,
+        values: data.recipes.value.perWeek,
+        now,
+        noun: ["receita nova", "receitas novas"],
+        empty: "Nenhuma receita nova nestas semanas.",
+      })
+    : failed("Receitas novas por semana");
   return row(
     "crescimento",
     "Crescimento",
-    "Semanas de segunda a domingo e dias em UTC.",
-    `<div class="grid grid-2">${data.users.ok ? usersChart(data.users.value, now) : failed("Contas novas por semana")}
-${data.recipes.ok ? recipesChart(data.recipes.value, now) : failed("Receitas geradas por dia")}</div>`,
+    "Semanas de segunda a domingo, em UTC. As receitas são as novas (as da cache não contam).",
+    `<div class="grid grid-2">${users}\n${recipes}</div>`,
+    filterHtml,
   );
 }
 
@@ -396,6 +586,7 @@ function foodItems(buckets: readonly Bucket[]): BarItem[] {
       label: foodName(b.key),
       sub: food ? CATEGORY_LABEL[food.category] : "Fora do catálogo",
       value: b.n,
+      href: food ? `/alimentos/${encodeURIComponent(b.key)}` : undefined,
     };
   });
 }
@@ -444,7 +635,7 @@ function foodsRow(loaded: Loaded<TopFoodsMetrics>): string {
 
 /* ---------------------------------------------------------------- Saúde (só agregado) */
 
-function healthRow(loaded: Loaded<HealthMetrics>): string {
+function healthDataRow(loaded: Loaded<HealthMetrics>): string {
   if (!loaded.ok) return row("saude", "Dados de saúde", "", FAILED_NOTE);
   const h = loaded.value;
   const rows = ALLERGENS.map((a) => {
@@ -467,13 +658,21 @@ ${tableScroll("Pessoas por alergénio", `<table><caption>Pessoas por alergénio 
 
 /* ---------------------------------------------------------------- Página */
 
+/**
+ * O Painel, por ordem (como no backoffice do Rejection Quest): o que precisa de uma ação, os
+ * números principais, duas listas curtas e, por baixo, os blocos com os gráficos (funcionamento,
+ * crescimento, pessoas ativas, retenção e ativação), a IA, as preferências, os alimentos e os
+ * dados de saúde agregados.
+ */
 export function dashboardPage({
   adminEmail,
   now,
+  range,
   data,
 }: {
   adminEmail: string;
   now: number;
+  range: Range;
   data: DashboardData;
 }): string {
   const day = new Date(now).toLocaleDateString("pt-PT", {
@@ -488,16 +687,22 @@ export function dashboardPage({
     adminEmail,
     now,
     heading: "Painel",
-    sub: `${escapeHtml(day.charAt(0).toUpperCase() + day.slice(1))} · as contas, as receitas e o custo da IA.`,
+    sub: `${escapeHtml(day.charAt(0).toUpperCase() + day.slice(1))} · o funcionamento, o uso da app e o custo da IA.`,
     about:
-      "<p>Só totais e contagens, nunca uma pessoa. “Ativos” são as contas com uma sessão criada nos últimos 7 dias (entraram na app). As preferências contam só as contas com o onboarding feito. O custo é uma estimativa a partir dos tokens guardados em cada receita.</p>",
+      "<p>Só totais e contagens, nunca uma pessoa. “Ativos” são as pessoas que fizeram alguma coisa na app (entraram, pediram ou guardaram uma receita, mudaram o dia ou as preferências). O funcionamento vem dos contadores diários da app, sem pessoas. As preferências contam só as contas com o onboarding feito. O custo é uma estimativa a partir dos tokens guardados em cada receita.</p>",
     body: [
+      needsYou(data, range),
       kpis(data),
-      growthRow(data, now),
+      shortLists(data.topRecipes),
+      healthRow(data.ops, now, daysControl(range)),
+      growthRow(data, now, weeksControl(range)),
+      activeRow(data.active),
+      retentionRow(data.cohorts, now),
+      funnelRow(data.funnel),
       aiRow(data.recipes),
       preferencesRow(data.preferences),
       foodsRow(data.foods),
-      healthRow(data.health),
+      healthDataRow(data.health),
     ].join("\n"),
   });
 }

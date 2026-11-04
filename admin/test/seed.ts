@@ -40,6 +40,8 @@ const run = (sql: string, ...params: unknown[]) => env.DB.prepare(sql).bind(...p
 const TABLES = [
   "plan_items",
   "day_plans",
+  "meal_recipes",
+  "user_recipes",
   "saved_recipes",
   "recipe_ingredients",
   "recipes",
@@ -48,6 +50,7 @@ const TABLES = [
   "account",
   "verification",
   "usage_counters",
+  "ops_counters",
   '"user"',
 ];
 
@@ -257,4 +260,39 @@ export async function countRows(table: string, column: string, id: string): Prom
     .bind(id)
     .first<{ n: number }>();
   return row?.n ?? 0;
+}
+
+/** Uma receita pedida pela pessoa (o histórico "Recentes"). */
+export async function seedRequested(userId: string, recipeId: string, at = NOW): Promise<void> {
+  await run(
+    "insert into user_recipes (user_id, recipe_id, created_at) values (?, ?, ?)",
+    userId,
+    recipeId,
+    at,
+  ).run();
+}
+
+/** Uma receita posta numa refeição do dia ("Pôr no meu dia"). */
+export async function seedMealRecipe(
+  userId: string,
+  meal: string,
+  recipeId: string,
+  at = NOW,
+): Promise<void> {
+  await run(
+    "insert into meal_recipes (user_id, meal, recipe_id, used_at) values (?, ?, ?, ?)",
+    userId,
+    meal,
+    recipeId,
+    at,
+  ).run();
+}
+
+/** Contadores do funcionamento de um dia (AAAA-MM-DD), como a app os grava. */
+export async function seedOps(day: string, metrics: Record<string, number>): Promise<void> {
+  await env.DB.batch(
+    Object.entries(metrics).map(([metric, count]) =>
+      run("insert into ops_counters (day, metric, count) values (?, ?, ?)", day, metric, count),
+    ),
+  );
 }

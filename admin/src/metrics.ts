@@ -10,9 +10,25 @@ import { estimatedCost } from "./pricing";
  * saúde e aparecem com o limite de privacy.ts.
  */
 
-/** Semanas do gráfico das contas novas e dias do gráfico das receitas (o atual incluído). */
+/** Semanas dos gráficos do crescimento por omissão e dias das séries por dia (o atual incluído). */
 export const WEEKS = 12;
 export const DAYS = 30;
+
+/** Uma contagem nos últimos 7 dias e nos 7 anteriores (para a faixa de números). */
+export interface Window {
+  recent: number;
+  previous: number;
+}
+
+/** As duas somas de uma janela, em SQL: `recent` desde `cut`, `previous` nos 7 dias antes. */
+const windowColumns = (column: string) =>
+  `coalesce(sum(case when ${column} >= ? then 1 else 0 end), 0) as recent,
+  coalesce(sum(case when ${column} >= ? and ${column} < ? then 1 else 0 end), 0) as previous`;
+const windowParams = (now: number) => [now - 7 * DAY_MS, now - 14 * DAY_MS, now - 7 * DAY_MS];
+const toWindow = (row: { recent: number; previous: number } | null): Window => ({
+  recent: Number(row?.recent ?? 0),
+  previous: Number(row?.previous ?? 0),
+});
 
 /** As últimas `count` semanas (o dia de cada segunda-feira), da mais antiga para a atual. */
 export function lastWeeks(now: number, count = WEEKS): number[] {
@@ -39,18 +55,22 @@ export interface UsersMetrics {
   total: number;
   new7: number;
   new30: number;
+  /** Contas novas nos últimos 7 dias e nos 7 anteriores. */
+  created: Window;
   /** Contas com o onboarding feito. */
   onboarded: number;
-  /** Contas com uma sessão criada nos últimos 7 dias (entraram na app). */
-  active7: number;
   weeks: number[];
   createdPerWeek: number[];
 }
 
-export async function usersMetrics(db: AdminDb, now: number): Promise<UsersMetrics> {
-  const weeks = lastWeeks(now);
+export async function usersMetrics(
+  db: AdminDb,
+  now: number,
+  weekCount: number = WEEKS,
+): Promise<UsersMetrics> {
+  const weeks = lastWeeks(now, weekCount);
   const since = (weeks[0] ?? 0) * DAY_MS;
-  const [totals, onboarded, active, perWeek] = await Promise.all([
+  const [totals, onboarded, created, perWeek] = await Promise.all([
     db.first<{ total: number; new7: number | null; new30: number | null }>(
       `select count(*) as total,
         sum(case when created_at >= ? then 1 else 0 end) as new7,
@@ -63,9 +83,9 @@ export async function usersMetrics(db: AdminDb, now: number): Promise<UsersMetri
       `select count(*) as n from profiles p join "user" u on u.id = p.user_id
       where p.onboarded_at is not null`,
     ),
-    db.first<{ n: number }>(
-      "select count(distinct user_id) as n from session where created_at >= ?",
-      now - 7 * DAY_MS,
+    db.first<{ recent: number; previous: number }>(
+      `select ${windowColumns("created_at")} from "user"`,
+      ...windowParams(now),
     ),
     db.all<{ k: number; n: number }>(
       `select ${weekOf("created_at")} as k, count(*) as n from "user"
@@ -77,8 +97,8 @@ export async function usersMetrics(db: AdminDb, now: number): Promise<UsersMetri
     total: Number(totals?.total ?? 0),
     new7: Number(totals?.new7 ?? 0),
     new30: Number(totals?.new30 ?? 0),
+    created: toWindow(created),
     onboarded: Number(onboarded?.n ?? 0),
-    active7: Number(active?.n ?? 0),
     weeks,
     createdPerWeek: series(weeks, perWeek),
   };
@@ -109,8 +129,10 @@ export interface RecipesMetrics {
   today: number;
   d7: number;
   d30: number;
-  days: number[];
-  perDay: number[];
+  /** Receitas novas nos últimos 7 dias e nos 7 anteriores. */
+  created: Window;
+  weeks: number[];
+  perWeek: number[];
   saved: number;
   saved7: number;
   /** Pessoas com pelo menos uma receita guardada. */
@@ -130,11 +152,15 @@ function tokenWindow(rows: readonly ModelUsage[]): TokenWindow {
   };
 }
 
-export async function recipesMetrics(db: AdminDb, now: number): Promise<RecipesMetrics> {
-  const days = lastDays(now);
+export async function recipesMetrics(
+  db: AdminDb,
+  now: number,
+  weekCount: number = WEEKS,
+): Promise<RecipesMetrics> {
+  const weeks = lastWeeks(now, weekCount);
   const todayStart = dayOf(now) * DAY_MS;
   const cut30 = now - 30 * DAY_MS;
-  const [counts, perDay, models, saved] = await Promise.all([
+  const [counts, created, perWeek, models, saved] = await Promise.all([
     db.first<{ total: number; today: number | null; d7: number | null; d30: number | null }>(
       `select count(*) as total,
         sum(case when created_at >= ? then 1 else 0 end) as today,
@@ -145,9 +171,13 @@ export async function recipesMetrics(db: AdminDb, now: number): Promise<RecipesM
       now - 7 * DAY_MS,
       cut30,
     ),
+    db.first<{ recent: number; previous: number }>(
+      `select ${windowColumns("created_at")} from recipes`,
+      ...windowParams(now),
+    ),
     db.all<{ k: number; n: number }>(
-      "select created_at / 86400000 as k, count(*) as n from recipes where created_at >= ? group by 1",
-      (days[0] ?? 0) * DAY_MS,
+      `select ${weekOf("created_at")} as k, count(*) as n from recipes where created_at >= ? group by 1`,
+      (weeks[0] ?? 0) * DAY_MS,
     ),
     db.all<{
       model: string;
@@ -201,8 +231,9 @@ export async function recipesMetrics(db: AdminDb, now: number): Promise<RecipesM
     today: Number(counts?.today ?? 0),
     d7: Number(counts?.d7 ?? 0),
     d30: Number(counts?.d30 ?? 0),
-    days,
-    perDay: series(days, perDay),
+    created: toWindow(created),
+    weeks,
+    perWeek: series(weeks, perWeek),
     saved: Number(saved?.n ?? 0),
     saved7: Number(saved?.d7 ?? 0),
     savers: Number(saved?.savers ?? 0),
@@ -350,4 +381,35 @@ export async function healthMetrics(db: AdminDb): Promise<HealthMetrics> {
     withAllergies: Number(base?.allergic ?? 0),
     byAllergen: new Map(byAllergen.map((r) => [String(r.k), Number(r.n)])),
   };
+}
+
+/** Quantas receitas aparecem nas listas curtas do Painel. */
+export const SHORT_LIST = 5;
+
+export interface TopRecipe {
+  id: string;
+  title: string;
+  meal: string;
+  n: number;
+}
+
+export interface TopRecipesMetrics {
+  /** As mais guardadas (por número de pessoas). */
+  saved: TopRecipe[];
+  /** As mais postas no dia ("Pôr no meu dia"; uma por refeição e por pessoa). */
+  inDay: TopRecipe[];
+}
+
+export async function topRecipesMetrics(db: AdminDb): Promise<TopRecipesMetrics> {
+  const top = (table: string) =>
+    db.all<{ id: string; title: string; meal: string; n: number }>(
+      `select r.id as id, r.title as title, r.meal as meal, count(distinct t.user_id) as n
+      from ${table} t join recipes r on r.id = t.recipe_id
+      group by r.id order by n desc, r.created_at desc limit ?`,
+      SHORT_LIST,
+    );
+  const [saved, inDay] = await Promise.all([top("saved_recipes"), top("meal_recipes")]);
+  const items = (rows: typeof saved): TopRecipe[] =>
+    rows.map((r) => ({ id: r.id, title: r.title, meal: r.meal, n: Number(r.n) }));
+  return { saved: items(saved), inDay: items(inDay) };
 }

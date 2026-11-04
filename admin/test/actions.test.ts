@@ -14,6 +14,8 @@ import {
   seedDayPlan,
   seedProfile,
   seedRecipe,
+  seedMealRecipe,
+  seedRequested,
   seedSaved,
   seedUser,
 } from "./seed";
@@ -203,7 +205,7 @@ describe("terminar as sessões", () => {
       { Origin: ORIGIN, Cookie: cookie, "Sec-Fetch-Site": "same-origin" },
     );
     expect(res.status).toBe(303);
-    expect(res.headers.get("Location")).toBe("/utilizadores/uDel");
+    expect(res.headers.get("Location")).toBe("/utilizadores/uDel?separador=gestao");
     expect(await rowsOf("uDel")).toEqual({ ...FULL, session: 0 });
     expect(await rowsOf("uKeep")).toEqual(FULL);
 
@@ -211,7 +213,7 @@ describe("terminar as sessões", () => {
     expect(notice).toBe(`${NOTICE_COOKIE}=sessions.2.uDel`);
     // O aviso só aparece na ficha desta conta, e na outra ficha não
     expect(await html("/utilizadores/uKeep", notice)).not.toContain("sessões terminadas");
-    const page = await html("/utilizadores/uDel", notice);
+    const page = await html("/utilizadores/uDel?separador=gestao", notice);
     expect(page).toContain("2 sessões terminadas.");
     expect(page).toContain('role="status"');
     // A ficha já não tem o botão (não há sessões)
@@ -237,6 +239,67 @@ describe("terminar as sessões", () => {
       expect(res.status).toBe(404);
     }
     expect(await rowsOf("uDel")).toEqual(FULL);
+  });
+});
+
+describe("apagar os dados de saúde", () => {
+  type HealthRow = {
+    weight_kg: number | null;
+    allergies: string;
+    health_consent_at: number | null;
+    manual_target: number;
+    daily_target_g: number;
+  };
+  const healthOf = (id: string) =>
+    env.DB.prepare(
+      "select weight_kg, allergies, health_consent_at, manual_target, daily_target_g from profiles where user_id = ?",
+    )
+      .bind(id)
+      .first<HealthRow>();
+
+  it("apaga o peso, as alergias e o consentimento só desta conta, e a meta fica (manual)", async () => {
+    const before = await healthOf("uDel");
+    const { token, cookie } = await formToken();
+    const res = await post(
+      "/utilizadores/uDel/saude",
+      { csrf: token },
+      { Origin: ORIGIN, Cookie: cookie, "Sec-Fetch-Site": "same-origin" },
+    );
+    expect(res.status).toBe(303);
+    expect(res.headers.get("Location")).toBe("/utilizadores/uDel?separador=gestao");
+    expect(await healthOf("uDel")).toEqual({
+      weight_kg: null,
+      allergies: "[]",
+      health_consent_at: null,
+      manual_target: 1,
+      daily_target_g: before?.daily_target_g,
+    });
+    // A outra conta fica igual, e o resto desta também
+    expect((await healthOf("uKeep"))?.weight_kg).toBe(70);
+    expect(await rowsOf("uDel")).toEqual(FULL);
+
+    const notice = noticeOf(res);
+    expect(notice).toBe(`${NOTICE_COOKIE}=health.1.uDel`);
+    const page = await html("/utilizadores/uDel?separador=gestao", notice);
+    expect(page).toContain("Dados de saúde apagados: o peso, as alergias e o consentimento.");
+    expect(page).toContain("Sem dados de saúde: nada a apagar.");
+    expect(page).not.toContain("70");
+    expect(logs).toContainEqual(["admin_action", { action: "remove_health_data" }]);
+    expectCleanLogs();
+
+    // Uma segunda vez não muda nada e diz que não havia dados
+    const again = await post(
+      "/utilizadores/uDel/saude",
+      { csrf: token },
+      { Origin: ORIGIN, Cookie: cookie, "Sec-Fetch-Site": "same-origin" },
+    );
+    expect(noticeOf(again)).toBe(`${NOTICE_COOKIE}=health.0.uDel`);
+  });
+
+  it("sem o token do formulário, não apaga nada (403)", async () => {
+    const res = await post("/utilizadores/uDel/saude", {}, { Origin: ORIGIN });
+    expect(res.status).toBe(403);
+    expect((await healthOf("uDel"))?.weight_kg).toBe(70);
   });
 });
 
@@ -283,6 +346,38 @@ describe("apagar uma conta", () => {
 
     expect(logs).toContainEqual(["admin_action", { action: "delete_account" }]);
     expectCleanLogs();
+  });
+
+  it("não fica nenhuma linha da conta em nenhuma tabela com user_id (o mesmo que o apagar da app)", async () => {
+    await seedRequested("uDel", "r1");
+    await seedMealRecipe("uDel", "almoco", "r1");
+    const { token, cookie } = await formToken();
+    await post(
+      "/utilizadores/uDel/apagar",
+      { csrf: token, confirmar: "apagar@example.test" },
+      { Origin: ORIGIN, Cookie: cookie },
+    );
+    // As tabelas com uma coluna user_id, a partir do CREATE TABLE (a D1 não deixa usar pragmas)
+    const { results } = await env.DB.prepare(
+      "select name, sql from sqlite_master where type = 'table' and sql is not null",
+    ).all<{ name: string; sql: string }>();
+    const tables = results.filter((t) => /[`"]user_id[`"]/.test(t.sql));
+    expect(tables.map((t) => t.name).sort()).toEqual(
+      [
+        "account",
+        "day_plans",
+        "meal_recipes",
+        "profiles",
+        "saved_recipes",
+        "session",
+        "user_recipes",
+      ].sort(),
+    );
+    for (const { name } of tables) {
+      expect([name, await countRows(name, "user_id", "uDel")]).toEqual([name, 0]);
+    }
+    expect(await countRows("user_recipes", "user_id", "uKeep")).toBe(0);
+    expect(await countRows("saved_recipes", "user_id", "uKeep")).toBe(1);
   });
 
   it("uma conta que não existe dá 404", async () => {
