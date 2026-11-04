@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  LazyMotion,
-  MotionConfig,
-  domAnimation,
-  m,
-  useInView,
-  useReducedMotion,
-} from "motion/react";
-import { useRef } from "react";
-import { AnimatedNumber, Illustration } from "@/features/onboarding/ui";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CountUp } from "@/components/count-up";
+import { Illustration } from "@/components/illustration";
+import { cn } from "@/lib/cn";
 
 export interface ExampleMeal {
   key: string;
@@ -21,7 +15,9 @@ export interface ExampleMeal {
 
 /**
  * O dia exemplo da página inicial: as refeições entram uma a uma, a barra enche até à meta e o total
- * conta até lá (tudo parado com prefers-reduced-motion).
+ * conta até lá. Só CSS e um IntersectionObserver, sem a biblioteca de motion (a página inicial
+ * carrega menos JavaScript e o LCP chega mais cedo). Com prefers-reduced-motion aparece tudo logo
+ * (as transições ficam a 0,01 ms no CSS global e o contador mostra o valor final).
  */
 export function ExampleDayCard({
   title,
@@ -41,78 +37,93 @@ export function ExampleDayCard({
   format: "pt-PT" | "en-GB";
 }) {
   const ref = useRef<HTMLElement>(null);
-  const seen = useInView(ref, { once: true, amount: 0.3 });
-  // Com prefers-reduced-motion, tudo aparece logo, sem esperar pelo scroll
-  const reduced = useReducedMotion() ?? false;
-  const inView = seen || reduced;
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShown(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   const number = new Intl.NumberFormat(format, { maximumFractionDigits: 0 });
+  const formatNumber = useCallback(
+    (n: number) => new Intl.NumberFormat(format, { maximumFractionDigits: 0 }).format(n),
+    [format],
+  );
   const percent = Math.min(100, (total / target) * 100);
 
   return (
-    <LazyMotion features={domAnimation} strict>
-      <MotionConfig reducedMotion="user">
-        <m.figure
-          ref={ref}
-          initial={reduced ? false : { opacity: 0, y: 24, rotate: 1.5 }}
-          animate={inView ? { opacity: 1, y: 0, rotate: 0 } : undefined}
-          transition={{ type: "spring", stiffness: 140, damping: 20 }}
-          className="relative rounded-[2rem] border border-border bg-surface p-5 shadow-[0_30px_80px_-40px_rgb(47_107_58/0.5)]"
-        >
-          <figcaption className="flex flex-wrap items-baseline justify-between gap-2">
-            <span className="font-display text-lg font-bold">{title}</span>
-            <span className="text-sm text-muted">{caption}</span>
-          </figcaption>
-          <ul className="mt-4 flex flex-col gap-2.5">
-            {meals.map((meal, i) => (
-              <m.li
-                key={meal.key}
-                initial={reduced ? false : { opacity: 0, x: 16 }}
-                animate={inView ? { opacity: 1, x: 0 } : undefined}
-                transition={{ delay: 0.25 + i * 0.12, duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-                className="flex items-center gap-3 rounded-2xl bg-bg p-3"
-              >
-                <Illustration src={meal.image} size={36} />
-                <div className="min-w-0 flex-1">
-                  <p className="flex items-baseline justify-between gap-2">
-                    <span className="font-semibold">{meal.label}</span>
-                    <span className="font-display font-bold tabular">
-                      {number.format(meal.protein)} g
-                    </span>
-                  </p>
-                  <ul className="mt-1 flex flex-wrap gap-1">
-                    {meal.items.map((item) => (
-                      <li
-                        key={item.id}
-                        className="flex items-center gap-1 rounded-full bg-surface py-0.5 pr-2 pl-0.5 text-xs text-muted"
-                      >
-                        <Illustration src={item.image} size={18} />
-                        {item.label}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </m.li>
-            ))}
-          </ul>
-          <div className="mt-4 border-t border-border pt-4">
-            <p className="flex items-baseline justify-between">
-              <span className="font-semibold">{totalLabel}</span>
-              <span className="font-display text-[2rem] leading-none font-extrabold text-primary">
-                <AnimatedNumber value={inView ? total : 0} format={(n) => number.format(n)} />
-                <span className="ml-0.5 text-lg"> g</span>
-              </span>
-            </p>
-            <div className="mt-3 h-3 overflow-hidden rounded-full bg-track" aria-hidden>
-              <m.div
-                className="h-full rounded-full bg-primary"
-                initial={reduced ? false : { width: "0%" }}
-                animate={inView ? { width: `${percent}%` } : undefined}
-                transition={{ delay: 0.5, duration: 1.1, ease: [0.2, 0.8, 0.2, 1] }}
-              />
+    <figure
+      ref={ref}
+      data-shown={shown}
+      className={cn(
+        "relative rounded-[2rem] border border-border bg-surface p-5 shadow-[0_30px_80px_-40px_rgb(47_107_58/0.5)]",
+        "transition-[opacity,translate,rotate] duration-700 ease-out",
+        !shown && "translate-y-6 rotate-[1.5deg] opacity-0",
+      )}
+    >
+      <figcaption className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className="font-display text-lg font-bold">{title}</span>
+        <span className="text-sm text-muted">{caption}</span>
+      </figcaption>
+      <ul className="mt-4 flex flex-col gap-2.5">
+        {meals.map((meal, i) => (
+          <li
+            key={meal.key}
+            style={{ transitionDelay: shown ? `${250 + i * 120}ms` : undefined }}
+            className={cn(
+              "flex items-center gap-3 rounded-2xl bg-bg p-3 transition-[opacity,translate] duration-350 ease-out",
+              !shown && "translate-x-4 opacity-0",
+            )}
+          >
+            <Illustration src={meal.image} size={36} />
+            <div className="min-w-0 flex-1">
+              <p className="flex items-baseline justify-between gap-2">
+                <span className="font-semibold">{meal.label}</span>
+                <span className="font-display font-bold tabular">
+                  {number.format(meal.protein)} g
+                </span>
+              </p>
+              <ul className="mt-1 flex flex-wrap gap-1">
+                {meal.items.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex items-center gap-1 rounded-full bg-surface py-0.5 pr-2 pl-0.5 text-xs text-muted"
+                  >
+                    <Illustration src={item.image} size={18} />
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
-        </m.figure>
-      </MotionConfig>
-    </LazyMotion>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4 border-t border-border pt-4">
+        <p className="flex items-baseline justify-between">
+          <span className="font-semibold">{totalLabel}</span>
+          <span className="font-display text-[2rem] leading-none font-extrabold text-primary">
+            <CountUp value={shown ? total : 0} format={formatNumber} />
+            <span className="ml-0.5 text-lg"> g</span>
+          </span>
+        </p>
+        <div className="mt-3 h-3 overflow-hidden rounded-full bg-track" aria-hidden>
+          <div
+            className="h-full rounded-full bg-primary transition-[width] delay-500 duration-1100 ease-out"
+            style={{ width: shown ? `${percent}%` : "0%" }}
+          />
+        </div>
+      </div>
+    </figure>
   );
 }

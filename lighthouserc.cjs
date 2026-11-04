@@ -1,19 +1,22 @@
-// Lighthouse CI: mínimo de 90 nas quatro categorias em mobile (secção 12), contra o Worker local.
-// Só as páginas públicas: desde o login obrigatório, as da app redirecionam para /entrar
+// Lighthouse CI: mínimo de 90 nas quatro categorias em mobile (secção 12).
+// Por defeito corre contra o Worker local (indicativo: o `wrangler dev` não comprime as respostas e
+// o HTML do catálogo pesa ~220 KB em vez de ~20 KB); a medida que conta é contra o staging, depois do
+// deploy: LHCI_BASE_URL=https://staging.protein-plate.app LHCI_RUNS=3 (mediana de 3 corridas).
+// Só as páginas públicas: desde o login obrigatório, as da app redirecionam para /entrar.
+const base = (process.env.LHCI_BASE_URL ?? "http://localhost:8787").replace(/\/$/, "");
+const runs = Number(process.env.LHCI_RUNS ?? 1);
+
 module.exports = {
   ci: {
     collect: {
-      url: [
-        "http://localhost:8787/",
-        "http://localhost:8787/entrar",
-        "http://localhost:8787/alimentos",
-        "http://localhost:8787/alimentos/skyr-natural",
-      ],
-      numberOfRuns: 1,
+      url: ["/", "/entrar", "/alimentos", "/alimentos/skyr-natural"].map((path) => base + path),
+      numberOfRuns: runs,
       // Por defeito o Lighthouse emula um telemóvel (Moto G Power, rede lenta)
       settings: { chromeFlags: "--headless=new --no-sandbox" },
     },
     assert: {
+      // Com várias corridas, conta a mediana
+      aggregationMethod: "median-run",
       assertMatrix: [
         {
           matchingUrlPattern: ".*",

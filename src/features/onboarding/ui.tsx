@@ -2,33 +2,12 @@
 
 import { Check } from "lucide-react";
 import { animate, m, useReducedMotion } from "motion/react";
-import Image from "next/image";
 import { useEffect, useRef, type ReactNode } from "react";
+import { Illustration } from "@/components/illustration";
 import { cn } from "@/lib/cn";
 
-/** Ilustração (Fluent Emoji 3D, WebP 160 px). Decorativa: o texto ao lado diz o que é. */
-export function Illustration({
-  src,
-  size = 48,
-  className,
-}: {
-  src: string | undefined;
-  size?: number;
-  className?: string;
-}) {
-  if (!src) return null;
-  return (
-    <Image
-      src={src}
-      alt=""
-      aria-hidden
-      width={size}
-      height={size}
-      className={cn("shrink-0 select-none", className)}
-      draggable={false}
-    />
-  );
-}
+// A ilustração vive em components/ (as páginas públicas usam-na sem trazer o motion)
+export { Illustration };
 
 /** Marca de "escolhido" que aparece com uma pequena mola. */
 export function CheckBadge({ on, className }: { on: boolean; className?: string }) {

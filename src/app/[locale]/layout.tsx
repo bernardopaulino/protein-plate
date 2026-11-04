@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { BottomNav, SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 import { ENABLED_LOCALES, HTML_LANG, type Locale } from "@/i18n/routing";
+import { SITE_URL } from "@/lib/site";
 import { bricolage, figtree } from "../fonts";
 
 export function generateStaticParams() {
@@ -21,6 +22,8 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
   return {
+    // URLs absolutos no canonical e no Open Graph (o Lighthouse recusa canonicals relativos)
+    metadataBase: new URL(SITE_URL),
     title: { default: t("title"), template: t("titleTemplate") },
     description: t("description"),
     applicationName: "Protein Plate",

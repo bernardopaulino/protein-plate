@@ -102,6 +102,18 @@
 
   --radius-card: 1.25rem;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Alimentos que flutuam em "Entrar" (decorativos; parados com prefers-reduced-motion) */
+  --animate-float: float 4s ease-in-out infinite;
+  @keyframes float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -8px;
+    }
+  }
 }
 
 @layer base {

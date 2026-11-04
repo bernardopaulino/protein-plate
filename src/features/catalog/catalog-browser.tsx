@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown, Search, X } from "lucide-react";
-import { LazyMotion, MotionConfig, domMax, m } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
@@ -277,186 +276,175 @@ export function CatalogBrowser() {
   const sections: SectionFilter[] = ["all", ...FOOD_SECTIONS];
 
   return (
-    <LazyMotion features={domMax} strict>
-      <MotionConfig reducedMotion="user">
-        <div className="flex flex-col gap-6">
-          <div className="relative max-w-2xl">
-            <label htmlFor={searchId} className="sr-only">
-              {t("search")}
-            </label>
-            <Search
-              aria-hidden
-              className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted"
-            />
-            <input
-              id={searchId}
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("searchPlaceholder")}
-              autoComplete="off"
-              className="h-13 w-full rounded-full border border-border bg-surface pr-12 pl-12 text-base shadow-sm focus:border-primary"
-            />
-            {query ? (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label={t("clearSearch")}
-                className="absolute top-1/2 right-2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-track hover:text-text"
-              >
-                <X aria-hidden className="size-4" />
-              </button>
-            ) : null}
-          </div>
-
-          {/* Secções: cartões que cabem sempre no ecrã (3 por linha no telemóvel, 6 no desktop) */}
-          <div
-            role="radiogroup"
-            aria-labelledby={tilesId}
-            aria-disabled={searching || undefined}
-            className={cn(
-              "transition-opacity duration-200",
-              searching && "pointer-events-none opacity-50",
-            )}
+    <div className="flex flex-col gap-6">
+      <div className="relative max-w-2xl">
+        <label htmlFor={searchId} className="sr-only">
+          {t("search")}
+        </label>
+        <Search
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-muted"
+        />
+        <input
+          id={searchId}
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("searchPlaceholder")}
+          autoComplete="off"
+          className="h-13 w-full rounded-full border border-border bg-surface pr-12 pl-12 text-base shadow-sm focus:border-primary"
+        />
+        {query ? (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            aria-label={t("clearSearch")}
+            className="absolute top-1/2 right-2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-muted hover:bg-track hover:text-text"
           >
-            <p id={tilesId} className="sr-only">
-              {t("sections")}
-            </p>
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-6">
-              {sections.map((s) => {
-                const on = section === s && !searching;
-                return (
-                  <button
-                    key={s}
-                    type="button"
-                    role="radio"
-                    aria-checked={on}
-                    tabIndex={searching ? -1 : undefined}
-                    onClick={() => setSection(s)}
-                    className={cn(
-                      "relative flex min-h-24 min-w-0 flex-col items-center justify-center gap-1.5 rounded-card border px-2 py-3 text-center transition-[border-color,box-shadow] duration-200 sm:min-h-28",
-                      on
-                        ? "border-primary shadow-[0_8px_24px_-16px_var(--primary)]"
-                        : "border-border bg-surface hover:border-primary/50",
-                    )}
-                  >
-                    {on ? (
-                      <m.span
-                        layoutId="catalog-section"
-                        aria-hidden
-                        className="absolute inset-0 rounded-card bg-primary-soft"
-                        transition={{ type: "spring", stiffness: 420, damping: 36 }}
-                      />
-                    ) : null}
-                    <Image
-                      src={SECTION_IMAGES[s]!}
-                      alt=""
-                      aria-hidden
-                      width={40}
-                      height={40}
-                      className="relative size-9 sm:size-10"
-                    />
-                    <span className="relative text-sm leading-tight font-semibold text-balance">
-                      {s === "all" ? t("all") : tf(`sections.${s}`)}
-                    </span>
-                    <span className="relative text-xs text-muted tabular">
-                      {counts.get(s) ?? 0}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            <X aria-hidden className="size-4" />
+          </button>
+        ) : null}
+      </div>
 
-          {/* Barra de filtros: cada controlo diz o que é; nada sai do ecrã */}
-          <div className="flex flex-col gap-3 border-y border-border py-3 md:flex-row md:items-center md:justify-between">
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
-              <SelectPill
-                label={t("meal")}
-                value={meal}
-                onChange={setMeal}
-                active={meal !== ""}
-                options={[
-                  { value: "" as const, label: t("anyMeal") },
-                  ...MEALS.map((x) => ({ value: x, label: tm(x) })),
-                ]}
-              />
-              <SelectPill
-                label={t("ease")}
-                value={ease}
-                onChange={setEase}
-                active={ease !== ""}
-                options={[
-                  { value: "" as const, label: t("anyEase") },
-                  ...(["1", "2", "3"] as const).map((x) => ({ value: x, label: te(x) })),
-                ]}
-              />
-              <div className="col-span-2 sm:col-span-1">
-                <SelectPill
-                  label={t("sort")}
-                  value={sort}
-                  onChange={setSort}
-                  active={false}
-                  options={[
-                    { value: "protein", label: t("sortProtein") },
-                    { value: "ease", label: t("sortEase") },
-                    { value: "name", label: t("sortName") },
-                  ]}
+      {/* Secções: cartões que cabem sempre no ecrã (3 por linha no telemóvel, 6 no desktop) */}
+      <div
+        role="radiogroup"
+        aria-labelledby={tilesId}
+        aria-disabled={searching || undefined}
+        className={cn(
+          "transition-opacity duration-200",
+          searching && "pointer-events-none opacity-50",
+        )}
+      >
+        <p id={tilesId} className="sr-only">
+          {t("sections")}
+        </p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-6">
+          {sections.map((s) => {
+            const on = section === s && !searching;
+            return (
+              <button
+                key={s}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                tabIndex={searching ? -1 : undefined}
+                onClick={() => setSection(s)}
+                className={cn(
+                  "relative flex min-h-24 min-w-0 flex-col items-center justify-center gap-1.5 rounded-card border px-2 py-3 text-center transition-[border-color,box-shadow] duration-200 sm:min-h-28",
+                  on
+                    ? "border-primary shadow-[0_8px_24px_-16px_var(--primary)]"
+                    : "border-border bg-surface hover:border-primary/50",
+                )}
+              >
+                {on ? (
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 animate-in rounded-card bg-primary-soft duration-200 fade-in-0 zoom-in-95"
+                  />
+                ) : null}
+                <Image
+                  src={SECTION_IMAGES[s]!}
+                  alt=""
+                  aria-hidden
+                  width={40}
+                  height={40}
+                  className="relative size-9 sm:size-10"
                 />
-              </div>
-            </div>
-            <div className="flex items-center justify-between gap-3 md:justify-end">
-              <p aria-live="polite" className="text-sm text-muted">
-                {t("count", { count: results.length })}
-              </p>
-              {hasFilters || searching ? (
-                <Button variant="ghost" size="sm" onClick={clearAll}>
-                  <X aria-hidden />
-                  {t("clear")}
-                </Button>
-              ) : null}
-            </div>
-          </div>
+                <span className="relative text-sm leading-tight font-semibold text-balance">
+                  {s === "all" ? t("all") : tf(`sections.${s}`)}
+                </span>
+                <span className="relative text-xs text-muted tabular">{counts.get(s) ?? 0}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-          {results.length === 0 ? (
-            <div className="rounded-card border border-dashed border-border p-8 text-center">
-              <p className="font-semibold">{t("emptyTitle")}</p>
-              <p className="mt-1 text-muted">{t("emptyBody")}</p>
-              <Button variant="secondary" className="mt-4" onClick={clearAll}>
-                {t("clear")}
-              </Button>
-            </div>
+      {/* Barra de filtros: cada controlo diz o que é; nada sai do ecrã */}
+      <div className="flex flex-col gap-3 border-y border-border py-3 md:flex-row md:items-center md:justify-between">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+          <SelectPill
+            label={t("meal")}
+            value={meal}
+            onChange={setMeal}
+            active={meal !== ""}
+            options={[
+              { value: "" as const, label: t("anyMeal") },
+              ...MEALS.map((x) => ({ value: x, label: tm(x) })),
+            ]}
+          />
+          <SelectPill
+            label={t("ease")}
+            value={ease}
+            onChange={setEase}
+            active={ease !== ""}
+            options={[
+              { value: "" as const, label: t("anyEase") },
+              ...(["1", "2", "3"] as const).map((x) => ({ value: x, label: te(x) })),
+            ]}
+          />
+          <div className="col-span-2 sm:col-span-1">
+            <SelectPill
+              label={t("sort")}
+              value={sort}
+              onChange={setSort}
+              active={false}
+              options={[
+                { value: "protein", label: t("sortProtein") },
+                { value: "ease", label: t("sortEase") },
+                { value: "name", label: t("sortName") },
+              ]}
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 md:justify-end">
+          <p aria-live="polite" className="text-sm text-muted">
+            {t("count", { count: results.length })}
+          </p>
+          {hasFilters || searching ? (
+            <Button variant="ghost" size="sm" onClick={clearAll}>
+              <X aria-hidden />
+              {t("clear")}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      {results.length === 0 ? (
+        <div className="rounded-card border border-dashed border-border p-8 text-center">
+          <p className="font-semibold">{t("emptyTitle")}</p>
+          <p className="mt-1 text-muted">{t("emptyBody")}</p>
+          <Button variant="secondary" className="mt-4" onClick={clearAll}>
+            {t("clear")}
+          </Button>
+        </div>
+      ) : (
+        <div
+          key={searching ? "search" : section}
+          className="flex animate-in flex-col gap-10 duration-200 ease-out fade-in-0 slide-in-from-bottom-2"
+        >
+          {groups === null ? (
+            <FoodGrid foods={results}>{t("results")}</FoodGrid>
           ) : (
-            <m.div
-              key={searching ? "search" : section}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col gap-10"
-            >
-              {groups === null ? (
-                <FoodGrid foods={results}>{t("results")}</FoodGrid>
-              ) : (
-                groups.map((g) => (
-                  <section
-                    key={g.key}
-                    aria-labelledby={`grupo-${g.key}`}
-                    className="flex flex-col gap-4"
-                  >
-                    <GroupHeading
-                      id={`grupo-${g.key}`}
-                      image={g.image}
-                      title={g.title}
-                      count={t("groupCount", { count: g.foods.length })}
-                    />
-                    <FoodGrid foods={g.foods} showCategory={section === "all"} />
-                  </section>
-                ))
-              )}
-            </m.div>
+            groups.map((g) => (
+              <section
+                key={g.key}
+                aria-labelledby={`grupo-${g.key}`}
+                className="flex flex-col gap-4"
+              >
+                <GroupHeading
+                  id={`grupo-${g.key}`}
+                  image={g.image}
+                  title={g.title}
+                  count={t("groupCount", { count: g.foods.length })}
+                />
+                <FoodGrid foods={g.foods} showCategory={section === "all"} />
+              </section>
+            ))
           )}
         </div>
-      </MotionConfig>
-    </LazyMotion>
+      )}
+    </div>
   );
 }
