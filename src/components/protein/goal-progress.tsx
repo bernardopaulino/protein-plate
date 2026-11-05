@@ -43,17 +43,17 @@ export function GoalProgress({
         className,
       )}
     >
-      <div className="flex items-end justify-between gap-3">
-        <p className="flex items-baseline gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+        <p className="flex shrink-0 items-baseline gap-2">
           <ProteinNumber value={total} size="xl" />
-          <span className="text-muted tabular">
+          <span className="whitespace-nowrap text-muted tabular">
             {t("ofTarget", { target: formatProtein(target, locale) })}
           </span>
         </p>
         <p
           aria-live="polite"
           aria-atomic="true"
-          className={cn("text-right font-semibold", reached && "text-primary")}
+          className={cn("ml-auto text-right font-semibold", reached && "text-primary")}
         >
           {message}
         </p>

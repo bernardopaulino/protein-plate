@@ -7,14 +7,19 @@ import { TCA_REFERENCE, TODO } from "@/domain/contracts/food";
 import { defaultPortion } from "@/domain/food";
 import { formatProtein, portionProtein } from "@/domain/protein";
 import { AddToDay } from "@/features/catalog/add-to-day";
-import { CATALOG, FOOD_INDEX, defaultPortionProtein, foodName } from "@/features/catalog/catalog";
+import {
+  FOOD_INDEX,
+  LISTED_FOODS,
+  defaultPortionProtein,
+  foodName,
+} from "@/features/catalog/catalog";
 import { Link } from "@/i18n/navigation";
 import { ENABLED_LOCALES, HTML_LANG, type Locale } from "@/i18n/routing";
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return ENABLED_LOCALES.flatMap((locale) => CATALOG.map((f) => ({ locale, id: f.id })));
+  return ENABLED_LOCALES.flatMap((locale) => LISTED_FOODS.map((f) => ({ locale, id: f.id })));
 }
 
 type Params = Promise<{ locale: Locale; id: string }>;
@@ -22,7 +27,7 @@ type Params = Promise<{ locale: Locale; id: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { locale, id } = await params;
   const food = FOOD_INDEX.get(id);
-  if (!food) return {};
+  if (!food || food.role === "pantry") return {};
   const t = await getTranslations({ locale, namespace: "food" });
   const portion = defaultPortion(food);
   const description = t("metaDescription", {
@@ -42,7 +47,8 @@ export default async function FoodPage({ params }: { params: Params }) {
   const { locale, id } = await params;
   setRequestLocale(locale);
   const food = FOOD_INDEX.get(id);
-  if (!food) notFound();
+  // A despensa (azeite, sal, especiarias) só entra nas receitas: sem página própria
+  if (!food || food.role === "pantry") notFound();
 
   const t = await getTranslations("food");
   const tc = await getTranslations("categories");

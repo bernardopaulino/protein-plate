@@ -215,6 +215,7 @@
     "results": "Resultados da pesquisa",
     "emptyTitle": "Nada com estes filtros.",
     "emptyBody": "Experimenta outra refeição ou preparação, ou limpa os filtros.",
+    "category": "Categoria",
     "groupCount": "{count, plural, one {# alimento} other {# alimentos}}"
   },
   "food": {
@@ -440,6 +441,8 @@
     },
     "goal": {
       "title": "Quanto pesas?",
+      "manualTitle": "Qual é a tua meta?",
+      "manualLead": "Escreve quantos gramas de proteína queres comer por dia.",
       "lead": "Com o teu peso e o quanto treinas calculamos a proteína de que precisas por dia.",
       "weightLabel": "Peso",
       "unit": "kg",
@@ -452,7 +455,7 @@
       "manualInvalid": "Escreve uma meta entre 40 e 300 g.",
       "intensityTitle": "Quanto treinas?",
       "result": "A tua meta",
-      "perDay": "g de proteína por dia"
+      "perDay": "de proteína por dia"
     },
     "meals": {
       "title": "Como é o teu dia?",

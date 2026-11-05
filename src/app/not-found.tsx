@@ -1,10 +1,11 @@
 import Link from "next/link";
 import "./globals.css";
+import { bricolage, figtree } from "./fonts";
 
 // Caminhos fora das rotas da app (sem idioma): página simples, com o seu próprio <html>
 export default function GlobalNotFound() {
   return (
-    <html lang="pt-PT">
+    <html lang="pt-PT" className={`${bricolage.variable} ${figtree.variable}`}>
       <body className="grid min-h-dvh place-items-center p-6 text-center">
         <div>
           <h1 className="text-2xl font-bold">Esta página não existe</h1>

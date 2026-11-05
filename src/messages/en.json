@@ -215,6 +215,7 @@
     "results": "Resultados da pesquisa",
     "emptyTitle": "Nada com estes filtros.",
     "emptyBody": "Experimenta outra refeição ou preparação, ou limpa os filtros.",
+    "category": "Category",
     "groupCount": "{count, plural, one {# alimento} other {# alimentos}}"
   },
   "food": {
@@ -440,6 +441,8 @@
     },
     "goal": {
       "title": "How much do you weigh?",
+      "manualTitle": "What is your goal?",
+      "manualLead": "Write how many grams of protein you want to eat a day.",
       "lead": "With your weight and how much you train we work out the protein you need each day.",
       "weightLabel": "Weight",
       "unit": "kg",
@@ -452,7 +455,7 @@
       "manualInvalid": "Enter a goal between 40 and 300 g.",
       "intensityTitle": "How much do you train?",
       "result": "Your goal",
-      "perDay": "g of protein a day"
+      "perDay": "of protein a day"
     },
     "meals": {
       "title": "What does your day look like?",

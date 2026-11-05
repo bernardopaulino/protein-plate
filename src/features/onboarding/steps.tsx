@@ -74,7 +74,10 @@ export function GoalStep({ draft, update }: StepProps) {
 
   return (
     <div>
-      <StepHeader title={t("title")} lead={t("lead")} />
+      <StepHeader
+        title={t(draft.manual ? "manualTitle" : "title")}
+        lead={t(draft.manual ? "manualLead" : "lead")}
+      />
 
       {/* O resultado fica sempre à vista: muda à medida que a pessoa escreve */}
       <div className="mb-6 flex items-center gap-4 rounded-card bg-primary-soft p-5">
