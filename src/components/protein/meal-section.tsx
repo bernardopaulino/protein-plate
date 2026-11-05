@@ -43,9 +43,9 @@ export function MealSection({
             </span>
           ) : null}
         </div>
-        <p className="flex items-baseline gap-1.5 text-right">
+        <p className="flex shrink-0 items-baseline gap-1.5 text-right">
           <ProteinNumber value={total} size="md" />
-          <span className="text-sm text-muted tabular">{targetLabel}</span>
+          <span className="text-sm whitespace-nowrap text-muted tabular">{targetLabel}</span>
         </p>
       </header>
       <div className="mt-3">{children}</div>

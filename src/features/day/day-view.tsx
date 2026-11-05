@@ -321,7 +321,7 @@ export function DayView({
                         <li key={item.id} className="flex items-center gap-3 py-2.5">
                           {food ? <Illustration src={foodImage(food.id)} size={32} /> : null}
                           <div className="min-w-0 flex-1">
-                            <p className="truncate font-semibold">
+                            <p className="line-clamp-2 leading-snug font-semibold">
                               {food ? (
                                 <Link href={`/alimentos/${food.id}`} className="hover:underline">
                                   {name}
@@ -330,7 +330,7 @@ export function DayView({
                                 name
                               )}
                             </p>
-                            <p className="truncate text-sm text-muted">
+                            <p className="line-clamp-2 text-sm leading-snug text-muted">
                               {portion
                                 ? t("item.portions", {
                                     count: formatCount(item.count, lang),

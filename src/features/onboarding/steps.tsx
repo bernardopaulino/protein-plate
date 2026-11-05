@@ -502,7 +502,7 @@ export function KitchenStep({ draft, update }: StepProps) {
         <div
           role="group"
           aria-label={t("equipment")}
-          className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+          className="grid grid-cols-2 gap-3 lg:grid-cols-3"
         >
           {EQUIPMENT.map((item) => {
             const on = draft.equipment.includes(item);

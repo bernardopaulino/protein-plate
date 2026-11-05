@@ -59,19 +59,30 @@ export function OptionCard({
       whileTap={{ scale: 0.97 }}
       className={cn(
         "relative flex w-full items-center gap-3 rounded-card border-2 bg-surface text-left transition-[border-color,background-color,box-shadow] duration-200 ease-out",
-        compact ? "min-h-14 px-3 py-2" : "min-h-20 px-4 py-3",
+        compact ? "min-h-14 px-3 py-2" : "min-h-20 px-3 py-3 sm:px-4",
         selected
           ? "border-primary bg-primary-soft shadow-[0_6px_20px_-12px_var(--primary)]"
           : "border-border hover:border-primary/50",
       )}
     >
-      <Illustration src={image} size={compact ? 36 : 48} />
+      {/* No telemóvel, o visto vai para o canto da ilustração: em duas colunas, o texto precisa da
+          largura toda ("Breakfast", "Micro-ondas") */}
+      <span className="relative shrink-0">
+        <Illustration
+          src={image}
+          size={compact ? 36 : 48}
+          className={compact ? undefined : "max-sm:size-10"}
+        />
+        <CheckBadge on={selected} className="absolute -right-1.5 -bottom-1 size-5 sm:hidden" />
+      </span>
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="leading-tight font-semibold">{title}</span>
+        <span className="text-[0.9375rem] leading-tight font-semibold hyphens-auto sm:text-base">
+          {title}
+        </span>
         {detail ? <span className="text-sm text-muted">{detail}</span> : null}
         {children}
       </span>
-      <CheckBadge on={selected} className="shrink-0" />
+      <CheckBadge on={selected} className="shrink-0 max-sm:hidden" />
     </m.button>
   );
 }
