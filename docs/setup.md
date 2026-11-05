@@ -55,14 +55,15 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Cliente Web |
 | `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` | Services ID e chave .p8 |
 | `ANTHROPIC_API_KEY` | Uma por ambiente |
-| `TURNSTILE_SECRET_KEY` | |
 | `IP_HASH_SECRET` | Chave diária do HMAC derivada deste valor e da data |
+| ~~`TURNSTILE_SECRET_KEY`~~ | Já não é usado (login obrigatório desde 3/11/2026); apagar onde existir |
+
+O env é validado com Zod (`src/lib/env.ts`): `BETTER_AUTH_SECRET` e `IP_HASH_SECRET` são obrigatórios (mínimo 32 caracteres), `ANTHROPIC_API_KEY` é obrigatória com `AI_MODE=live`, o Google precisa do par ID/segredo e a Apple dos quatro valores. Se faltar algum, o Worker responde 503 e o `wrangler tail --env <ambiente>` mostra `env_invalid` com os campos.
 
 ## Variáveis públicas (`wrangler.jsonc`)
 
-`APP_ENV`, `BETTER_AUTH_URL`, `AI_MODEL` (`claude-haiku-5-5`), `AI_MODE` (`live` ou `mock`), `AI_DAILY_LIMIT`, `QUOTA_GUEST` (3), `QUOTA_USER` (15), `TURNSTILE_SITE_KEY`.
+`APP_ENV`, `BETTER_AUTH_URL`, `AI_MODEL` (`claude-haiku-5-5`), `AI_MODE` (`live` ou `mock`), `AI_DAILY_LIMIT`, `QUOTA_USER` (15).
 
-- `TURNSTILE_SITE_KEY` lê-se em runtime no servidor e passa para o componente (um `NEXT_PUBLIC_*` ficaria fixo no build, igual em todos os ambientes).
 - `FOOD_DATA_VERSION` vem de `content/foods/meta.json` (gerado em `src/content/foods.generated.ts`) e `PROMPT_VERSION` do ficheiro do prompt: ficam junto do que versionam, sem risco de desencontro.
 - `BETTER_AUTH_URL` é pública e fica em `vars`.
 
@@ -78,3 +79,27 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 ### Backoffice (Cloudflare Access)
 
 - [ ] Aplicação do Cloudflare Zero Trust Access para `admin.protein-plate.app` e `admin-staging.protein-plate.app` (passo a passo em `docs/backoffice.md`); team domain, AUD e email em `admin/wrangler.jsonc`.
+
+## Lançamento em produção
+
+Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (escrever `produção` para confirmar); aplica as migrações, carrega o seed e publica o Worker.
+
+### Bloqueia o lançamento
+
+- [ ] Segredos do Worker de produção. Já existe `ANTHROPIC_API_KEY`; faltam `BETTER_AUTH_SECRET` e `IP_HASH_SECRET` (novos, diferentes dos de staging), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` e os quatro `APPLE_*` (os mesmos de staging: o Services ID já inclui `protein-plate.app`). Confirmar com `npx wrangler secret list --env production`.
+- [ ] Curadoria da TCA: os 168 alimentos ainda têm valores `TODO`, e o workflow corre `content:check` sem `--allow-todo`, por isso falha antes do deploy.
+- [ ] Google: redirect URI `https://protein-plate.app/api/auth/callback/google` no cliente OAuth e ecrã de consentimento publicado ("In production"; em "Testing" só entram os utilizadores de teste).
+
+### Antes ou logo a seguir
+
+- [ ] Créditos da Anthropic: os 100 $ promocionais expiram a 28/11/2026 e não há cartão na consola.
+- [ ] Beacon do Cloudflare Web Analytics bloqueado pelo CSP: desligar a injeção automática ou permiti-lo no CSP.
+- [ ] Email ao INSA sobre a reutilização da TCA (secção INSA acima).
+- [ ] Regra "required reviewer" no ambiente `production` do GitHub (criado na primeira corrida do workflow).
+- [ ] Apagar `TURNSTILE_SECRET_KEY` em staging e produção e o projeto criado por engano na Vercel.
+- [ ] Backoffice (secção acima) e deploy do `admin/`.
+
+### Depois do primeiro deploy
+
+- [ ] Checklist manual: login Google e Apple em produção, apagar conta, modo escuro, VoiceOver, rede lenta.
+- [ ] GIF do README e secção "Resultados" de `docs/case-study.md`.
