@@ -6,9 +6,10 @@ import type { RecipeRequest } from "@/domain/contracts/recipe";
 /**
  * Incrementa a cada mudança do prompt (entra na cache e nas avaliações). A 2 junta o pré-treino, o
  * equipamento e a dieta da pessoa; a 3, a proteína à escolha, o equipamento escolhido para a receita
- * (ou "sem cozinhar") e passos sem quantidades (a app pode ajustar as gramas depois).
+ * (ou "sem cozinhar") e passos sem quantidades (a app pode ajustar as gramas depois); a 4, sem
+ * fogão, nada de tachos nem água a ferver (o que se coze entra já cozido).
  */
-export const PROMPT_VERSION = 3;
+export const PROMPT_VERSION = 4;
 
 const MEAL_NAMES: Record<Meal, string> = {
   "pequeno-almoco": "pequeno-almoço",
@@ -84,6 +85,10 @@ export function buildRecipePrompt(input: RecipePromptInput): { system: string; p
       : context.equipmentChosen
         ? `A pessoa quer cozinhar com: ${equipment}. Usa este equipamento e nenhum outro.`
         : `Equipamento disponível: ${equipment}. Não uses outro.`;
+  const noStove =
+    context.equipment.length > 0 && !context.equipment.includes("stove")
+      ? "Não há fogão: nada de tachos, panelas nem água a ferver; cada passo usa só o equipamento indicado. Se um alimento precisar de ser cozido em água, usa-o já cozido (de véspera ou comprado assim) e diz isso no passo."
+      : "";
 
   const system = [
     "És um cozinheiro português que escreve receitas caseiras, simples e com comida de verdade.",
@@ -96,6 +101,7 @@ export function buildRecipePrompt(input: RecipePromptInput): { system: string; p
     `Cria uma receita para ${MEAL_NAMES[request.meal]}${moment}.`,
     `Doses: ${request.servings}. Tempo máximo de preparação: ${request.maxMinutes} minutos.`,
     equipmentLine,
+    noStove,
     DIET_NOTES[context.diet] ?? "",
     "",
     "Alimentos escolhidos (usa todos os que são fonte de proteína):",

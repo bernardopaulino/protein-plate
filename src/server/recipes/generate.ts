@@ -8,7 +8,7 @@ import { allowedFoods, isAllowed } from "@/domain/preferences";
 import { recipeBase } from "@/domain/recipe-base";
 import type { AppEnv } from "@/lib/env";
 import { languageModel, mockModel } from "../ai/model";
-import { PROMPT_VERSION } from "../ai/prompts/recipe.v3";
+import { PROMPT_VERSION } from "../ai/prompts/recipe.v4";
 import type { Db } from "../db/client-core";
 import { recipeIngredients, recipes } from "../db/schema";
 import { restrictionsOf, type Profile } from "../services/account";
@@ -120,6 +120,7 @@ async function pipeline(
         ? input.variant - 1
         : Math.floor((deps.random ?? Math.random)() * 1_000_000),
     noCooking,
+    canBoil: equipment.includes("stove") || equipment.includes("microwave"),
     targetG,
   });
   if (!chosenFoods.some((f) => f.role === "protein")) return fail("invalid_request", 400);

@@ -10,6 +10,8 @@ export interface DayBasesInput {
   preferred: ReadonlySet<string>;
   preWorkoutMeal: Meal | null;
   noCooking: boolean;
+  /** Há fogão ou micro-ondas (ver `needsBoiling`). */
+  canBoil: boolean;
   /** A meta de cada refeição (a base escolhe proteínas que lá chegam). */
   targets: ReadonlyMap<Meal, number>;
   /** Varia o dia inteiro (inteiro ≥ 0). */
@@ -33,6 +35,7 @@ export function dayRecipeBases(input: DayBasesInput): Map<Meal, Food[]> {
       preWorkout: meal === input.preWorkoutMeal,
       seed: input.seed + index * 13,
       noCooking: input.noCooking,
+      canBoil: input.canBoil,
       avoid: used,
       targetG: input.targets.get(meal),
     });

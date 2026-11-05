@@ -40,6 +40,7 @@ export async function generateRecipeDay(
     preferred: new Set(profile.likedFoods),
     preWorkoutMeal: profile.preWorkoutMeal,
     noCooking: equipment.length === 0,
+    canBoil: equipment.includes("stove") || equipment.includes("microwave"),
     targets: mealTargets(profile.dailyTargetG, meals, profile.postWorkoutMeal),
     seed: Math.floor((deps.random ?? Math.random)() * 1_000_000),
   });

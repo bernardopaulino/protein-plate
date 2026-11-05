@@ -14,6 +14,14 @@ const isLightProtein = (f: Food) => f.role === "protein" && f.ease <= 2 && f.fat
 /** A proteína que um alimento dá no máximo numa dose (3 porções habituais, o limite da receita). */
 export const proteinReach = (f: Food) => (3 * defaultPortion(f).grams * f.proteinPer100g) / 100;
 
+/**
+ * Coze-se em água (arroz, massa, quinoa, leguminosas secas): sem fogão nem micro-ondas, a app não os
+ * escolhe para completar a base (uma receita "só airfryer" com arroz cozido no tacho não serve).
+ */
+export const needsBoiling = (f: Food) =>
+  f.ease > 1 &&
+  ((f.category === "cereais" && f.weightBasis === "raw") || f.category === "leguminosas");
+
 /** Abaixo disto da meta, a base junta outra fonte de proteína (se houver espaço). */
 const REACH_MIN = 0.85;
 
@@ -30,6 +38,8 @@ export interface RecipeBaseInput {
   seed: number;
   /** "Sem cozinhar": a app só completa com alimentos que se comem sem preparação (ease 1). */
   noCooking?: boolean;
+  /** Há fogão ou micro-ondas (dá para cozer em água); sem eles, a app não escolhe o que se coze. */
+  canBoil?: boolean;
   /** Fontes de proteína a evitar se houver outras (dia completo: uma proteína diferente por refeição). */
   avoid?: ReadonlySet<string>;
   /**
@@ -53,7 +63,11 @@ export function recipeBase(input: RecipeBaseInput): Food[] {
     const taken = new Set(base.map((f) => f.id));
     for (const filter of filters) {
       const all = input.foods.filter(
-        (f) => !taken.has(f.id) && filter(f) && (!input.noCooking || f.ease === 1),
+        (f) =>
+          !taken.has(f.id) &&
+          filter(f) &&
+          (!input.noCooking || f.ease === 1) &&
+          (input.canBoil !== false || !needsBoiling(f)),
       );
       const fresh = all.filter((f) => !input.avoid?.has(f.id));
       const pool = fresh.length > 0 ? fresh : all;

@@ -16,7 +16,7 @@ import { indexFoods } from "../src/domain/food";
 import type { Meal } from "../src/domain/meals";
 import type { Equipment } from "../src/domain/preferences";
 import { AI_EFFORT, AI_THINKING } from "../src/server/ai/model";
-import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v3";
+import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v4";
 import { callRecipeModel } from "../src/server/recipes/model-call";
 import { proteinPerServing, type RecipeOutput } from "../src/server/recipes/recipe-rules";
 
@@ -34,7 +34,7 @@ interface Case {
 }
 
 /**
- * 24 combinações fixas: refeições, tempos, doses e pós-treino variados; as 4 últimas com a proteína
+ * 25 combinações fixas: refeições, tempos, doses e pós-treino variados; as 5 últimas com a proteína
  * escolhida pela pessoa e com equipamento escolhido (ou sem cozinhar).
  */
 const CASES: Case[] = [
@@ -199,6 +199,15 @@ const CASES: Case[] = [
     customTarget: true,
     minutes: 30,
     servings: 2,
+    equipment: ["airfryer"],
+  },
+  {
+    foods: ["peito-frango", "arroz-branco", "courgette"],
+    meal: "almoco",
+    target: 45,
+    customTarget: true,
+    minutes: 20,
+    servings: 1,
     equipment: ["airfryer"],
   },
 ];

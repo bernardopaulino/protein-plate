@@ -245,6 +245,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     );
     expect(result.ok).toBe(true);
     expect(prompts[0]).toContain("Equipamento disponível: airfryer");
+    expect(prompts[0]).toContain("Não há fogão");
     expect(prompts[0]).toContain("pré-treino");
     expect(prompts[0]).toContain("vegana");
     expect(prompts[0]).not.toContain("manteiga");
@@ -574,6 +575,7 @@ describe("proteína à escolha, equipamento e sem cozinhar", () => {
     );
     expect(result.ok).toBe(true);
     expect(prompts[0]).toContain("A pessoa quer cozinhar com: airfryer, forno");
+    expect(prompts[0]).toContain("Não há fogão");
     if (!result.ok) return;
     expect((await getRecipe(t.db, result.id))!.equipment).toEqual(["airfryer", "oven"]);
   });

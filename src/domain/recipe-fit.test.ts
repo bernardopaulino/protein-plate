@@ -4,7 +4,7 @@ import { FOODS } from "@/content/foods.generated";
 import { defaultPortion, type FoodIndex } from "./food";
 import { allowedFoods } from "./preferences";
 import { dayRecipeBases } from "./recipe-day";
-import { proteinReach, recipeBase } from "./recipe-base";
+import { needsBoiling, proteinReach, recipeBase } from "./recipe-base";
 import { fitProtein, proteinPerServingOf } from "./recipe-fit";
 
 const INDEX: FoodIndex = new Map(FOODS.map((f) => [f.id, f]));
@@ -116,6 +116,33 @@ describe("base que chega à meta", () => {
 });
 
 describe("base sem cozinhar e dia completo", () => {
+  it("só airfryer (sem fogão nem micro-ondas): a app não escolhe nada que se coza em água", () => {
+    for (const meal of ["almoco", "jantar", "pequeno-almoco"] as const) {
+      for (let seed = 0; seed < 30; seed++) {
+        const base = recipeBase({
+          meal,
+          chosen: [],
+          foods: ALLOWED,
+          preferred: new Set(),
+          preWorkout: false,
+          seed,
+          canBoil: false,
+          targetG: 40,
+        });
+        expect(
+          base.filter(needsBoiling).map((f) => f.id),
+          `${meal} ${seed}`,
+        ).toEqual([]);
+      }
+    }
+    // Arroz, massa e leguminosas secas cozem-se; pão, aveia, batata e conservas não
+    const ids = ALLOWED.filter(needsBoiling).map((f) => f.id);
+    expect(ids).toEqual(expect.arrayContaining(["arroz-branco", "massa-trigo", "trigo-sarraceno"]));
+    for (const id of ["pao-integral", "aveia-flocos", "batata-doce", "grao-bico-lata"]) {
+      expect(ids).not.toContain(id);
+    }
+  });
+
   it("sem cozinhar: a app só completa com alimentos sem preparação", () => {
     for (let seed = 0; seed < 20; seed++) {
       const base = recipeBase({
@@ -141,6 +168,7 @@ describe("base sem cozinhar e dia completo", () => {
         preferred: new Set(),
         preWorkoutMeal: "lanche",
         noCooking: false,
+        canBoil: true,
         seed,
         targets: new Map(),
       });
@@ -159,6 +187,7 @@ describe("base sem cozinhar e dia completo", () => {
       preferred: new Set(),
       preWorkoutMeal: null,
       noCooking: false,
+      canBoil: true,
       seed: 0,
       targets: new Map(),
     });
