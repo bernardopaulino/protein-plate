@@ -88,7 +88,7 @@ A CI corre o `admin:typecheck`, o `admin:test` e um `wrangler deploy --dry-run` 
 
 ## Configurar o Cloudflare Access (passo a passo)
 
-Enquanto isto não estiver feito, o backoffice publicado responde 503 a tudo. Faz-se uma vez, no painel da Cloudflare da conta onde estão os Workers (os nomes dos menus do Zero Trust mudam de vez em quando; os passos são os mesmos):
+Feito a 5/11/2026: aplicação "Protein Plate Backoffice" na equipa `dawn-sun-e5a0` (a do Rejection Quest), com a política reutilizável "Só o dono" e os dois domínios; os valores estão em `admin/wrangler.jsonc` e os dois ambientes estão publicados. Sem esta configuração, o backoffice publicado responde 503 a tudo. Faz-se uma vez, no painel da Cloudflare da conta onde estão os Workers (os nomes dos menus do Zero Trust mudam de vez em quando; os passos são os mesmos):
 
 1. **Equipa do Zero Trust.** Em [dash.cloudflare.com](https://dash.cloudflare.com), abre **Zero Trust**. Se a conta ainda não tiver uma equipa, escolhe o nome da equipa (fica `<equipa>.cloudflareaccess.com`) e o plano **Free** (até 50 utilizadores, sem custo). Se já tiveres uma (por exemplo, a do Rejection Quest, na mesma conta), usa essa.
 2. **Forma de entrar.** Em **Settings → Authentication → Login methods**, confirma que o **One-time PIN** (código por email) está ativo. Chega para uma só pessoa.

@@ -39,16 +39,14 @@
       "workers_dev": false,
       "preview_urls": false,
       "routes": [{ "pattern": "admin-staging.protein-plate.app", "custom_domain": true }],
-      // POR PREENCHER depois de criar a aplicação do Access (docs/backoffice.md, passo a passo):
-      // ACCESS_TEAM_DOMAIN é o nome da equipa do Zero Trust (<equipa>.cloudflareaccess.com),
-      // ACCESS_AUD a "Application Audience (AUD) Tag" e ADMIN_EMAILS os emails autorizados,
-      // separados por vírgulas (bernardo.sobral7@gmail.com). Nenhum é segredo. Enquanto
-      // estiverem vazios, o backoffice recusa tudo
+      // Aplicação "Protein Plate Backoffice" do Access (equipa dawn-sun-e5a0, a mesma do Rejection
+      // Quest; política "Só o dono"), com os dois domínios: a AUD é a mesma nos dois ambientes.
+      // Nenhum é segredo. Se a aplicação for recriada, a AUD muda (docs/backoffice.md)
       "vars": {
         "ADMIN_DEV_BYPASS": "0",
-        "ACCESS_TEAM_DOMAIN": "",
-        "ACCESS_AUD": "",
-        "ADMIN_EMAILS": "",
+        "ACCESS_TEAM_DOMAIN": "dawn-sun-e5a0",
+        "ACCESS_AUD": "2eabb88f1d293092dc5e0fbbbac55733e229beb04c381d634f03728d7abfabfe",
+        "ADMIN_EMAILS": "bernardo.sobral7@gmail.com",
         "APP_URL": "https://staging.protein-plate.app",
       },
       "d1_databases": [
@@ -64,13 +62,12 @@
       "workers_dev": false,
       "preview_urls": false,
       "routes": [{ "pattern": "admin.protein-plate.app", "custom_domain": true }],
-      // POR PREENCHER depois de criar a aplicação do Access (ver staging, acima). Enquanto
-      // estiverem vazios, o backoffice recusa tudo
+      // A mesma aplicação do Access que o staging (ver acima)
       "vars": {
         "ADMIN_DEV_BYPASS": "0",
-        "ACCESS_TEAM_DOMAIN": "",
-        "ACCESS_AUD": "",
-        "ADMIN_EMAILS": "",
+        "ACCESS_TEAM_DOMAIN": "dawn-sun-e5a0",
+        "ACCESS_AUD": "2eabb88f1d293092dc5e0fbbbac55733e229beb04c381d634f03728d7abfabfe",
+        "ADMIN_EMAILS": "bernardo.sobral7@gmail.com",
         "APP_URL": "https://protein-plate.app",
       },
       "d1_databases": [
