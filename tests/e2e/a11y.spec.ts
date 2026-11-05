@@ -10,6 +10,8 @@ const PUBLIC_PAGES = [
   "/alimentos/skyr-natural",
   "/privacidade",
   "/termos",
+  "/en",
+  "/en/alimentos/skyr-natural",
 ];
 /** Páginas com login (pessoa com o plano feito). */
 const APP_PAGES = [
@@ -19,6 +21,8 @@ const APP_PAGES = [
   "/receitas/dia",
   "/conta",
   "/conta/preferencias",
+  "/en/o-meu-dia",
+  "/en/receitas/nova",
 ];
 
 async function expectNoViolations(page: Page) {

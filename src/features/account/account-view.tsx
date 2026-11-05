@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatProtein } from "@/domain/protein";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link, getPathname, useRouter } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { PROVIDER_NAMES, authClient, type SocialProvider } from "@/lib/auth-client";
 import { clearLegacyStorage } from "@/lib/legacy-storage";
@@ -31,7 +31,8 @@ export function AccountView({
 }) {
   const t = useTranslations("account");
   const tc = useTranslations("common");
-  const lang = HTML_LANG[useLocale() as Locale];
+  const locale = useLocale() as Locale;
+  const lang = HTML_LANG[locale];
   const router = useRouter();
   const [deleting, setDeleting] = useState(deleteRequested);
   const [provider, setProvider] = useState<SocialProvider | null>(null);
@@ -150,7 +151,7 @@ export function AccountView({
               </p>
               <ProviderButtons
                 providers={provider ? [provider] : providers}
-                callbackURL="/conta?apagar=1"
+                callbackURL={`${getPathname({ href: "/conta", locale })}?apagar=1`}
                 labelKey="delete.reauthButton"
               />
             </div>

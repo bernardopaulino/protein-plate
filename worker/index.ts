@@ -22,7 +22,7 @@ function withTransportSecurity(request: Request, response: Response): Response {
   return secured;
 }
 
-const RECIPE_PAGE = /^\/receitas\/[0-9a-zA-Z]{6,20}\/?$/;
+const RECIPE_PAGE = /^(\/en)?\/receitas\/[0-9a-zA-Z]{6,20}\/?$/;
 
 /**
  * As receitas são imutáveis e a página não tem nada da pessoa: cache pública longa (só o HTML;
@@ -47,6 +47,24 @@ function withRecipeCache(request: Request, response: Response): Response {
   return cached;
 }
 
+/**
+ * Fora da produção (staging), nada vai para o Google: robots.txt fecha tudo e cada resposta leva
+ * X-Robots-Tag: noindex (o canonical já aponta para a produção; isto evita o conteúdo duplicado).
+ */
+function blockedOutsideProduction(request: Request, env: CloudflareEnv): Response | null {
+  if (env.APP_ENV === "production" || new URL(request.url).pathname !== "/robots.txt") return null;
+  return new Response("User-agent: *\nDisallow: /\n", {
+    headers: { "Content-Type": "text/plain; charset=utf-8", "X-Robots-Tag": "noindex" },
+  });
+}
+
+function withNoIndex(env: CloudflareEnv, response: Response): Response {
+  if (env.APP_ENV === "production") return response;
+  const hidden = new Response(response.body, response);
+  hidden.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return hidden;
+}
+
 const handler: ExportedHandler<CloudflareEnv> = {
   async fetch(request, env, ctx) {
     try {
@@ -57,8 +75,10 @@ const handler: ExportedHandler<CloudflareEnv> = {
       console.error(JSON.stringify({ level: "error", msg: "env_invalid", fields }));
       return new Response("Service unavailable", { status: 503 });
     }
+    const blocked = blockedOutsideProduction(request, env);
+    if (blocked) return withTransportSecurity(request, blocked);
     const response = await app.fetch(request, env, ctx);
-    return withTransportSecurity(request, withRecipeCache(request, response));
+    return withTransportSecurity(request, withNoIndex(env, withRecipeCache(request, response)));
   },
 
   async scheduled(_event, env, ctx) {

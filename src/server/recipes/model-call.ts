@@ -2,7 +2,7 @@ import { Output, generateText, type LanguageModel } from "ai";
 import type { FoodIndex } from "@/domain/food";
 import { fitProtein } from "@/domain/recipe-fit";
 import { AI_DEADLINE_MS, AI_EFFORT, AI_MIN_RETRY_MS, AI_THINKING } from "../ai/model";
-import { buildRecipePrompt, type RecipePromptInput } from "../ai/prompts/recipe.v4";
+import { buildRecipePrompt, type RecipePromptInput } from "../ai/prompts/recipe.v5";
 import {
   mergeDuplicateIngredients,
   recipeOutputSchema,

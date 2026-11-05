@@ -12,6 +12,7 @@ import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { getDb } from "@/server/db/client";
 import { getRecipe } from "@/server/services/recipes";
+import { absoluteUrl, ogImage } from "@/lib/seo";
 
 // Dinâmica, mas sem nada da pessoa: o Worker acrescenta cache pública longa (receitas imutáveis)
 export const dynamic = "force-dynamic";
@@ -34,8 +35,16 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: recipe.title,
     description,
-    openGraph: { type: "article", title: recipe.title, description, url: `/receitas/${recipe.id}` },
-    twitter: { card: "summary", title: recipe.title, description },
+    // Receitas geradas por IA, sem curadoria: partilham-se, mas não vão para o Google
+    robots: { index: false, follow: true },
+    openGraph: {
+      type: "article",
+      title: recipe.title,
+      description,
+      url: absoluteUrl(`/receitas/${recipe.id}`, locale),
+      images: [ogImage(locale, recipe.title)],
+    },
+    twitter: { card: "summary_large_image", title: recipe.title, description },
   };
 }
 

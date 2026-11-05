@@ -1,8 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getPathname } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import { PROVIDER_NAMES, authClient, type SocialProvider } from "@/lib/auth-client";
 
 function ProviderIcon({ provider }: { provider: SocialProvider }) {
@@ -42,7 +44,7 @@ function ProviderIcon({ provider }: { provider: SocialProvider }) {
 export function ProviderButtons({
   providers,
   signUp = false,
-  callbackURL = "/conta/bem-vindo",
+  callbackURL,
   disabled = false,
   labelKey = "signInWith",
   beforeRedirect,
@@ -55,10 +57,13 @@ export function ProviderButtons({
   beforeRedirect?: () => Promise<boolean>;
 }) {
   const t = useTranslations("account");
+  const locale = useLocale() as Locale;
   const [pending, setPending] = useState<SocialProvider | null>(null);
   const [failed, setFailed] = useState(false);
 
   if (providers.length === 0) return <p className="text-muted">{t("providersMissing")}</p>;
+
+  const back = callbackURL ?? getPathname({ href: "/conta/bem-vindo", locale });
 
   const start = async (provider: SocialProvider) => {
     setPending(provider);
@@ -69,9 +74,10 @@ export function ProviderButtons({
     }
     const { error } = await authClient.signIn.social({
       provider,
-      callbackURL,
-      errorCallbackURL: "/entrar?erro=1",
-      ...(signUp ? { requestSignUp: true, newUserCallbackURL: callbackURL } : {}),
+      callbackURL: back,
+      // Caminhos absolutos para o Better Auth: com o idioma (o inglês vive em /en)
+      errorCallbackURL: `${getPathname({ href: "/entrar", locale })}?erro=1`,
+      ...(signUp ? { requestSignUp: true, newUserCallbackURL: back } : {}),
     });
     if (error) {
       setFailed(true);

@@ -16,7 +16,7 @@ import { indexFoods } from "../src/domain/food";
 import type { Meal } from "../src/domain/meals";
 import type { Equipment } from "../src/domain/preferences";
 import { AI_EFFORT, AI_THINKING } from "../src/server/ai/model";
-import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v4";
+import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v5";
 import { callRecipeModel } from "../src/server/recipes/model-call";
 import { proteinPerServing, type RecipeOutput } from "../src/server/recipes/recipe-rules";
 
@@ -31,10 +31,12 @@ interface Case {
   customTarget?: boolean;
   /** Equipamento escolhido para a receita ([] = sem cozinhar); senão, fogão e micro-ondas. */
   equipment?: Equipment[];
+  /** Idioma da receita (por defeito, português). */
+  locale?: "pt" | "en";
 }
 
 /**
- * 25 combinações fixas: refeições, tempos, doses e pós-treino variados; as 5 últimas com a proteína
+ * 27 combinações fixas: refeições, tempos, doses e pós-treino variados; 5 com a proteína
  * escolhida pela pessoa e com equipamento escolhido (ou sem cozinhar).
  */
 const CASES: Case[] = [
@@ -210,6 +212,22 @@ const CASES: Case[] = [
     servings: 1,
     equipment: ["airfryer"],
   },
+  {
+    foods: ["ovo", "espinafres", "pao-integral"],
+    meal: "pequeno-almoco",
+    target: 25,
+    minutes: 10,
+    servings: 1,
+    locale: "en",
+  },
+  {
+    foods: ["salmao", "batata-doce", "brocolos"],
+    meal: "jantar",
+    target: 45,
+    minutes: 30,
+    servings: 2,
+    locale: "en",
+  },
 ];
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -245,6 +263,7 @@ for (const [i, c] of CASES.entries()) {
     maxMinutes: c.minutes,
     servings: c.servings,
     variant: 1,
+    locale: c.locale ?? "pt",
   };
   // Perfil típico: fogão e micro-ondas, come de tudo
   const context = {

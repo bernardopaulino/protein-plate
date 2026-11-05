@@ -1,4 +1,6 @@
 import { ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Illustration } from "@/components/illustration";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
@@ -11,8 +13,29 @@ import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { ExampleDayCard } from "@/features/landing/example-day-card";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
+import { absoluteUrl, pageMetadata } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 const EXAMPLE = { target: 160, meals: DEFAULT_COMBINATIONS[4] } as const;
+const FAQ = ["diet", "account", "allergies", "numbers", "supplements"] as const;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seo" });
+  const tm = await getTranslations({ locale, namespace: "meta" });
+  return pageMetadata({
+    locale,
+    path: "/",
+    title: t("homeTitle"),
+    description: t("homeDescription"),
+    imageAlt: tm("ogAlt"),
+    absoluteTitle: true,
+  });
+}
 
 export default async function LandingPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -43,15 +66,49 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         return {
           id: i.id,
           image: foodImage(food.id),
-          label: `${formatCount(i.count, lang)} × ${portion.label[locale].toLowerCase()} ${foodName(food, locale).toLowerCase()}`,
+          // "Ovo · 2 × 1 ovo médio": o nome primeiro; antes ficava "2 × 1 ovo médio ovo"
+          label: `${foodName(food, locale)} · ${formatCount(i.count, lang)} × ${portion.label[locale].toLowerCase()}`,
         };
       }),
     };
   });
-  const faq = ["diet", "account", "allergies", "numbers", "supplements"] as const;
+  const faq = FAQ;
+  const ts = await getTranslations("seo");
+  // Dados estruturados: o site, a app (gratuita, na web) e as perguntas frequentes
+  const structured = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Protein Plate",
+      url: SITE_URL,
+      inLanguage: ["pt-PT", "en"],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: "Protein Plate",
+      url: absoluteUrl("/", locale),
+      description: ts("homeDescription"),
+      applicationCategory: "HealthApplication",
+      operatingSystem: "Web",
+      inLanguage: lang,
+      offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      inLanguage: lang,
+      mainEntity: FAQ.map((key) => ({
+        "@type": "Question",
+        name: t(`faq.${key}.q`),
+        acceptedAnswer: { "@type": "Answer", text: t(`faq.${key}.a`) },
+      })),
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-20 pb-8 lg:gap-28">
+      <JsonLd data={structured} />
       <section className="grid items-center gap-10 pt-6 md:grid-cols-[1.15fr_1fr] md:pt-12 lg:gap-16 xl:pt-16">
         <div>
           <p className="font-semibold tracking-wide text-primary">{t("eyebrow")}</p>

@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { BottomNav, SiteFooter, SiteHeader } from "@/components/layout/site-chrome";
 import { ENABLED_LOCALES, HTML_LANG, type Locale } from "@/i18n/routing";
+import { ogImage } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { bricolage, figtree } from "../fonts";
 
@@ -29,7 +30,14 @@ export async function generateMetadata({
     applicationName: "Protein Plate",
     manifest: "/manifest.webmanifest",
     icons: { icon: "/icon.svg", apple: "/icon.svg" },
-    openGraph: { type: "website", siteName: "Protein Plate", locale: HTML_LANG[locale as Locale] },
+    // As páginas públicas trazem o seu Open Graph (src/lib/seo.ts); este é o de reserva
+    openGraph: {
+      type: "website",
+      siteName: "Protein Plate",
+      locale: locale === "en" ? "en_US" : "pt_PT",
+      images: [ogImage(locale as Locale, t("ogAlt"))],
+    },
+    twitter: { card: "summary_large_image", images: [ogImage(locale as Locale, t("ogAlt")).url] },
     formatDetection: { telephone: false },
   };
 }

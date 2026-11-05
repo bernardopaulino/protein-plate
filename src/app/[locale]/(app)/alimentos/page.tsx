@@ -4,6 +4,7 @@ import { CatalogBrowser } from "@/features/catalog/catalog-browser";
 import { ALL_IMAGE, catalogItems, catalogSections } from "@/features/catalog/catalog-index";
 import { getPathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -11,8 +12,14 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "catalog" });
-  return { title: t("title"), description: t("lead") };
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return pageMetadata({
+    locale,
+    path: "/alimentos",
+    title: t("catalogTitle"),
+    description: t("catalogDescription"),
+    imageAlt: t("catalogTitle"),
+  });
 }
 
 export default async function FoodsPage({ params }: { params: Promise<{ locale: Locale }> }) {

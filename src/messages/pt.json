@@ -132,7 +132,7 @@
       },
       "numbers": {
         "q": "De onde vêm os números?",
-        "a": "Da Tabela da Composição de Alimentos do INSA. A proteína é sempre calculada pela app, nunca pela IA."
+        "a": "Das tabelas de composição de alimentos de referência, como a do INSA. A proteína é sempre calculada pela app, nunca pela IA."
       },
       "account": {
         "q": "Preciso de criar conta?",
@@ -234,7 +234,8 @@
     "metaDescription": "{name}: {protein} g de proteína em {portion}. Porções, valor por 100 g e ideias rápidas.",
     "signInToAdd": "Entra para juntares este alimento ao teu dia.",
     "signInCta": "Entrar",
-    "notForYou": "Este alimento não entra no teu plano, por causa do que disseste que não comes."
+    "notForYou": "Este alimento não entra no teu plano, por causa do que disseste que não comes.",
+    "related": "Alimentos parecidos"
   },
   "recipes": {
     "title": "Receitas",
@@ -689,5 +690,18 @@
     },
     "legal": "Ao continuar, confirmas que tens 16 anos ou mais e aceitas os <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy>.",
     "error": "Não conseguimos entrar. Tenta outra vez."
+  },
+  "seo": {
+    "homeTitle": "Protein Plate: proteína sem dieta, com comida de verdade",
+    "homeDescription": "Calcula a tua meta diária de proteína e vê um dia completo com os alimentos de que gostas, em porções reais, e receitas feitas para ti. Sem dieta e sem contar calorias.",
+    "catalogTitle": "Alimentos com proteína: quanto tem cada porção",
+    "catalogDescription": "147 alimentos de verdade com a proteína por porção e por 100 g: carne, peixe, ovos, lacticínios, leguminosas, tofu, cereais e mais. Para chegares à tua meta sem dieta.",
+    "foodTitle": "{name}: proteína por porção",
+    "privacyDescription": "Que dados o Protein Plate guarda, para quê, durante quanto tempo e como os exportas ou apagas.",
+    "termsDescription": "As regras de utilização do Protein Plate: a conta, as receitas geradas por IA e o que a app não substitui.",
+    "breadcrumbHome": "Início"
+  },
+  "lang": {
+    "switch": "English"
   }
 }

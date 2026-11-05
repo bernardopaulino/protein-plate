@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { LanguageSwitch } from "./language-switch";
 import { BottomNav, TopNav } from "./main-nav";
 
 export function Logo() {
@@ -23,7 +24,10 @@ export function SiteHeader() {
         <Link href="/" aria-label={t("home")} className="rounded-lg">
           <Logo />
         </Link>
-        <TopNav />
+        <div className="flex items-center gap-2">
+          <TopNav />
+          <LanguageSwitch />
+        </div>
       </div>
     </header>
   );
@@ -40,12 +44,18 @@ export function SiteFooter() {
         </p>
         <ul className="flex gap-4">
           <li>
-            <Link href="/privacidade" className="underline underline-offset-4 hover:no-underline">
+            <Link
+              href="/privacidade"
+              className="inline-flex min-h-11 items-center underline underline-offset-4 hover:no-underline"
+            >
               {t("privacy")}
             </Link>
           </li>
           <li>
-            <Link href="/termos" className="underline underline-offset-4 hover:no-underline">
+            <Link
+              href="/termos"
+              className="inline-flex min-h-11 items-center underline underline-offset-4 hover:no-underline"
+            >
               {t("terms")}
             </Link>
           </li>

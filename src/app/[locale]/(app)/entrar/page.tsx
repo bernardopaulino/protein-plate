@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SignIn } from "@/features/account/sign-in";
 import { redirect } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { alternatesFor } from "@/lib/seo";
 import { safeNext } from "@/server/auth/guard";
 import { availableProviders } from "@/server/auth/providers";
 import { getSession } from "@/server/auth/session";
@@ -16,7 +17,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "signIn" });
-  return { title: t("title"), description: t("lead") };
+  return {
+    title: t("title"),
+    description: t("lead"),
+    alternates: alternatesFor("/entrar", locale),
+    robots: { index: false, follow: true },
+  };
 }
 
 /** Entrar (ou criar conta): Google ou Apple. Com sessão, segue para onde ia. */

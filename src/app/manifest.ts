@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Protein Plate",
     short_name: "Protein Plate",
-    description: "Proteína sem dieta: a tua meta com comida de verdade.",
+    description: "Proteína sem dieta: a tua meta com comida de verdade. Protein without the diet.",
     lang: "pt-PT",
     start_url: "/o-meu-dia",
     scope: "/",

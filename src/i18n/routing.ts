@@ -10,8 +10,8 @@ export const routing = defineRouting({
 
 export type Locale = (typeof routing.locales)[number];
 
-/** Idiomas publicados. O inglês entra aqui quando o en.json estiver traduzido (v1.1). */
-export const ENABLED_LOCALES: readonly Locale[] = ["pt"];
+/** Idiomas publicados: o português sem prefixo e o inglês em /en (desde 5/11/2026). */
+export const ENABLED_LOCALES: readonly Locale[] = ["pt", "en"];
 
 /** O atributo lang de cada idioma (português de Portugal). */
 export const HTML_LANG: Record<Locale, string> = { pt: "pt-PT", en: "en" };

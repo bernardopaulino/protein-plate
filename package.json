@@ -35,7 +35,8 @@
     "admin:types": "wrangler types -c admin/wrangler.jsonc admin/cloudflare-env.d.ts --strict-vars=false",
     "admin:deploy:staging": "wrangler deploy -c admin/wrangler.jsonc --env staging",
     "admin:deploy:production": "wrangler deploy -c admin/wrangler.jsonc --env production",
-    "test:lighthouse": "lhci autorun"
+    "test:lighthouse": "lhci autorun",
+    "og:images": "node scripts/og-images.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "3.0.137",

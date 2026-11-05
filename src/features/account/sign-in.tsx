@@ -1,9 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
 import { Illustration } from "@/components/illustration";
-import { Link } from "@/i18n/navigation";
+import { Link, getPathname } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
 import type { SocialProvider } from "@/lib/auth-client";
 import { acceptTermsAction } from "@/server/actions/account";
 import { ProviderButtons } from "./provider-buttons";
@@ -38,7 +39,9 @@ export function SignIn({
   failed: boolean;
 }) {
   const t = useTranslations("signIn");
-  const callbackURL = `/conta/bem-vindo?next=${encodeURIComponent(next)}`;
+  const locale = useLocale() as Locale;
+  // O Better Auth volta para um caminho absoluto: com o idioma (o inglês vive em /en)
+  const callbackURL = `${getPathname({ href: "/conta/bem-vindo", locale })}?next=${encodeURIComponent(next)}`;
 
   return (
     <div className="mx-auto grid max-w-6xl items-center gap-10 pb-10 md:grid-cols-2 md:pt-6 lg:gap-16">

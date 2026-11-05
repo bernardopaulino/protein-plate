@@ -1,334 +1,335 @@
 {
   "meta": {
-    "title": "Protein Plate — proteína sem dieta",
+    "title": "Protein Plate — protein without the diet",
     "titleTemplate": "%s · Protein Plate",
-    "description": "Calcula a tua meta de proteína e vê um dia completo com comida de verdade que já lá chega. Sem dieta, sem contar calorias.",
-    "ogAlt": "Protein Plate: proteína sem dieta"
+    "description": "Work out your protein goal and see a full day of real food that already gets you there. No diet, no calorie counting.",
+    "ogAlt": "Protein Plate: protein without the diet"
   },
   "nav": {
-    "label": "Navegação principal",
-    "today": "Hoje",
-    "foods": "Alimentos",
-    "recipes": "Receitas",
-    "account": "Conta",
-    "skip": "Saltar para o conteúdo",
-    "home": "Protein Plate, página inicial"
+    "label": "Main navigation",
+    "today": "Today",
+    "foods": "Foods",
+    "recipes": "Recipes",
+    "account": "Account",
+    "skip": "Skip to content",
+    "home": "Protein Plate, home page"
   },
   "footer": {
-    "privacy": "Privacidade",
-    "terms": "Termos",
-    "source": "Valores nutricionais de referência (TCA do INSA e tabelas equivalentes).",
-    "tagline": "Proteína sem dieta."
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "source": "Reference nutritional values: the Portuguese Food Composition Table (TCA) from INSA and equivalent tables.",
+    "tagline": "Protein without the diet."
   },
   "common": {
     "grams": "{value} g",
-    "gramsProtein": "{value} g de proteína",
-    "perPortion": "por porção",
-    "per100g": "por 100 g",
-    "close": "Fechar",
-    "cancel": "Cancelar",
-    "back": "Voltar",
-    "retry": "Tentar outra vez",
-    "loading": "A carregar…",
-    "saving": "A guardar…",
-    "saved": "Guardado",
-    "add": "Adicionar",
-    "remove": "Tirar",
-    "source": "Fonte: TCA, INSA",
-    "sourceReference": "Valores de referência de tabelas de composição de alimentos, como a TCA do INSA.",
-    "provisional": "Valores provisórios, a confirmar na TCA.",
-    "technicalError": "Algo correu mal do nosso lado. Tenta outra vez daqui a pouco.",
-    "whey": "Ultraprocessado (exceção)"
+    "gramsProtein": "{value} g of protein",
+    "perPortion": "per portion",
+    "per100g": "per 100 g",
+    "close": "Close",
+    "cancel": "Cancel",
+    "back": "Back",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "add": "Add",
+    "remove": "Remove",
+    "source": "Source: TCA (INSA)",
+    "sourceReference": "Reference values from food composition tables, such as the Portuguese Food Composition Table (TCA) from INSA.",
+    "provisional": "Provisional values, still to be confirmed in the TCA.",
+    "technicalError": "Something went wrong on our end. Try again in a little while.",
+    "whey": "Ultra-processed (exception)"
   },
   "meals": {
-    "pequeno-almoco": "Pequeno-almoço",
-    "meio-da-manha": "Meio da manhã",
-    "almoco": "Almoço",
-    "lanche": "Lanche",
-    "jantar": "Jantar",
-    "ceia": "Ceia",
-    "postWorkout": "Pós-treino",
+    "pequeno-almoco": "Breakfast",
+    "meio-da-manha": "Mid-morning snack",
+    "almoco": "Lunch",
+    "lanche": "Afternoon snack",
+    "jantar": "Dinner",
+    "ceia": "Evening snack",
+    "postWorkout": "Post-workout",
     "preWorkout": "Pre-workout"
   },
   "intensity": {
     "base": {
-      "label": "Para começar",
-      "detail": "1,6 g por kg"
+      "label": "Getting started",
+      "detail": "1.6 g per kg"
     },
     "moderada": {
-      "label": "Treino regular",
-      "detail": "1,8 g por kg"
+      "label": "Regular training",
+      "detail": "1.8 g per kg"
     },
     "alta": {
-      "label": "Treino intenso",
-      "detail": "2,0 g por kg"
+      "label": "Intense training",
+      "detail": "2.0 g per kg"
     },
     "maxima": {
-      "label": "Ganhar massa",
-      "detail": "2,2 g por kg"
+      "label": "Building muscle",
+      "detail": "2.2 g per kg"
     }
   },
   "categories": {
-    "carne": "Carne",
-    "peixe": "Peixe",
-    "marisco": "Marisco",
-    "conservas": "Conservas",
-    "ovos": "Ovos",
-    "laticinios": "Laticínios",
-    "suplementos": "Suplementos",
-    "soja": "Soja",
-    "leguminosas": "Leguminosas",
-    "cereais": "Cereais",
-    "tuberculos": "Tubérculos",
-    "frutos-secos": "Frutos secos",
-    "sementes": "Sementes",
-    "fruta": "Fruta",
-    "legumes": "Legumes",
-    "despensa": "Despensa"
+    "carne": "Meat",
+    "peixe": "Fish",
+    "marisco": "Seafood",
+    "conservas": "Canned fish",
+    "ovos": "Eggs",
+    "laticinios": "Dairy",
+    "suplementos": "Supplements",
+    "soja": "Soy",
+    "leguminosas": "Legumes",
+    "cereais": "Grains",
+    "tuberculos": "Tubers",
+    "frutos-secos": "Nuts",
+    "sementes": "Seeds",
+    "fruta": "Fruit",
+    "legumes": "Vegetables",
+    "despensa": "Pantry"
   },
   "ease": {
-    "1": "Sem preparação",
-    "2": "Rápido",
-    "3": "Cozinhar"
+    "1": "No prep",
+    "2": "Quick",
+    "3": "Needs cooking"
   },
   "weightBasis": {
-    "raw": "Peso em cru",
-    "cooked": "Peso cozinhado",
-    "as_sold": "Peso como se compra"
+    "raw": "Raw weight",
+    "cooked": "Cooked weight",
+    "as_sold": "Weight as sold"
   },
   "disclaimer": {
-    "health": "Informação geral, não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína.",
-    "recipe": "Gerada por IA. A proteína é calculada a partir da TCA. Confirma alergénios e intolerâncias."
+    "health": "General information, not a substitute for a nutritionist or doctor. If you have kidney disease, are pregnant or have another health condition, talk to a professional before increasing your protein.",
+    "recipe": "AI-generated. Protein is calculated from the TCA. Check allergens and intolerances."
   },
   "landing": {
-    "eyebrow": "Protein without the diet",
-    "title": "Proteína sem dieta.",
-    "lead": "Chegar à tua meta de proteína é mais fácil do que parece. Com comida de verdade, em porções que reconheces, sem contar calorias.",
+    "eyebrow": "Real food, real portions",
+    "title": "Protein without the diet.",
+    "lead": "Reaching your protein goal is easier than it looks. With real food, in portions you recognize, without counting calories.",
     "cta": "Get started",
-    "secondary": "Ver os alimentos",
+    "secondary": "See the foods",
     "stepsTitle": "Three steps, two minutes",
     "steps": {
       "goal": {
         "title": "Work out your goal",
-        "body": "Your weight and how much you train give the day's goal, spread across your meals."
+        "body": "Your weight and how much you train set the day's goal, spread across your meals."
       },
       "day": {
         "title": "Tell us what you like",
-        "body": "What you don't eat, your favourite foods and what you have in the kitchen."
+        "body": "What you don't eat, your favorite foods and what you have in your kitchen."
       },
       "adjust": {
         "title": "Eat and cook",
-        "body": "A day that already reaches the goal, with your foods, and AI recipes made for you."
+        "body": "A day that already reaches your goal, with your foods, and AI recipes made for you."
       }
     },
-    "exampleTitle": "Um dia de 160 g, assim",
-    "exampleCaption": "Exemplo para 80 kg, treino intenso, 4 refeições.",
-    "exampleTotal": "Total do dia",
-    "faqTitle": "Perguntas frequentes",
+    "exampleTitle": "A 160 g day looks like this",
+    "exampleCaption": "Example for 80 kg, intense training, 4 meals.",
+    "exampleTotal": "Day total",
+    "faqTitle": "Frequently asked questions",
     "faq": {
       "diet": {
-        "q": "Isto é uma dieta?",
-        "a": "Não. A app só acrescenta: não há alimentos proibidos, nem calorias, nem registos diários."
+        "q": "Is this a diet?",
+        "a": "No. The app only adds: no forbidden foods, no calories, no daily logging."
       },
       "numbers": {
-        "q": "De onde vêm os números?",
-        "a": "Da Tabela da Composição de Alimentos do INSA. A proteína é sempre calculada pela app, nunca pela IA."
+        "q": "Where do the numbers come from?",
+        "a": "From reference food composition tables, such as INSA's. Protein is always calculated by the app, never by the AI."
       },
       "account": {
         "q": "Do I need an account?",
-        "a": "Yes: sign in with Google or Apple in one tap. That way we keep your plan and recipes on any device. You can export or delete everything at any time."
+        "a": "Yes: you sign in with Google or Apple, in one tap. That way we keep your plan and your recipes on any device. You can export or delete everything whenever you want."
       },
       "supplements": {
-        "q": "Preciso de suplementos?",
-        "a": "Não. O dia exemplo usa só comida de verdade. A whey está no catálogo, assinalada, para quem já a usa."
+        "q": "Do I need supplements?",
+        "a": "No. The example day uses only real food. Whey is in the catalog, flagged, for those who already use it."
       },
       "allergies": {
         "q": "What if I have allergies or don't eat meat?",
-        "a": "Tell us at the start. Your day and recipes never include those foods, and you can change it whenever you want."
+        "a": "Tell us at the start. Your day and your recipes never include those foods, and you can change that whenever you want."
       }
     }
   },
   "today": {
-    "title": "O meu dia",
-    "progressLabel": "Proteína do dia",
-    "ofTarget": "de {target} g",
-    "missing": "Faltam {grams} g.",
-    "reached": "Meta atingida.",
-    "over": "Meta atingida, com {grams} g a mais.",
+    "title": "My day",
+    "progressLabel": "Protein for the day",
+    "ofTarget": "of {target} g",
+    "missing": "{grams} g to go.",
+    "reached": "Goal reached.",
+    "over": "Goal reached, with {grams} g to spare.",
     "mealTarget": "≈ {grams} g",
-    "mealEmpty": "Ainda nada aqui.",
-    "addFood": "Adicionar alimento",
-    "addTo": "Adicionar a {meal}",
-    "recipe": "Cozinhar isto",
-    "recipeNeeds": "Junta dois alimentos para gerar uma receita.",
-    "closeTitle": "Para fechar a meta",
-    "closeLead": "Faltam {grams} g. Uma destas resolve:",
-    "closePartial": "Faltam {grams} g. Estas ajudam muito:",
-    "closeDone": "Meta atingida. O resto do dia é contigo.",
-    "suggestion": "{count} × {portion} de {food}: +{grams} g em {meal}",
-    "otherOptions": "Outras opções",
-    "otherOptionsHint": "Troca os alimentos do dia exemplo.",
-    "resetExample": "Recomeçar com um dia exemplo",
-    "resetConfirm": "Trocar o teu dia por um dia exemplo novo?",
-    "resetYes": "Sim, trocar",
+    "mealEmpty": "Nothing here yet.",
+    "addFood": "Add food",
+    "addTo": "Add to {meal}",
+    "recipe": "Cook this",
+    "recipeNeeds": "Add two foods to generate a recipe.",
+    "closeTitle": "To reach your goal",
+    "closeLead": "{grams} g to go. Any one of these does it:",
+    "closePartial": "{grams} g to go. These help a lot:",
+    "closeDone": "Goal reached. The rest of the day is up to you.",
+    "suggestion": "{count} × {portion} of {food}: +{grams} g for {meal}",
+    "otherOptions": "Other options",
+    "otherOptionsHint": "Swap the foods in the example day.",
+    "resetExample": "Start over with an example day",
+    "resetConfirm": "Replace your day with a new example day?",
+    "resetYes": "Yes, replace it",
     "editGoal": "Change preferences",
-    "syncError": "Não conseguimos guardar.",
-    "synced": "Guardado na tua conta.",
+    "syncError": "We couldn't save.",
+    "synced": "Saved to your account.",
     "item": {
       "portions": "{count} × {portion}",
-      "decrease": "Menos meia porção de {food}",
-      "increase": "Mais meia porção de {food}",
-      "remove": "Tirar {food}",
-      "count": "{count} porções",
-      "unknown": "Alimento que já não está no catálogo"
+      "decrease": "Half a portion less of {food}",
+      "increase": "Half a portion more of {food}",
+      "remove": "Remove {food}",
+      "count": "{count} portions",
+      "unknown": "Food no longer in the catalog"
     },
-    "saving": "A guardar…",
-    "fromRecipe": "Receita: {title}"
+    "saving": "Saving…",
+    "fromRecipe": "Recipe: {title}"
   },
   "drawer": {
-    "title": "Adicionar a {meal}",
-    "search": "Procurar alimento",
-    "searchPlaceholder": "Ex.: atum, skyr, grão",
-    "easiest": "Os mais fáceis para esta refeição",
-    "results": "{count, plural, =0 {Nenhum alimento encontrado.} one {# alimento} other {# alimentos}}",
-    "add": "Adicionar {food}",
-    "added": "{food} adicionado."
+    "title": "Add to {meal}",
+    "search": "Search foods",
+    "searchPlaceholder": "E.g. tuna, skyr, chickpeas",
+    "easiest": "Easiest for this meal",
+    "results": "{count, plural, =0 {No foods found.} one {# food} other {# foods}}",
+    "add": "Add {food}",
+    "added": "{food} added."
   },
   "catalog": {
-    "title": "Alimentos",
-    "lead": "Proteína por porção real, organizada como a comes. Escolhe um grupo ou procura um alimento.",
-    "search": "Procurar",
-    "searchPlaceholder": "Procurar alimento",
-    "meal": "Refeição",
-    "ease": "Preparação",
-    "all": "Todos",
-    "sort": "Ordenar",
-    "sortProtein": "Mais proteína por porção",
-    "sortEase": "Mais fáceis primeiro",
+    "title": "Foods",
+    "lead": "Protein per real portion, organized the way you eat it. Pick a group or search for a food.",
+    "search": "Search",
+    "searchPlaceholder": "Search foods",
+    "meal": "Meal",
+    "ease": "Preparation",
+    "all": "All",
+    "sort": "Sort",
+    "sortProtein": "Most protein per portion",
+    "sortEase": "Easiest first",
     "sortName": "A–Z",
-    "clear": "Limpar filtros",
-    "count": "{count, plural, =0 {Nenhum alimento} one {# alimento} other {# alimentos}}",
-    "sections": "Grupos de alimentos",
-    "anyMeal": "Refeição",
-    "anyEase": "Preparação",
-    "clearSearch": "Limpar a pesquisa",
-    "results": "Resultados da pesquisa",
-    "emptyTitle": "Nada com estes filtros.",
-    "emptyBody": "Experimenta outra refeição ou preparação, ou limpa os filtros.",
+    "clear": "Clear filters",
+    "count": "{count, plural, =0 {No foods} one {# food} other {# foods}}",
+    "sections": "Food groups",
+    "anyMeal": "Meal",
+    "anyEase": "Preparation",
+    "clearSearch": "Clear search",
+    "results": "Search results",
+    "emptyTitle": "Nothing matches these filters.",
+    "emptyBody": "Try another meal or preparation, or clear the filters.",
     "category": "Category",
-    "groupCount": "{count, plural, one {# alimento} other {# alimentos}}"
+    "groupCount": "{count, plural, one {# food} other {# foods}}"
   },
   "food": {
-    "portions": "Porções",
-    "per100": "Por 100 g",
-    "ideas": "Ideias rápidas",
-    "addToDay": "Adicionar ao meu dia",
-    "chooseMeal": "Em que refeição?",
-    "choosePortion": "Porção",
-    "addButton": "Adicionar",
-    "added": "Adicionado a {meal}.",
-    "seeDay": "Ver o meu dia",
-    "noGoal": "Responde primeiro ao formulário de boas-vindas para adicionares alimentos ao teu dia.",
-    "noGoalCta": "Fazer o meu plano",
-    "back": "Todos os alimentos",
-    "metaDescription": "{name}: {protein} g de proteína em {portion}. Porções, valor por 100 g e ideias rápidas.",
-    "signInToAdd": "Entra para juntares este alimento ao teu dia.",
-    "signInCta": "Entrar",
-    "notForYou": "Este alimento não entra no teu plano, por causa do que disseste que não comes."
+    "portions": "Portions",
+    "per100": "Per 100 g",
+    "ideas": "Quick ideas",
+    "addToDay": "Add to my day",
+    "chooseMeal": "Which meal?",
+    "choosePortion": "Portion",
+    "addButton": "Add",
+    "added": "Added to {meal}.",
+    "seeDay": "See my day",
+    "noGoal": "Fill in the welcome form first so you can add foods to your day.",
+    "noGoalCta": "Make my plan",
+    "back": "All foods",
+    "metaDescription": "{name}: {protein} g of protein in {portion}. Portions, value per 100 g and quick ideas.",
+    "signInToAdd": "Sign in to add this food to your day.",
+    "signInCta": "Sign in",
+    "notForYou": "This food isn't part of your plan, because of what you told us you don't eat.",
+    "related": "Similar foods"
   },
   "recipes": {
-    "title": "Receitas",
+    "title": "Recipes",
     "lead": "Turn what you eat into dishes: generate one recipe or the whole day, save the ones you like and put them in your day.",
-    "new": "Gerar uma receita",
-    "saved": "Guardadas",
-    "savedEmpty": "Ainda não guardaste receitas. Abre uma receita e carrega em \"Guardar\".",
+    "new": "Generate a recipe",
+    "saved": "Saved",
+    "savedEmpty": "You haven't saved any recipes yet. Open a recipe and tap \"Save\".",
     "form": {
-      "title": "Nova receita",
-      "foods": "Alimentos",
-      "foodsCount": "{count} de {max}",
-      "meal": "Refeição",
-      "time": "Tempo máximo",
+      "title": "New recipe",
+      "foods": "Foods",
+      "foodsCount": "{count} of {max}",
+      "meal": "Meal",
+      "time": "Maximum time",
       "minutes": "{minutes} min",
-      "servings": "Doses",
-      "submit": "Gerar receita",
-      "generating": "A cozinhar a tua receita…",
-      "generatingHint": "Demora uns segundos.",
-      "mealTarget": "Meta desta refeição: ≈ {grams} g por dose.",
+      "servings": "Servings",
+      "submit": "Generate recipe",
+      "generating": "Cooking up your recipe…",
+      "generatingHint": "It takes a few seconds.",
+      "mealTarget": "Goal for this meal: ≈ {grams} g per serving.",
       "preWorkout": "Pre-workout",
-      "autoFoods": "Escolhemos nós, entre os alimentos de que gostas, uma base que chega à meta desta refeição. Cada receita nova traz uma combinação diferente.",
-      "pickFoods": "Quero usar alimentos que tenho",
-      "pickHint": "Escolhe até {max}. O que faltar (uma fonte de proteína, acompanhamento) completamos nós com o que gostas.",
-      "chosen": "Alimentos escolhidos",
-      "removeFood": "Tirar {food}",
-      "autoInstead": "Prefiro que escolham por mim",
-      "more": "Mais opções",
-      "moreSummary": "Até {minutes} min · {servings, plural, one {# dose} other {# doses}}",
-      "summary": "A tua receita",
-      "summaryTarget": "Proteína por dose",
-      "summaryAuto": "Escolhemos nós",
-      "summaryChosen": "{count, plural, one {# escolhido} other {# escolhidos}}",
+      "autoFoods": "From the foods you like, we pick a base that reaches this meal's goal. Each new recipe brings a different combination.",
+      "pickFoods": "I want to use foods I have",
+      "pickHint": "Pick up to {max}. We fill in whatever's missing (a protein source, a side) with foods you like.",
+      "chosen": "Chosen foods",
+      "removeFood": "Remove {food}",
+      "autoInstead": "I'd rather you pick for me",
+      "more": "More options",
+      "moreSummary": "Up to {minutes} min · {servings, plural, one {# serving} other {# servings}}",
+      "summary": "Your recipe",
+      "summaryTarget": "Protein per serving",
+      "summaryAuto": "We pick",
+      "summaryChosen": "{count, plural, one {# chosen} other {# chosen}}",
       "protein": "Protein per serving",
-      "proteinMeal": "The meal goal",
+      "proteinMeal": "The meal's goal",
       "proteinMealHint": "≈ {grams} g, from your plan",
-      "proteinCustom": "I choose",
-      "proteinCustomHint": "The grams you want",
+      "proteinCustom": "I'll choose",
+      "proteinCustomHint": "As many grams as you want",
       "proteinValue": "Grams of protein per serving",
       "proteinLess": "5 g less",
       "proteinMore": "5 g more",
       "proteinNote": "Between {min} and {max} g. The app adjusts the amounts to get there.",
       "equipment": "How do you want to cook?",
-      "equipmentHint": "Starts with what you have at home. Pick only what you want to use for this recipe.",
+      "equipmentHint": "We start with what you have at home. Pick only what you want to use for this recipe.",
       "noCooking": "No cooking",
-      "noCookingHint": "Just assemble, with foods you eat without preparation.",
+      "noCookingHint": "Just put it together, with foods you can eat without any preparation.",
       "equipmentReset": "Use what I have at home",
-      "summaryEquipment": "Cooking"
+      "summaryEquipment": "Kitchen"
     },
     "errors": {
-      "invalid_request": "Há algo no pedido que não percebemos. Revê as escolhas e tenta outra vez.",
-      "unknown_food": "Um dos alimentos já não está no catálogo.",
-      "rate_limited": "Muitos pedidos seguidos. Espera um minuto.",
-      "quota_exceeded": "Já geraste as receitas novas de hoje. Amanhã há mais (as receitas já geradas continuam a abrir).",
-      "generation_failed": "Não conseguimos uma receita boa com estes alimentos. Tenta trocar um ou mudar o tempo.",
-      "service_unavailable": "As receitas estão em pausa por hoje. As que já existem continuam a abrir.",
+      "invalid_request": "Something in the request didn't make sense to us. Check your choices and try again.",
+      "unknown_food": "One of the foods is no longer in the catalog.",
+      "rate_limited": "Lots of requests in a row. Give it a minute.",
+      "quota_exceeded": "You've generated all of today's new recipes. There are more tomorrow (recipes you've already generated still open).",
+      "generation_failed": "We couldn't make a good recipe with these foods. Try swapping one or changing the time.",
+      "service_unavailable": "Recipes are paused for today. The ones that already exist still open.",
       "restricted_food": "One of the foods doesn't fit your restrictions.",
       "unauthorized": "Your session has ended. Sign in again to generate recipes.",
       "onboarding_required": "Finish your plan before generating recipes.",
-      "needs_cooking": "No cooking only works with foods you eat without preparation. Remove the ones that need heat or pick an appliance."
+      "needs_cooking": "\"No cooking\" only works with foods you can eat without any preparation. Remove the ones that need heat or pick an appliance."
     },
     "detail": {
-      "perServing": "por dose",
-      "covers": "Cobre {percent}% da meta de {meal} (≈ {target} g).",
+      "perServing": "per serving",
+      "covers": "Covers {percent}% of your {meal} goal (≈ {target} g).",
       "time": "{minutes} min",
-      "servings": "{count, plural, one {# dose} other {# doses}}",
-      "ingredients": "Ingredientes",
-      "steps": "Passos",
-      "save": "Guardar receita",
-      "saved": "Guardada",
-      "unsave": "Tirar das guardadas",
-      "share": "Partilhar",
-      "copied": "Link copiado.",
-      "another": "Gerar outra",
-      "postWorkout": "Pós-treino",
+      "servings": "{count, plural, one {# serving} other {# servings}}",
+      "ingredients": "Ingredients",
+      "steps": "Steps",
+      "save": "Save recipe",
+      "saved": "Saved",
+      "unsave": "Remove from saved",
+      "share": "Share",
+      "copied": "Link copied.",
+      "another": "Generate another",
+      "postWorkout": "Post-workout",
       "loginToSave": "Sign in to save",
-      "useTitle": "Vais comer isto?",
-      "useHint": "Põe uma dose desta receita no teu dia: os alimentos dessa refeição passam a ser os da receita.",
-      "useMeal": "Em que refeição",
-      "useButton": "Pôr no meu dia",
-      "useDone": "Feito: {meal} atualizado no teu dia.",
-      "useError": "Não conseguimos mudar o teu dia. Tenta outra vez.",
-      "seeDay": "Ver o meu dia",
-      "favorite": "Favorita",
-      "markFavorite": "Marcar como favorita",
+      "useTitle": "Going to eat this?",
+      "useHint": "Put one serving of this recipe in your day: that meal's foods are replaced by the recipe's.",
+      "useMeal": "Which meal",
+      "useButton": "Put in my day",
+      "useDone": "Done: {meal} updated in your day.",
+      "useError": "We couldn't change your day. Try again.",
+      "seeDay": "See my day",
+      "favorite": "Favorite",
+      "markFavorite": "Mark as favorite",
       "requested": "You asked for {target} g per serving.",
       "cookWith": "With {list}",
       "noCooking": "No cooking"
     },
-    "recent": "Recentes",
-    "recentEmpty": "As receitas que gerares aparecem aqui.",
-    "favoritesOnly": "Só favoritas",
-    "favorite": "Favorita",
-    "markFavorite": "Marcar {title} como favorita",
-    "unmarkFavorite": "Tirar {title} das favoritas",
+    "recent": "Recent",
+    "recentEmpty": "The recipes you generate show up here.",
+    "favoritesOnly": "Favorites only",
+    "favorite": "Favorite",
+    "markFavorite": "Mark {title} as favorite",
+    "unmarkFavorite": "Remove {title} from favorites",
     "start": {
       "single": {
         "title": "One recipe",
@@ -337,7 +338,7 @@
       },
       "day": {
         "title": "The whole day",
-        "body": "One recipe for each meal of your day, already with each meal's goal.",
+        "body": "One recipe for each meal of your day, already matched to each meal's goal.",
         "cta": "Generate my day"
       }
     },
@@ -346,7 +347,7 @@
       "tabs": "Saved and recent recipes",
       "allMeals": "All",
       "mealFilter": "Filter by meal",
-      "noneForMeal": "No recipes for this meal here yet.",
+      "noneForMeal": "You don't have any recipes for this meal here yet.",
       "savedCount": "Saved",
       "recentCount": "Recent"
     },
@@ -357,16 +358,16 @@
       "mealsHint": "They come from your plan. Change them in Account → My preferences.",
       "options": "Options",
       "total": "Day total",
-      "quota": "Uses {count} of today's new recipes. You still have {remaining}.",
-      "quotaShort": "Today there's room for {remaining, plural, =0 {no new recipes} one {# new recipe} other {# new recipes}} and the whole day needs {count}. Tomorrow there's more, or generate one recipe at a time.",
+      "quota": "This uses {count} of today's new recipes. You still have {remaining}.",
+      "quotaShort": "You have {remaining, plural, =0 {no new recipes} one {# new recipe} other {# new recipes}} left today, and the whole day needs {count}. There are more tomorrow, or generate one recipe at a time.",
       "submit": "Generate my day",
       "generating": "Cooking {count} recipes…",
-      "generatingHint": "We make them all at once. It takes a few seconds."
+      "generatingHint": "We make them all at the same time. It takes a few seconds."
     },
     "dayView": {
       "title": "Your day in recipes",
       "lead": "One recipe for each meal. Open each one to see the steps.",
-      "total": "Day protein",
+      "total": "Protein for the day",
       "ofTarget": "of {target} g",
       "open": "See recipe",
       "apply": "Put the whole day in my day",
@@ -381,44 +382,44 @@
     }
   },
   "account": {
-    "title": "Conta",
+    "title": "Account",
     "lead": "Your goal, your preferences and your saved recipes.",
-    "signIn": "Entrar",
+    "signIn": "Sign in",
     "signInWith": "Continue with {provider}",
-    "providersMissing": "O login ainda não está configurado neste ambiente.",
-    "error": "We couldn't sign you in. Please try again.",
-    "hello": "Olá, {name}",
-    "helloAnon": "Olá",
+    "providersMissing": "Sign-in isn't set up in this environment yet.",
+    "error": "We couldn't sign you in. Try again.",
+    "hello": "Hi, {name}",
+    "helloAnon": "Hi",
     "goal": "Goal and preferences",
-    "goalValue": "{grams} g por dia · {count} refeições",
+    "goalValue": "{grams} g a day · {count} meals",
     "editGoal": "Change",
-    "export": "Exportar os meus dados",
-    "exportHint": "A JSON file with your goal, preferences, day and saved recipes.",
-    "signOut": "Sair",
+    "export": "Export my data",
+    "exportHint": "A JSON file with your goal, your preferences, your day and your saved recipes.",
+    "signOut": "Sign out",
     "delete": {
-      "title": "Apagar conta",
-      "body": "Deletes your account, goal, preferences (including weight and allergies), day and saved recipes. This can't be undone.",
-      "reauth": "Por segurança, volta a entrar com {provider} antes de apagar.",
-      "reauthButton": "Entrar outra vez com {provider}",
-      "confirm": "Apagar a minha conta para sempre",
-      "done": "A tua conta foi apagada."
+      "title": "Delete account",
+      "body": "Deletes your account, goal, preferences (including your weight and allergies), day and saved recipes. This can't be undone.",
+      "reauth": "For security, sign in again with {provider} before deleting.",
+      "reauthButton": "Sign in again with {provider}",
+      "confirm": "Delete my account permanently",
+      "done": "Your account has been deleted."
     },
     "welcome": {
-      "title": "Bem-vindo",
-      "done": "Está tudo guardado na tua conta.",
-      "nothing": "A tua conta está pronta.",
-      "goToday": "Ir para o meu dia",
+      "title": "Welcome",
+      "done": "Everything is saved to your account.",
+      "nothing": "Your account is ready.",
+      "goToday": "Go to my day",
       "loading": "Getting your account ready…"
     },
     "preferences": "My preferences",
     "preferencesHint": "Goal, meals, restrictions, foods and kitchen."
   },
   "legal": {
-    "privacyTitle": "Política de privacidade",
-    "termsTitle": "Termos de utilização",
-    "updated": "Última atualização: {date}",
-    "date": "3 November 2026",
-    "draft": "Rascunho: este texto ainda vai ser revisto antes do lançamento.",
+    "privacyTitle": "Privacy policy",
+    "termsTitle": "Terms of use",
+    "updated": "Last updated: {date}",
+    "date": "November 3, 2026",
+    "draft": "Draft: this text will still be reviewed before launch.",
     "privacy": {
       "who": {
         "title": "Who we are",
@@ -426,73 +427,73 @@
       },
       "account": {
         "title": "Account",
-        "body": "To use the app you sign in with Google or Apple. We store your name and email. Sessions don't store your IP or browser, and Google and Apple tokens aren't kept (except Apple's, encrypted, so we can disconnect it when you delete your account)."
+        "body": "To use the app, you sign in with Google or Apple. We store your name and your email. Sessions don't store your IP or your browser, and Google and Apple tokens aren't stored (except Apple's, encrypted, so we can disconnect Apple when you delete your account)."
       },
       "plan": {
         "title": "Your plan",
-        "body": "We store your daily goal, training intensity, meals (including before and after training), diet, the foods you like, your kitchen equipment and cooking time, your day and the recipes you save. We use this to personalise your day and recipes (performance of contract)."
+        "body": "We store your daily goal, training intensity, meals (including the ones before and after training), type of diet, the foods you like, the equipment and time you have to cook, your day and the recipes you save. We use this to personalize your day and your recipes (performance of the contract)."
       },
       "health": {
         "title": "Health data",
-        "body": "Your weight and your allergies and intolerances are health data. We only store them with your explicit consent, given at the end of the initial form, and only to work out your goal and exclude foods. You can withdraw consent at any time: type your goal manually and remove allergies in preferences, or delete your account."
+        "body": "Your weight and your allergies and intolerances are health data. We only store them with your explicit consent, given at the end of the initial form, and only to calculate your goal and exclude foods. You can withdraw your consent at any time: enter your goal by hand and remove your allergies in your preferences, or delete your account."
       },
       "ai": {
         "title": "AI recipes",
-        "body": "To generate a recipe, we send the AI model (Anthropic) only the names of the chosen foods, the meal, time, servings, equipment and diet. We never send your name, email, weight or allergies (foods with allergens are simply not in the list)."
+        "body": "To generate a recipe, we send the AI model (Anthropic) only the names of the chosen foods, the meal, the time, the servings, the equipment and the type of diet. We never send your name, your email, your weight or your allergies (foods with allergens are simply left off the list)."
       },
       "limits": {
         "title": "Usage limits",
-        "body": "To prevent abuse, we count recipes generated per day with a code derived from your account (HMAC with a key that changes daily). Counters are deleted after 2 days."
+        "body": "To prevent abuse, we count the recipes generated per day with a code derived from your account (HMAC with a key that changes every day). The counters are deleted after 2 days."
       },
       "storage": {
-        "title": "Where the data lives",
-        "body": "On Cloudflare (D1 database in the European Union). We don't use third-party analytics or advertising cookies. The service owner has a protected admin panel for support and aggregate numbers; each person's weight and allergies never appear there."
+        "title": "Where the data is stored",
+        "body": "On Cloudflare (D1 database in the European Union). We don't use third-party analytics or advertising cookies. The person responsible for the service has a protected admin panel to provide support and see aggregate numbers; each person's weight and allergies never appear in that panel."
       },
       "rights": {
         "title": "Your rights",
-        "body": "Em Conta podes exportar todos os teus dados (JSON), mudar as tuas preferências e apagar a conta a qualquer momento. Guardamos também as últimas 50 receitas que geraste (para as encontrares em Receitas), as que marcaste como favoritas e a receita que puseste em cada refeição do teu dia. Apagar a conta apaga o perfil, as preferências, o dia, as receitas guardadas, o histórico e as sessões. As receitas geradas não têm dono e ficam públicas pelo link."
+        "body": "In Account you can export all your data (JSON), change your preferences and delete your account at any time. We also keep the last 50 recipes you generated (so you can find them in Recipes), the ones you marked as favorites and the recipe you put in each meal of your day. Deleting your account deletes your profile, preferences, day, saved recipes, history and sessions. Generated recipes have no owner and stay public through their link."
       },
       "age": {
         "title": "Age",
-        "body": "You must be at least 16 to create an account."
+        "body": "You must be at least 16 years old to create an account."
       }
     },
     "terms": {
       "what": {
         "title": "What it is",
-        "body": "Protein Plate helps you reach your protein goal with real food. It's free and needs an account (Google or Apple)."
+        "body": "Protein Plate helps you reach your protein goal with real food. It's free and requires an account (Google or Apple)."
       },
       "general": {
-        "title": "Informação geral",
-        "body": "A informação é geral e não substitui um nutricionista ou médico. Se tens uma doença renal, estás grávida ou tens outra condição de saúde, fala com um profissional antes de aumentar a proteína."
+        "title": "General information",
+        "body": "The information is general and doesn't replace a nutritionist or doctor. If you have kidney disease, are pregnant or have another health condition, talk to a professional before increasing your protein."
       },
       "numbers": {
-        "title": "Números",
-        "body": "Os valores nutricionais vêm da Tabela da Composição de Alimentos do INSA. Enquanto a curadoria não estiver concluída, alguns valores são provisórios e estão assinalados."
+        "title": "Numbers",
+        "body": "Nutritional values come from the Portuguese Food Composition Table (TCA) from INSA. Until curation is complete, some values are provisional and are flagged as such."
       },
       "ai": {
-        "title": "Receitas geradas por IA",
-        "body": "As receitas são geradas por IA e podem ter erros. A proteína é calculada pela app a partir da TCA. Confirma sempre alergénios, intolerâncias e tempos de cozedura."
+        "title": "AI-generated recipes",
+        "body": "Recipes are generated by AI and may contain errors. Protein is calculated by the app from the TCA. Always check allergens, intolerances and cooking times."
       },
       "fairUse": {
-        "title": "Utilização justa",
-        "body": "Há limites diários de receitas novas. Não uses a app de forma automatizada nem para sobrecarregar o serviço."
+        "title": "Fair use",
+        "body": "There are daily limits on new recipes. Don't use the app in an automated way or to overload the service."
       },
       "account": {
-        "title": "Conta",
-        "body": "Podes apagar a conta quando quiseres. Podemos suspender contas usadas para abuso."
+        "title": "Account",
+        "body": "You can delete your account whenever you want. We may suspend accounts used for abuse."
       }
     }
   },
   "notFound": {
-    "title": "Esta página não existe",
-    "body": "Talvez o link esteja errado. O teu dia continua onde o deixaste.",
-    "cta": "Ir para o início"
+    "title": "This page doesn't exist",
+    "body": "Maybe the link is wrong. Your day is right where you left it.",
+    "cta": "Go to the home page"
   },
   "error": {
-    "title": "Algo correu mal",
-    "body": "Não é contigo, é connosco. Tenta outra vez.",
-    "retry": "Tentar outra vez"
+    "title": "Something went wrong",
+    "body": "It's not you, it's us. Try again.",
+    "retry": "Try again"
   },
   "onboarding": {
     "title": "Let's build your plan",
@@ -510,16 +511,16 @@
     },
     "goal": {
       "title": "How much do you weigh?",
-      "manualTitle": "What is your goal?",
-      "manualLead": "Write how many grams of protein you want to eat a day.",
-      "lead": "With your weight and how much you train we work out the protein you need each day.",
+      "manualTitle": "What's your goal?",
+      "manualLead": "Enter how many grams of protein you want to eat a day.",
+      "lead": "With your weight and how much you train, we work out the protein you need each day.",
       "weightLabel": "Weight",
       "unit": "kg",
       "invalid": "Enter a weight between 20 and 400 kg.",
       "confirm": "Yes, the weight is right",
-      "confirmHint": "This weight is outside the usual range (35 to 250 kg). Please confirm.",
-      "manualToggle": "I'd rather type my goal",
-      "weightToggle": "Calculate from weight",
+      "confirmHint": "This weight is outside the usual range (35 to 250 kg). Confirm that it's right.",
+      "manualToggle": "I'd rather enter my goal",
+      "weightToggle": "Calculate from my weight",
       "manualLabel": "Daily goal",
       "manualInvalid": "Enter a goal between 40 and 300 g.",
       "intensityTitle": "How much do you train?",
@@ -529,7 +530,7 @@
     "meals": {
       "title": "What does your day look like?",
       "lead": "Pick the meals you usually have. We spread the protein across them.",
-      "count": "How many meals?",
+      "count": "How many meals do you have?",
       "which": "Which ones?",
       "min": "Pick at least two meals.",
       "trains": "Do you train?",
@@ -538,12 +539,12 @@
       "pre": "Before training",
       "preHint": "Lighter, with carbs.",
       "post": "After training",
-      "postHint": "More protein, quick options.",
+      "postHint": "More protein and quick options.",
       "none": "None",
       "target": "≈ {grams} g"
     },
     "restrictions": {
-      "title": "Anything you don't eat?",
+      "title": "Is there anything you don't eat?",
       "lead": "Your day and your recipes will never include these foods.",
       "diet": "Diet",
       "diets": {
@@ -565,7 +566,7 @@
         }
       },
       "allergies": "Allergies and intolerances",
-      "allergiesHint": "Tap all that apply. If none, just continue.",
+      "allergiesHint": "Tap all that apply. If you don't have any, just continue.",
       "allergyNames": {
         "milk": "Milk and lactose",
         "gluten": "Gluten",
@@ -580,71 +581,71 @@
         "mustard": "Mustard"
       },
       "excluded": "{count, plural, =0 {No foods excluded.} one {# food is left out.} other {# foods are left out.}}",
-      "safety": "Always check labels: the app helps, but it doesn't replace your own care."
+      "safety": "Always check the labels: the app helps, but it doesn't replace your own care."
     },
     "foods": {
-      "title": "Do que gostas?",
-      "lead": "Toca nos grupos de que gostas. Para afinar, abre o grupo e tira o que não comes. Usamos isto no teu dia e nas receitas.",
-      "everything": "Como de tudo",
-      "everythingHint": "Escolhe de uma vez tudo o que podes comer.",
-      "everythingOn": "Tudo escolhido. Abre os grupos para tirar o que não gostas.",
-      "search": "Search food",
-      "results": "Resultados da pesquisa",
-      "sectionsLabel": "Tipos de alimentos",
+      "title": "What do you like?",
+      "lead": "Tap the groups you like. To fine-tune, open a group and remove what you don't eat. We use this for your day and your recipes.",
+      "everything": "I eat everything",
+      "everythingHint": "Pick everything you can eat in one go.",
+      "everythingOn": "Everything picked. Open the groups to remove what you don't like.",
+      "search": "Search foods",
+      "results": "Search results",
+      "sectionsLabel": "Types of food",
       "selected": "{count, plural, =0 {Nothing picked} one {# picked} other {# picked}}",
-      "needProteins": "Escolhe pelo menos {min} fontes de proteína (tens {count}).",
-      "empty": "No food with that name.",
-      "groupCount": "{count} de {total} escolhidos",
-      "groupSize": "{total, plural, one {# alimento} other {# alimentos}}",
-      "toggleGroup": "Escolher todos: {group}",
-      "showFoods": "Ver os alimentos: {group}",
-      "hideFoods": "Esconder os alimentos: {group}",
+      "needProteins": "Pick at least {min} protein sources (you have {count}).",
+      "empty": "No foods with that name.",
+      "groupCount": "{count} of {total} picked",
+      "groupSize": "{total, plural, one {# food} other {# foods}}",
+      "toggleGroup": "Pick all: {group}",
+      "showFoods": "Show the foods: {group}",
+      "hideFoods": "Hide the foods: {group}",
       "perPortion": "{grams} g per portion",
       "perPortionShort": "{grams} g",
       "sections": {
-        "protein": "Proteína",
-        "carb": "Hidratos",
-        "fruit": "Fruta",
-        "vegetable": "Legumes",
-        "nuts": "Frutos secos e sementes"
+        "protein": "Protein",
+        "carb": "Carbs",
+        "fruit": "Fruit",
+        "vegetable": "Vegetables",
+        "nuts": "Nuts and seeds"
       },
       "subgroups": {
-        "aves": "Aves",
-        "carne": "Carne",
-        "peixe": "Peixe",
-        "conservas": "Conservas de peixe",
-        "marisco": "Marisco",
-        "ovos": "Ovos",
-        "leite-iogurtes": "Leite, iogurtes e whey",
-        "queijos": "Queijos",
-        "leguminosas": "Leguminosas",
-        "soja": "Soja e tofu",
-        "pao": "Pão",
-        "arroz-massa": "Arroz e massa",
-        "cereais": "Aveia e outros cereais",
-        "tuberculos": "Batata e tubérculos",
-        "fruta-dia": "Fruta do dia a dia",
-        "frutos-vermelhos": "Frutos vermelhos",
-        "fruta-verao": "Fruta de verão e tropical",
-        "fruta-outras": "Outras frutas",
-        "folhas": "Folhas",
-        "couves": "Brócolos e couves",
-        "salada": "Para a salada",
-        "cozinhar": "Para cozinhar",
-        "frutos-secos": "Frutos secos",
-        "amendoim": "Amendoim",
-        "sementes": "Sementes e tahini"
+        "aves": "Poultry",
+        "carne": "Meat",
+        "peixe": "Fish",
+        "conservas": "Canned fish",
+        "marisco": "Seafood",
+        "ovos": "Eggs",
+        "leite-iogurtes": "Milk, yogurt and whey",
+        "queijos": "Cheese",
+        "leguminosas": "Legumes",
+        "soja": "Soy and tofu",
+        "pao": "Bread",
+        "arroz-massa": "Rice and pasta",
+        "cereais": "Oats and other grains",
+        "tuberculos": "Potatoes and tubers",
+        "fruta-dia": "Everyday fruit",
+        "frutos-vermelhos": "Berries",
+        "fruta-verao": "Summer and tropical fruit",
+        "fruta-outras": "Other fruit",
+        "folhas": "Leafy greens",
+        "couves": "Broccoli and cabbage",
+        "salada": "For salads",
+        "cozinhar": "For cooking",
+        "frutos-secos": "Nuts",
+        "amendoim": "Peanuts",
+        "sementes": "Seeds and tahini"
       }
     },
     "kitchen": {
       "title": "And in the kitchen?",
-      "lead": "So recipes fit your time and what you have at home.",
+      "lead": "So your recipes fit your time and what you have at home.",
       "time": "How much time do you usually have?",
       "times": {
-        "10": "Quick",
-        "20": "Normal",
-        "30": "Relaxed",
-        "45": "I love cooking"
+        "10": "Super quick",
+        "20": "The usual",
+        "30": "No rush",
+        "45": "I like cooking"
       },
       "minutes": "{minutes} min",
       "equipment": "What do you have at home?",
@@ -670,24 +671,37 @@
       "foods": "{count, plural, one {# food picked} other {# foods picked}}",
       "kitchen": "Up to {minutes} min · {equipment}",
       "edit": "Change",
-      "consent": "I allow Protein Plate to store my weight and allergies to personalise my plan. I can delete them at any time.",
-      "consentRequired": "We need your permission to store your weight and allergies. If you prefer, go back and type your goal.",
+      "consent": "I allow Protein Plate to store my weight and my allergies to personalize my plan. I can delete them whenever I want.",
+      "consentRequired": "To store your weight and allergies, we need your permission. If you prefer, go back to the goal and enter it by hand.",
       "submit": "Create my plan",
       "save": "Save changes",
-      "saving": "Preparing your day…",
+      "saving": "Getting your day ready…",
       "likedError": "Pick at least 3 protein sources you can eat.",
       "done": "All set!"
     }
   },
   "signIn": {
-    "title": "Sign in to start",
-    "lead": "In two minutes you get your goal, a full day with foods you like and recipes made for you.",
+    "title": "Sign in to get started",
+    "lead": "In two minutes you'll have your goal, a full day with foods you like and recipes made for you.",
     "benefits": {
       "goal": "Your protein goal, worked out for you",
-      "day": "A day that already gets there, with your foods",
+      "day": "A day that already gets you there, with your foods",
       "recipes": "AI recipes with what you have at home"
     },
-    "legal": "By continuing, you confirm you are 16 or older and accept the <terms>Terms</terms> and the <privacy>Privacy Policy</privacy>.",
-    "error": "We couldn't sign you in. Please try again."
+    "legal": "By continuing, you confirm that you are 16 or older and accept the <terms>Terms</terms> and the <privacy>Privacy Policy</privacy>.",
+    "error": "We couldn't sign you in. Try again."
+  },
+  "seo": {
+    "homeTitle": "Protein Plate: protein without the diet, with real food",
+    "homeDescription": "Work out your daily protein goal and see a full day with the foods you like, in real portions, plus recipes made for you. No diet and no calorie counting.",
+    "catalogTitle": "High-protein foods: how much each portion has",
+    "catalogDescription": "147 real foods with protein per portion and per 100 g: meat, fish, eggs, dairy, legumes, tofu, grains and more. To reach your goal without a diet.",
+    "foodTitle": "{name}: protein per portion",
+    "privacyDescription": "What data Protein Plate keeps, why, for how long, and how to export or delete it.",
+    "termsDescription": "The rules for using Protein Plate: your account, AI-generated recipes and what the app does not replace.",
+    "breadcrumbHome": "Home"
+  },
+  "lang": {
+    "switch": "Português"
   }
 }

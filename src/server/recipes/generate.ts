@@ -8,7 +8,7 @@ import { allowedFoods, isAllowed } from "@/domain/preferences";
 import { recipeBase } from "@/domain/recipe-base";
 import type { AppEnv } from "@/lib/env";
 import { languageModel, mockModel } from "../ai/model";
-import { PROMPT_VERSION } from "../ai/prompts/recipe.v4";
+import { PROMPT_VERSION } from "../ai/prompts/recipe.v5";
 import type { Db } from "../db/client-core";
 import { recipeIngredients, recipes } from "../db/schema";
 import { restrictionsOf, type Profile } from "../services/account";

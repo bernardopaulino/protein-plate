@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LegalPage } from "@/components/legal/legal-page";
 import type { Locale } from "@/i18n/routing";
+import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -10,7 +11,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "legal" });
-  return { title: t("termsTitle") };
+  const ts = await getTranslations({ locale, namespace: "seo" });
+  return pageMetadata({
+    locale,
+    path: "/termos",
+    title: t("termsTitle"),
+    description: ts("termsDescription"),
+    imageAlt: t("termsTitle"),
+  });
 }
 
 export default async function TermsPage({ params }: { params: Promise<{ locale: Locale }> }) {

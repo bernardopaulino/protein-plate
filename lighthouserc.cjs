@@ -5,11 +5,26 @@
 // Só as páginas públicas: desde o login obrigatório, as da app redirecionam para /entrar.
 const base = (process.env.LHCI_BASE_URL ?? "http://localhost:8787").replace(/\/$/, "");
 const runs = Number(process.env.LHCI_RUNS ?? 1);
+// O staging tem noindex e robots.txt fechado (worker/index.ts): a nota de SEO desceria por isso. Lá
+// contam as auditorias de SEO uma a uma, menos as de indexação; na produção, a categoria inteira.
+const staging = /staging./.test(base);
+const SEO_AUDITS = [
+  "document-title",
+  "meta-description",
+  "http-status-code",
+  "link-text",
+  "crawlable-anchors",
+  "image-alt",
+  "hreflang",
+  "canonical",
+];
 
 module.exports = {
   ci: {
     collect: {
-      url: ["/", "/entrar", "/alimentos", "/alimentos/skyr-natural"].map((path) => base + path),
+      url: ["/", "/en", "/entrar", "/alimentos", "/alimentos/skyr-natural"].map(
+        (path) => base + path,
+      ),
       numberOfRuns: runs,
       // Por defeito o Lighthouse emula um telemóvel (Moto G Power, rede lenta)
       settings: { chromeFlags: "--headless=new --no-sandbox" },
@@ -26,11 +41,13 @@ module.exports = {
             "categories:best-practices": ["error", { minScore: 0.9 }],
           },
         },
-        // O SEO só conta nas páginas indexáveis (o dia da pessoa tem noindex)
+        // O SEO só conta nas páginas indexáveis (o /entrar e o dia da pessoa têm noindex)
         {
-          matchingUrlPattern: "^(?!.*o-meu-dia).*$",
+          matchingUrlPattern: "^(?!.*(o-meu-dia|entrar)).*$",
           aggregationMethod: "median-run",
-          assertions: { "categories:seo": ["error", { minScore: 0.9 }] },
+          assertions: staging
+            ? Object.fromEntries(SEO_AUDITS.map((audit) => [audit, ["error", { minScore: 1 }]]))
+            : { "categories:seo": ["error", { minScore: 0.9 }] },
         },
       ],
     },

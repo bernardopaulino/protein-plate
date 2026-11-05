@@ -20,7 +20,7 @@ Quando uma decisão mudar, atualiza `docs/especificacao.md` no mesmo commit.
 - **Better Auth 1.7**: login só Google e Apple (OAuth web), adaptador Drizzle (SQLite).
 - **AI SDK 6** + `@ai-sdk/anthropic`, modelo em `AI_MODEL` (por defeito `claude-haiku-5-5`). Usar `generateText` com `output: Output.object({ schema })`; `generateObject` está descontinuado.
 - **Tailwind v4** + **shadcn/ui** (Radix), ícones Lucide, fontes com `next/font` (Bricolage Grotesque + Figtree).
-- **next-intl**: português sem prefixo; inglês em `/en` (v1.1). Rotas em `src/app/[locale]` desde o início.
+- **next-intl**: português sem prefixo; inglês em `/en` (publicado, mesmos caminhos). Rotas em `src/app/[locale]`; todo o texto novo vai para `pt.json` e `en.json`.
 - **Zod 4**, **Vitest** (+ fast-check), **Playwright**, **axe-core**, Lighthouse CI.
 - Cloudflare: binding de rate limiting, Turnstile, cron horário (custom worker do OpenNext).
 
@@ -79,6 +79,6 @@ migrations/  scripts/  tests/  worker/  docs/
 
 - No início de cada sessão: lê a secção relevante da especificação, mostra um plano curto e espera confirmação. Depois implementa a sessão completa sem parar a cada ficheiro.
 - Pergunta quando houver ambiguidade em vez de assumir.
-- Código em inglês; textos da UI em `src/messages/pt.json`.
+- Código em inglês; textos da UI em `src/messages/pt.json` e `src/messages/en.json` (inglês dos EUA).
 - Commits pequenos com Conventional Commits; `lint`, `typecheck` e `test` verdes antes de cada commit.
 - Reutiliza os padrões do Rejection Quest (`rejection-quest-api`): allowlist de endpoints do Better Auth, testes de integração numa D1 local real com dois utilizadores por rota, cron de limpeza, client secret ES256 da Apple, sessões sem IP nem user agent.
