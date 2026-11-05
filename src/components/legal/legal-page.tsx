@@ -17,9 +17,7 @@ export async function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
       <h1 className="text-2xl font-extrabold">
         {t(kind === "privacy" ? "privacyTitle" : "termsTitle")}
       </h1>
-      <p className="mt-2 text-sm text-muted">
-        {t("updated", { date: t("date") })} · {t("draft")}
-      </p>
+      <p className="mt-2 text-sm text-muted">{t("updated", { date: t("date") })}</p>
       <div className="mt-6 flex flex-col gap-6">
         {SECTIONS[kind].map((key) => (
           <section key={key}>

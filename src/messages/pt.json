@@ -418,8 +418,7 @@
     "privacyTitle": "Política de privacidade",
     "termsTitle": "Termos de utilização",
     "updated": "Última atualização: {date}",
-    "date": "3 de novembro de 2026",
-    "draft": "Rascunho: este texto ainda vai ser revisto antes do lançamento.",
+    "date": "5 de novembro de 2026",
     "privacy": {
       "who": {
         "title": "Quem somos",
@@ -439,7 +438,7 @@
       },
       "ai": {
         "title": "Receitas por IA",
-        "body": "Para gerar uma receita, enviamos ao modelo de IA (Anthropic) só os nomes dos alimentos escolhidos, a refeição, o tempo, as doses, o equipamento e o tipo de alimentação. Nunca enviamos o teu nome, o teu email, o teu peso nem as tuas alergias (os alimentos com alergénios simplesmente não entram na lista)."
+        "body": "Para gerar uma receita, enviamos ao modelo de IA (Anthropic) só os nomes dos alimentos escolhidos, a refeição (e se é antes ou depois do treino), a proteína por dose, o tempo, as doses, o equipamento e o tipo de alimentação. Nunca enviamos o teu nome, o teu email, o teu peso nem as tuas alergias (os alimentos com alergénios simplesmente não entram na lista)."
       },
       "limits": {
         "title": "Limites de utilização",
@@ -469,11 +468,11 @@
       },
       "numbers": {
         "title": "Números",
-        "body": "Os valores nutricionais vêm da Tabela da Composição de Alimentos do INSA. Enquanto a curadoria não estiver concluída, alguns valores são provisórios e estão assinalados."
+        "body": "Os valores nutricionais vêm de tabelas de composição de alimentos de referência, sobretudo a Tabela da Composição de Alimentos do INSA. São médias: o mesmo alimento varia com a marca e a preparação. Se encontrares um erro, escreve-nos e corrigimos."
       },
       "ai": {
         "title": "Receitas geradas por IA",
-        "body": "As receitas são geradas por IA e podem ter erros. A proteína é calculada pela app a partir da TCA. Confirma sempre alergénios, intolerâncias e tempos de cozedura."
+        "body": "As receitas são geradas por IA e podem ter erros. A proteína é calculada pela app a partir dessas tabelas, nunca pela IA. Confirma sempre alergénios, intolerâncias e tempos de cozedura."
       },
       "fairUse": {
         "title": "Utilização justa",
