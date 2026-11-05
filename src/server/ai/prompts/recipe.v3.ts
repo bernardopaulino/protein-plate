@@ -5,9 +5,10 @@ import type { RecipeRequest } from "@/domain/contracts/recipe";
 
 /**
  * Incrementa a cada mudança do prompt (entra na cache e nas avaliações). A 2 junta o pré-treino, o
- * equipamento e a dieta da pessoa.
+ * equipamento e a dieta da pessoa; a 3, a proteína à escolha, o equipamento escolhido para a receita
+ * (ou "sem cozinhar") e passos sem quantidades (a app pode ajustar as gramas depois).
  */
-export const PROMPT_VERSION = 2;
+export const PROMPT_VERSION = 3;
 
 const MEAL_NAMES: Record<Meal, string> = {
   "pequeno-almoco": "pequeno-almoço",
@@ -43,7 +44,12 @@ export interface RecipePromptInput {
   request: Pick<RecipeRequest, "meal" | "maxMinutes" | "servings" | "variant">;
   /** Do perfil da pessoa (nunca do pedido). */
   context: {
+    /** Proteína por dose a apontar: a meta da refeição ou a que a pessoa escolheu. */
     mealTargetG: number;
+    /** A pessoa escolheu a proteína (em vez da meta da refeição). */
+    customTarget?: boolean;
+    /** A pessoa escolheu o equipamento desta receita (em vez do do perfil). */
+    equipmentChosen?: boolean;
     postWorkout: boolean;
     preWorkout: boolean;
     equipment: readonly Equipment[];
@@ -64,7 +70,7 @@ export interface RecipePromptInput {
 export function buildRecipePrompt(input: RecipePromptInput): { system: string; prompt: string } {
   const { request, context, chosen, pantry } = input;
   const line = (f: Food) =>
-    `- id "${f.id}": ${f.name.pt} (${BASIS[f.weightBasis]}; porção habitual ${defaultPortion(f).grams} g)`;
+    `- id "${f.id}": ${f.name.pt} (${BASIS[f.weightBasis]}; porção habitual ${defaultPortion(f).grams} g; ${f.proteinPer100g} g de proteína por 100 g)`;
   const proteins = chosen.filter((f) => f.role === "protein").map((f) => `"${f.id}"`);
   const moment = context.postWorkout
     ? " (refeição pós-treino: rápida, fácil e prática)"
@@ -72,6 +78,12 @@ export function buildRecipePrompt(input: RecipePromptInput): { system: string; p
       ? " (refeição pré-treino: leve, fácil de digerir, com hidratos e pouca gordura)"
       : "";
   const equipment = context.equipment.map((e) => EQUIPMENT_NAMES[e]).join(", ");
+  const equipmentLine =
+    context.equipment.length === 0
+      ? "Sem cozinhar: nada de fogão, forno, micro-ondas, airfryer nem liquidificadora. A receita só se monta (cortar, misturar, servir)."
+      : context.equipmentChosen
+        ? `A pessoa quer cozinhar com: ${equipment}. Usa este equipamento e nenhum outro.`
+        : `Equipamento disponível: ${equipment}. Não uses outro.`;
 
   const system = [
     "És um cozinheiro português que escreve receitas caseiras, simples e com comida de verdade.",
@@ -83,7 +95,7 @@ export function buildRecipePrompt(input: RecipePromptInput): { system: string; p
   const prompt = [
     `Cria uma receita para ${MEAL_NAMES[request.meal]}${moment}.`,
     `Doses: ${request.servings}. Tempo máximo de preparação: ${request.maxMinutes} minutos.`,
-    `Equipamento disponível: ${equipment}. Não uses outro.`,
+    equipmentLine,
     DIET_NOTES[context.diet] ?? "",
     "",
     "Alimentos escolhidos (usa todos os que são fonte de proteína):",
@@ -95,7 +107,10 @@ export function buildRecipePrompt(input: RecipePromptInput): { system: string; p
     "Regras:",
     `- Usa obrigatoriamente estas fontes de proteína: ${proteins.join(", ") || "nenhuma"}.`,
     "- As gramas de cada ingrediente são para a receita completa (todas as doses), na base de peso indicada.",
-    `- Aponta para cerca de ${Math.round(context.mealTargetG)} g de proteína por dose; quantidades realistas (no máximo 3 porções habituais por dose).`,
+    context.customTarget
+      ? `- A pessoa quer ${Math.round(context.mealTargetG)} g de proteína por dose: escolhe as quantidades das fontes de proteína para lá chegar; quantidades realistas (no máximo 3 porções habituais por dose).`
+      : `- Aponta para cerca de ${Math.round(context.mealTargetG)} g de proteína por dose; quantidades realistas (no máximo 3 porções habituais por dose).`,
+    "- Nos passos não escrevas gramas nem quantidades (estão nos ingredientes).",
     "- Título até 60 caracteres, resumo até 140, 2 a 8 passos curtos (até 240 caracteres cada).",
     `- prepMinutes é um número inteiro até ${request.maxMinutes}.`,
     request.variant > 1

@@ -10,14 +10,11 @@ import { getSession } from "@/server/auth/session";
 import { getDb } from "@/server/db/client";
 import { getBindings, getEnv } from "@/server/env";
 import { countRequestOps } from "@/server/ops";
-import { isCrossOrigin } from "@/server/origin";
 import { generateRecipe } from "@/server/recipes/generate";
+import { readRecipeBody } from "@/server/recipes/read-body";
 import { loadProfile, recordRecipeHistory } from "@/server/services/account";
 
 export const dynamic = "force-dynamic";
-
-/** Corpo máximo do pedido (só campos fechados). */
-const BODY_MAX_BYTES = 4 * 1024;
 
 function json(body: RecipeResponse, status: number) {
   return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
@@ -51,22 +48,9 @@ export async function POST(request: Request) {
 async function handle(request: Request, requestId: string) {
   const started = Date.now();
   const env = getEnv();
-  if (isCrossOrigin(request)) return reject("invalid_request", 403);
-  // Corpo grande recusado antes de o ler (e outra vez depois, para pedidos sem Content-Length)
-  if (Number(request.headers.get("content-length") ?? 0) > BODY_MAX_BYTES) {
-    return reject("invalid_request", 413);
-  }
-  const text = await request.text();
-  if (new TextEncoder().encode(text).length > BODY_MAX_BYTES) {
-    return reject("invalid_request", 413);
-  }
-  let raw: unknown;
-  try {
-    raw = JSON.parse(text);
-  } catch {
-    return reject("invalid_request", 400);
-  }
-  const parsed = recipeRequestSchema.safeParse(raw);
+  const body = await readRecipeBody(request);
+  if (!body.ok) return reject("invalid_request", body.status);
+  const parsed = recipeRequestSchema.safeParse(body.raw);
   if (!parsed.success) return reject("invalid_request", 400);
 
   const session = await getSession();

@@ -8,7 +8,7 @@ import { allowedFoods, isAllowed } from "@/domain/preferences";
 import { recipeBase } from "@/domain/recipe-base";
 import type { AppEnv } from "@/lib/env";
 import { languageModel, mockModel } from "../ai/model";
-import { PROMPT_VERSION } from "../ai/prompts/recipe.v2";
+import { PROMPT_VERSION } from "../ai/prompts/recipe.v3";
 import type { Db } from "../db/client-core";
 import { recipeIngredients, recipes } from "../db/schema";
 import { restrictionsOf, type Profile } from "../services/account";
@@ -97,6 +97,16 @@ async function pipeline(
   if (picked.some((f) => !f || f.role === "pantry")) return fail("unknown_food", 400);
   if ((picked as Food[]).some((f) => !isAllowed(f, restrictions)))
     return fail("restricted_food", 400);
+  // Equipamento: o escolhido para esta receita ou o do perfil; vazio = "Sem cozinhar" (só alimentos
+  // que se comem sem preparação)
+  const equipment = input.equipment ?? profile.equipment;
+  const noCooking = equipment.length === 0;
+  if (noCooking && (picked as Food[]).some((f) => f.ease === 3)) return fail("needs_cooking", 400);
+  // Proteína por dose: a escolhida pela pessoa ou a meta da refeição (do perfil)
+  const customTarget = input.targetProteinG !== undefined;
+  const targetG =
+    input.targetProteinG ??
+    mealTarget(profile.dailyTargetG, profile.meals, input.meal, profile.postWorkoutMeal);
   const chosenFoods = recipeBase({
     meal: input.meal,
     chosen: picked as Food[],
@@ -109,6 +119,8 @@ async function pipeline(
       input.foodIds.length > 0
         ? input.variant - 1
         : Math.floor((deps.random ?? Math.random)() * 1_000_000),
+    noCooking,
+    targetG,
   });
   if (!chosenFoods.some((f) => f.role === "protein")) return fail("invalid_request", 400);
   const request: RecipeRequest = { ...input, foodIds: chosenFoods.map((f) => f.id) };
@@ -116,15 +128,12 @@ async function pipeline(
     (f) => f.role === "pantry" && !request.foodIds.includes(f.id) && isAllowed(f, restrictions),
   );
   const context = {
-    mealTargetG: mealTarget(
-      profile.dailyTargetG,
-      profile.meals,
-      request.meal,
-      profile.postWorkoutMeal,
-    ),
+    mealTargetG: targetG,
+    customTarget,
     postWorkout: request.meal === profile.postWorkoutMeal,
     preWorkout: request.meal === profile.preWorkoutMeal,
-    equipment: profile.equipment,
+    equipment,
+    equipmentChosen: input.equipment !== undefined,
     diet: profile.diet,
   };
 
@@ -202,6 +211,8 @@ async function pipeline(
         steps: output.steps.map((s) => s.trim()),
         proteinPerServingG: perServing,
         mealTargetG: context.mealTargetG,
+        customTarget,
+        equipment: [...equipment],
         model: modelId,
         promptVersion: PROMPT_VERSION,
         foodDataVersion: deps.foodDataVersion,

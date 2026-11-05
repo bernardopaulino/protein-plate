@@ -62,14 +62,18 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
     await page.goto("/o-meu-dia");
     await expect(page.locator("#refeicao-jantar").getByText(`Receita: ${title}`)).toBeVisible();
     await page.goto("/receitas");
-    const saved = page.getByRole("region", { name: "Guardadas" });
-    await expect(saved.getByRole("link", { name: title })).toBeVisible();
+    // O livro abre nas guardadas (há uma); as recentes estão no outro separador
+    await expect(page.getByRole("tab", { name: /^Guardadas/ })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    const panel = page.getByRole("tabpanel");
+    await expect(panel.getByRole("link", { name: new RegExp(title) })).toBeVisible();
     await expect(
-      saved.getByRole("button", { name: `Tirar ${title} das favoritas` }),
+      panel.getByRole("button", { name: `Tirar ${title} das favoritas` }),
     ).toHaveAttribute("aria-pressed", "true");
-    await expect(
-      page.getByRole("region", { name: "Recentes" }).getByRole("link", { name: title }),
-    ).toBeVisible();
+    await page.getByRole("tab", { name: /^Recentes/ }).click();
+    await expect(panel.getByRole("link", { name: new RegExp(title) })).toBeVisible();
 
     // Com um alimento escolhido pelos grupos
     await page.goto("/receitas/nova");
@@ -85,6 +89,53 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
     await page.getByRole("button", { name: "Gerar receita" }).click();
     await expect(page).toHaveURL(/\/receitas\/[0-9a-zA-Z]{10}$/, { timeout: 20_000 });
     await expect(page.getByRole("link", { name: "Brócolos" }).first()).toBeVisible();
+  });
+});
+
+test.describe("dia completo e proteína à escolha (conta própria)", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("o dia todo: uma receita por refeição e depois para o \"Hoje\"", async ({
+    context,
+    page,
+    baseURL,
+  }, testInfo) => {
+    await signIn(context, baseURL!, `dia-${testInfo.project.name}@protein-plate.local`, {
+      fresh: true,
+    });
+    await completeOnboarding(page);
+
+    await page.goto("/receitas");
+    await page.getByRole("link", { name: /O dia todo/ }).click();
+    await expect(page.getByRole("heading", { name: "O dia todo em receitas" })).toBeVisible();
+    await page.getByRole("button", { name: "Gerar o meu dia" }).click();
+    await expect(page).toHaveURL(/\/receitas\/dia\/ver\?r=/, { timeout: 30_000 });
+    await expect(page.getByRole("heading", { name: "O teu dia em receitas" })).toBeVisible();
+    const cards = page.getByRole("link", { name: /Ver receita/ });
+    expect(await cards.count()).toBeGreaterThanOrEqual(2);
+
+    await page.getByRole("button", { name: "Pôr o dia todo no meu dia" }).click();
+    await expect(page.getByText("Feito: o teu dia já tem estas receitas.")).toBeVisible();
+    await page.goto("/o-meu-dia");
+    expect(await page.getByText(/^Receita: /).count()).toBeGreaterThanOrEqual(2);
+  });
+
+  test("proteína à escolha e sem cozinhar", async ({ context, page, baseURL }, testInfo) => {
+    await signIn(context, baseURL!, `proteina-${testInfo.project.name}@protein-plate.local`, {
+      fresh: true,
+    });
+    await completeOnboarding(page);
+
+    await page.goto("/receitas/nova");
+    await page.getByRole("radio", { name: /^Escolho eu/ }).click();
+    const grams = page.getByLabel("Gramas de proteína por dose");
+    await grams.fill("35");
+    await grams.blur();
+    await page.getByRole("checkbox", { name: /Sem cozinhar/ }).click();
+    await page.getByRole("button", { name: "Gerar receita" }).click();
+    await expect(page).toHaveURL(/\/receitas\/[0-9a-zA-Z]{10}$/, { timeout: 20_000 });
+    await expect(page.getByText("Pediste 35 g por dose.")).toBeVisible();
+    await expect(page.getByText("Sem cozinhar", { exact: true })).toBeVisible();
   });
 });
 

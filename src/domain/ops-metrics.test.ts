@@ -19,6 +19,7 @@ describe("OPS_METRICS (contrato com o backoffice)", () => {
       "recipes.error.invalid_request",
       "recipes.error.unknown_food",
       "recipes.error.restricted_food",
+      "recipes.error.needs_cooking",
       "recipes.error.unauthorized",
       "recipes.error.onboarding_required",
       "recipes.error.rate_limited",

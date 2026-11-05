@@ -22,6 +22,7 @@ import {
   RECIPE_HISTORY_MAX,
   addDayItem,
   applyRecipeToDay,
+  applyRecipesToDay,
   exportUserData,
   listRecentRecipes,
   loadMealRecipes,
@@ -475,6 +476,64 @@ describe("livro de receitas: favoritas, recentes e pôr no dia (dois utilizadore
     expect(await loadMealRecipes(t.db, ana)).toEqual({});
     // A ligação do Rui não mudou
     expect(Object.keys(await loadMealRecipes(t.db, rui))).toEqual(["almoco"]);
+  });
+
+  it("dia completo: várias receitas numa só escrita, tudo ou nada", async () => {
+    const ana = await createUser(t.db);
+    await onboard(ana);
+    await saveDayItems(t.db, ana, items, FOOD_INDEX);
+    await recipeWithIngredients("rcpDay0001");
+    await recipeWithIngredients("rcpDay0002", 1);
+
+    expect(
+      await applyRecipesToDay(
+        t.db,
+        ana,
+        [
+          { recipeId: "rcpDay0001", meal: "almoco" },
+          { recipeId: "rcpDay0002", meal: "jantar" },
+        ],
+        FOOD_INDEX,
+      ),
+    ).toBe("ok");
+    const day = await loadDay(t.db, ana);
+    // O pequeno-almoço fica; almoço e jantar passam a ser os das receitas
+    expect(day.items.filter((i) => i.meal === "pequeno-almoco").map((i) => i.foodId)).toEqual([
+      "skyr-natural",
+    ]);
+    for (const meal of ["almoco", "jantar"] as const) {
+      expect(day.items.filter((i) => i.meal === meal).map((i) => i.foodId)).toEqual([
+        "peito-frango",
+        "arroz-branco",
+      ]);
+    }
+    expect(Object.keys(await loadMealRecipes(t.db, ana)).sort()).toEqual(["almoco", "jantar"]);
+
+    // Uma receita que não existe ou uma refeição repetida: nada muda
+    const before = (await loadDay(t.db, ana)).items;
+    expect(
+      await applyRecipesToDay(
+        t.db,
+        ana,
+        [
+          { recipeId: "rcpDay0001", meal: "pequeno-almoco" },
+          { recipeId: "nao-existe", meal: "jantar" },
+        ],
+        FOOD_INDEX,
+      ),
+    ).toBe("not_found");
+    expect(
+      await applyRecipesToDay(
+        t.db,
+        ana,
+        [
+          { recipeId: "rcpDay0001", meal: "almoco" },
+          { recipeId: "rcpDay0002", meal: "almoco" },
+        ],
+        FOOD_INDEX,
+      ),
+    ).toBe("not_allowed");
+    expect((await loadDay(t.db, ana)).items).toEqual(before);
   });
 
   it("exportar inclui as recentes, as favoritas e as receitas do dia; apagar a conta leva tudo", async () => {

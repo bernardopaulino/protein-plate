@@ -238,7 +238,7 @@
   },
   "recipes": {
     "title": "Receitas",
-    "lead": "O teu livro de receitas. O \"Hoje\" diz o que comer; aqui transformas isso em pratos, guardas os que gostas e pões no teu dia os que vais comer.",
+    "lead": "Transforma o que comes em pratos: gera uma receita ou o dia todo, guarda as de que gostas e põe-nas no teu dia.",
     "new": "Gerar uma receita",
     "saved": "Guardadas",
     "savedEmpty": "Ainda não guardaste receitas. Abre uma receita e carrega em \"Guardar\".",
@@ -266,7 +266,22 @@
       "summary": "A tua receita",
       "summaryTarget": "Proteína por dose",
       "summaryAuto": "Escolhemos nós",
-      "summaryChosen": "{count, plural, one {# escolhido} other {# escolhidos}}"
+      "summaryChosen": "{count, plural, one {# escolhido} other {# escolhidos}}",
+      "protein": "Proteína por dose",
+      "proteinMeal": "A meta da refeição",
+      "proteinMealHint": "≈ {grams} g, do teu plano",
+      "proteinCustom": "Escolho eu",
+      "proteinCustomHint": "Os gramas que quiseres",
+      "proteinValue": "Gramas de proteína por dose",
+      "proteinLess": "Menos 5 g",
+      "proteinMore": "Mais 5 g",
+      "proteinNote": "Entre {min} e {max} g. A app ajusta as quantidades para lá chegar.",
+      "equipment": "Como queres cozinhar?",
+      "equipmentHint": "Começa com o que tens em casa. Escolhe só o que queres usar nesta receita.",
+      "noCooking": "Sem cozinhar",
+      "noCookingHint": "Só montar, com alimentos que se comem sem preparação.",
+      "equipmentReset": "Usar o que tenho em casa",
+      "summaryEquipment": "Cozinha"
     },
     "errors": {
       "invalid_request": "Há algo no pedido que não percebemos. Revê as escolhas e tenta outra vez.",
@@ -277,7 +292,8 @@
       "service_unavailable": "As receitas estão em pausa por hoje. As que já existem continuam a abrir.",
       "restricted_food": "Um dos alimentos não cabe nas tuas restrições.",
       "unauthorized": "A tua sessão terminou. Entra outra vez para gerar receitas.",
-      "onboarding_required": "Completa o teu plano antes de gerar receitas."
+      "onboarding_required": "Completa o teu plano antes de gerar receitas.",
+      "needs_cooking": "Sem cozinhar só dá com alimentos que se comem sem preparação. Tira os que precisam de lume ou escolhe um eletrodoméstico."
     },
     "detail": {
       "perServing": "por dose",
@@ -302,14 +318,67 @@
       "useError": "Não conseguimos mudar o teu dia. Tenta outra vez.",
       "seeDay": "Ver o meu dia",
       "favorite": "Favorita",
-      "markFavorite": "Marcar como favorita"
+      "markFavorite": "Marcar como favorita",
+      "requested": "Pediste {target} g por dose.",
+      "cookWith": "Com {list}",
+      "noCooking": "Sem cozinhar"
     },
     "recent": "Recentes",
     "recentEmpty": "As receitas que gerares aparecem aqui.",
     "favoritesOnly": "Só favoritas",
     "favorite": "Favorita",
     "markFavorite": "Marcar {title} como favorita",
-    "unmarkFavorite": "Tirar {title} das favoritas"
+    "unmarkFavorite": "Tirar {title} das favoritas",
+    "start": {
+      "single": {
+        "title": "Uma receita",
+        "body": "Para uma refeição, com a proteína e os eletrodomésticos que quiseres.",
+        "cta": "Gerar uma receita"
+      },
+      "day": {
+        "title": "O dia todo",
+        "body": "Uma receita para cada refeição do teu dia, já com a meta de cada uma.",
+        "cta": "Gerar o meu dia"
+      }
+    },
+    "library": {
+      "title": "O teu livro de receitas",
+      "tabs": "Receitas guardadas e recentes",
+      "allMeals": "Todas",
+      "mealFilter": "Filtrar por refeição",
+      "noneForMeal": "Ainda não tens receitas desta refeição aqui.",
+      "savedCount": "Guardadas",
+      "recentCount": "Recentes"
+    },
+    "day": {
+      "title": "O dia todo em receitas",
+      "lead": "Uma receita para cada refeição do teu dia, cada uma com a meta dessa refeição e alimentos diferentes.",
+      "meals": "As tuas refeições",
+      "mealsHint": "Vêm do teu plano. Mudas em Conta → As minhas preferências.",
+      "options": "Opções",
+      "total": "Total do dia",
+      "quota": "Usa {count} das receitas novas de hoje. Ainda tens {remaining}.",
+      "quotaShort": "Hoje só dá para mais {remaining, plural, =0 {nenhuma receita nova} one {# receita nova} other {# receitas novas}} e o dia todo precisa de {count}. Amanhã há mais, ou gera uma receita de cada vez.",
+      "submit": "Gerar o meu dia",
+      "generating": "A cozinhar {count} receitas…",
+      "generatingHint": "Fazemos todas ao mesmo tempo. Demora uns segundos."
+    },
+    "dayView": {
+      "title": "O teu dia em receitas",
+      "lead": "Uma receita para cada refeição. Abre cada uma para ver os passos.",
+      "total": "Proteína do dia",
+      "ofTarget": "de {target} g",
+      "open": "Ver receita",
+      "apply": "Pôr o dia todo no meu dia",
+      "applyHint": "Cada refeição do teu dia passa a ter uma dose da sua receita.",
+      "applied": "Feito: o teu dia já tem estas receitas.",
+      "applyError": "Não conseguimos mudar o teu dia. Tenta outra vez.",
+      "seeDay": "Ver o meu dia",
+      "failed": "Não conseguimos uma receita para {meal}.",
+      "retry": "Gerar só esta",
+      "again": "Gerar outro dia",
+      "empty": "Não encontrámos estas receitas. Gera um dia novo."
+    }
   },
   "account": {
     "title": "Conta",

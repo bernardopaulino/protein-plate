@@ -8,6 +8,7 @@ import { parseEnv, type AppEnv } from "@/lib/env";
 import { mockModel } from "@/server/ai/model";
 import { recipeIngredients, recipes, usageCounters } from "@/server/db/schema";
 import { generateRecipe, type Actor, type GenerateDeps } from "@/server/recipes/generate";
+import { generateRecipeDay } from "@/server/recipes/generate-day";
 import { mockRecipe } from "@/server/recipes/mock-recipe";
 import { proteinPerServing } from "@/server/recipes/recipe-rules";
 import { getRecipe } from "@/server/services/recipes";
@@ -311,9 +312,13 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
 
   it("ingredientes repetidos: a app junta-os sem gastar outra chamada ao modelo", async () => {
     const userId = await createUser(t.db);
-    const req = request();
-    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
-    const good = mockRecipe(req, chosen, []);
+    const plain = request();
+    const chosen = plain.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const good = mockRecipe(plain, chosen, []);
+    // A proteína pedida é a da receita: o ajuste da app não mexe nas quantidades
+    const req = request({
+      targetProteinG: Math.round(proteinPerServing(good.ingredients, plain.servings, FOOD_INDEX)),
+    });
     const atum = good.ingredients.find((i) => i.foodId === "atum-lata-natural")!;
     const split = {
       ...good,
@@ -478,9 +483,7 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     const good = mockRecipe(req, chosen, []);
     const huge = {
       ...good,
-      ingredients: good.ingredients.map((i) =>
-        i.foodId === "atum-lata-natural" ? { ...i, grams: 2000 } : i,
-      ),
+      ingredients: good.ingredients.map((i) => (i.foodId === "tomate" ? { ...i, grams: 2000 } : i)),
     };
     const result = await generateRecipe(
       req,
@@ -493,5 +496,176 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
       .from(recipeIngredients)
       .where(eq(recipeIngredients.foodId, "nao-existe"));
     expect(ingredientRows[0]?.n).toBe(0);
+  });
+});
+
+describe("proteína à escolha, equipamento e sem cozinhar", () => {
+  it("fonte de proteína exagerada: a app corta-a para a meta em vez de recusar", async () => {
+    const userId = await createUser(t.db);
+    const req = request({ servings: 1 });
+    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const good = mockRecipe(req, chosen, []);
+    const huge = {
+      ...good,
+      ingredients: good.ingredients.map((i) =>
+        i.foodId === "atum-lata-natural" ? { ...i, grams: 2000 } : i,
+      ),
+    };
+    const result = await generateRecipe(
+      req,
+      person(userId),
+      deps({ model: () => mockModel(() => JSON.stringify(huge)) }),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const atum = (await getRecipe(t.db, result.id))!.ingredients.find(
+      (i) => i.foodId === "atum-lata-natural",
+    )!;
+    expect(atum.grams).toBeLessThanOrEqual(3 * 60);
+  });
+
+  it("proteína à escolha: a app ajusta as quantidades e guarda o pedido", async () => {
+    const userId = await createUser(t.db);
+    const req = request({
+      foodIds: ["peito-frango", "arroz-branco"],
+      servings: 1,
+      targetProteinG: 60,
+    });
+    const result = await generateRecipe(req, person(userId), deps());
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const saved = await getRecipe(t.db, result.id);
+    expect(saved!.customTarget).toBe(true);
+    expect(saved!.mealTargetG).toBe(60);
+    expect(Math.abs(saved!.proteinPerServingG - 60)).toBeLessThanOrEqual(60 * 0.2);
+    // A proteína guardada é sempre a calculada pela app a partir dos ingredientes guardados
+    expect(saved!.proteinPerServingG).toBeCloseTo(
+      proteinPerServing(saved!.ingredients, 1, FOOD_INDEX),
+      9,
+    );
+  });
+
+  it("a proteína à escolha entra na cache: outro valor gera outra receita", async () => {
+    const userId = await createUser(t.db);
+    const me = person(userId);
+    const base = request({ foodIds: ["peito-frango", "arroz-branco"], servings: 1 });
+    const a = await generateRecipe({ ...base, targetProteinG: 30 }, me, deps());
+    const b = await generateRecipe({ ...base, targetProteinG: 50 }, me, deps());
+    const again = await generateRecipe({ ...base, targetProteinG: 30 }, me, deps());
+    expect(a.ok && b.ok && a.id !== b.id).toBe(true);
+    expect(again).toMatchObject({ ok: true, cached: true });
+  });
+
+  it("equipamento escolhido: vai para o prompt e fica na receita", async () => {
+    const userId = await createUser(t.db);
+    const prompts: string[] = [];
+    const req = request({ equipment: ["airfryer", "oven"] });
+    const chosen = req.foodIds.map((id) => FOOD_INDEX.get(id)!);
+    const result = await generateRecipe(
+      req,
+      person(userId),
+      deps({
+        model: () =>
+          mockModel((prompt) => {
+            prompts.push(prompt);
+            return JSON.stringify(mockRecipe(req, chosen, []));
+          }),
+      }),
+    );
+    expect(result.ok).toBe(true);
+    expect(prompts[0]).toContain("A pessoa quer cozinhar com: airfryer, forno");
+    if (!result.ok) return;
+    expect((await getRecipe(t.db, result.id))!.equipment).toEqual(["airfryer", "oven"]);
+  });
+
+  it("sem cozinhar: recusa alimentos que precisam de lume e completa só com o que não precisa", async () => {
+    const userId = await createUser(t.db);
+    expect(
+      await generateRecipe(
+        request({ foodIds: ["peito-frango"], equipment: [] }),
+        person(userId),
+        deps(),
+      ),
+    ).toMatchObject({ ok: false, code: "needs_cooking" });
+    const result = await generateRecipe(
+      request({ foodIds: [], equipment: [] }),
+      person(userId),
+      deps({ random: () => 0.3 }),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const saved = await getRecipe(t.db, result.id);
+    expect(saved!.equipment).toEqual([]);
+    for (const i of saved!.ingredients) {
+      const food = FOOD_INDEX.get(i.foodId)!;
+      if (food.role !== "pantry") expect(food.ease, i.foodId).toBe(1);
+    }
+  });
+});
+
+describe("POST /api/recipes/day: dia completo", () => {
+  const dayRequest = { maxMinutes: 20 as const, servings: 1, locale: "pt" as const };
+
+  it("uma receita por refeição, com a meta de cada uma e sem repetir a proteína", async () => {
+    const userId = await createUser(t.db);
+    const me = person(userId, { likedFoods: [] });
+    const result = await generateRecipeDay(dayRequest, me, deps({ random: () => 0.42 }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.recipes.map((r) => r.meal)).toEqual(me.profile.meals);
+    expect(result.recipes.every((r) => r.ok)).toBe(true);
+    const saved = await Promise.all(
+      result.recipes.map((r) => (r.ok ? getRecipe(t.db, r.id) : null)),
+    );
+    const proteins = saved.flatMap((r) =>
+      r!.ingredients
+        .filter((i) => FOOD_INDEX.get(i.foodId)!.role === "protein")
+        .map((i) => i.foodId),
+    );
+    expect(new Set(proteins).size).toBe(proteins.length);
+    for (const recipe of saved) expect(recipe!.customTarget).toBe(false);
+    // Cada receita nova conta uma na quota
+    const rows = await t.db.select().from(usageCounters);
+    expect(rows.find((r) => r.keyHash === "global")?.count).toBe(me.profile.meals.length);
+  });
+
+  it("a quota tem de chegar para o dia todo; o rate limiting conta o pedido uma vez", async () => {
+    const userId = await createUser(t.db);
+    const small = { ...env, QUOTA_USER: 3 };
+    expect(await generateRecipeDay(dayRequest, person(userId), deps({ env: small }))).toEqual({
+      ok: false,
+      code: "quota_exceeded",
+      status: 429,
+      remaining: 3,
+    });
+    let calls = 0;
+    const counted = deps({
+      rateLimit: async () => {
+        calls += 1;
+        return true;
+      },
+    });
+    expect((await generateRecipeDay(dayRequest, person(userId), counted)).ok).toBe(true);
+    expect(calls).toBe(1);
+    expect(
+      await generateRecipeDay(dayRequest, person(userId), deps({ rateLimit: async () => false })),
+    ).toMatchObject({ ok: false, code: "rate_limited" });
+  });
+
+  it("vegana: nenhuma receita do dia leva origem animal", async () => {
+    const userId = await createUser(t.db);
+    const me = person(userId, { diet: "vegan", likedFoods: [] });
+    const result = await generateRecipeDay(dayRequest, me, deps({ random: () => 0.7 }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    for (const r of result.recipes) {
+      expect(r.ok).toBe(true);
+      if (!r.ok) continue;
+      for (const i of (await getRecipe(t.db, r.id))!.ingredients) {
+        expect(FOOD_INDEX.get(i.foodId)!.category, i.foodId).not.toMatch(
+          /carne|peixe|marisco|conservas|ovos|laticinios/,
+        );
+      }
+    }
   });
 });

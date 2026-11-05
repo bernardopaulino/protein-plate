@@ -54,6 +54,7 @@ const REFUSED = [
   error("invalid_request"),
   error("unknown_food"),
   error("restricted_food"),
+  error("needs_cooking"),
   error("unauthorized"),
   error("onboarding_required"),
 ];

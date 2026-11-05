@@ -40,9 +40,7 @@ export default async function FoodsPage({ params }: { params: Promise<{ locale: 
           basePath={getPathname({ locale, href: "/alimentos" })}
         />
       </div>
-      <p className="mt-8 text-sm text-muted">
-        {common("sourceReference")}
-      </p>
+      <p className="mt-8 text-sm text-muted">{common("sourceReference")}</p>
     </div>
   );
 }

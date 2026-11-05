@@ -5,6 +5,7 @@ import { ProteinNumber } from "./protein-number";
 
 /** Cartão de receita: título, proteína por dose e tempo. */
 export function RecipeCard({
+  eyebrow,
   title,
   summary,
   proteinPerServing,
@@ -14,6 +15,8 @@ export function RecipeCard({
   renderLink,
   className,
 }: {
+  /** Por cima do título (a refeição). */
+  eyebrow?: string;
   title: string;
   summary?: string;
   proteinPerServing: number;
@@ -31,6 +34,11 @@ export function RecipeCard({
     ),
     children: (
       <>
+        {eyebrow ? (
+          <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+            {eyebrow}
+          </span>
+        ) : null}
         <span className="font-display text-lg font-bold">{title}</span>
         {summary ? <span className="line-clamp-2 text-sm text-muted">{summary}</span> : null}
         <span className="mt-auto flex items-center justify-between gap-3">

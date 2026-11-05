@@ -1,4 +1,4 @@
-import type { Food } from "./food";
+import { defaultPortion, type Food } from "./food";
 import type { Meal } from "./meals";
 
 /** Máximo de alimentos que a pessoa escolhe para uma receita (o resto completa a app). */
@@ -11,6 +11,12 @@ const isStarch = (f: Food) => f.role === "carb" && f.category !== "fruta";
 /** Antes do treino: proteína fácil de digerir (pouca gordura, sem muita preparação). */
 const isLightProtein = (f: Food) => f.role === "protein" && f.ease <= 2 && f.fatPer100g <= 10;
 
+/** A proteína que um alimento dá no máximo numa dose (3 porções habituais, o limite da receita). */
+export const proteinReach = (f: Food) => (3 * defaultPortion(f).grams * f.proteinPer100g) / 100;
+
+/** Abaixo disto da meta, a base junta outra fonte de proteína (se houver espaço). */
+const REACH_MIN = 0.85;
+
 export interface RecipeBaseInput {
   meal: Meal;
   /** O que a pessoa escolheu (pode ser nada). */
@@ -22,6 +28,15 @@ export interface RecipeBaseInput {
   preWorkout: boolean;
   /** Para variar a base entre pedidos (inteiro ≥ 0). */
   seed: number;
+  /** "Sem cozinhar": a app só completa com alimentos que se comem sem preparação (ease 1). */
+  noCooking?: boolean;
+  /** Fontes de proteína a evitar se houver outras (dia completo: uma proteína diferente por refeição). */
+  avoid?: ReadonlySet<string>;
+  /**
+   * Proteína por dose a atingir: quando é a app a escolher a proteína, prefere fontes que lá chegam em
+   * quantidades realistas e, se não houver nenhuma que chegue sozinha, junta outra.
+   */
+  targetG?: number;
 }
 
 /**
@@ -37,7 +52,11 @@ export function recipeBase(input: RecipeBaseInput): Food[] {
   const pick = (...filters: ((f: Food) => boolean)[]) => {
     const taken = new Set(base.map((f) => f.id));
     for (const filter of filters) {
-      const pool = input.foods.filter((f) => !taken.has(f.id) && filter(f));
+      const all = input.foods.filter(
+        (f) => !taken.has(f.id) && filter(f) && (!input.noCooking || f.ease === 1),
+      );
+      const fresh = all.filter((f) => !input.avoid?.has(f.id));
+      const pool = fresh.length > 0 ? fresh : all;
       const forMeal = pool.filter((f) => f.moments.includes(input.meal));
       const fitting = forMeal.length > 0 ? forMeal : pool;
       const liked = fitting.filter((f) => input.preferred.has(f.id));
@@ -55,13 +74,25 @@ export function recipeBase(input: RecipeBaseInput): Food[] {
 
   const has = (test: (f: Food) => boolean) => base.some(test);
 
-  if (!has((f) => f.role === "protein")) {
-    const protein = (f: Food) => f.role === "protein";
-    if (input.preWorkout) pick(isLightProtein, protein);
-    else pick(protein);
+  const target = input.targetG ?? 0;
+  const reach = () =>
+    base.filter((f) => f.role === "protein").reduce((sum, f) => sum + proteinReach(f), 0);
+  const protein = (f: Food) => f.role === "protein";
+  const reaches = (needed: number) => (f: Food) => protein(f) && proteinReach(f) >= needed;
+  const room = () => base.length < RECIPE_MAX_CHOSEN;
+
+  // Se a pessoa escolheu as proteínas, a app respeita a escolha (só ajusta as quantidades depois)
+  const appPicksProtein = !has(protein);
+  if (appPicksProtein) {
+    const light = (f: Food) => isLightProtein(f) && proteinReach(f) >= target;
+    if (input.preWorkout) pick(light, isLightProtein, reaches(target), protein);
+    else pick(reaches(target), protein);
+  }
+  // A proteína que a app escolheu não chega à meta (sem cozinhar, vegano): junta outra
+  if (appPicksProtein && target > 0 && reach() < target * REACH_MIN && room()) {
+    pick(reaches(target - reach()), protein);
   }
   // A proteína entra sempre; os acompanhamentos só se houver espaço
-  const room = () => base.length < RECIPE_MAX_CHOSEN;
   if (main) {
     if (room() && !has(isStarch)) pick(isStarch);
     if (room() && !has((f) => f.role === "vegetable")) pick((f) => f.role === "vegetable");

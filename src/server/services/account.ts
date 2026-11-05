@@ -408,6 +408,7 @@ export async function listSavedRecipes(db: Db, userId: string) {
       id: recipes.id,
       title: recipes.title,
       summary: recipes.summary,
+      meal: recipes.meal,
       proteinPerServingG: recipes.proteinPerServingG,
       prepMinutes: recipes.prepMinutes,
       savedAt: savedRecipes.savedAt,
@@ -515,40 +516,70 @@ export async function applyRecipeToDay(
   foods: FoodIndex,
   now = Date.now(),
 ): Promise<ApplyRecipeResult> {
+  return applyRecipesToDay(db, userId, [{ recipeId, meal }], foods, now);
+}
+
+/**
+ * Várias receitas de uma vez (o dia completo): cada refeição passa a ter uma dose da sua receita,
+ * numa só escrita. Falha tudo se alguma receita não existir, se uma refeição não for da pessoa ou se
+ * uma receita não tiver nada que a pessoa possa comer.
+ */
+export async function applyRecipesToDay(
+  db: Db,
+  userId: string,
+  pairs: readonly { recipeId: string; meal: Meal }[],
+  foods: FoodIndex,
+  now = Date.now(),
+): Promise<ApplyRecipeResult> {
   const profile = await loadProfile(db, userId);
   if (!profile?.onboardedAt) return "no_profile";
-  if (!profile.meals.includes(meal)) return "not_allowed";
-  const [recipe] = await db
+  if (pairs.length === 0) return "not_allowed";
+  if (pairs.some((p) => !profile.meals.includes(p.meal))) return "not_allowed";
+  if (new Set(pairs.map((p) => p.meal)).size !== pairs.length) return "not_allowed";
+  const ids = [...new Set(pairs.map((p) => p.recipeId))];
+  const found = await db
     .select({ id: recipes.id, servings: recipes.servings })
     .from(recipes)
-    .where(eq(recipes.id, recipeId));
-  if (!recipe) return "not_found";
-  const ingredients = await db
-    .select({ foodId: recipeIngredients.foodId, grams: recipeIngredients.grams })
+    .where(inArray(recipes.id, ids));
+  if (found.length !== ids.length) return "not_found";
+  const servingsOf = new Map(found.map((r) => [r.id, r.servings]));
+  const ingredientRows = await db
+    .select({
+      recipeId: recipeIngredients.recipeId,
+      foodId: recipeIngredients.foodId,
+      grams: recipeIngredients.grams,
+    })
     .from(recipeIngredients)
-    .where(eq(recipeIngredients.recipeId, recipeId))
-    .orderBy(asc(recipeIngredients.position));
+    .where(inArray(recipeIngredients.recipeId, ids))
+    .orderBy(asc(recipeIngredients.recipeId), asc(recipeIngredients.position));
   const restrictions = restrictionsOf(profile);
-  const fromRecipe = recipeToItems(ingredients, recipe.servings, meal, foods, (food) =>
-    isAllowed(food, restrictions),
-  );
-  if (fromRecipe.length === 0) return "not_allowed";
 
   const { items } = await loadItems(db, userId);
-  const next = fromRecipe.reduce(
-    (list, item) => addItem(list, item, crypto.randomUUID()),
-    items.filter((i) => i.meal !== meal),
-  );
+  const meals = new Set(pairs.map((p) => p.meal));
+  let next = items.filter((i) => !meals.has(i.meal));
+  for (const { recipeId, meal } of pairs) {
+    const fromRecipe = recipeToItems(
+      ingredientRows.filter((i) => i.recipeId === recipeId),
+      servingsOf.get(recipeId)!,
+      meal,
+      foods,
+      (food) => isAllowed(food, restrictions),
+    );
+    if (fromRecipe.length === 0) return "not_allowed";
+    next = fromRecipe.reduce((list, item) => addItem(list, item, crypto.randomUUID()), next);
+  }
   const planId = await planIdFor(db, userId);
   await db.batch([
     ...replaceItemsQueries(db, userId, planId, itemsForProfile(next, profile, foods), now),
-    db
-      .insert(mealRecipes)
-      .values({ userId, meal, recipeId, usedAt: now })
-      .onConflictDoUpdate({
-        target: [mealRecipes.userId, mealRecipes.meal],
-        set: { recipeId, usedAt: now },
-      }),
+    ...pairs.map(({ recipeId, meal }) =>
+      db
+        .insert(mealRecipes)
+        .values({ userId, meal, recipeId, usedAt: now })
+        .onConflictDoUpdate({
+          target: [mealRecipes.userId, mealRecipes.meal],
+          set: { recipeId, usedAt: now },
+        }),
+    ),
   ] as never);
   return "ok";
 }

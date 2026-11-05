@@ -16,6 +16,7 @@ import { countedAction } from "../ops";
 import {
   addDayItem,
   applyRecipeToDay,
+  applyRecipesToDay,
   listRecentRecipes,
   recipeStateFor,
   setRecipeFavorite,
@@ -231,6 +232,24 @@ export const applyRecipeToDayAction = countedAction(
     return result === "ok" ? { ok: true, data: null } : { ok: false, code: result };
   },
 );
+
+/** "Pôr o dia todo no meu dia": cada refeição passa a ter uma dose da sua receita. */
+export const applyRecipeDayAction = countedAction(async (input: unknown): Promise<Result<null>> => {
+  const session = await getSession();
+  if (!session) return unauthorized;
+  const parsed = z
+    .object({
+      recipes: z
+        .array(z.object({ recipeId: recipeIdSchema, meal: mealSchema }).strict())
+        .min(1)
+        .max(6),
+    })
+    .strict()
+    .safeParse(input);
+  if (!parsed.success) return invalid;
+  const result = await applyRecipesToDay(getDb(), session.user.id, parsed.data.recipes, FOOD_INDEX);
+  return result === "ok" ? { ok: true, data: null } : { ok: false, code: result };
+});
 
 export const listRecentRecipesAction = countedAction(
   async (): Promise<Result<Awaited<ReturnType<typeof listRecentRecipes>>>> => {

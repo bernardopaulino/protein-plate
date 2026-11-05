@@ -14,8 +14,9 @@ import { FOODS } from "../src/content/foods.generated";
 import type { MaxMinutes } from "../src/domain/contracts/recipe";
 import { indexFoods } from "../src/domain/food";
 import type { Meal } from "../src/domain/meals";
+import type { Equipment } from "../src/domain/preferences";
 import { AI_EFFORT, AI_THINKING } from "../src/server/ai/model";
-import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v2";
+import { PROMPT_VERSION } from "../src/server/ai/prompts/recipe.v3";
 import { callRecipeModel } from "../src/server/recipes/model-call";
 import { proteinPerServing, type RecipeOutput } from "../src/server/recipes/recipe-rules";
 
@@ -26,9 +27,16 @@ interface Case {
   target: number;
   minutes: MaxMinutes;
   servings: number;
+  /** A proteína por dose foi escolhida pela pessoa (tem de ficar a menos de 20%). */
+  customTarget?: boolean;
+  /** Equipamento escolhido para a receita ([] = sem cozinhar); senão, fogão e micro-ondas. */
+  equipment?: Equipment[];
 }
 
-/** 20 combinações fixas: refeições, tempos, doses e pós-treino variados. */
+/**
+ * 24 combinações fixas: refeições, tempos, doses e pós-treino variados; as 4 últimas com a proteína
+ * escolhida pela pessoa e com equipamento escolhido (ou sem cozinhar).
+ */
 const CASES: Case[] = [
   {
     foods: ["atum-lata-natural", "grao-bico-lata", "tomate"],
@@ -160,6 +168,39 @@ const CASES: Case[] = [
     minutes: 30,
     servings: 4,
   },
+  {
+    foods: ["peito-frango", "arroz-branco", "brocolos"],
+    meal: "jantar",
+    target: 70,
+    customTarget: true,
+    minutes: 30,
+    servings: 1,
+  },
+  {
+    foods: ["skyr-natural", "morangos"],
+    meal: "lanche",
+    target: 20,
+    customTarget: true,
+    minutes: 10,
+    servings: 1,
+  },
+  {
+    foods: ["atum-lata-natural", "grao-bico-lata", "tomate"],
+    meal: "almoco",
+    target: 46,
+    minutes: 10,
+    servings: 1,
+    equipment: [],
+  },
+  {
+    foods: ["salmao", "batata-doce"],
+    meal: "jantar",
+    target: 50,
+    customTarget: true,
+    minutes: 30,
+    servings: 2,
+    equipment: ["airfryer"],
+  },
 ];
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -201,7 +242,9 @@ for (const [i, c] of CASES.entries()) {
     mealTargetG: c.target,
     postWorkout: c.postWorkout ?? false,
     preWorkout: false,
-    equipment: ["stove", "microwave"] as const,
+    equipment: c.equipment ?? (["stove", "microwave"] as Equipment[]),
+    equipmentChosen: c.equipment !== undefined,
+    customTarget: c.customTarget ?? false,
     diet: "omnivore" as const,
   };
   // A mesma chamada do servidor: schema fixo, effort, repetidos juntos, prazo e nova tentativa
@@ -240,6 +283,9 @@ const p95 = latencies[Math.min(latencies.length - 1, Math.floor(latencies.length
 const nearTarget = valid.filter(
   (r) => r.targetRatio !== null && r.targetRatio >= 0.7 && r.targetRatio <= 1.4,
 ).length;
+const customHit = valid.filter(
+  (r) => CASES[r.case - 1]!.customTarget && r.targetRatio !== null && Math.abs(r.targetRatio - 1) <= 0.2,
+).length;
 const summary = {
   model: modelId,
   effort: AI_EFFORT,
@@ -251,6 +297,8 @@ const summary = {
   /** Tentativas com ingredientes fora da lista (ids inventados) */
   outOfListIngredients: rows.reduce((s, r) => s + r.outOfList, 0),
   proteinNearTarget: nearTarget,
+  /** Com a proteína escolhida: dentro de 20% do pedido */
+  customTargetHit: `${customHit}/${CASES.filter((c) => c.customTarget).length}`,
   latencyP50Ms: latencies[Math.floor(latencies.length / 2)] ?? 0,
   latencyP95Ms: p95,
   /** Tokens médios por receita (todas as tentativas) */
@@ -268,4 +316,4 @@ const file = join(
 writeFileSync(file, JSON.stringify({ summary, rows }, null, 2));
 console.log(`Resultados em ${file}`);
 // Critérios mínimos: 90% válidas e p95 < 15 s
-process.exit(valid.length >= 18 && p95 < 15_000 ? 0 : 1);
+process.exit(valid.length >= Math.ceil(rows.length * 0.9) && p95 < 15_000 ? 0 : 1);

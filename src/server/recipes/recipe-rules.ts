@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { MAX_MINUTES_OPTIONS, RECIPE_LIMITS, type MaxMinutes } from "@/domain/contracts/recipe";
 import { defaultPortion, type FoodIndex } from "@/domain/food";
-import { proteinForGrams } from "@/domain/protein";
+import { proteinPerServingOf } from "@/domain/recipe-fit";
+import { RECIPE_TARGET_ACCEPT } from "@/domain/recipe-options";
 
 /**
  * Schema da resposta do modelo, IGUAL em todos os pedidos (secção 6). A API compila uma gramática
@@ -51,22 +52,13 @@ export function mergeDuplicateIngredients(output: RecipeOutput): RecipeOutput {
 }
 
 /** Proteína por dose, calculada pela app a partir da TCA (nunca pela IA). */
-export function proteinPerServing(
-  ingredients: readonly { foodId: string; grams: number }[],
-  servings: number,
-  foods: FoodIndex,
-): number {
-  const total = ingredients.reduce((sum, i) => {
-    const food = foods.get(i.foodId);
-    return sum + (food ? proteinForGrams(i.grams, food.proteinPer100g) : 0);
-  }, 0);
-  return total / servings;
-}
+export const proteinPerServing = proteinPerServingOf;
 
 /**
  * Validação depois do modelo (secção 6): só ingredientes da lista enviada, tempo dentro do pedido,
  * todas as fontes de proteína escolhidas presentes, sem ingredientes repetidos, gramas por dose
- * ≤ 3 × porção default, proteína por dose entre 1 e 120 g. Devolve a descrição do problema (para a
+ * ≤ 3 × porção default, proteína por dose entre 1 e 120 g e, com a proteína escolhida pela pessoa,
+ * a menos de 20% do pedido (depois do ajuste da app). Devolve a descrição do problema (para a
  * segunda tentativa) ou null.
  */
 export function recipeProblem(
@@ -78,6 +70,8 @@ export function recipeProblem(
     proteinIds: readonly string[];
     servings: number;
     foods: FoodIndex;
+    /** Só com a proteína escolhida pela pessoa: o pedido por dose, em gramas. */
+    requiredProteinG?: number;
   },
 ): string | null {
   const ids = output.ingredients.map((i) => i.foodId);
@@ -105,6 +99,10 @@ export function recipeProblem(
   if (protein < min || protein > max) {
     return `a proteína por dose (${Math.round(protein)} g) tem de ficar entre ${min} e ${max} g`;
   }
+  const required = context.requiredProteinG;
+  if (required && Math.abs(protein - required) > required * RECIPE_TARGET_ACCEPT) {
+    return `a proteína por dose (${Math.round(protein)} g) está longe dos ${required} g pedidos; muda as quantidades das fontes de proteína (ou junta outra)`;
+  }
   return null;
 }
 
@@ -115,6 +113,8 @@ export async function recipeCacheKey(parts: {
   postWorkout: boolean;
   preWorkout: boolean;
   mealTargetG: number;
+  /** A proteína foi escolhida pela pessoa (o texto do prompt muda). */
+  customTarget: boolean;
   /** Despensa permitida (muda com as restrições da pessoa) e equipamento. */
   pantryIds: readonly string[];
   equipment: readonly string[];
@@ -132,6 +132,7 @@ export async function recipeCacheKey(parts: {
     parts.postWorkout,
     parts.preWorkout,
     Math.round(parts.mealTargetG / 5) * 5,
+    parts.customTarget,
     [...parts.pantryIds].sort(),
     [...parts.equipment].sort(),
     parts.maxMinutes,

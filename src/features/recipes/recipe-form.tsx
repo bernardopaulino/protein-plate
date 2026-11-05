@@ -1,6 +1,6 @@
 "use client";
 
-import { ChefHat, ChevronDown, Loader2, Sparkles, X } from "lucide-react";
+import { ChefHat, ChevronDown, Loader2, Minus, Plus, Sparkles, X } from "lucide-react";
 import { LazyMotion, MotionConfig, domMax } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
@@ -9,14 +9,16 @@ import { Button } from "@/components/ui/button";
 import type { RecipeResponse } from "@/domain/contracts/recipe";
 import type { Allergen } from "@/domain/food";
 import { isMeal, mealTargets, type Meal } from "@/domain/meals";
-import { allowedFoods, type Diet } from "@/domain/preferences";
+import { allowedFoods, type Diet, type Equipment } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
 import { RECIPE_MAX_CHOSEN } from "@/domain/recipe-base";
 import {
   MAX_MINUTES_OPTIONS,
+  RECIPE_TARGET,
   type MaxMinutes,
   type RecipeErrorCode,
 } from "@/domain/recipe-options";
+import { EquipmentPicker, EquipmentSummary, sameEquipment } from "./equipment-picker";
 import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { FoodPicker } from "@/features/onboarding/food-picker";
 import { useRouter } from "@/i18n/navigation";
@@ -32,12 +34,20 @@ export interface RecipeProfile {
   allergies: Allergen[];
   likedFoods: string[];
   cookMinutes: MaxMinutes;
+  equipment: Equipment[];
+}
+
+/** A proteína escolhida: inteiro, nos limites e em passos de 1 g (os botões andam de 5 em 5). */
+function clampTarget(value: number): number {
+  if (!Number.isFinite(value)) return RECIPE_TARGET.min;
+  return Math.min(RECIPE_TARGET.max, Math.max(RECIPE_TARGET.min, Math.round(value)));
 }
 
 /**
- * Nova receita (ecrã 7): por defeito basta escolher a refeição; a app escolhe a base entre os
- * alimentos de que a pessoa gosta. Escolher alimentos é opcional ("tenho isto em casa"), e o tempo
- * e as doses ficam em "Mais opções", já com o que a pessoa disse no formulário.
+ * Nova receita (ecrã 8): por defeito basta escolher a refeição; a app escolhe a base entre os
+ * alimentos de que a pessoa gosta e aponta para a meta da refeição. Opcional: a proteína por dose à
+ * escolha, os eletrodomésticos (ou sem cozinhar) e os alimentos que a pessoa tem; o tempo e as doses
+ * ficam em "Mais opções", já com o que a pessoa disse no formulário.
  */
 export function RecipeForm({
   profile,
@@ -45,6 +55,8 @@ export function RecipeForm({
   initialFoods,
   initialMinutes,
   initialServings,
+  initialTarget,
+  initialEquipment,
   variant,
 }: {
   profile: RecipeProfile;
@@ -52,6 +64,10 @@ export function RecipeForm({
   initialFoods: string[];
   initialMinutes: number | null;
   initialServings: number;
+  /** Proteína por dose à escolha (de "Gerar outra"); null = a meta da refeição. */
+  initialTarget: number | null;
+  /** Equipamento desta receita (de "Gerar outra"); null = o do perfil. */
+  initialEquipment: Equipment[] | null;
   variant: number;
 }) {
   const t = useTranslations("recipes.form");
@@ -91,6 +107,21 @@ export function RecipeForm({
   const pre = profile.preWorkoutMeal;
   const mealTarget = mealTargets(profile.dailyTargetG, meals, post).get(meal) ?? 0;
 
+  const [customTarget, setCustomTarget] = useState(initialTarget !== null);
+  const [target, setTarget] = useState(() =>
+    clampTarget(initialTarget ?? Math.round(mealTarget / RECIPE_TARGET.step) * RECIPE_TARGET.step),
+  );
+  const [targetText, setTargetText] = useState(String(target));
+  const updateTarget = (value: number) => {
+    const next = clampTarget(value);
+    setTarget(next);
+    setTargetText(String(next));
+  };
+  const proteinPerServing = customTarget ? target : mealTarget;
+
+  const [equipment, setEquipment] = useState<Equipment[]>(initialEquipment ?? profile.equipment);
+  const equipmentChanged = !sameEquipment(equipment, profile.equipment);
+
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (status === "loading") return;
@@ -107,6 +138,9 @@ export function RecipeForm({
           servings,
           locale,
           variant: Math.min(3, Math.max(1, Math.round(variant))),
+          // Só vão quando mudam: sem eles, o servidor usa a meta da refeição e o perfil
+          ...(customTarget ? { targetProteinG: target } : {}),
+          ...(equipmentChanged ? { equipment } : {}),
         }),
       });
       const body = (await response.json()) as RecipeResponse;
@@ -155,6 +189,121 @@ export function RecipeForm({
               <p className="mt-2 text-sm text-muted">
                 {t("mealTarget", { grams: formatProtein(mealTarget, lang) })}
               </p>
+            </fieldset>
+
+            <fieldset className="min-w-0 rounded-card border border-border bg-surface p-5">
+              <legend className="px-1 font-display text-lg font-bold">{t("protein")}</legend>
+              <div
+                role="radiogroup"
+                aria-label={t("protein")}
+                className="mt-2 grid gap-2 sm:grid-cols-2"
+              >
+                {[
+                  {
+                    custom: false,
+                    title: t("proteinMeal"),
+                    hint: t("proteinMealHint", { grams: formatProtein(mealTarget, lang) }),
+                  },
+                  { custom: true, title: t("proteinCustom"), hint: t("proteinCustomHint") },
+                ].map((option) => {
+                  const on = customTarget === option.custom;
+                  return (
+                    <button
+                      key={String(option.custom)}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      onClick={() => {
+                        if (option.custom && !customTarget) {
+                          updateTarget(
+                            Math.round(mealTarget / RECIPE_TARGET.step) * RECIPE_TARGET.step,
+                          );
+                        }
+                        setCustomTarget(option.custom);
+                      }}
+                      className={cn(
+                        "flex min-h-14 flex-col justify-center rounded-card border-2 px-4 py-2 text-left transition-colors duration-200",
+                        on
+                          ? "border-primary bg-primary-soft"
+                          : "border-border hover:border-primary/50",
+                      )}
+                    >
+                      <span className="font-semibold">{option.title}</span>
+                      <span className="text-sm text-muted">{option.hint}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {customTarget ? (
+                <div className="mt-4">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      aria-label={t("proteinLess")}
+                      disabled={target <= RECIPE_TARGET.min}
+                      onClick={() => updateTarget(target - RECIPE_TARGET.step)}
+                    >
+                      <Minus aria-hidden />
+                    </Button>
+                    <label className="relative">
+                      <span className="sr-only">{t("proteinValue")}</span>
+                      <input
+                        type="number"
+                        inputMode="numeric"
+                        min={RECIPE_TARGET.min}
+                        max={RECIPE_TARGET.max}
+                        step={1}
+                        value={targetText}
+                        onChange={(e) => {
+                          setTargetText(e.target.value);
+                          const value = Number(e.target.value);
+                          if (
+                            e.target.value !== "" &&
+                            value >= RECIPE_TARGET.min &&
+                            value <= RECIPE_TARGET.max
+                          ) {
+                            setTarget(Math.round(value));
+                          }
+                        }}
+                        onBlur={() => updateTarget(Number(targetText))}
+                        className="h-14 w-28 rounded-card border-2 border-border bg-surface pr-9 pl-4 font-display text-2xl font-bold tabular outline-none focus:border-primary"
+                      />
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-muted"
+                      >
+                        g
+                      </span>
+                    </label>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      aria-label={t("proteinMore")}
+                      disabled={target >= RECIPE_TARGET.max}
+                      onClick={() => updateTarget(target + RECIPE_TARGET.step)}
+                    >
+                      <Plus aria-hidden />
+                    </Button>
+                  </div>
+                  <p className="mt-2 text-sm text-muted">
+                    {t("proteinNote", { min: RECIPE_TARGET.min, max: RECIPE_TARGET.max })}
+                  </p>
+                </div>
+              ) : null}
+            </fieldset>
+
+            <fieldset className="min-w-0 rounded-card border border-border bg-surface p-5">
+              <legend className="px-1 font-display text-lg font-bold">{t("equipment")}</legend>
+              <p className="mt-1 text-sm text-muted">{t("equipmentHint")}</p>
+              <EquipmentPicker
+                className="mt-3"
+                value={equipment}
+                onChange={setEquipment}
+                profileEquipment={profile.equipment}
+              />
             </fieldset>
 
             <section
@@ -295,7 +444,16 @@ export function RecipeForm({
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-muted">{t("summaryTarget")}</dt>
-                  <dd className="font-semibold tabular">≈ {formatProtein(mealTarget, lang)} g</dd>
+                  <dd className="font-semibold tabular">
+                    {customTarget ? "" : "≈ "}
+                    {formatProtein(proteinPerServing, lang)} g
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-muted">{t("summaryEquipment")}</dt>
+                  <dd className="text-right font-semibold">
+                    <EquipmentSummary value={equipment} />
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-muted">{t("foods")}</dt>

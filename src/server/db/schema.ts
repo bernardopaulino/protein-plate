@@ -176,6 +176,10 @@ export const recipes = sqliteTable(
     steps: text("steps", { mode: "json" }).$type<string[]>().notNull(),
     proteinPerServingG: real("protein_per_serving_g").notNull(),
     mealTargetG: real("meal_target_g").notNull(),
+    /** A proteína por dose foi escolhida pela pessoa (mealTargetG é esse valor), migração 0005 */
+    customTarget: integer("custom_target", { mode: "boolean" }).notNull().default(false),
+    /** Equipamento usado (vazio = sem cozinhar); null nas receitas anteriores à 0005 */
+    equipment: text("equipment", { mode: "json" }).$type<Equipment[]>(),
     model: text("model").notNull(),
     promptVersion: integer("prompt_version").notNull(),
     foodDataVersion: integer("food_data_version").notNull(),

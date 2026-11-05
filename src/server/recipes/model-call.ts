@@ -1,7 +1,8 @@
 import { Output, generateText, type LanguageModel } from "ai";
 import type { FoodIndex } from "@/domain/food";
+import { fitProtein } from "@/domain/recipe-fit";
 import { AI_DEADLINE_MS, AI_EFFORT, AI_MIN_RETRY_MS, AI_THINKING } from "../ai/model";
-import { buildRecipePrompt, type RecipePromptInput } from "../ai/prompts/recipe.v2";
+import { buildRecipePrompt, type RecipePromptInput } from "../ai/prompts/recipe.v3";
 import {
   mergeDuplicateIngredients,
   recipeOutputSchema,
@@ -28,7 +29,9 @@ export interface RecipeModelResult {
  * A chamada ao modelo, partilhada pelo servidor e pelo `eval:recipes` (as avaliações medem
  * exatamente o que corre em produção). Secção 6:
  * - schema fixo (a gramática fica em cache do lado da API), effort baixo e sem thinking;
- * - os repetidos juntam-se na app; o resto dos problemas leva a 1 nova tentativa com o erro descrito;
+ * - os repetidos juntam-se na app e as fontes de proteína ajustam-se para a proteína por dose chegar
+ *   ao alvo (a meta da refeição ou a escolhida); o resto dos problemas leva a 1 nova tentativa com o
+ *   erro descrito;
  * - prazo total de `AI_DEADLINE_MS` para as duas tentativas: a segunda só arranca se ainda houver
  *   pelo menos `AI_MIN_RETRY_MS`, e cada uma tem como timeout o tempo que falta.
  */
@@ -41,13 +44,14 @@ export async function callRecipeModel(params: {
 }): Promise<RecipeModelResult> {
   const now = params.now ?? Date.now;
   const log = params.log ?? (() => {});
-  const { request, chosen, pantry } = params.prompt;
+  const { request, context, chosen, pantry } = params.prompt;
   const check = {
     allowedIds: new Set([...chosen, ...pantry].map((f) => f.id)),
     maxMinutes: request.maxMinutes,
     proteinIds: chosen.filter((f) => f.role === "protein").map((f) => f.id),
     servings: request.servings,
     foods: params.foods,
+    requiredProteinG: context.customTarget ? Math.round(context.mealTargetG) : undefined,
   };
 
   const started = now();
@@ -82,7 +86,15 @@ export async function callRecipeModel(params: {
       });
       inputTokens += result.usage.inputTokens ?? 0;
       outputTokens += result.usage.outputTokens ?? 0;
-      const candidate = mergeDuplicateIngredients(result.output);
+      const merged = mergeDuplicateIngredients(result.output);
+      const fitted = fitProtein(
+        merged.ingredients,
+        request.servings,
+        context.mealTargetG,
+        params.foods,
+      );
+      const candidate: RecipeOutput = { ...merged, ingredients: fitted.ingredients };
+      if (fitted.adjusted) log({ msg: "recipe_protein_fitted", attempt });
       problem = recipeProblem(candidate, check);
       if (!problem) output = candidate;
     } catch (err) {

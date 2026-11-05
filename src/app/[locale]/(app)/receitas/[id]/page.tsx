@@ -1,9 +1,10 @@
-import { Clock, Users, Zap } from "lucide-react";
+import { Clock, CookingPot, Users, Zap } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { cache } from "react";
 import { ProteinNumber } from "@/components/protein/protein-number";
+import { EQUIPMENT } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
 import { FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { RecipeActions } from "@/features/recipes/recipe-actions";
@@ -47,6 +48,7 @@ export default async function RecipePage({ params }: { params: Params }) {
   const t = await getTranslations("recipes.detail");
   const tm = await getTranslations("meals");
   const td = await getTranslations("disclaimer");
+  const tk = await getTranslations("onboarding.kitchen");
   const lang = HTML_LANG[locale];
   const covers =
     recipe.mealTargetG > 0 ? Math.round((recipe.proteinPerServingG / recipe.mealTargetG) * 100) : 0;
@@ -66,9 +68,25 @@ export default async function RecipePage({ params }: { params: Params }) {
             tempo: String(maxMinutes),
             doses: String(recipe.servings),
             variante: String((recipe.variant % 3) + 1),
+            ...(recipe.customTarget ? { proteina: String(Math.round(recipe.mealTargetG)) } : {}),
+            ...(recipe.equipment
+              ? { equipamento: recipe.equipment.length > 0 ? recipe.equipment.join(",") : "nenhum" }
+              : {}),
           },
         }
       : null;
+
+  // Receitas anteriores à migração 0005 não guardam o equipamento
+  const cookWith =
+    recipe.equipment === null
+      ? null
+      : recipe.equipment.length === 0
+        ? t("noCooking")
+        : t("cookWith", {
+            list: EQUIPMENT.filter((e) => recipe.equipment!.includes(e))
+              .map((e) => tk(`equipmentNames.${e}`).toLowerCase())
+              .join(", "),
+          });
 
   return (
     <article className="mx-auto max-w-5xl pb-8">
@@ -93,11 +111,13 @@ export default async function RecipePage({ params }: { params: Params }) {
         </p>
         <div className="flex flex-col gap-1 sm:pl-4">
           <p className="font-semibold">
-            {t("covers", {
-              percent: covers,
-              meal: tm(recipe.meal).toLowerCase(),
-              target: formatProtein(recipe.mealTargetG, lang),
-            })}
+            {recipe.customTarget
+              ? t("requested", { target: formatProtein(recipe.mealTargetG, lang) })
+              : t("covers", {
+                  percent: covers,
+                  meal: tm(recipe.meal).toLowerCase(),
+                  target: formatProtein(recipe.mealTargetG, lang),
+                })}
           </p>
           <p className="flex flex-wrap gap-4 text-muted">
             <span className="inline-flex items-center gap-1">
@@ -108,6 +128,12 @@ export default async function RecipePage({ params }: { params: Params }) {
               <Users aria-hidden className="size-4" />
               {t("servings", { count: recipe.servings })}
             </span>
+            {cookWith ? (
+              <span className="inline-flex items-center gap-1">
+                <CookingPot aria-hidden className="size-4" />
+                {cookWith}
+              </span>
+            ) : null}
           </p>
         </div>
       </section>

@@ -12,7 +12,14 @@ const PUBLIC_PAGES = [
   "/termos",
 ];
 /** Páginas com login (pessoa com o plano feito). */
-const APP_PAGES = ["/o-meu-dia", "/receitas", "/receitas/nova", "/conta", "/conta/preferencias"];
+const APP_PAGES = [
+  "/o-meu-dia",
+  "/receitas",
+  "/receitas/nova",
+  "/receitas/dia",
+  "/conta",
+  "/conta/preferencias",
+];
 
 async function expectNoViolations(page: Page) {
   await page.waitForLoadState("load");

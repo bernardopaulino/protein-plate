@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { EQUIPMENT, type Equipment } from "@/domain/preferences";
 import { RecipeForm } from "@/features/recipes/recipe-form";
 import type { Locale } from "@/i18n/routing";
 import { requireProfile } from "@/server/auth/guard";
@@ -35,6 +36,16 @@ export default async function NewRecipePage({
     typeof query.alimentos === "string"
       ? query.alimentos.split(",").filter(Boolean).slice(0, 12)
       : [];
+  // "Gerar outra" repete a proteína e o equipamento escolhidos ("nenhum" = sem cozinhar)
+  const target = Number(query.proteina);
+  const equipment =
+    typeof query.equipamento === "string"
+      ? query.equipamento === "nenhum"
+        ? []
+        : query.equipamento
+            .split(",")
+            .filter((e): e is Equipment => (EQUIPMENT as readonly string[]).includes(e))
+      : null;
 
   return (
     <div className="pb-8">
@@ -51,11 +62,16 @@ export default async function NewRecipePage({
             allergies: profile.allergies,
             likedFoods: profile.likedFoods,
             cookMinutes: profile.cookMinutes,
+            equipment: profile.equipment,
           }}
           initialMeal={meal}
           initialFoods={foods}
           initialMinutes={Number(query.tempo) || null}
           initialServings={Number(query.doses) || 1}
+          initialTarget={Number.isInteger(target) && target > 0 ? target : null}
+          initialEquipment={
+            equipment && (equipment.length > 0 || query.equipamento === "nenhum") ? equipment : null
+          }
           variant={Number(query.variante) || 1}
         />
       </div>
