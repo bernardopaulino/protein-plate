@@ -39,7 +39,7 @@ A app prova que atingir a meta diária de proteína é fácil: escolhes alimento
 | Conta | Preferências, exportar e apagar | Exportar inclui tudo o que a app guarda |
 | Livro de receitas | `/receitas`: duas entradas no topo ("Uma receita" e "O dia todo"); separadores Guardadas (favoritas primeiro, filtro "Só favoritas") e Recentes (as últimas 50 geradas), com filtro por refeição; na receita, "Pôr no meu dia" troca os alimentos dessa refeição por uma dose da receita | O "Hoje" mostra "Receita: …" na refeição; a proteína continua calculada pela app |
 | Backoffice | Painel, utilizadores, receitas, alimentos e duas ações (ver `docs/backoffice.md`) | Atrás do Cloudflare Access; sem dados de saúde por pessoa |
-| Base técnica | PWA, PT (EN preparado), páginas legais, motion com `prefers-reduced-motion` | Lighthouse mobile ≥ 90 nas 4 categorias |
+| Base técnica | PWA, PT e EN (`/en`), páginas legais, motion com `prefers-reduced-motion` | Lighthouse mobile ≥ 90 nas 4 categorias |
 
 ## 3. Regras de domínio (`src/domain`)
 
@@ -309,7 +309,7 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; esc
 | A11y | axe-core + Lighthouse CI | páginas principais, claro e escuro |
 | IA | `eval:recipes` | antes de mudar prompt/modelo |
 
-**CI:** PR → lint, typecheck, content:check, testes, build OpenNext, e2e, Lighthouse no Worker local (indicativo: o `wrangler dev` não comprime as respostas). Merge em `main` → deploy staging + migrações → Lighthouse contra o staging (mediana de 5 corridas; bloqueia abaixo de 90 em qualquer categoria). Produção → `workflow_dispatch` manual depois da checklist.
+**CI:** PR → lint, typecheck, content:check, testes, build OpenNext, e2e, Lighthouse no Worker local (indicativo: o `wrangler dev` não comprime as respostas, por isso a performance é só um aviso). Merge em `main` → deploy staging + migrações → Lighthouse contra o staging (mediana de 5 corridas; bloqueia abaixo de 90 em qualquer categoria). Fora da produção o Worker serve `noindex`: aí o SEO conta auditoria a auditoria (título, descrição, estado HTTP, links, imagens, hreflang, canonical), sem as de indexação. Produção → `workflow_dispatch` manual depois da checklist.
 
 **Performance:** as páginas públicas (landing, `/entrar`, `/alimentos`, detalhe) não carregam a biblioteca de motion; as entradas são CSS (`tw-animate-css`, transições) e o texto principal é visível desde o primeiro paint (é o LCP). A motion fica nas páginas da app (formulário de boas-vindas, receitas).
 
