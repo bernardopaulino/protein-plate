@@ -284,7 +284,8 @@ const nearTarget = valid.filter(
   (r) => r.targetRatio !== null && r.targetRatio >= 0.7 && r.targetRatio <= 1.4,
 ).length;
 const customHit = valid.filter(
-  (r) => CASES[r.case - 1]!.customTarget && r.targetRatio !== null && Math.abs(r.targetRatio - 1) <= 0.2,
+  (r) =>
+    CASES[r.case - 1]!.customTarget && r.targetRatio !== null && Math.abs(r.targetRatio - 1) <= 0.2,
 ).length;
 const summary = {
   model: modelId,

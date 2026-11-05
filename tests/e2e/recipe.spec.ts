@@ -95,7 +95,7 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
 test.describe("dia completo e proteína à escolha (conta própria)", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("o dia todo: uma receita por refeição e depois para o \"Hoje\"", async ({
+  test('o dia todo: uma receita por refeição e depois para o "Hoje"', async ({
     context,
     page,
     baseURL,
