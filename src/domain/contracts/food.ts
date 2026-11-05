@@ -14,6 +14,12 @@ import { portionIdSchema, slugSchema } from "./common";
 /** Marcador de curadoria: alimento ainda sem os valores confirmados na TCA. */
 export const TODO = "TODO";
 
+/**
+ * Valores de referência revistos (alinhados com a TCA e tabelas equivalentes), sem o código do item
+ * na TCA. Passa no content:check; quando o código for confirmado, substitui este marcador.
+ */
+export const TCA_REFERENCE = "REF";
+
 /** Porção mínima (g) fora da despensa. */
 export const PORTION_MIN_GRAMS = 5;
 

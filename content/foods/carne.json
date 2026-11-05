@@ -36,7 +36,7 @@
     "ease": 3,
     "exampleRank": 95,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhado com limão e orégãos", "Em tiras, salteado com legumes"],
       "en": ["Grilled with lemon and oregano", "In strips, stir-fried with vegetables"]
@@ -79,7 +79,7 @@
     "ease": 2,
     "exampleRank": 75,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Bife na frigideira em 6 minutos", "Em cubos, no caril"],
       "en": ["Pan-fried steak in 6 minutes", "Diced, in a curry"]
@@ -122,7 +122,7 @@
     "ease": 3,
     "exampleRank": 70,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Bolonhesa com massa", "Hambúrguer caseiro no forno"],
       "en": ["Bolognese with pasta", "Homemade oven burger"]
@@ -157,7 +157,7 @@
     "ease": 3,
     "exampleRank": 72,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["No forno com batata e limão"],
       "en": ["Roasted with potato and lemon"]
@@ -192,7 +192,7 @@
     "ease": 3,
     "exampleRank": 62,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Almôndegas com tomate"],
       "en": ["Meatballs in tomato sauce"]
@@ -227,7 +227,7 @@
     "ease": 2,
     "exampleRank": 68,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Na frigideira com alho"],
       "en": ["Pan-fried with garlic"]
@@ -262,7 +262,7 @@
     "ease": 2,
     "exampleRank": 60,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhado com salada"],
       "en": ["Grilled with salad"]
@@ -297,7 +297,7 @@
     "ease": 3,
     "exampleRank": 58,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Assado com laranja"],
       "en": ["Roasted with orange"]
@@ -332,7 +332,7 @@
     "ease": 2,
     "exampleRank": 56,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhadas com alho e colorau"],
       "en": ["Grilled with garlic and paprika"]
@@ -367,7 +367,7 @@
     "ease": 3,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Estufado com vinho branco"],
       "en": ["Stewed with white wine"]
@@ -402,7 +402,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["No forno com alecrim"],
       "en": ["Roasted with rosemary"]
@@ -437,7 +437,7 @@
     "ease": 2,
     "exampleRank": 20,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Iscas com cebola"],
       "en": ["With onions"]
@@ -472,7 +472,7 @@
     "ease": 3,
     "exampleRank": 25,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com laranja e arroz"],
       "en": ["With orange and rice"]
@@ -507,7 +507,7 @@
     "ease": 1,
     "exampleRank": 45,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em pão com tomate"],
       "en": ["On bread with tomato"]

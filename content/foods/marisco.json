@@ -36,7 +36,7 @@
     "ease": 2,
     "exampleRank": 50,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salteado com alho em 5 minutos", "Com massa e limão"],
       "en": ["Sautéed with garlic in 5 minutes", "With pasta and lemon"]
@@ -71,7 +71,7 @@
     "ease": 3,
     "exampleRank": 40,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salada de polvo"],
       "en": ["Octopus salad"]
@@ -106,7 +106,7 @@
     "ease": 2,
     "exampleRank": 38,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhadas com alho"],
       "en": ["Grilled with garlic"]
@@ -141,7 +141,7 @@
     "ease": 2,
     "exampleRank": 36,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhado com batata"],
       "en": ["Grilled with potato"]
@@ -176,7 +176,7 @@
     "ease": 2,
     "exampleRank": 30,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["À bulhão pato"],
       "en": ["With garlic and coriander"]
@@ -211,7 +211,7 @@
     "ease": 2,
     "exampleRank": 28,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["À bulhão pato"],
       "en": ["With garlic and coriander"]

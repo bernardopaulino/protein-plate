@@ -28,7 +28,7 @@
     "ease": 3,
     "exampleRank": 70,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Cozida com bacalhau", "No forno com alecrim"],
       "en": ["Boiled with salt cod", "Roasted with rosemary"]
@@ -63,7 +63,7 @@
     "ease": 3,
     "exampleRank": 65,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Assada com salmão", "Em puré com canela"],
       "en": ["Roasted with salmon", "Mashed with cinnamon"]
@@ -98,7 +98,7 @@
     "ease": 3,
     "exampleRank": 25,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []

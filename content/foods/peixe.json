@@ -36,7 +36,7 @@
     "ease": 2,
     "exampleRank": 82,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["No forno com batata-doce", "Na frigideira, pele para baixo"],
       "en": ["Baked with sweet potato", "Pan-seared, skin side down"]
@@ -79,7 +79,7 @@
     "ease": 3,
     "exampleRank": 65,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Cozida com legumes e um fio de azeite", "No forno com tomate"],
       "en": ["Poached with vegetables and olive oil", "Baked with tomato"]
@@ -122,7 +122,7 @@
     "ease": 3,
     "exampleRank": 55,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Cozido com grão e ovo", "Lascas com espinafres"],
       "en": ["Boiled with chickpeas and egg", "Flaked with spinach"]
@@ -157,7 +157,7 @@
     "ease": 2,
     "exampleRank": 60,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Selado com sésamo"],
       "en": ["Seared with sesame"]
@@ -192,7 +192,7 @@
     "ease": 3,
     "exampleRank": 50,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Assadas com pimentos"],
       "en": ["Grilled with peppers"]
@@ -227,7 +227,7 @@
     "ease": 3,
     "exampleRank": 45,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhado com batata cozida"],
       "en": ["Grilled with boiled potato"]
@@ -262,7 +262,7 @@
     "ease": 3,
     "exampleRank": 42,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["No forno com limão"],
       "en": ["Baked with lemon"]
@@ -297,7 +297,7 @@
     "ease": 3,
     "exampleRank": 52,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Grelhada com legumes"],
       "en": ["Grilled with vegetables"]
@@ -332,7 +332,7 @@
     "ease": 3,
     "exampleRank": 50,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["No forno com batata-doce"],
       "en": ["Baked with sweet potato"]
@@ -367,7 +367,7 @@
     "ease": 3,
     "exampleRank": 38,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com banana, à madeirense"],
       "en": ["Madeira style, with banana"]
@@ -402,7 +402,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em arroz de tamboril"],
       "en": ["In monkfish rice"]
@@ -437,7 +437,7 @@
     "ease": 2,
     "exampleRank": 35,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Na frigideira com limão"],
       "en": ["Pan-fried with lemon"]
@@ -472,7 +472,7 @@
     "ease": 3,
     "exampleRank": 40,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["No forno com amêndoa"],
       "en": ["Baked with almonds"]

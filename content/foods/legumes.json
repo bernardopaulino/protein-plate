@@ -28,7 +28,7 @@
     "ease": 2,
     "exampleRank": 60,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Ao vapor em 5 minutos", "Salteados com alho"],
       "en": ["Steamed in 5 minutes", "Sautéed with garlic"]
@@ -63,7 +63,7 @@
     "ease": 2,
     "exampleRank": 50,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salteados com ovo", "Crus em salada"],
       "en": ["Sautéed with egg", "Raw in a salad"]
@@ -98,7 +98,7 @@
     "ease": 1,
     "exampleRank": 55,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salada com orégãos", "Em tosta com azeite"],
       "en": ["Salad with oregano", "On toast with olive oil"]
@@ -133,7 +133,7 @@
     "ease": 2,
     "exampleRank": 45,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -168,7 +168,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -203,7 +203,7 @@
     "ease": 2,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -238,7 +238,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -273,7 +273,7 @@
     "ease": 1,
     "exampleRank": 45,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -308,7 +308,7 @@
     "ease": 1,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -343,7 +343,7 @@
     "ease": 1,
     "exampleRank": 50,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -378,7 +378,7 @@
     "ease": 1,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -413,7 +413,7 @@
     "ease": 2,
     "exampleRank": 35,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -448,7 +448,7 @@
     "ease": 2,
     "exampleRank": 25,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -483,7 +483,7 @@
     "ease": 2,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -518,7 +518,7 @@
     "ease": 3,
     "exampleRank": 25,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -553,7 +553,7 @@
     "ease": 2,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -588,7 +588,7 @@
     "ease": 2,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -623,7 +623,7 @@
     "ease": 2,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -658,7 +658,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -693,7 +693,7 @@
     "ease": 1,
     "exampleRank": 25,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []

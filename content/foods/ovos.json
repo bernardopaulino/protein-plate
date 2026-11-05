@@ -36,7 +36,7 @@
     "ease": 2,
     "exampleRank": 85,
     "allergens": ["egg"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Cozido (10 minutos) para levar", "Mexido com espinafres"],
       "en": ["Hard-boiled (10 minutes) to go", "Scrambled with spinach"]
@@ -71,7 +71,7 @@
     "ease": 2,
     "exampleRank": 35,
     "allergens": ["egg"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Omelete com um ovo inteiro", "Panquecas de aveia"],
       "en": ["Omelette with one whole egg", "Oat pancakes"]
@@ -106,7 +106,7 @@
     "ease": 2,
     "exampleRank": 30,
     "allergens": ["egg"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Cozidos, em salada"],
       "en": ["Boiled, in a salad"]

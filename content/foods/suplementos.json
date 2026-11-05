@@ -28,7 +28,7 @@
     "ease": 1,
     "exampleRank": 10,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Batido com leite e banana", "Misturada nas papas de aveia"],
       "en": ["Shake with milk and banana", "Stirred into porridge"]

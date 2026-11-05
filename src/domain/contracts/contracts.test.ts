@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { FIXTURE_FOODS, fixtureFood } from "../__fixtures__/foods";
 import { addToDayInputSchema, saveDayInputSchema } from "./account";
 import { mealsSchema, portionCountSchema } from "./common";
-import { TODO, checkCatalog, foodSchema, foodsMetaSchema } from "./food";
+import { TCA_REFERENCE, TODO, checkCatalog, foodSchema, foodsMetaSchema } from "./food";
 import { planItemSchema } from "./plan";
 import { preferencesInputSchema } from "./profile";
 import { recipeRequestSchema, recipeResponseSchema } from "./recipe";
@@ -218,5 +218,7 @@ describe("alimentos (content/foods)", () => {
     ]);
     expect(checkCatalog([todo], { allowTodo: true })).toEqual([]);
     expect(checkCatalog([todo], { allowTodo: false })[0]?.path).toBe("novo.tcaCode");
+    const reference = fixtureFood({ id: "revisto", tcaCode: TCA_REFERENCE });
+    expect(checkCatalog([reference], { allowTodo: false })).toEqual([]);
   });
 });

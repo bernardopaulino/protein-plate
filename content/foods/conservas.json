@@ -36,7 +36,7 @@
     "ease": 1,
     "exampleRank": 78,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salada de grão com atum", "Sandes com tomate"],
       "en": ["Chickpea and tuna salad", "Sandwich with tomato"]
@@ -71,7 +71,7 @@
     "ease": 1,
     "exampleRank": 60,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em tosta com tomate", "Com batata cozida e cebola"],
       "en": ["On toast with tomato", "With boiled potato and onion"]
@@ -106,7 +106,7 @@
     "ease": 1,
     "exampleRank": 40,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em pão com queijo fresco", "Com ovos mexidos"],
       "en": ["On bread with fresh cheese", "With scrambled eggs"]
@@ -141,7 +141,7 @@
     "ease": 1,
     "exampleRank": 70,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com feijão-frade e cebola"],
       "en": ["With black-eyed peas and onion"]
@@ -176,7 +176,7 @@
     "ease": 1,
     "exampleRank": 45,
     "allergens": ["fish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em tosta com tomate"],
       "en": ["On toast with tomato"]
@@ -211,7 +211,7 @@
     "ease": 1,
     "exampleRank": 30,
     "allergens": ["shellfish"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com arroz e salsa"],
       "en": ["With rice and parsley"]

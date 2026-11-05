@@ -69,6 +69,6 @@ npm run eval:recipes                             # contra o modelo real (ANTHROP
 
 ## Estado e próximos passos
 
-- **Curadoria**: os 168 alimentos da lista estão no catálogo, mas com valores provisórios (`tcaCode: "TODO"`) até serem confirmados na TCA do INSA. O `content:check` sem `--allow-todo` (usado no deploy de produção) falha até lá.
+- **Curadoria**: os 168 alimentos têm valores de referência revistos (`tcaCode: "REF"`, 5/11/2026). Falta associar o código de cada item na TCA do INSA quando o portal estiver disponível; erros corrigem-se em `content/foods` e no próximo deploy.
 - **Contas e segredos**: Google e Apple a funcionar em staging; receitas com o modelo real em staging (`eval:recipes`: 20/20 válidas, mediana 6,9 s, menos de 0,001 $ por receita). Staging em `https://staging.protein-plate.app`, produção em `https://protein-plate.app`.
 - **Performance** (Lighthouse mobile contra staging, mediana de 3 corridas, 2026-11-03): performance 90–91 em `/`, `/comecar`, `/alimentos` e no detalhe dos alimentos, 89 em `/o-meu-dia` (medido antes de o dia passar a vir do servidor); acessibilidade e boas práticas 100; SEO 100 nas páginas indexáveis. O limite é o LCP (cerca de 3,5 s em 4G lento simulado).

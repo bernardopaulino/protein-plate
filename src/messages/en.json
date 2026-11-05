@@ -17,7 +17,7 @@
   "footer": {
     "privacy": "Privacidade",
     "terms": "Termos",
-    "source": "Valores nutricionais: TCA, INSA.",
+    "source": "Valores nutricionais de referência (TCA do INSA e tabelas equivalentes).",
     "tagline": "Proteína sem dieta."
   },
   "common": {
@@ -35,6 +35,7 @@
     "add": "Adicionar",
     "remove": "Tirar",
     "source": "Fonte: TCA, INSA",
+    "sourceReference": "Valores de referência de tabelas de composição de alimentos, como a TCA do INSA.",
     "provisional": "Valores provisórios, a confirmar na TCA.",
     "technicalError": "Algo correu mal do nosso lado. Tenta outra vez daqui a pouco.",
     "whey": "Ultraprocessado (exceção)"

@@ -28,7 +28,7 @@
     "ease": 2,
     "exampleRank": 45,
     "allergens": ["soy"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em cubos, salteado com soja e alho", "No forno com legumes"],
       "en": ["Cubed, stir-fried with soy and garlic", "Baked with vegetables"]
@@ -63,7 +63,7 @@
     "ease": 2,
     "exampleRank": 30,
     "allergens": ["soy"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com sal e limão", "Em salada de arroz"],
       "en": ["With salt and lemon", "In a rice salad"]
@@ -98,7 +98,7 @@
     "ease": 2,
     "exampleRank": 35,
     "allergens": ["soy"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salteado com legumes"],
       "en": ["Stir-fried with vegetables"]
@@ -133,7 +133,7 @@
     "ease": 2,
     "exampleRank": 25,
     "allergens": ["soy"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em salada morna"],
       "en": ["In a warm salad"]

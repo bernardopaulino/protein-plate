@@ -36,7 +36,7 @@
     "ease": 1,
     "exampleRank": 60,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salada com atum e cebola", "Húmus caseiro"],
       "en": ["Salad with tuna and onion", "Homemade hummus"]
@@ -79,7 +79,7 @@
     "ease": 1,
     "exampleRank": 45,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com arroz e ovo", "Chili rápido"],
       "en": ["With rice and egg", "Quick chili"]
@@ -114,7 +114,7 @@
     "ease": 1,
     "exampleRank": 50,
     "allergens": ["lupin"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Petisco de meio da tarde", "Em salada"],
       "en": ["Afternoon snack", "In a salad"]
@@ -149,7 +149,7 @@
     "ease": 3,
     "exampleRank": 45,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com bacalhau e ovo"],
       "en": ["With salt cod and egg"]
@@ -184,7 +184,7 @@
     "ease": 3,
     "exampleRank": 38,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com arroz"],
       "en": ["With rice"]
@@ -219,7 +219,7 @@
     "ease": 3,
     "exampleRank": 36,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Chili caseiro"],
       "en": ["Homemade chili"]
@@ -254,7 +254,7 @@
     "ease": 3,
     "exampleRank": 36,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em sopa"],
       "en": ["In a soup"]
@@ -289,7 +289,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salada com atum"],
       "en": ["Salad with tuna"]
@@ -324,7 +324,7 @@
     "ease": 3,
     "exampleRank": 40,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Estufadas com legumes"],
       "en": ["Stewed with vegetables"]
@@ -359,7 +359,7 @@
     "ease": 2,
     "exampleRank": 38,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Caril de lentilhas"],
       "en": ["Lentil curry"]
@@ -394,7 +394,7 @@
     "ease": 2,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com ovos escalfados"],
       "en": ["With poached eggs"]
@@ -429,7 +429,7 @@
     "ease": 2,
     "exampleRank": 20,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Guisadas com coentros"],
       "en": ["Stewed with coriander"]
@@ -464,7 +464,7 @@
     "ease": 2,
     "exampleRank": 45,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com tomate e manjericão"],
       "en": ["With tomato and basil"]

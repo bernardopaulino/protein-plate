@@ -28,7 +28,7 @@
     "ease": 1,
     "exampleRank": 40,
     "allergens": ["tree-nuts"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com iogurte grego", "Petisco de bolso"],
       "en": ["With Greek yogurt", "Pocket snack"]
@@ -63,7 +63,7 @@
     "ease": 1,
     "exampleRank": 35,
     "allergens": ["peanut"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em tosta com banana", "Nas papas de aveia"],
       "en": ["On toast with banana", "In porridge"]
@@ -98,7 +98,7 @@
     "ease": 1,
     "exampleRank": 38,
     "allergens": ["tree-nuts"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -133,7 +133,7 @@
     "ease": 1,
     "exampleRank": 42,
     "allergens": ["peanut"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -168,7 +168,7 @@
     "ease": 1,
     "exampleRank": 32,
     "allergens": ["tree-nuts"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -203,7 +203,7 @@
     "ease": 1,
     "exampleRank": 30,
     "allergens": ["tree-nuts"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -238,7 +238,7 @@
     "ease": 1,
     "exampleRank": 34,
     "allergens": ["tree-nuts"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []

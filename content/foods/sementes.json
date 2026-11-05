@@ -28,7 +28,7 @@
     "ease": 1,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -63,7 +63,7 @@
     "ease": 1,
     "exampleRank": 25,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -98,7 +98,7 @@
     "ease": 1,
     "exampleRank": 28,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -133,7 +133,7 @@
     "ease": 1,
     "exampleRank": 22,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -168,7 +168,7 @@
     "ease": 1,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -203,7 +203,7 @@
     "ease": 1,
     "exampleRank": 15,
     "allergens": ["sesame"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -238,7 +238,7 @@
     "ease": 1,
     "exampleRank": 20,
     "allergens": ["sesame"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []

@@ -88,7 +88,7 @@ Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (escrever 
 ### Bloqueia o lançamento
 
 - [x] Segredos do Worker de produção (5/11/2026): `ANTHROPIC_API_KEY`, `BETTER_AUTH_SECRET` e `IP_HASH_SECRET` (próprios de produção), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` e os quatro `APPLE_*` (os mesmos de staging). Os valores só se validam no primeiro deploy: um 503 com `env_invalid` no `wrangler tail --env production` indica o campo.
-- [ ] Curadoria da TCA: os 168 alimentos ainda têm valores `TODO`, e o workflow corre `content:check` sem `--allow-todo`, por isso falha antes do deploy.
+- [x] Curadoria: os 168 alimentos com valores de referência revistos (`tcaCode: "REF"`, 5/11/2026). O portal da TCA estava em baixo (504); falta associar os códigos dos itens quando voltar.
 - [x] Google: origem e redirect URI de produção no cliente OAuth; ecrã de consentimento publicado ("In production").
 
 ### Antes ou logo a seguir

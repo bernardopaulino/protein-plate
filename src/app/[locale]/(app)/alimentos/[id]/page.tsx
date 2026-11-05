@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProteinNumber } from "@/components/protein/protein-number";
-import { TODO } from "@/domain/contracts/food";
+import { TCA_REFERENCE, TODO } from "@/domain/contracts/food";
 import { defaultPortion } from "@/domain/food";
 import { formatProtein, portionProtein } from "@/domain/protein";
 import { AddToDay } from "@/features/catalog/add-to-day";
@@ -128,8 +128,11 @@ export default async function FoodPage({ params }: { params: Params }) {
           ) : null}
 
           <p className="order-4 text-sm text-muted lg:mt-8">
-            {common("source")}
-            {food.tcaCode === TODO ? `. ${common("provisional")}` : ` (${food.tcaCode})`}
+            {food.tcaCode === TCA_REFERENCE
+              ? common("sourceReference")
+              : food.tcaCode === TODO
+                ? `${common("source")}. ${common("provisional")}`
+                : `${common("source")} (${food.tcaCode})`}
           </p>
         </div>
         {/* No telemóvel fica a seguir às porções; no desktop, numa coluna fixa ao lado */}

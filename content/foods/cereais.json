@@ -28,7 +28,7 @@
     "ease": 1,
     "exampleRank": 85,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Papas com leite e canela", "Com skyr e fruta"],
       "en": ["Porridge with milk and cinnamon", "With skyr and fruit"]
@@ -63,7 +63,7 @@
     "ease": 3,
     "exampleRank": 90,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Arroz de tomate", "Base para salteados"],
       "en": ["Tomato rice", "Base for stir-fries"]
@@ -98,7 +98,7 @@
     "ease": 2,
     "exampleRank": 85,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com atum e tomate", "Com camarão e alho"],
       "en": ["With tuna and tomato", "With prawns and garlic"]
@@ -133,7 +133,7 @@
     "ease": 1,
     "exampleRank": 80,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Tosta com ovo", "Sandes de queijo fresco"],
       "en": ["Toast with egg", "Fresh cheese sandwich"]
@@ -168,7 +168,7 @@
     "ease": 3,
     "exampleRank": 60,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -203,7 +203,7 @@
     "ease": 2,
     "exampleRank": 60,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -238,7 +238,7 @@
     "ease": 2,
     "exampleRank": 55,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Salada com grão e legumes"],
       "en": ["Salad with chickpeas and vegetables"]
@@ -273,7 +273,7 @@
     "ease": 2,
     "exampleRank": 55,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Pronto em 5 minutos com água a ferver"],
       "en": ["Ready in 5 minutes with boiling water"]
@@ -308,7 +308,7 @@
     "ease": 2,
     "exampleRank": 40,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -343,7 +343,7 @@
     "ease": 3,
     "exampleRank": 30,
     "allergens": [],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -378,7 +378,7 @@
     "ease": 1,
     "exampleRank": 75,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -413,7 +413,7 @@
     "ease": 1,
     "exampleRank": 55,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []
@@ -448,7 +448,7 @@
     "ease": 1,
     "exampleRank": 40,
     "allergens": ["gluten"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": [],
       "en": []

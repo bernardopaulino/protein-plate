@@ -139,7 +139,7 @@ O JSON é a fonte única: gera o seed da D1 e um módulo TypeScript tipado para 
 | `ease` | 1 a 3 | 1 = sem preparação, 2 = rápido, 3 = cozinhar |
 | `exampleRank` | inteiro | prioridade no dia exemplo |
 | `allergens` | lista | alergénios (secção 3, "Preferências"); `[]` se não tiver |
-| `tcaCode` | texto | rastreabilidade |
+| `tcaCode` | texto | rastreabilidade: código do item na TCA, `REF` (valores de referência revistos, sem código confirmado) ou `TODO` (por rever; recusado em produção) |
 | `ideas` | `{ pt, en }` | ideias rápidas |
 
 **Ilustrações:** cada alimento tem uma ilustração (Microsoft Fluent Emoji 3D, MIT) em `public/images/foods`, gerada por `scripts/fetch-food-images.ts` (WebP 160 px, ~450 KB no total) com o mapa em `src/content/food-images.generated.ts`.

@@ -41,7 +41,7 @@ export default async function FoodsPage({ params }: { params: Promise<{ locale: 
         />
       </div>
       <p className="mt-8 text-sm text-muted">
-        {common("source")}. {common("provisional")}
+        {common("sourceReference")}
       </p>
     </div>
   );

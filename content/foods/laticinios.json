@@ -36,7 +36,7 @@
     "ease": 1,
     "exampleRank": 60,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com aveia e canela", "Batido com banana"],
       "en": ["With oats and cinnamon", "Shake with banana"]
@@ -71,7 +71,7 @@
     "ease": 1,
     "exampleRank": 80,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com fruta e amêndoa", "Molho com pepino e alho"],
       "en": ["With fruit and almonds", "Dip with cucumber and garlic"]
@@ -106,7 +106,7 @@
     "ease": 1,
     "exampleRank": 90,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com morangos e aveia", "Com mel e canela"],
       "en": ["With strawberries and oats", "With honey and cinnamon"]
@@ -149,7 +149,7 @@
     "ease": 1,
     "exampleRank": 70,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em pão com tomate", "Com mel e nozes"],
       "en": ["On bread with tomato", "With honey and walnuts"]
@@ -184,7 +184,7 @@
     "ease": 1,
     "exampleRank": 65,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com doce de abóbora", "Em pão de mistura"],
       "en": ["With pumpkin jam", "On mixed-grain bread"]
@@ -219,7 +219,7 @@
     "ease": 1,
     "exampleRank": 50,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com tomate e orégãos", "Em salada com grão"],
       "en": ["With tomato and oregano", "In a chickpea salad"]
@@ -254,7 +254,7 @@
     "ease": 1,
     "exampleRank": 55,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Tosta com fiambre de peru", "Em pão integral"],
       "en": ["Toastie with turkey ham", "On wholemeal bread"]
@@ -289,7 +289,7 @@
     "ease": 1,
     "exampleRank": 58,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com aveia"],
       "en": ["With oats"]
@@ -324,7 +324,7 @@
     "ease": 1,
     "exampleRank": 55,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com fruta"],
       "en": ["With fruit"]
@@ -359,7 +359,7 @@
     "ease": 1,
     "exampleRank": 75,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com mirtilos e mel"],
       "en": ["With blueberries and honey"]
@@ -394,7 +394,7 @@
     "ease": 1,
     "exampleRank": 45,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Batido com fruta"],
       "en": ["Shake with fruit"]
@@ -429,7 +429,7 @@
     "ease": 1,
     "exampleRank": 35,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em tosta com mel"],
       "en": ["On toast with honey"]
@@ -464,7 +464,7 @@
     "ease": 1,
     "exampleRank": 40,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com tomate e manjericão"],
       "en": ["With tomato and basil"]
@@ -499,7 +499,7 @@
     "ease": 1,
     "exampleRank": 35,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Em pão de mistura"],
       "en": ["On mixed-grain bread"]
@@ -534,7 +534,7 @@
     "ease": 1,
     "exampleRank": 20,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Por cima da massa"],
       "en": ["Over pasta"]
@@ -569,7 +569,7 @@
     "ease": 1,
     "exampleRank": 25,
     "allergens": ["milk"],
-    "tcaCode": "TODO",
+    "tcaCode": "REF",
     "ideas": {
       "pt": ["Com figos"],
       "en": ["With figs"]
