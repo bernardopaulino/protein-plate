@@ -16,15 +16,16 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 - [x] Criar as D1 de staging e produção na jurisdição UE (como no Rejection Quest).
 - [x] Configurar o binding de rate limiting em `wrangler.jsonc` (staging e produção).
-- [x] ~~Widget Turnstile~~: deixou de ser usado com o login obrigatório (3/11/2026). O segredo `TURNSTILE_SECRET_KEY` pode ser apagado em staging e produção (`npx wrangler secret delete TURNSTILE_SECRET_KEY --env <ambiente>`) e o widget removido no painel da Cloudflare.
+- [x] ~~Widget Turnstile~~: deixou de ser usado com o login obrigatório (3/11/2026). O segredo `TURNSTILE_SECRET_KEY` foi apagado em staging e produção (5/11/2026); falta remover o widget no painel da Cloudflare.
 - [x] Domínio `protein-plate.app` (Cloudflare Registrar), ligado ao Worker por custom domain, com `staging.` para staging (`routes` no `wrangler.jsonc`).
 - [x] Token de API para o GitHub Actions (`CLOUDFLARE_API_TOKEN`) e `CLOUDFLARE_ACCOUNT_ID`.
 
 ### Google
 
-- [ ] Cliente OAuth do tipo **Web** (separado do cliente iOS do Rejection Quest).
-- [ ] Redirect URIs: `http://localhost:3000/api/auth/callback/google`, `https://staging.protein-plate.app/api/auth/callback/google`, `https://protein-plate.app/api/auth/callback/google`.
-- [ ] Ecrã de consentimento com o nome final da app.
+- [x] Cliente OAuth do tipo **Web** ("Protein Plate Web", projeto `protein-plate`) (separado do cliente iOS do Rejection Quest).
+- [x] Origens JavaScript (localhost, staging e produção) e redirect URIs: `http://localhost:3000/api/auth/callback/google`, `https://staging.protein-plate.app/api/auth/callback/google`, `https://protein-plate.app/api/auth/callback/google`.
+- [x] Ecrã de consentimento com o nome final da app, links de privacidade e termos em `protein-plate.app`, publicado ("In production").
+- [ ] Opcional: verificar a marca (Search Console + "Verify branding") para o nome e o logótipo aparecerem no login; remover o domínio autorizado antigo `bernardo-sobral7.workers.dev`.
 
 ### Apple (conta de developer que já tens)
 
@@ -86,9 +87,9 @@ Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (escrever 
 
 ### Bloqueia o lançamento
 
-- [ ] Segredos do Worker de produção. Já existe `ANTHROPIC_API_KEY`; faltam `BETTER_AUTH_SECRET` e `IP_HASH_SECRET` (novos, diferentes dos de staging), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` e os quatro `APPLE_*` (os mesmos de staging: o Services ID já inclui `protein-plate.app`). Confirmar com `npx wrangler secret list --env production`.
+- [x] Segredos do Worker de produção (5/11/2026): `ANTHROPIC_API_KEY`, `BETTER_AUTH_SECRET` e `IP_HASH_SECRET` (próprios de produção), `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` e os quatro `APPLE_*` (os mesmos de staging). Os valores só se validam no primeiro deploy: um 503 com `env_invalid` no `wrangler tail --env production` indica o campo.
 - [ ] Curadoria da TCA: os 168 alimentos ainda têm valores `TODO`, e o workflow corre `content:check` sem `--allow-todo`, por isso falha antes do deploy.
-- [ ] Google: redirect URI `https://protein-plate.app/api/auth/callback/google` no cliente OAuth e ecrã de consentimento publicado ("In production"; em "Testing" só entram os utilizadores de teste).
+- [x] Google: origem e redirect URI de produção no cliente OAuth; ecrã de consentimento publicado ("In production").
 
 ### Antes ou logo a seguir
 
@@ -96,7 +97,7 @@ Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (escrever 
 - [ ] Beacon do Cloudflare Web Analytics bloqueado pelo CSP: desligar a injeção automática ou permiti-lo no CSP.
 - [ ] Email ao INSA sobre a reutilização da TCA (secção INSA acima).
 - [ ] Regra "required reviewer" no ambiente `production` do GitHub (criado na primeira corrida do workflow).
-- [ ] Apagar `TURNSTILE_SECRET_KEY` em staging e produção e o projeto criado por engano na Vercel.
+- [ ] Apagar o projeto criado por engano na Vercel e o widget do Turnstile no painel da Cloudflare.
 - [ ] Backoffice (secção acima) e deploy do `admin/`.
 
 ### Depois do primeiro deploy
