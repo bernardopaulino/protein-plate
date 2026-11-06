@@ -314,13 +314,19 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; esc
 - Ilustrações 3D (Fluent Emoji, MIT) nos alimentos, refeições, dietas, alergias, equipamento e passos.
 - Movimento com `motion` 14 (`LazyMotion` + `m`, só nas ilhas que o usam): transições de passo, cartões com mola ao escolher, números que contam, barras que enchem, o dia exemplo a entrar no ecrã. 150–350 ms `ease-out`; `MotionConfig reducedMotion="user"` e o CSS global param tudo com `prefers-reduced-motion`.
 - A11y: contraste ≥ 4,5:1, alvos ≥ 44 px, foco visível, teclado em tudo, `aria-live` para "Faltam X g", `lang="pt-PT"`.
+
+### 3D
+
+O prato do dia em 3D, para a ideia se perceber num segundo (com comida de verdade chegas à meta).
+
+- **Disposição** (`src/domain/plate-layout.ts`, função pura, sem three): o prato é um disco de raio 1; as peças ficam dentro do raio útil (0,8), por dentro do anel. Cada refeição do dia tem um setor, pela ordem do dia (as refeições vazias guardam o seu, para o prato não saltar). Uma peça por porção até 3 (a meia porção é uma peça a 70 %); com mais de 3 porções, uma peça maior (130 %) e "×N" na legenda HTML. As peças põem-se num girassol de pontos, das mais perto do centro do setor para fora, com sobreposição de no máximo 25 % da soma dos raios; se não couberem, as do setor encolhem 15 % de cada vez (no limite, a peça vai para o sítio mais livre). Rotação pelo hash do id: o mesmo dia dá sempre o mesmo prato e mudar uma refeição não mexe nas outras.
 - **Responsive** (de 320 px a ecrãs de 2560 px): a app ocupa o ecrã até 80rem (90rem a partir de 1536 px), com margens de 16/24/32 px (utilitário `app-container`, igual no cabeçalho, no conteúdo e no rodapé). Telemóvel: uma coluna e barra de navegação em baixo. Desktop: o "Hoje" tem as refeições à esquerda (duas colunas a partir de 1280 px) e o progresso com "Para fechar a meta" numa coluna fixa à direita; a "Nova receita" tem o resumo e o botão fixos ao lado; o detalhe de um alimento tem o "Adicionar ao meu dia" ao lado; o catálogo e as receitas guardadas vão até 4 colunas. O formulário de boas-vindas e os textos legais ficam numa coluna centrada (leitura e foco). Os testes e2e verificam que não há scroll horizontal a 320, 768, 1024, 1440 e 2560 px e que o conteúdo usa a largura.
 
 ## 12. Qualidade
 
 | Nível | Ferramenta | Cobre |
 | --- | --- | --- |
-| Domínio | Vitest + fast-check | 100% de `src/domain` |
+| Domínio | Vitest + fast-check | 100% de `src/domain` (o prato 3D: nada fora do prato, sobreposição limitada, determinismo, setores estáveis) |
 | Conteúdo | Vitest | JSON válido, seed = módulo tipado |
 | Servidor | Vitest numa D1 local real | ownership com 2 utilizadores, preferências e restrições, quotas por conta, validação de receitas com modelo simulado |
 | E2E | Playwright contra `preview`, com a sessão de `scripts/dev-session.ts` | login obrigatório, formulário de boas-vindas, ajustar o dia, gerar receita (mock) |

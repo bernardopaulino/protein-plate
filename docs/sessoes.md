@@ -126,3 +126,9 @@ Lê a secção 13 de docs/especificacao.md e docs/backoffice.md. Worker admin/ c
 ```text
 Feito. O dia passa a viver só na D1 (sem localStorage; saveDayAction com debounce), "Adicionar ao meu dia" grava na conta. Alimentos de que gosta por 5 secções e 25 subgrupos com "Como de tudo" e ilustração por subgrupo (src/domain/food-groups.ts). Receitas com alimentos opcionais: a app completa a base (src/domain/recipe-base.ts); formulário com "Quero usar alimentos que tenho" e "Mais opções". Segurança: Origin e Content-Length em /api/recipes, overrides de glob e tmp. Responsive de 320 a 2560 px (app-container, "Hoje" com coluna lateral fixa).
 ```
+
+## 17. Prato 3D (6/11/2026)
+
+```text
+Lê as secções 10, 11 ("3D") e 12 de docs/especificacao.md. O prato passa a existir em 3D (three + @react-three/fiber, sem drei nem descodificadores WebAssembly): enche até à meta com os alimentos do dia em modelos low-poly (Kenney Food Kit, CC0). Disposição pura e testada (src/domain/plate-layout.ts), modelos otimizados com gltf-transform e nomes com hash (cache longa), anel com os tokens (claro e escuro), frameloop="demand", queda curta das peças novas (nada com reduced motion), sem 3D sem WebGL, com saveData ou se o contexto se perder. Aparece na landing (md em diante, depois do LCP), no detalhe do alimento ("Ver em 3D", só depois do clique) e no "O meu dia". Testes e2e de rede, canvas, peças, reduced motion e axe.
+```
