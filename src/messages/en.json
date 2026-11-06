@@ -712,5 +712,13 @@
   },
   "lang": {
     "switch": "Português"
+  },
+  "plate3d": {
+    "view": "View in 3D",
+    "hide": "Close 3D",
+    "reset": "Reset view",
+    "viewerLabel": "{food}, in 3D",
+    "hint": "Drag or use the arrow keys to rotate.",
+    "dayToggle": "Your plate in 3D"
   }
 }

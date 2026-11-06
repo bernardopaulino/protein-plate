@@ -10,7 +10,7 @@ import { defaultPortion } from "@/domain/food";
 import { DEFAULT_COMBINATIONS, sortMeals } from "@/domain/meals";
 import { formatCount, itemProtein, totalProtein } from "@/domain/protein";
 import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
-import { ExampleDayCard } from "@/features/landing/example-day-card";
+import { ExampleDayHero } from "@/features/landing/example-day-hero";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
@@ -65,6 +65,8 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         const portion = food.portions.find((p) => p.id === i.portionId) ?? defaultPortion(food);
         return {
           id: i.id,
+          foodId: food.id,
+          count: i.count,
           image: foodImage(food.id),
           // "Ovo · 2 × 1 ovo médio": o nome primeiro; antes ficava "2 × 1 ovo médio ovo"
           label: `${foodName(food, locale)} · ${formatCount(i.count, lang)} × ${portion.label[locale].toLowerCase()}`,
@@ -130,7 +132,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
           <p className="mt-6 max-w-xl text-sm text-muted">{td("health")}</p>
         </div>
 
-        <ExampleDayCard
+        <ExampleDayHero
           title={t("exampleTitle")}
           caption={t("exampleCaption")}
           totalLabel={t("exampleTotal")}

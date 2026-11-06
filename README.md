@@ -12,6 +12,7 @@
 - **Catálogo** (`/alimentos`): páginas estáticas geradas do JSON, filtros por refeição, facilidade e categoria ("snack sem preparação com mais proteína" em 2 toques).
 - **Receitas por IA** (`POST /api/recipes`): só campos fechados; a meta da refeição, o treino, o equipamento e a dieta vêm do perfil; os alimentos com alergénios nunca chegam ao modelo; rate limiting; quotas diárias por conta (HMAC diário); cache por `cache_key`; schema do modelo construído por pedido; validação depois do modelo com uma nova tentativa; **a proteína é sempre calculada pela app**.
 - **Conta** (Google e Apple, Better Auth): consentimento versionado, "As minhas preferências", sincronização do dia, exportar dados (JSON) e apagar conta com login recente.
+- **Prato 3D** (three + React Three Fiber, modelos low-poly do Kenney Food Kit): o prato enche até à meta com os alimentos do dia, com o anel na borda a fazer de barra de progresso. Na página inicial (por trás do dia exemplo, só no desktop e depois do LCP), no detalhe de cada alimento ("Ver em 3D", roda com o rato ou as setas) e no "O meu dia". Disposição pura e testada com property-based testing, modelos otimizados com gltf-transform, `frameloop="demand"`, sem 3D sem WebGL ou com poupança de dados, e o chunk do three nunca chega a quem não o vê.
 - **Backoffice** (`admin/`, Cloudflare Access): painel, utilizadores, receitas e alimentos, sem dados de saúde por pessoa.
 - **Base**: CSP e cabeçalhos de segurança, cron de limpeza horário, PWA, páginas legais, PT (estrutura EN pronta).
 
@@ -21,6 +22,7 @@
 - **Cloudflare D1** (UE) + **Drizzle ORM**, rate limiting da Cloudflare
 - **Better Auth 1.7**, **AI SDK 6** + Anthropic (`claude-haiku-5-5`)
 - **Tailwind v4**, Radix, vaul, Lucide, **motion**, ilustrações Fluent Emoji 3D, `next-intl`
+- **three** + **@react-three/fiber** (sem drei), modelos Kenney Food Kit (CC0) otimizados com `@gltf-transform/cli`
 - **Zod 4**, **Vitest** + fast-check, **Playwright** + axe-core, Lighthouse CI
 
 ## Arquitetura
@@ -28,7 +30,7 @@
 ```text
 src/domain/      regras puras (meta, refeições, proteína, dia exemplo, fechar a meta, contratos Zod)
 src/server/      D1, Better Auth, IA, serviços e Server Actions (server-only, db injetado)
-src/features/    UI por funcionalidade (onboarding, catalog, day, recipes, account, landing)
+src/features/    UI por funcionalidade (onboarding, catalog, day, recipes, account, landing, plate-3d)
 src/components/  ProteinNumber, GoalProgress, MealSection, PortionStepper, FoodCard, chips…
 content/foods/   fonte única dos alimentos → seed da D1 + módulo tipado
 worker/          Worker próprio: valida o env (não arranca sem segredos), HSTS, cache das receitas, cron

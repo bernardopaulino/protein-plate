@@ -712,5 +712,13 @@
   },
   "lang": {
     "switch": "English"
+  },
+  "plate3d": {
+    "view": "Ver em 3D",
+    "hide": "Fechar o 3D",
+    "reset": "Repor vista",
+    "viewerLabel": "{food}, em 3D",
+    "hint": "Arrasta ou usa as setas para rodar.",
+    "dayToggle": "O teu prato em 3D"
   }
 }

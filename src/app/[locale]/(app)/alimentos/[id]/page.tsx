@@ -7,6 +7,7 @@ import { KcalDetails } from "@/components/protein/kcal-details";
 import { ProteinNumber } from "@/components/protein/protein-number";
 import { JsonLd } from "@/components/seo/json-ld";
 import { foodImage } from "@/content/food-images.generated";
+import { portionUnits } from "@/content/food-models.generated";
 import { formatKcal, portionKcal, proteinPer100Kcal } from "@/domain/calories";
 import { TCA_REFERENCE, TODO } from "@/domain/contracts/food";
 import { defaultPortion } from "@/domain/food";
@@ -19,6 +20,7 @@ import {
   defaultPortionProtein,
   foodName,
 } from "@/features/catalog/catalog";
+import { Food3D } from "@/features/plate-3d/food-3d";
 import { Link } from "@/i18n/navigation";
 import { ENABLED_LOCALES, HTML_LANG, type Locale } from "@/i18n/routing";
 import { absoluteUrl, pageMetadata } from "@/lib/seo";
@@ -126,6 +128,13 @@ export default async function FoodPage({ params }: { params: Params }) {
             {defaultPortion(food).label[locale]} · {common("perPortion")}
           </span>
         </p>
+        {/* "Ver em 3D" por baixo do número; o quadro abre com a largura toda */}
+        <Food3D
+          foodId={food.id}
+          count={portionUnits(food.id, defaultPortion(food).grams)}
+          label={`${foodName(food, locale)}, ${defaultPortion(food).label[locale].toLowerCase()}`}
+          className="flex w-full flex-col items-end"
+        />
       </header>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">

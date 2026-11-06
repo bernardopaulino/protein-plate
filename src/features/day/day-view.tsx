@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Illustration } from "@/components/illustration";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SuggestionChip } from "@/components/protein/chips";
 import { GoalProgress } from "@/components/protein/goal-progress";
 import { MealSection } from "@/components/protein/meal-section";
@@ -35,6 +35,7 @@ import {
 import { allowedFoods, type Diet } from "@/domain/preferences";
 import { closeTheGoal } from "@/domain/suggestions";
 import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
+import { DayPlate } from "@/features/plate-3d/day-plate";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { clearLegacyStorage } from "@/lib/legacy-storage";
@@ -159,6 +160,19 @@ export function DayView({
   const pre = profile.preWorkoutMeal;
   const targets = mealTargets(target, meals, post);
   const total = totalProtein(items, FOOD_INDEX);
+  // O prato 3D recalcula a disposição só quando o dia muda (não a cada render)
+  const plateItems = useMemo(
+    () => allItems.filter((i) => personal.foods.some((f) => f.id === i.foodId)),
+    [allItems, personal.foods],
+  );
+  const plateMeals = useMemo(() => sortMeals(profile.meals), [profile.meals]);
+  const plateFoodName = useCallback(
+    (id: string) => {
+      const food = FOOD_INDEX.get(id);
+      return food ? foodName(food, locale) : id;
+    },
+    [locale],
+  );
   const close = closeTheGoal({
     target,
     items,
@@ -288,6 +302,24 @@ export function DayView({
             kcal={kcalOn ? totalKcal(items, FOOD_INDEX) : undefined}
             sticky
             className="order-1 lg:static"
+          />
+          <DayPlate
+            placement="sidebar"
+            items={plateItems}
+            meals={plateMeals}
+            total={total}
+            target={target}
+            foodName={plateFoodName}
+            className="order-1 hidden lg:flex"
+          />
+          <DayPlate
+            placement="collapsible"
+            items={plateItems}
+            meals={plateMeals}
+            total={total}
+            target={target}
+            foodName={plateFoodName}
+            className="order-1 lg:hidden"
           />
           {closePanel}
           {resetActions}

@@ -1,23 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { CountUp } from "@/components/count-up";
 import { Illustration } from "@/components/illustration";
+import type { Meal } from "@/domain/meals";
 import { cn } from "@/lib/cn";
 
 export interface ExampleMeal {
-  key: string;
+  key: Meal;
   label: string;
   image: string | undefined;
   protein: number;
-  items: { id: string; label: string; image: string }[];
+  items: { id: string; label: string; image: string; foodId: string; count: number }[];
 }
 
 /**
  * O dia exemplo da página inicial: as refeições entram uma a uma, a barra enche até à meta e o total
  * conta até lá. Só CSS e um IntersectionObserver, sem a biblioteca de motion (a página inicial
  * carrega menos JavaScript e o LCP chega mais cedo). Com prefers-reduced-motion aparece tudo logo
- * (as transições ficam a 0,01 ms no CSS global e o contador mostra o valor final).
+ * (as transições ficam a 0,01 ms no CSS global e o contador mostra o valor final). O `shown` vive
+ * fora (ExampleDayHero), para o prato 3D encher ao mesmo tempo.
  */
 export function ExampleDayCard({
   title,
@@ -27,6 +29,8 @@ export function ExampleDayCard({
   total,
   target,
   format,
+  shown,
+  onShow,
 }: {
   title: string;
   caption: string;
@@ -35,9 +39,14 @@ export function ExampleDayCard({
   total: number;
   target: number;
   format: "pt-PT" | "en-GB";
+  shown: boolean;
+  onShow: () => void;
 }) {
   const ref = useRef<HTMLElement>(null);
-  const [shown, setShown] = useState(false);
+  const show = useRef(onShow);
+  useEffect(() => {
+    show.current = onShow;
+  }, [onShow]);
 
   useEffect(() => {
     const node = ref.current;
@@ -45,7 +54,7 @@ export function ExampleDayCard({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((e) => e.isIntersecting)) {
-          setShown(true);
+          show.current();
           observer.disconnect();
         }
       },
