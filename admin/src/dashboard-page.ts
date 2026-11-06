@@ -541,6 +541,14 @@ function preferencesRow(loaded: Loaded<PreferencesMetrics>): string {
             "Refeições à volta do treino",
           )}`,
   });
+  const kcalCard = card({
+    id: "calorias",
+    title: "Calorias",
+    body:
+      base === 0
+        ? note("Ainda sem contas com o onboarding feito.")
+        : `<p class="big-figure">${escapeHtml(pct(p.showKcal / base))}</p><p class="panel-sub">veem as calorias no "Hoje" (só informação; desligado por defeito): ${num(p.showKcal)} de ${num(base)}.</p>`,
+  });
   return row(
     "preferencias",
     "Preferências",
@@ -573,7 +581,8 @@ ${bucketsCard(
   bucketItems(p.equipment, (k) => labelOf(EQUIPMENT_LABEL, k)),
   base,
   "Contas com cada equipamento de cozinha",
-)}</div>`,
+)}
+${kcalCard}</div>`,
   );
 }
 

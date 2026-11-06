@@ -122,6 +122,7 @@ export interface ProfileSeed {
   likedFoods?: string[];
   equipment?: string[];
   cookMinutes?: number;
+  showKcal?: boolean;
   healthConsentAt?: number | null;
   onboardedAt?: number | null;
 }
@@ -139,14 +140,15 @@ export async function seedProfile({
   likedFoods = [],
   equipment = ["stove", "microwave"],
   cookMinutes = 20,
+  showKcal = false,
   healthConsentAt = null,
   onboardedAt = NOW - DAY,
 }: ProfileSeed): Promise<void> {
   await run(
     `insert into profiles (user_id, daily_target_g, intensity, weight_kg, manual_target, meals,
       pre_workout_meal, post_workout_meal, diet, allergies, liked_foods, equipment, cook_minutes,
-      locale, consent_version, consented_at, health_consent_at, onboarded_at, updated_at)
-    values (?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, 'pt', 1, ?, ?, ?, ?)`,
+      show_kcal, locale, consent_version, consented_at, health_consent_at, onboarded_at, updated_at)
+    values (?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pt', 1, ?, ?, ?, ?)`,
     userId,
     dailyTargetG,
     intensity,
@@ -159,6 +161,7 @@ export async function seedProfile({
     JSON.stringify(likedFoods),
     JSON.stringify(equipment),
     cookMinutes,
+    showKcal ? 1 : 0,
     NOW - 2 * DAY,
     healthConsentAt,
     onboardedAt,

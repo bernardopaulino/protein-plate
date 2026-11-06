@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { PROVISIONAL_FOODS } from "../src/dashboard-page";
 import { adminDb } from "../src/db";
 import { isoDay, signedPct } from "../src/format";
-import { recipesMetrics } from "../src/metrics";
+import { preferencesMetrics, recipesMetrics } from "../src/metrics";
 import { healthTiles, opsMetrics } from "../src/ops";
 import { DEFAULT_RANGE, parseRange, rangeHref } from "../src/range";
 import { activeMetrics, cohortMetrics, funnelMetrics } from "../src/usage";
@@ -208,6 +208,23 @@ describe("uso da app", () => {
     expect(page).toContain("Voltou na 2.ª semana");
     expect(page).toMatch(/Receitas mais guardadas.*?href="\/receitas\/r1"/s);
     expect(page).toMatch(/Mais postas no dia.*?href="\/receitas\/r1"/s);
+  });
+});
+
+describe("preferências", () => {
+  it("conta quem vê as calorias, só entre as contas com o onboarding feito", async () => {
+    await seedUser({ id: "ana" });
+    await seedUser({ id: "rui" });
+    await seedUser({ id: "eva" });
+    await seedProfile({ userId: "ana", showKcal: true });
+    await seedProfile({ userId: "rui" });
+    await seedProfile({ userId: "eva", showKcal: true, onboardedAt: null });
+    const m = await preferencesMetrics(db());
+    expect(m.onboarded).toBe(2);
+    expect(m.showKcal).toBe(1);
+    const page = await html("/");
+    expect(page).toContain('id="calorias"');
+    expect(page).toContain("1 de 2");
   });
 });
 

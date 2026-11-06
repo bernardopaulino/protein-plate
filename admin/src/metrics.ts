@@ -271,6 +271,8 @@ export interface PreferencesMetrics {
   training: { any: number; pre: number; post: number };
   cookMinutes: Bucket[];
   equipment: Bucket[];
+  /** Com "Calorias" ligado no "Hoje" (só informação). */
+  showKcal: number;
 }
 
 const ONBOARDED = "p.onboarded_at is not null";
@@ -284,12 +286,19 @@ const buckets = (rows: readonly { k: string | number | null; n: number }[]): Buc
 
 export async function preferencesMetrics(db: AdminDb): Promise<PreferencesMetrics> {
   const [base, diets, mealCounts, cook, equipment] = await Promise.all([
-    db.first<{ n: number; trains: number | null; pre: number | null; post: number | null }>(
+    db.first<{
+      n: number;
+      trains: number | null;
+      pre: number | null;
+      post: number | null;
+      kcal: number | null;
+    }>(
       `select count(*) as n,
         sum(case when p.pre_workout_meal is not null or p.post_workout_meal is not null
           then 1 else 0 end) as trains,
         sum(case when p.pre_workout_meal is not null then 1 else 0 end) as pre,
-        sum(case when p.post_workout_meal is not null then 1 else 0 end) as post
+        sum(case when p.post_workout_meal is not null then 1 else 0 end) as post,
+        sum(case when p.show_kcal = 1 then 1 else 0 end) as kcal
       from profiles p where ${ONBOARDED}`,
     ),
     db.all<{ k: string; n: number }>(
@@ -319,6 +328,7 @@ export async function preferencesMetrics(db: AdminDb): Promise<PreferencesMetric
     },
     cookMinutes: buckets(cook),
     equipment: buckets(equipment),
+    showKcal: Number(base?.kcal ?? 0),
   };
 }
 

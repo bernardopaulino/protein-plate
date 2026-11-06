@@ -22,7 +22,7 @@ O padrão é o do backoffice do Rejection Quest (`rejection-quest-api/admin`): H
   - **Retenção**: as contas de cada uma das últimas 8 semanas, semana a semana (mapa de calor).
   - **Ativação**: das contas com 14 dias ou mais, quantas fizeram o formulário, pediram uma receita, guardaram uma ou puseram-na no dia, e voltaram na 2.ª semana.
   - **IA e receitas**: tokens e custo estimado por modelo (30 dias e desde o início) e receitas guardadas.
-  - **Preferências** de quem fez o onboarding, **alimentos** mais escolhidos e mais usados (com link para cada um) e **alergias** só agregadas (ver abaixo).
+  - **Preferências** de quem fez o onboarding (incluindo o cartão **Calorias**: quantas pessoas as veem no "Hoje"), **alimentos** mais escolhidos e mais usados (com link para cada um) e **alergias** só agregadas (ver abaixo).
 - **Utilizadores** (`/utilizadores`): lista com pesquisa por nome, email ou ID exato, ordem pela data de criação, pela última atividade ou pelas receitas pedidas, páginas de 25 e o menu "⋯" em cada linha. A **ficha** (`/utilizadores/:id`) tem três separadores (`?separador=`):
   - **Visão geral**: o nome, o email, a data de criação, as formas de entrar, a última atividade, o onboarding, os termos, se há dados de saúde (nunca quais), a meta diária, as refeições (com o pré e o pós-treino), a alimentação, o equipamento, o tempo para cozinhar e os alimentos de que gosta.
   - **Dia e receitas**: o dia guardado por refeição, com a proteína calculada pela app e a receita posta em cada refeição; as receitas pedidas (as 20 mais recentes) e as guardadas.
