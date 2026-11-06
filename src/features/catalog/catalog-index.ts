@@ -1,5 +1,6 @@
 import "server-only";
 import { UI_IMAGES, foodImage } from "@/content/food-images.generated";
+import { proteinPer100Kcal } from "@/domain/calories";
 import { defaultPortion } from "@/domain/food";
 import { FOOD_SECTIONS, FOOD_SUBGROUPS, foodSubgroup } from "@/domain/food-groups";
 import { MEALS } from "@/domain/meals";
@@ -29,6 +30,7 @@ export function catalogItems(locale: Locale, categoryLabel: (c: string) => strin
         en: normalizeSearch(food.name.en),
         portion: portionLabel(defaultPortion(food), locale),
         protein: defaultPortionProtein(food),
+        density: Math.round((proteinPer100Kcal(food) ?? 0) * 10) / 10,
         category: categoryLabel(food.category),
         ease: food.ease,
         meals: MEALS.reduce(

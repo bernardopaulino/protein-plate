@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { formatKcal } from "@/domain/calories";
 import { formatProtein, roundForDisplay } from "@/domain/protein";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
@@ -8,16 +9,20 @@ import { ProteinNumber } from "./protein-number";
 
 /**
  * Barra de progresso grossa até à meta. Abaixo da meta é "Faltam X g" (nunca vermelho); a mensagem
- * está numa região aria-live para os leitores de ecrã.
+ * está numa região aria-live para os leitores de ecrã. Com `kcal`, uma linha discreta com as
+ * calorias dos alimentos do dia (só informação, nunca uma meta).
  */
 export function GoalProgress({
   total,
   target,
+  kcal,
   sticky = false,
   className,
 }: {
   total: number;
   target: number;
+  /** Calorias dos alimentos do dia (só com "Calorias" ligado) */
+  kcal?: number;
   sticky?: boolean;
   className?: string;
 }) {
@@ -75,6 +80,11 @@ export function GoalProgress({
           style={{ width: `${ratio * 100}%` }}
         />
       </div>
+      {kcal !== undefined ? (
+        <p className="mt-2 text-sm text-muted tabular">
+          {t("kcalDay", { kcal: formatKcal(kcal, locale) })}
+        </p>
+      ) : null}
     </section>
   );
 }

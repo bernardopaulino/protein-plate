@@ -18,7 +18,8 @@ import { FoodCard } from "@/components/protein/food-card";
 import { Button } from "@/components/ui/button";
 import type { FoodSection } from "@/domain/food-groups";
 import { MEALS, type Meal } from "@/domain/meals";
-import type { Locale } from "@/i18n/routing";
+import { formatProtein } from "@/domain/protein";
+import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import {
   catalogImage,
@@ -28,12 +29,13 @@ import {
 } from "./catalog-types";
 import { normalizeSearch } from "./search";
 
-type Sort = "protein" | "ease" | "name";
+type Sort = "protein" | "density" | "ease" | "name";
 type EaseFilter = "1" | "2" | "3";
 type SectionFilter = FoodSection | "all";
 
 const SORTERS: Record<Sort, (locale: Locale) => (a: CatalogItem, b: CatalogItem) => number> = {
   protein: () => (a, b) => b.protein - a.protein,
+  density: () => (a, b) => b.density - a.density || b.protein - a.protein,
   ease: () => (a, b) => a.ease - b.ease || b.protein - a.protein,
   name: (locale) => (a, b) => a.name.localeCompare(b.name, locale),
 };
@@ -97,6 +99,7 @@ function FoodGrid({
   basePath,
   children,
   showCategory = true,
+  showDensity = false,
 }: {
   items: CatalogItem[];
   /** "/alimentos" (ou "/en/alimentos"): o cartão leva a basePath/id */
@@ -104,8 +107,12 @@ function FoodGrid({
   children?: ReactNode;
   /** Dentro de um subgrupo a categoria repete o título: só a preparação. */
   showCategory?: boolean;
+  /** Ordem "Mais proteína por caloria": o cartão diz quanto (em vez da categoria) */
+  showDensity?: boolean;
 }) {
   const te = useTranslations("ease");
+  const tc = useTranslations("catalog");
+  const lang = HTML_LANG[useLocale() as Locale];
   return (
     <ul
       className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
@@ -123,9 +130,11 @@ function FoodGrid({
             portionLabel={item.portion}
             protein={item.protein}
             meta={
-              showCategory
-                ? `${item.category} · ${te(String(item.ease) as EaseFilter)}`
-                : te(String(item.ease) as EaseFilter)
+              showDensity
+                ? tc("densityCard", { grams: formatProtein(item.density, lang) })
+                : showCategory
+                  ? `${item.category} · ${te(String(item.ease) as EaseFilter)}`
+                  : te(String(item.ease) as EaseFilter)
             }
             href={`${basePath}/${item.id}`}
             renderLink={({ href, className, children: content }) => (
@@ -434,6 +443,7 @@ export function CatalogBrowser({
               active={false}
               options={[
                 { value: "protein", label: t("sortProtein") },
+                { value: "density", label: t("sortDensity") },
                 { value: "ease", label: t("sortEase") },
                 { value: "name", label: t("sortName") },
               ]}
@@ -468,7 +478,7 @@ export function CatalogBrowser({
           {...softNav}
         >
           {groups === null ? (
-            <FoodGrid items={results} basePath={basePath}>
+            <FoodGrid items={results} basePath={basePath} showDensity={sort === "density"}>
               {t("results")}
             </FoodGrid>
           ) : (
@@ -480,7 +490,12 @@ export function CatalogBrowser({
                   title={g.title}
                   count={t("groupCount", { count: g.items.length })}
                 />
-                <FoodGrid items={g.items} basePath={basePath} showCategory={section === "all"} />
+                <FoodGrid
+                  items={g.items}
+                  basePath={basePath}
+                  showCategory={section === "all"}
+                  showDensity={sort === "density"}
+                />
               </section>
             ))
           )}

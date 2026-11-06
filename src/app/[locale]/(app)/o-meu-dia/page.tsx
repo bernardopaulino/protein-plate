@@ -43,6 +43,7 @@ export default async function TodayPage({ params }: { params: Promise<{ locale: 
         items,
       }}
       mealRecipes={mealRecipes}
+      showKcal={profile.showKcal}
       preferences={{
         diet: profile.diet,
         allergies: profile.allergies,

@@ -4,7 +4,7 @@ Fonte de verdade para a implementação do Protein Plate ("Protein without the d
 
 ## 1. Produto
 
-A app prova que atingir a meta diária de proteína é fácil: escolhes alimentos comuns em porções reais, vês a barra encher até à meta e geras receitas com esses alimentos. Sem dieta, sem contar calorias, sem proibir nada.
+A app prova que atingir a meta diária de proteína é fácil: escolhes alimentos comuns em porções reais, vês a barra encher até à meta e geras receitas com esses alimentos. Sem dieta, sem contar calorias, sem proibir nada. Quem quiser pode ver as calorias, só como informação.
 
 **Princípios** (cada funcionalidade é avaliada contra eles):
 
@@ -14,11 +14,11 @@ A app prova que atingir a meta diária de proteína é fácil: escolhes alimento
 4. **Zero culpa.** Abaixo da meta é "faltam 23 g", nunca vermelho nem "falhaste".
 5. **Personalizado desde o início.** Login obrigatório (Google ou Apple) e um formulário de boas-vindas curto; a página inicial e o catálogo continuam abertos. Decidido a 3/11/2026: a conta guarda as preferências que tornam o dia e as receitas da pessoa.
 6. **Números fiáveis.** A proteína vem sempre da base de dados curada, nunca da IA.
-7. **Simples por defeito.** Sem calorias, sem macros completos, sem registo diário obrigatório.
+7. **Simples por defeito.** Sem metas nem limites de calorias, sem macros completos, sem registo diário obrigatório. As calorias aparecem só como informação e só para quem as quiser ver (decidido a 6/11/2026; ver "Calorias" na secção 3).
 
 **Critério de sucesso do MVP:** uma pessoa nova chega, em menos de 2 minutos depois de entrar, a um dia que atinge a meta com os alimentos de que gosta.
 
-**Fora do MVP:** calorias e macros completos, registo diário e histórico, produtos de marca, preços, lista de compras, notificações, app mobile.
+**Fora do MVP:** metas, limites ou mínimos de calorias, macros completos, registo diário e histórico, produtos de marca, preços, lista de compras, notificações, app mobile.
 
 **Depois do MVP:** v1.1 — vários "dias tipo", receitas em streaming, histórico do peso. v2 — Open Food Facts, lista de compras, custo por grama de proteína, app Expo sobre o mesmo backend.
 
@@ -32,6 +32,7 @@ A app prova que atingir a meta diária de proteína é fácil: escolhes alimento
 | Detalhe do alimento | Porções, proteína por porção e por 100 g, ideias, fonte TCA | Adicionar ao dia a partir do detalhe |
 | Dia exemplo | Gerado com as refeições da pessoa, só com o que pode comer e os alimentos de que gosta primeiro | Para metas de 80 a 250 g, total entre 100% e 110% |
 | O meu dia ("Hoje") | Refeições, adicionar/remover, porções em passos de 0,5, barra de progresso | Total = soma exata das porções (testado); nunca mostra alimentos excluídos |
+| Calorias (só informação) | Interruptor "Calorias" no "Hoje" (desligado por defeito, guardado na conta): o total do dia, cada refeição e cada item; no dia de receitas, cada dose e o dia; no detalhe do alimento e na receita, um bloco "Calorias" fechado; no catálogo, a ordem "Mais proteína por caloria" | Calculadas pela app a partir de `content/foods` (nunca pela IA); sempre com "≈"; sem meta, limite, mínimo, cores nem avisos |
 | Fechar a meta | "Faltam X g" e 3 sugestões | Cada sugestão cobre o que falta com 1 ou 2 porções, das que a pessoa pode comer |
 | Receitas por IA | Uma refeição da pessoa; alimentos opcionais (0 a 6, a app completa a base com o que a pessoa gosta), tempo, doses; opcional: proteína por dose à escolha (10–100 g, senão a meta da refeição) e eletrodomésticos para esta receita (ou "Sem cozinhar"); treino e dieta vêm do perfil | Ingredientes 100% da base de dados e dentro das restrições; proteína à escolha a menos de 20% do pedido; resposta < 15 s |
 | Dia completo | `/receitas/dia`: uma receita por refeição do plano, cada uma com a meta dessa refeição e alimentos diferentes; tempo, doses e eletrodomésticos; "Pôr o dia todo no meu dia" | Todas em paralelo (< 15 s); quota suficiente para o dia todo antes de gerar; uma falha não estraga as outras |
@@ -99,6 +100,19 @@ Exemplo: 160 g, 4 refeições → sem pós-treino ≈ 46/46/23/46 g; com lanche 
 - Total do dia = soma exata (pode diferir 1 g da soma das parcelas arredondadas; documentado em teste).
 - Formatação com `Intl.NumberFormat('pt-PT')`.
 
+### Calorias (`src/domain/calories.ts`)
+
+`kcal = gramas × kcal_por_100g / 100`
+
+- Só informação, para a pessoa ter uma noção: **nunca há meta, limite nem mínimo**, nem cores ou avisos ligados às calorias. Desligadas por defeito; o interruptor "Calorias" do "Hoje" guarda a escolha na conta (`profiles.show_kcal`, `setShowKcalAction`). O formulário de boas-vindas não pergunta nem lhes mexe.
+- Calculadas pela app a partir de `content/foods`, como a proteína; nas receitas, por dose, com todos os ingredientes (incluindo a despensa: o azeite conta). Valores exatos nos cálculos; na apresentação, "≈" e arredondadas de 5 em 5 abaixo de 100 kcal e de 10 em 10 a partir daí, porque são estimativas.
+- O "Hoje" diz "≈ X kcal com estes alimentos": o dia é um plano com os alimentos da app, não um registo de tudo o que a pessoa come (bebidas, o azeite deitado a olho e o que come fora do plano não entram).
+- **Proteína por 100 kcal** (`proteinPer100Kcal`): quanto da energia de um alimento vem com proteína. Aparece no detalhe e ordena o catálogo ("Mais proteína por caloria"), para quem quer saber das calorias escolher sem a app proibir nada.
+- As páginas públicas (detalhe do alimento, estático; receita, com cache pública) não dependem da conta: mostram as calorias num `<details>` fechado. A preferência vale no "Hoje" e no dia de receitas.
+- Um teste garante que, nas fontes de proteína, as kcal batem com os macros (4/4/9) a menos de 15%.
+
+> Porquê sem limite nem mínimo: um limite precisa de um estado "passaste", que é a culpa do princípio 4; o dia não é um registo completo, por isso um limite comparado com um total incompleto enganava; e um alvo de calorias com sentido exige sexo, idade, altura e atividade (mais dados de saúde) e é aconselhamento nutricional. Se voltar a ser pedido, a versão mais suave é um valor de referência neutro, sem alertas, depois de ver quantas pessoas ligam as calorias (cartão "Calorias" no backoffice).
+
 ### Peso de referência
 
 Cada alimento tem `weightBasis`: `raw` (cru, para o que se cozinha), `cooked` ou `as_sold`. Usa-se a forma em que as pessoas medem (80 g de arroz cru, 1 lata de atum escorrido). As receitas usam a mesma base.
@@ -132,7 +146,8 @@ O JSON é a fonte única: gera o seed da D1 e um módulo TypeScript tipado para 
 | `category` | enum | carne, peixe, marisco, conservas, ovos, laticinios, suplementos, soja, leguminosas, cereais, tuberculos, frutos-secos, sementes, fruta, legumes, despensa |
 | `role` | enum | `protein`, `carb` (inclui fruta), `fat`, `vegetable`, `pantry` |
 | `proteinPer100g` | número | da TCA |
-| `kcalPer100g`, `carbsPer100g`, `fatPer100g` | número | guardados; não aparecem no MVP |
+| `kcalPer100g` | número | só informação (secção 3, "Calorias") |
+| `carbsPer100g`, `fatPer100g` | número | guardados; não aparecem no MVP (servem para validar as kcal) |
 | `weightBasis` | enum | `raw`, `cooked`, `as_sold` |
 | `processing` | enum | `natural`, `culinary`, `processed`, `ultra` (só ids em `PROCESSING_EXCEPTIONS`, ex.: whey) |
 | `portions` | lista | `{ id, label: { pt, en }, grams, default? }`; exatamente uma `default` |
@@ -161,7 +176,7 @@ Datas em `integer` (epoch ms), booleanos em `integer`, JSON em `text` validado c
 | `food_portions` | `id`, `food_id`, `label_pt`, `label_en`, `grams`, `is_default` | FK `foods`; índice parcial único: uma `default` por alimento |
 | `food_moments` | `food_id`, `moment` | PK `(food_id, moment)` |
 | `user`, `session`, `account`, `verification` | Better Auth | sessões sem IP nem user agent |
-| `profiles` | `user_id`, `daily_target_g`, `intensity`, `weight_kg`, `manual_target`, `meals` (JSON), `pre_workout_meal`, `post_workout_meal`, `diet`, `allergies` (JSON), `liked_foods` (JSON), `equipment` (JSON), `cook_minutes`, `locale`, `consent_version`, `consented_at`, `health_consent_at`, `onboarded_at`, `last_import_id` (obsoleto), `updated_at` | PK `user_id`, FK cascade; preferências na migração 0002; `weight_kg` e `allergies` só com `health_consent_at` |
+| `profiles` | `user_id`, `daily_target_g`, `intensity`, `weight_kg`, `manual_target`, `meals` (JSON), `pre_workout_meal`, `post_workout_meal`, `diet`, `allergies` (JSON), `liked_foods` (JSON), `equipment` (JSON), `cook_minutes`, `show_kcal`, `locale`, `consent_version`, `consented_at`, `health_consent_at`, `onboarded_at`, `last_import_id` (obsoleto), `updated_at` | PK `user_id`, FK cascade; preferências na migração 0002; `show_kcal` (desligado por defeito) na 0007; `weight_kg` e `allergies` só com `health_consent_at` |
 | `day_plans` | `id`, `user_id`, `name`, `position`, `updated_at` | FK cascade; único `(user_id, name)`; v1 usa um plano |
 | `plan_items` | `id`, `plan_id`, `meal`, `food_id`, `portion_id`, `portion_count`, `position` | FK cascade para `day_plans`; `portion_count` 0,5–4 em passos de 0,5 (CHECK); ids gerados no servidor; sem FK para `foods` (o seed reescreve o catálogo e um alimento retirado não pode apagar dias) |
 | `recipes` | `id` (curto), `cache_key`, `locale`, `title`, `summary`, `meal`, `post_workout`, `pre_workout` (null antes da 0006: fora da biblioteca), `source_recipe_id` (cópia reajustada de uma receita da biblioteca, migração 0006; null = gerada pelo modelo ou pré-gerada), `servings`, `variant` (1–3, migração 0001), `prep_minutes`, `steps` (JSON), `protein_per_serving_g`, `meal_target_g` (o alvo da receita: a meta da refeição ou a proteína escolhida), `custom_target` (a proteína foi escolhida pela pessoa, migração 0005), `equipment` (JSON, vazio = sem cozinhar; null antes da 0005), `model`, `prompt_version`, `food_data_version`, `input_tokens`, `output_tokens`, `created_at` | `cache_key` único; imutável; sem dono; índice `(locale, meal, food_data_version)` para a biblioteca |
@@ -278,14 +293,14 @@ Desde 3/11/2026 o dia **vive só na D1**. O `/o-meu-dia` carrega-o do servidor e
 1. **Página inicial:** "Proteína sem dieta", 3 passos com ilustrações, o dia exemplo animado, FAQ, aviso, CTA "Começar agora".
 2. **Entrar:** benefícios, Google e Apple, "Ao continuar, aceitas os Termos e a Política de Privacidade".
 3. **Formulário de boas-vindas** (6 passos, barra de progresso, transições laterais, barra de ações fixa em baixo): meta (peso com o resultado ao vivo, intensidade em cartões; meta manual opcional), refeições (número, quais, treino com pré e pós), restrições (dieta em cartões, alergias), alimentos ("Como de tudo", secções em separadores, subgrupos com ilustração própria que se escolhem inteiros e abrem para afinar alimento a alimento, pesquisa; 3 fontes de proteína no mínimo, com um aviso só se faltarem), cozinha (tempo e equipamento), resumo (meta, meta por refeição, tudo editável, consentimento de dados de saúde) → "Tudo pronto!" → Hoje. O mesmo formulário edita as preferências na conta.
-4. **Hoje:** barra de progresso fixa, refeições pela ordem do dia (etiquetas pré e pós-treino), itens com stepper de meia porção, painel "Para fechar a meta", "Gerar receita com estes alimentos" por refeição.
+4. **Hoje:** barra de progresso fixa, refeições pela ordem do dia (etiquetas pré e pós-treino), itens com stepper de meia porção, painel "Para fechar a meta", "Gerar receita com estes alimentos" por refeição. Interruptor "Calorias" ao lado de "Mudar preferências": ligado, a barra mostra "≈ X kcal com estes alimentos", cada refeição as suas kcal por baixo da proteína e cada item as suas a seguir à porção.
 5. **Adicionar alimento:** painel inferior com pesquisa, filtros, os favoritos e os mais fáceis para a refeição primeiro; só alimentos permitidos.
-6. **Catálogo:** pesquisa; os mesmos grupos do formulário (Todos, Proteína, Hidratos, Fruta, Legumes, Frutos secos e sementes) em cartões com ilustração e contagem, que cabem sempre no ecrã (3 por linha no telemóvel, 6 no desktop); uma barra com refeição, preparação e ordem (seletores com nome, sem chips a sair do ecrã); resultados agrupados por subgrupo (ou por grupo em "Todos"), os de mais proteína primeiro; os filtros ficam ao voltar do detalhe (sessão).
-7. **Detalhe:** porções com proteína, valor por 100 g, ideias, fonte, "Adicionar ao meu dia".
+6. **Catálogo:** pesquisa; os mesmos grupos do formulário (Todos, Proteína, Hidratos, Fruta, Legumes, Frutos secos e sementes) em cartões com ilustração e contagem, que cabem sempre no ecrã (3 por linha no telemóvel, 6 no desktop); uma barra com refeição, preparação e ordem (seletores com nome, sem chips a sair do ecrã); resultados agrupados por subgrupo (ou por grupo em "Todos"), os de mais proteína primeiro (ou, com a ordem "Mais proteína por caloria", os de mais proteína por 100 kcal, com esse número no cartão); os filtros ficam ao voltar do detalhe (sessão).
+7. **Detalhe:** porções com proteína, valor por 100 g, "Calorias" fechado (por porção, por 100 g e proteína por 100 kcal), ideias, fonte, "Adicionar ao meu dia".
 8. **Nova receita:** refeição e "Gerar receita" chegam (a app escolhe a base); "Proteína por dose" (a meta da refeição ou "Escolho eu", com − / + de 5 g e o número); "Como queres cozinhar?" (os cartões do formulário, já com o que a pessoa tem, mais "Sem cozinhar"); opcional "Quero usar alimentos que tenho" (o mesmo seletor por grupos, até 6); "Mais opções" com o tempo (o habitual da pessoa) e as doses; estados a gerar / erro / quota esgotada.
-9. **Receita:** proteína por dose e quanto cobre da meta da refeição (ou "Pediste X g por dose"), tempo, doses, com que se cozinha, ingredientes, passos, "Pôr no meu dia" (escolhe a refeição; uma dose, sem a despensa e só o que a pessoa pode comer, convertida para porções reais em meias porções — `src/domain/recipe-to-day.ts`), guardar, favorita, partilhar, gerar outra, aviso IA.
+9. **Receita:** proteína por dose e quanto cobre da meta da refeição (ou "Pediste X g por dose"), tempo, doses, com que se cozinha, ingredientes ("Calorias" fechado por baixo, por dose), passos, "Pôr no meu dia" (escolhe a refeição; uma dose, sem a despensa e só o que a pessoa pode comer, convertida para porções reais em meias porções — `src/domain/recipe-to-day.ts`), guardar, favorita, partilhar, gerar outra, aviso IA.
 10. **Receitas (livro):** duas entradas ("Uma receita" e "O dia todo"); o livro em separadores, Guardadas (estrela de favorita em cada uma, favoritas primeiro, "Só favoritas") e Recentes, com a refeição em cada cartão e filtro por refeição.
-10a. **O dia todo** (`/receitas/dia`): as refeições do plano com a meta de cada uma, tempo, doses e eletrodomésticos, quanto da quota de hoje usa; "Gerar o meu dia" → `/receitas/dia/ver`: uma receita por refeição (proteína, tempo, alimentos), o total do dia contra a meta, "Pôr o dia todo no meu dia" e, para as que falharam, "Gerar só esta". O "Hoje" diz o que comer; as Receitas dizem como cozinhar e voltam ao dia com "Pôr no meu dia".
+10a. **O dia todo** (`/receitas/dia`): as refeições do plano com a meta de cada uma, tempo, doses e eletrodomésticos, quanto da quota de hoje usa; "Gerar o meu dia" → `/receitas/dia/ver`: uma receita por refeição (proteína, tempo, alimentos; kcal por dose com "Calorias" ligado), o total do dia contra a meta (e as kcal do dia), "Pôr o dia todo no meu dia" e, para as que falharam, "Gerar só esta". O "Hoje" diz o que comer; as Receitas dizem como cozinhar e voltam ao dia com "Pôr no meu dia".
 11. **Conta:** "As minhas preferências", exportar, sair, apagar.
 
 Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; escondida no formulário e em Entrar), superior no desktop. Tom: tu, frases curtas, sempre o próximo passo ("Faltam 23 g. Um skyr resolve.").
@@ -329,4 +344,4 @@ Navegação: barra inferior no telemóvel (Hoje, Alimentos, Receitas, Conta; esc
 
 ## 13. Backoffice
 
-Worker próprio (`admin/`, `admin.protein-plate.app`), com o mesmo modelo do Rejection Quest: Cloudflare Access + validação do token em cada pedido, lista de emails, HTML gerado no servidor sem JavaScript, leitura só com `SELECT` e três ações com CSRF (terminar sessões, apagar os dados de saúde a pedido, apagar conta). O Painel tem "Precisa de ti", os números principais com a variação face aos 7 dias anteriores, o funcionamento (contadores `ops_counters`, período de 7 a 90 dias), o crescimento (12 a 52 semanas), as pessoas ativas, a retenção por semana de registo e o funil de ativação, todos a partir do que já está na base, sem rastreio novo. Utilizadores com ficha em separadores (sem peso nem alergias), receitas com pesquisa, filtros e ordem, e alimentos com pesquisa e página própria. Detalhes e configuração em `docs/backoffice.md`.
+Worker próprio (`admin/`, `admin.protein-plate.app`), com o mesmo modelo do Rejection Quest: Cloudflare Access + validação do token em cada pedido, lista de emails, HTML gerado no servidor sem JavaScript, leitura só com `SELECT` e três ações com CSRF (terminar sessões, apagar os dados de saúde a pedido, apagar conta). O Painel tem "Precisa de ti", os números principais com a variação face aos 7 dias anteriores, o funcionamento (contadores `ops_counters`, período de 7 a 90 dias), o crescimento (12 a 52 semanas), as pessoas ativas, a retenção por semana de registo, o funil de ativação e quantas pessoas ligam as calorias, todos a partir do que já está na base, sem rastreio novo. Utilizadores com ficha em separadores (sem peso nem alergias), receitas com pesquisa, filtros e ordem, e alimentos com pesquisa e página própria. Detalhes e configuração em `docs/backoffice.md`.

@@ -108,6 +108,8 @@ export const profiles = sqliteTable("profiles", {
     .notNull()
     .default(sql`'["stove","microwave"]'`),
   cookMinutes: integer("cook_minutes").notNull().default(20),
+  /** Ver as calorias no "Hoje" e no dia de receitas (só informação; desligado por defeito). */
+  showKcal: integer("show_kcal", { mode: "boolean" }).notNull().default(false),
   locale: text("locale").$type<"pt" | "en">().notNull().default("pt"),
   consentVersion: integer("consent_version"),
   consentedAt: integer("consented_at"),

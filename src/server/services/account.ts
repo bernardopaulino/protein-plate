@@ -52,6 +52,8 @@ export interface Profile {
   likedFoods: string[];
   equipment: Equipment[];
   cookMinutes: MaxMinutes;
+  /** Ver as calorias (só informação); muda-se no "Hoje", não no formulário. */
+  showKcal: boolean;
   onboardedAt: number | null;
   healthConsentAt: number | null;
 }
@@ -94,6 +96,7 @@ function toProfile(row: ProfileRow): Profile {
     cookMinutes: (COOK_MINUTES.has(row.cookMinutes)
       ? row.cookMinutes
       : DEFAULT_COOK_MINUTES) as MaxMinutes,
+    showKcal: row.showKcal,
     onboardedAt: row.onboardedAt ?? null,
     healthConsentAt: row.healthConsentAt ?? null,
   };
@@ -333,7 +336,8 @@ export async function savePreferences(
     onboardedAt: previous?.onboardedAt ?? now,
     updatedAt: now,
   };
-  const profile: Profile = { ...values, onboardedAt: values.onboardedAt };
+  // O formulário não mexe nas calorias: ficam como estavam
+  const profile: Profile = { ...values, showKcal: previous?.showKcal ?? false };
 
   const { items: current } = await loadItems(db, userId);
   const kept = previous?.onboardedAt ? itemsForProfile(current, profile, foods) : [];
@@ -368,6 +372,24 @@ export async function recordConsent(db: Db, userId: string, now = Date.now()) {
       target: profiles.userId,
       set: { consentVersion: CONSENT_VERSION, consentedAt: now },
     });
+}
+
+/**
+ * "Mostrar calorias" no "Hoje". Só muda a preferência; devolve false se a pessoa ainda não tiver
+ * perfil (a conta é criada no primeiro login, com o consentimento).
+ */
+export async function setShowKcal(
+  db: Db,
+  userId: string,
+  show: boolean,
+  now = Date.now(),
+): Promise<boolean> {
+  const updated = await db
+    .update(profiles)
+    .set({ showKcal: show, updatedAt: now })
+    .where(eq(profiles.userId, userId))
+    .returning({ userId: profiles.userId });
+  return updated.length > 0;
 }
 
 /* ------------------------------------------------------------ Receitas guardadas */
@@ -640,6 +662,7 @@ export async function exportUserData(db: Db, userId: string) {
           likedFoods: row.likedFoods,
           equipment: row.equipment,
           cookMinutes: row.cookMinutes,
+          showKcal: row.showKcal,
           locale: row.locale,
           consentVersion: row.consentVersion,
           consentedAt: iso(row.consentedAt),
@@ -669,6 +692,6 @@ export async function exportUserData(db: Db, userId: string) {
 
 /** O perfil que vai para o browser (sem datas internas). */
 export function toClientProfile(profile: Profile): ClientProfile {
-  const { onboardedAt, healthConsentAt, ...rest } = profile;
+  const { onboardedAt, healthConsentAt, showKcal: _showKcal, ...rest } = profile;
   return { ...rest, onboarded: onboardedAt !== null, healthConsent: healthConsentAt !== null };
 }

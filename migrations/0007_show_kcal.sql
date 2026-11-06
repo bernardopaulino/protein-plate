@@ -1,0 +1,1 @@
+ALTER TABLE `profiles` ADD `show_kcal` integer DEFAULT false NOT NULL;

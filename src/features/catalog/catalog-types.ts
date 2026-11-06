@@ -14,6 +14,8 @@ export interface CatalogItem {
   portion: string;
   /** Proteína da porção por defeito (calculada pela app) */
   protein: number;
+  /** Gramas de proteína por 100 kcal, com uma casa decimal (0 se não tiver calorias) */
+  density: number;
   /** Categoria já traduzida */
   category: string;
   ease: Ease;

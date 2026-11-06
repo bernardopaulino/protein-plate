@@ -38,7 +38,11 @@
     "sourceReference": "Valores de referência de tabelas de composição de alimentos, como a TCA do INSA.",
     "provisional": "Valores provisórios, a confirmar na TCA.",
     "technicalError": "Algo correu mal do nosso lado. Tenta outra vez daqui a pouco.",
-    "whey": "Ultraprocessado (exceção)"
+    "whey": "Ultraprocessado (exceção)",
+    "kcal": "≈ {kcal} kcal",
+    "kcalTitle": "Calorias",
+    "kcalNote": "Valores aproximados, só para teres uma noção.",
+    "proteinPer100Kcal": "{grams} g de proteína por 100 kcal"
   },
   "meals": {
     "pequeno-almoco": "Pequeno-almoço",
@@ -128,7 +132,7 @@
     "faq": {
       "diet": {
         "q": "Isto é uma dieta?",
-        "a": "Não. A app só acrescenta: não há alimentos proibidos, nem calorias, nem registos diários."
+        "a": "Não. A app só acrescenta: não há alimentos proibidos, nem limites de calorias, nem registos diários. Se quiseres, podes ver as calorias, só para teres uma noção."
       },
       "numbers": {
         "q": "De onde vêm os números?",
@@ -183,7 +187,9 @@
       "unknown": "Alimento que já não está no catálogo"
     },
     "saving": "A guardar…",
-    "fromRecipe": "Receita: {title}"
+    "fromRecipe": "Receita: {title}",
+    "kcalToggle": "Calorias",
+    "kcalDay": "≈ {kcal} kcal com estes alimentos"
   },
   "drawer": {
     "title": "Adicionar a {meal}",
@@ -216,7 +222,9 @@
     "emptyTitle": "Nada com estes filtros.",
     "emptyBody": "Experimenta outra refeição ou preparação, ou limpa os filtros.",
     "category": "Categoria",
-    "groupCount": "{count, plural, one {# alimento} other {# alimentos}}"
+    "groupCount": "{count, plural, one {# alimento} other {# alimentos}}",
+    "sortDensity": "Mais proteína por caloria",
+    "densityCard": "{grams} g por 100 kcal"
   },
   "food": {
     "portions": "Porções",
@@ -322,7 +330,8 @@
       "markFavorite": "Marcar como favorita",
       "requested": "Pediste {target} g por dose.",
       "cookWith": "Com {list}",
-      "noCooking": "Sem cozinhar"
+      "noCooking": "Sem cozinhar",
+      "kcalPerServing": "≈ {kcal} kcal por dose, com todos os ingredientes."
     },
     "recent": "Recentes",
     "recentEmpty": "As receitas que gerares aparecem aqui.",
@@ -378,7 +387,8 @@
       "failed": "Não conseguimos uma receita para {meal}.",
       "retry": "Gerar só esta",
       "again": "Gerar outro dia",
-      "empty": "Não encontrámos estas receitas. Gera um dia novo."
+      "empty": "Não encontrámos estas receitas. Gera um dia novo.",
+      "kcalTotal": "≈ {kcal} kcal no dia"
     }
   },
   "account": {
@@ -418,7 +428,7 @@
     "privacyTitle": "Política de privacidade",
     "termsTitle": "Termos de utilização",
     "updated": "Última atualização: {date}",
-    "date": "5 de novembro de 2026",
+    "date": "6 de novembro de 2026",
     "privacy": {
       "who": {
         "title": "Quem somos",
@@ -430,7 +440,7 @@
       },
       "plan": {
         "title": "O teu plano",
-        "body": "Guardamos a tua meta diária, a intensidade do treino, as refeições (incluindo as de antes e depois do treino), o tipo de alimentação, os alimentos de que gostas, o equipamento e o tempo que tens para cozinhar, o teu dia e as receitas que guardares. Usamos isto para personalizar o dia e as receitas (execução do contrato)."
+        "body": "Guardamos a tua meta diária, a intensidade do treino, as refeições (incluindo as de antes e depois do treino), o tipo de alimentação, os alimentos de que gostas, o equipamento e o tempo que tens para cozinhar, se queres ver as calorias, o teu dia e as receitas que guardares. Usamos isto para personalizar o dia e as receitas (execução do contrato)."
       },
       "health": {
         "title": "Dados de saúde",

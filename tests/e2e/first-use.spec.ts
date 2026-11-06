@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { ONBOARDED_STATE, completeOnboarding, signIn } from "./support/auth";
 
@@ -108,6 +109,36 @@ test.describe("com o plano feito", () => {
     // Uma sugestão de um toque fecha a meta
     await close.getByRole("button").first().click();
     await expect(page.getByText(/Meta atingida/).first()).toBeVisible();
+  });
+
+  test("calorias: desligadas por defeito, ligam-se no dia e ficam na conta", async ({ page }) => {
+    await page.goto("/o-meu-dia");
+    const toggle = page.getByRole("switch", { name: "Calorias" });
+    const dayKcal = page.getByText(/^≈ [\d\s.,]+ kcal com estes alimentos$/);
+    await expect(toggle).toHaveAttribute("aria-checked", "false");
+    await expect(dayKcal).toHaveCount(0);
+
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-checked", "true");
+    await expect(dayKcal).toBeVisible();
+    await expect(
+      page
+        .locator("#refeicao-almoco")
+        .getByText(/^≈ [\d\s.,]+ kcal$/)
+        .first(),
+    ).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(results.violations.map((v) => v.id)).toEqual([]);
+
+    // Fica guardado na conta: depois de recarregar continua ligado; desliga-se para os outros testes
+    await page.reload();
+    await expect(toggle).toHaveAttribute("aria-checked", "true");
+    await toggle.click();
+    await expect(dayKcal).toHaveCount(0);
+    await page.reload();
+    await expect(toggle).toHaveAttribute("aria-checked", "false");
   });
 
   test("as preferências abrem o mesmo formulário com o que está guardado", async ({ page }) => {

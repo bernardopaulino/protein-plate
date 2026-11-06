@@ -12,14 +12,16 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Illustration } from "@/components/illustration";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SuggestionChip } from "@/components/protein/chips";
 import { GoalProgress } from "@/components/protein/goal-progress";
 import { MealSection } from "@/components/protein/meal-section";
 import { PortionStepper } from "@/components/protein/portion-stepper";
 import { ProteinNumber } from "@/components/protein/protein-number";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { foodImage } from "@/content/food-images.generated";
+import { formatKcal, itemKcal, mealKcal, totalKcal } from "@/domain/calories";
 import { findPortion, type Allergen } from "@/domain/food";
 import { mealTargets, sortMeals, type Meal } from "@/domain/meals";
 import {
@@ -36,6 +38,7 @@ import { CATALOG, FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { clearLegacyStorage } from "@/lib/legacy-storage";
+import { setShowKcalAction } from "@/server/actions/account";
 import { AddFoodDrawer } from "./add-food-drawer";
 import { useDay, type DayProfile, type SaveStatus } from "./use-day";
 
@@ -79,6 +82,27 @@ function SaveIndicator({ status, onRetry }: { status: SaveStatus; onRetry: () =>
 }
 
 /**
+ * "Calorias": desligado por defeito; liga-se aqui e fica na conta. Muda logo no ecrã e volta atrás
+ * se não se conseguir guardar (só o pedido mais recente conta).
+ */
+function useShowKcal(initial: boolean) {
+  const [show, setShow] = useState(initial);
+  const latest = useRef(0);
+  const toggle = async (next: boolean) => {
+    const request = ++latest.current;
+    setShow(next);
+    let ok = false;
+    try {
+      ok = (await setShowKcalAction({ show: next })).ok;
+    } catch {
+      ok = false;
+    }
+    if (!ok && request === latest.current) setShow(!next);
+  };
+  return [show, toggle] as const;
+}
+
+/**
  * "Hoje" (secção 10, ecrã 3): o dia da pessoa, carregado da conta. As mudanças aparecem logo e
  * gravam-se a seguir; só aparecem alimentos que a pessoa pode comer.
  */
@@ -86,9 +110,12 @@ export function DayView({
   day,
   preferences,
   mealRecipes = {},
+  showKcal = false,
 }: {
   day: { profile: DayProfile; items: PlanItem[] };
   preferences: DayPreferences;
+  /** Ver as calorias (preferência da conta; só informação) */
+  showKcal?: boolean;
   /** A receita usada em cada refeição ("Pôr no meu dia" na página da receita). */
   mealRecipes?: Partial<Record<Meal, { id: string; title: string }>>;
 }) {
@@ -99,6 +126,8 @@ export function DayView({
   const lang = HTML_LANG[locale];
   const [drawerMeal, setDrawerMeal] = useState<Meal | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [kcalOn, setKcalOn] = useShowKcal(showKcal);
+  const kcalText = (kcal: number) => tCommon("kcal", { kcal: formatKcal(kcal, lang) });
 
   const personal = useMemo(
     () => ({
@@ -232,6 +261,10 @@ export function DayView({
         <h1 className="text-2xl font-extrabold lg:text-3xl">{t("title")}</h1>
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <SaveIndicator status={status} onRetry={retry} />
+          <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-3 text-sm font-semibold transition-colors duration-200 hover:bg-primary-soft">
+            <Switch checked={kcalOn} onCheckedChange={(next) => void setKcalOn(next)} />
+            {t("kcalToggle")}
+          </label>
           <Button asChild variant="ghost" size="sm">
             <Link href="/conta/preferencias">
               <Pencil aria-hidden />
@@ -249,7 +282,13 @@ export function DayView({
       */}
       <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-6 2xl:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="contents lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1 lg:flex lg:flex-col lg:gap-4">
-          <GoalProgress total={total} target={target} sticky className="order-1 lg:static" />
+          <GoalProgress
+            total={total}
+            target={target}
+            kcal={kcalOn ? totalKcal(items, FOOD_INDEX) : undefined}
+            sticky
+            className="order-1 lg:static"
+          />
           {closePanel}
           {resetActions}
         </div>
@@ -271,6 +310,11 @@ export function DayView({
                 targetLabel={t("mealTarget", {
                   grams: formatProtein(targets.get(meal) ?? 0, lang),
                 })}
+                kcalLabel={
+                  kcalOn && mealItems.length > 0
+                    ? kcalText(mealKcal(items, meal, FOOD_INDEX))
+                    : undefined
+                }
                 footer={
                   <>
                     <Button variant="soft" size="sm" onClick={() => setDrawerMeal(meal)}>
@@ -338,6 +382,12 @@ export function DayView({
                                   })
                                 : null}
                             </p>
+                            {/* Linha própria: no telemóvel a porção já ocupa as 2 linhas do clamp */}
+                            {portion && kcalOn ? (
+                              <p className="text-sm leading-snug whitespace-nowrap text-muted tabular">
+                                {kcalText(itemKcal(item, FOOD_INDEX))}
+                              </p>
+                            ) : null}
                           </div>
                           <ProteinNumber value={itemProtein(item, FOOD_INDEX)} size="md" />
                           <PortionStepper

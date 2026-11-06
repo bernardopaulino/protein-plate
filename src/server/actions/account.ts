@@ -27,6 +27,7 @@ import {
   saveDayItems,
   savePreferences,
   setRecipeSaved,
+  setShowKcal,
 } from "../services/account";
 
 // Server Actions: o user ID vem sempre da sessão; tudo o que chega do cliente passa por Zod.
@@ -140,6 +141,16 @@ export const savePreferencesAction = countedAction(
     return result.ok ? { ok: true, data: null } : { ok: false, code: result.code };
   },
 );
+
+/** "Mostrar calorias" no "Hoje" (só informação; nunca uma meta). */
+export const setShowKcalAction = countedAction(async (input: unknown): Promise<Result<null>> => {
+  const session = await getSession();
+  if (!session) return unauthorized;
+  const parsed = z.object({ show: z.boolean() }).strict().safeParse(input);
+  if (!parsed.success) return invalid;
+  const saved = await setShowKcal(getDb(), session.user.id, parsed.data.show);
+  return saved ? { ok: true, data: null } : { ok: false, code: "no_profile" };
+});
 
 const recipeIdSchema = z.string().regex(/^[0-9a-zA-Z]{6,20}$/);
 

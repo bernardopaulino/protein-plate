@@ -38,7 +38,11 @@
     "sourceReference": "Reference values from food composition tables, such as the Portuguese Food Composition Table (TCA) from INSA.",
     "provisional": "Provisional values, still to be confirmed in the TCA.",
     "technicalError": "Something went wrong on our end. Try again in a little while.",
-    "whey": "Ultra-processed (exception)"
+    "whey": "Ultra-processed (exception)",
+    "kcal": "≈ {kcal} kcal",
+    "kcalTitle": "Calories",
+    "kcalNote": "Approximate values, just to give you a sense.",
+    "proteinPer100Kcal": "{grams} g of protein per 100 kcal"
   },
   "meals": {
     "pequeno-almoco": "Breakfast",
@@ -128,7 +132,7 @@
     "faq": {
       "diet": {
         "q": "Is this a diet?",
-        "a": "No. The app only adds: no forbidden foods, no calories, no daily logging."
+        "a": "No. The app only adds: no forbidden foods, no calorie limits, no daily logging. If you want, you can see the calories, just to get a sense."
       },
       "numbers": {
         "q": "Where do the numbers come from?",
@@ -183,7 +187,9 @@
       "unknown": "Food no longer in the catalog"
     },
     "saving": "Saving…",
-    "fromRecipe": "Recipe: {title}"
+    "fromRecipe": "Recipe: {title}",
+    "kcalToggle": "Calories",
+    "kcalDay": "≈ {kcal} kcal with these foods"
   },
   "drawer": {
     "title": "Add to {meal}",
@@ -216,7 +222,9 @@
     "emptyTitle": "Nothing matches these filters.",
     "emptyBody": "Try another meal or preparation, or clear the filters.",
     "category": "Category",
-    "groupCount": "{count, plural, one {# food} other {# foods}}"
+    "groupCount": "{count, plural, one {# food} other {# foods}}",
+    "sortDensity": "Most protein per calorie",
+    "densityCard": "{grams} g per 100 kcal"
   },
   "food": {
     "portions": "Portions",
@@ -322,7 +330,8 @@
       "markFavorite": "Mark as favorite",
       "requested": "You asked for {target} g per serving.",
       "cookWith": "With {list}",
-      "noCooking": "No cooking"
+      "noCooking": "No cooking",
+      "kcalPerServing": "≈ {kcal} kcal per serving, with every ingredient."
     },
     "recent": "Recent",
     "recentEmpty": "The recipes you generate show up here.",
@@ -378,7 +387,8 @@
       "failed": "We couldn't get a recipe for {meal}.",
       "retry": "Generate just this one",
       "again": "Generate another day",
-      "empty": "We couldn't find these recipes. Generate a new day."
+      "empty": "We couldn't find these recipes. Generate a new day.",
+      "kcalTotal": "≈ {kcal} kcal for the day"
     }
   },
   "account": {
@@ -418,7 +428,7 @@
     "privacyTitle": "Privacy policy",
     "termsTitle": "Terms of use",
     "updated": "Last updated: {date}",
-    "date": "November 5, 2026",
+    "date": "November 6, 2026",
     "privacy": {
       "who": {
         "title": "Who we are",
@@ -430,7 +440,7 @@
       },
       "plan": {
         "title": "Your plan",
-        "body": "We store your daily goal, training intensity, meals (including the ones before and after training), type of diet, the foods you like, the equipment and time you have to cook, your day and the recipes you save. We use this to personalize your day and your recipes (performance of the contract)."
+        "body": "We store your daily goal, training intensity, meals (including the ones before and after training), type of diet, the foods you like, the equipment and time you have to cook, whether you want to see calories, your day and the recipes you save. We use this to personalize your day and your recipes (performance of the contract)."
       },
       "health": {
         "title": "Health data",

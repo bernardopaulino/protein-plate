@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { cache } from "react";
+import { KcalDetails } from "@/components/protein/kcal-details";
 import { ProteinNumber } from "@/components/protein/protein-number";
+import { formatKcal, kcalPerServingOf } from "@/domain/calories";
 import { EQUIPMENT } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
 import { FOOD_INDEX, foodName } from "@/features/catalog/catalog";
@@ -57,6 +59,7 @@ export default async function RecipePage({ params }: { params: Params }) {
   const t = await getTranslations("recipes.detail");
   const tm = await getTranslations("meals");
   const td = await getTranslations("disclaimer");
+  const tc = await getTranslations("common");
   const tk = await getTranslations("onboarding.kitchen");
   const lang = HTML_LANG[locale];
   const covers =
@@ -180,6 +183,16 @@ export default async function RecipePage({ params }: { params: Params }) {
               );
             })}
           </ul>
+          <KcalDetails title={tc("kcalTitle")} note={tc("kcalNote")} className="mt-3">
+            <p>
+              {t("kcalPerServing", {
+                kcal: formatKcal(
+                  kcalPerServingOf(recipe.ingredients, recipe.servings, FOOD_INDEX),
+                  lang,
+                ),
+              })}
+            </p>
+          </KcalDetails>
         </section>
         <section aria-labelledby="passos">
           <h2 id="passos" className="text-lg font-bold">

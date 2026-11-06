@@ -5,6 +5,7 @@ import { Illustration } from "@/components/illustration";
 import { ProteinNumber } from "@/components/protein/protein-number";
 import { Button } from "@/components/ui/button";
 import { UI_IMAGES } from "@/content/food-images.generated";
+import { formatKcal, kcalPerServingOf } from "@/domain/calories";
 import { MEALS, isMeal, type Meal } from "@/domain/meals";
 import { formatProtein } from "@/domain/protein";
 import { FOOD_INDEX, foodName } from "@/features/catalog/catalog";
@@ -46,7 +47,8 @@ function parsePairs(value: unknown): { meal: Meal; id: string }[] {
 /**
  * O dia em receitas (depois de "Gerar o meu dia"): uma receita por refeição, pela ordem do dia, com
  * a proteína de cada uma e o total do dia contra a meta. "Pôr o dia todo no meu dia" troca as
- * refeições do "Hoje" pelas receitas; as refeições sem receita têm "Gerar só esta".
+ * refeições do "Hoje" pelas receitas; as refeições sem receita têm "Gerar só esta". Com "Calorias"
+ * ligado na conta, também as calorias por dose e as do dia (calculadas pela app).
  */
 export default async function DayRecipesViewPage({
   params,
@@ -61,6 +63,7 @@ export default async function DayRecipesViewPage({
   const { profile } = await requireProfile(locale, "/receitas/dia");
   const t = await getTranslations("recipes.dayView");
   const td = await getTranslations("recipes.detail");
+  const tc = await getTranslations("common");
   const tm = await getTranslations("meals");
   const lang = HTML_LANG[locale];
 
@@ -82,6 +85,9 @@ export default async function DayRecipesViewPage({
           .filter((m) => profile.meals.includes(m) && !day.some((d) => d.meal === m))
       : [];
   const total = day.reduce((sum, d) => sum + d.recipe.proteinPerServingG, 0);
+  const kcalOf = (recipe: (typeof day)[number]["recipe"]) =>
+    kcalPerServingOf(recipe.ingredients, recipe.servings, FOOD_INDEX);
+  const kcalTotal = profile.showKcal ? day.reduce((sum, d) => sum + kcalOf(d.recipe), 0) : null;
 
   if (day.length === 0) {
     return (
@@ -102,13 +108,20 @@ export default async function DayRecipesViewPage({
           <h1 className="text-2xl font-extrabold lg:text-3xl">{t("title")}</h1>
           <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
         </div>
-        <p className="flex items-baseline gap-2 self-start rounded-card border border-border bg-surface px-5 py-3 lg:self-auto">
-          <span className="sr-only">{t("total")}:</span>
-          <ProteinNumber value={total} size="xl" className="text-primary" />
-          <span className="whitespace-nowrap text-muted tabular">
-            {t("ofTarget", { target: formatProtein(profile.dailyTargetG, lang) })}
-          </span>
-        </p>
+        <div className="self-start rounded-card border border-border bg-surface px-5 py-3 lg:self-auto">
+          <p className="flex items-baseline gap-2">
+            <span className="sr-only">{t("total")}:</span>
+            <ProteinNumber value={total} size="xl" className="text-primary" />
+            <span className="whitespace-nowrap text-muted tabular">
+              {t("ofTarget", { target: formatProtein(profile.dailyTargetG, lang) })}
+            </span>
+          </p>
+          {kcalTotal !== null ? (
+            <p className="mt-1 text-sm text-muted tabular">
+              {t("kcalTotal", { kcal: formatKcal(kcalTotal, lang) })}
+            </p>
+          ) : null}
+        </div>
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
@@ -140,6 +153,11 @@ export default async function DayRecipesViewPage({
                         <Clock aria-hidden className="size-4" />
                         {td("time", { minutes: recipe.prepMinutes })}
                       </span>
+                      {profile.showKcal ? (
+                        <span className="text-muted tabular">
+                          {tc("kcal", { kcal: formatKcal(kcalOf(recipe), lang) })}
+                        </span>
+                      ) : null}
                       <span className="ml-auto inline-flex items-center gap-1 font-semibold text-primary">
                         {t("open")}
                         <ArrowRight

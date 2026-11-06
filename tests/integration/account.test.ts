@@ -37,6 +37,7 @@ import {
   saveDayItems,
   savePreferences,
   setRecipeSaved,
+  setShowKcal,
 } from "@/server/services/account";
 import { cleanUpExpiredRows } from "@/server/services/cleanup";
 import { createTestD1, createUser, type TestD1 } from "./d1";
@@ -211,6 +212,34 @@ describe("preferências e formulário de boas-vindas (dois utilizadores)", () =>
     expect(row?.consentVersion).toBe(2);
     expect(row?.consentedAt).toBeTypeOf("number");
     expect(profile?.onboardedAt).toBeNull();
+  });
+});
+
+describe("mostrar calorias (dois utilizadores)", () => {
+  it("desligado por defeito; cada pessoa muda só o seu e o formulário não lhe mexe", async () => {
+    const ana = await createUser(t.db, "Ana");
+    const rui = await createUser(t.db, "Rui");
+    await onboard(ana);
+    await onboard(rui);
+    expect((await loadProfile(t.db, ana))?.showKcal).toBe(false);
+
+    expect(await setShowKcal(t.db, ana, true)).toBe(true);
+    expect((await loadProfile(t.db, ana))?.showKcal).toBe(true);
+    expect((await loadProfile(t.db, rui))?.showKcal).toBe(false);
+
+    // Editar as preferências mantém a escolha; exportar inclui-a
+    await onboard(ana, { cookMinutes: 30 });
+    expect((await loadProfile(t.db, ana))?.showKcal).toBe(true);
+    expect((await exportUserData(t.db, ana)).profile?.showKcal).toBe(true);
+
+    expect(await setShowKcal(t.db, ana, false)).toBe(true);
+    expect((await loadProfile(t.db, ana))?.showKcal).toBe(false);
+  });
+
+  it("sem perfil não grava nada", async () => {
+    const id = await createUser(t.db);
+    expect(await setShowKcal(t.db, id, true)).toBe(false);
+    expect(await loadProfile(t.db, id)).toBeNull();
   });
 });
 

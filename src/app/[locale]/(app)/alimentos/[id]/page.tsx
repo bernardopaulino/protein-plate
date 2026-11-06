@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Illustration } from "@/components/illustration";
+import { KcalDetails } from "@/components/protein/kcal-details";
 import { ProteinNumber } from "@/components/protein/protein-number";
 import { JsonLd } from "@/components/seo/json-ld";
 import { foodImage } from "@/content/food-images.generated";
+import { formatKcal, portionKcal, proteinPer100Kcal } from "@/domain/calories";
 import { TCA_REFERENCE, TODO } from "@/domain/contracts/food";
 import { defaultPortion } from "@/domain/food";
 import { foodSubgroup } from "@/domain/food-groups";
@@ -77,6 +79,7 @@ export default async function FoodPage({ params }: { params: Params }) {
   const ts = await getTranslations("seo");
   const tn = await getTranslations("nav");
   const related = relatedFoods(food.id);
+  const density = proteinPer100Kcal(food);
   const breadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -150,6 +153,31 @@ export default async function FoodPage({ params }: { params: Params }) {
                 <ProteinNumber value={food.proteinPer100g} size="md" />
               </li>
             </ul>
+            <KcalDetails title={common("kcalTitle")} note={common("kcalNote")} className="mt-3">
+              <ul className="divide-y divide-border">
+                {food.portions.map((p) => (
+                  <li key={p.id} className="flex items-center justify-between gap-3 py-2">
+                    <span>{p.label[locale]}</span>
+                    <span className="text-muted tabular">
+                      {common("kcal", { kcal: formatKcal(portionKcal(food, p.id), lang) })}
+                    </span>
+                  </li>
+                ))}
+                <li className="flex items-center justify-between gap-3 py-2">
+                  <span>
+                    {t("per100")} · {tw(food.weightBasis)}
+                  </span>
+                  <span className="text-muted tabular">
+                    {common("kcal", { kcal: formatKcal(food.kcalPer100g, lang) })}
+                  </span>
+                </li>
+              </ul>
+              {density !== null ? (
+                <p className="mt-2 font-semibold">
+                  {common("proteinPer100Kcal", { grams: formatProtein(density, lang) })}
+                </p>
+              ) : null}
+            </KcalDetails>
           </section>
 
           {ideas.length > 0 ? (

@@ -17,6 +17,9 @@ describe("índice do catálogo para o browser", () => {
     for (const food of LISTED_FOODS) {
       const item = items.find((i) => i.id === food.id)!;
       expect(item.protein).toBe(defaultPortionProtein(food));
+      expect(
+        Math.abs(item.density - (food.proteinPer100g / food.kcalPer100g) * 100),
+      ).toBeLessThanOrEqual(0.05 + 1e-9);
       expect(item.subgroup).toBe(foodSubgroup(food));
       expect(item.category).toBe(`cat:${food.category}`);
       expect(item.name).toBe(food.name.pt);

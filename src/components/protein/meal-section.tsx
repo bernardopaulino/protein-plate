@@ -3,13 +3,17 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { ProteinNumber } from "./protein-number";
 
-/** Uma refeição do dia: título, etiqueta pós-treino, proteína da refeição e o alvo. */
+/**
+ * Uma refeição do dia: título, etiqueta pós-treino, proteína da refeição e o alvo (e, com
+ * "Calorias" ligado, as calorias da refeição por baixo).
+ */
 export function MealSection({
   id,
   title,
   postWorkoutLabel,
   total,
   targetLabel,
+  kcalLabel,
   children,
   footer,
   className,
@@ -20,6 +24,8 @@ export function MealSection({
   postWorkoutLabel?: string;
   total: number;
   targetLabel: string;
+  /** "≈ 450 kcal" (só com "Calorias" ligado) */
+  kcalLabel?: string;
   children: ReactNode;
   footer?: ReactNode;
   className?: string;
@@ -43,10 +49,15 @@ export function MealSection({
             </span>
           ) : null}
         </div>
-        <p className="flex shrink-0 items-baseline gap-1.5 text-right">
-          <ProteinNumber value={total} size="md" />
-          <span className="text-sm whitespace-nowrap text-muted tabular">{targetLabel}</span>
-        </p>
+        <div className="flex shrink-0 flex-col items-end">
+          <p className="flex items-baseline gap-1.5 text-right">
+            <ProteinNumber value={total} size="md" />
+            <span className="text-sm whitespace-nowrap text-muted tabular">{targetLabel}</span>
+          </p>
+          {kcalLabel ? (
+            <p className="text-sm whitespace-nowrap text-muted tabular">{kcalLabel}</p>
+          ) : null}
+        </div>
       </header>
       <div className="mt-3">{children}</div>
       {footer ? (
