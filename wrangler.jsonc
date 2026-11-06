@@ -77,7 +77,7 @@
         "BETTER_AUTH_URL": "https://protein-plate.app",
         "AI_MODE": "live",
         "AI_MODEL": "claude-haiku-5-5",
-        "AI_DAILY_LIMIT": "500",
+        "AI_DAILY_LIMIT": "400",
         "QUOTA_USER": "15",
       },
       "d1_databases": [

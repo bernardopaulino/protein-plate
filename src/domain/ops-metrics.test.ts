@@ -16,6 +16,7 @@ describe("OPS_METRICS (contrato com o backoffice)", () => {
     expect(OPS_METRICS).toEqual([
       "recipes.ok.new",
       "recipes.ok.cached",
+      "recipes.ok.library",
       "recipes.error.invalid_request",
       "recipes.error.unknown_food",
       "recipes.error.restricted_food",
@@ -48,9 +49,12 @@ describe("OPS_METRICS (contrato com o backoffice)", () => {
 });
 
 describe("recipeOutcomeMetric", () => {
-  it("receita nova, da cache e um nome por código de erro", () => {
+  it("receita nova, da cache, da biblioteca e um nome por código de erro", () => {
     expect(recipeOutcomeMetric({ ok: true, cached: false })).toBe("recipes.ok.new");
     expect(recipeOutcomeMetric({ ok: true, cached: true })).toBe("recipes.ok.cached");
+    expect(recipeOutcomeMetric({ ok: true, cached: true, source: "library" })).toBe(
+      "recipes.ok.library",
+    );
     for (const code of RECIPE_ERROR_CODES) {
       const metric = recipeOutcomeMetric({ ok: false, code });
       expect(metric).toBe(`recipes.error.${code}`);

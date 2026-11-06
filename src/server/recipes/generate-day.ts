@@ -1,10 +1,20 @@
 import type { RecipeDayRequest, RecipeErrorCode } from "@/domain/contracts/recipe";
 import { mealTargets, type Meal } from "@/domain/meals";
+import { once, recipeOutcomeMetric } from "@/domain/ops-metrics";
 import { allowedFoods } from "@/domain/preferences";
 import { dayRecipeBases } from "@/domain/recipe-day";
 import { restrictionsOf } from "../services/account";
-import { GLOBAL_KEY, quotaKey, usageCount } from "../services/quota";
-import { generateRecipe, type Actor, type GenerateDeps } from "./generate";
+import { GLOBAL_KEY, usageCount } from "../services/quota";
+import {
+  fromCacheOrLibrary,
+  fromModel,
+  personQuotaKey,
+  prepareRecipe,
+  type Actor,
+  type GenerateDeps,
+  type GenerateResult,
+  type PreparedRecipe,
+} from "./generate";
 
 export type DayRecipeResult =
   | { meal: Meal; ok: true; id: string; cached: boolean }
@@ -17,9 +27,9 @@ export type GenerateDayResult =
 /**
  * Dia completo (secção 6): uma receita por refeição da pessoa, cada uma com a meta dessa refeição e
  * uma base diferente (sem repetir alimentos entre refeições enquanto houver alternativas). Um só
- * pedido conta uma vez no rate limiting; a quota tem de chegar para o dia inteiro (cada receita nova
- * conta uma). As receitas geram-se em paralelo, com o pipeline normal (validação, cache, ajuste da
- * proteína, D1); se uma falhar, as outras ficam.
+ * pedido conta uma vez no rate limiting. Primeiro, sem custo, a cache e a biblioteca (por ordem do
+ * dia, sem repetir a proteína das refeições anteriores); a quota só tem de chegar para as que faltam,
+ * que se geram em paralelo com o pipeline normal. Se uma falhar, as outras ficam.
  */
 export async function generateRecipeDay(
   input: RecipeDayRequest,
@@ -27,6 +37,7 @@ export async function generateRecipeDay(
   deps: GenerateDeps,
 ): Promise<GenerateDayResult> {
   const now = deps.now ?? Date.now;
+  const count = deps.count ?? (() => {});
   const { profile } = actor;
   const { db, env } = deps;
   const meals = profile.meals;
@@ -45,46 +56,84 @@ export async function generateRecipeDay(
     seed: Math.floor((deps.random ?? Math.random)() * 1_000_000),
   });
 
-  const personKey = await quotaKey(env.IP_HASH_SECRET, `user:${actor.userId}`, now());
+  const personKey = await personQuotaKey(actor, env, now());
   if (!(await deps.rateLimit(personKey))) return { ok: false, code: "rate_limited", status: 429 };
 
-  // A quota tem de chegar para o dia todo (as receitas que vierem da cache não contam)
-  const [used, usedGlobal] = await Promise.all([
-    usageCount(db, personKey, now()),
-    usageCount(db, GLOBAL_KEY, now()),
-  ]);
-  if (usedGlobal + meals.length > env.AI_DAILY_LIMIT) {
-    return { ok: false, code: "service_unavailable", status: 503 };
-  }
-  if (used + meals.length > env.QUOTA_USER) {
-    return {
-      ok: false,
-      code: "quota_exceeded",
-      status: 429,
-      remaining: Math.max(0, env.QUOTA_USER - used),
-    };
+  const results = new Map<Meal, GenerateResult>();
+  const pending: { meal: Meal; prepared: PreparedRecipe }[] = [];
+  // Proteínas já usadas no dia: as da biblioteca e as das bases das outras refeições (que podem ir
+  // ao modelo); a biblioteca nunca as repete
+  const picked = new Set<string>();
+  const baseProteins = (meal: Meal) =>
+    (bases.get(meal) ?? []).filter((f) => f.role === "protein").map((f) => f.id);
+  for (const meal of meals) {
+    const avoid = new Set([...picked, ...meals.filter((m) => m !== meal).flatMap(baseProteins)]);
+    const prepared = await prepareRecipe(
+      {
+        foodIds: [],
+        meal,
+        maxMinutes: input.maxMinutes,
+        servings: input.servings,
+        locale: input.locale,
+        variant: 1,
+        equipment: input.equipment,
+      },
+      actor,
+      deps,
+      bases.get(meal),
+    );
+    if (!prepared.ok) {
+      results.set(meal, prepared);
+      continue;
+    }
+    const ready = await fromCacheOrLibrary(prepared.value, actor, deps, avoid);
+    if (ready) {
+      for (const id of ready.proteinIds ?? []) picked.add(id);
+      results.set(meal, ready);
+    } else {
+      pending.push({ meal, prepared: prepared.value });
+    }
   }
 
-  const recipes = await Promise.all(
-    meals.map(async (meal): Promise<DayRecipeResult> => {
-      const result = await generateRecipe(
-        {
-          foodIds: (bases.get(meal) ?? []).map((f) => f.id),
-          meal,
-          maxMinutes: input.maxMinutes,
-          servings: input.servings,
-          locale: input.locale,
-          variant: 1,
-          equipment: input.equipment,
-        },
-        actor,
-        // O rate limiting já contou este pedido uma vez
-        { ...deps, rateLimit: async () => true },
+  // A quota tem de chegar para as que faltam (as da cache e da biblioteca não contam)
+  if (pending.length > 0) {
+    const [used, usedGlobal] = await Promise.all([
+      usageCount(db, personKey, now()),
+      usageCount(db, GLOBAL_KEY, now()),
+    ]);
+    const blocked: { code: RecipeErrorCode; status: number; remaining?: number } | null =
+      usedGlobal + pending.length > env.AI_DAILY_LIMIT
+        ? { code: "service_unavailable", status: 503 }
+        : used + pending.length > env.QUOTA_USER
+          ? {
+              code: "quota_exceeded",
+              status: 429,
+              remaining: Math.max(0, env.QUOTA_USER - used),
+            }
+          : null;
+    if (blocked) {
+      // Nada saiu sem custo: o dia inteiro fica para depois (como antes da biblioteca)
+      if (results.size === 0 || [...results.values()].every((r) => !r.ok)) {
+        return { ok: false, ...blocked };
+      }
+      for (const { meal } of pending) {
+        results.set(meal, { ok: false, code: blocked.code, status: blocked.status });
+      }
+    } else {
+      await Promise.all(
+        pending.map(async ({ meal, prepared }) => {
+          results.set(meal, await fromModel(prepared, personKey, deps, count));
+        }),
       );
-      return result.ok
-        ? { meal, ok: true, id: result.id, cached: result.cached }
-        : { meal, ok: false, code: result.code };
-    }),
-  );
+    }
+  }
+
+  const recipes = meals.map((meal): DayRecipeResult => {
+    const result = results.get(meal)!;
+    count(once(recipeOutcomeMetric(result)));
+    return result.ok
+      ? { meal, ok: true, id: result.id, cached: result.cached }
+      : { meal, ok: false, code: result.code };
+  });
   return { ok: true, recipes };
 }

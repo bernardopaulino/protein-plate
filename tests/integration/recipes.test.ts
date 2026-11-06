@@ -56,6 +56,8 @@ function deps(overrides: Partial<GenerateDeps> = {}): GenerateDeps {
     foodIndex: FOOD_INDEX,
     foodDataVersion: FOOD_DATA_VERSION,
     rateLimit: async () => true,
+    // Estes testes são do caminho do modelo; a biblioteca tem os seus (mais abaixo)
+    library: false,
     ...overrides,
   };
 }
@@ -123,7 +125,12 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
     const me = person(userId);
     const first = await generateRecipe(req, me, deps());
     const again = await generateRecipe({ ...req, foodIds: [...req.foodIds].reverse() }, me, deps());
-    expect(again).toEqual({ ok: true, id: first.ok ? first.id : "", cached: true });
+    expect(again).toEqual({
+      ok: true,
+      id: first.ok ? first.id : "",
+      cached: true,
+      source: "cache",
+    });
     const other = await generateRecipe({ ...req, variant: 2 }, me, deps());
     expect(other.ok && other.id).not.toBe(first.ok && first.id);
     const [usage] = await t.db.select({ n: count() }).from(recipes);

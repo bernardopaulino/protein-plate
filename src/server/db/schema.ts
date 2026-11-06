@@ -169,6 +169,13 @@ export const recipes = sqliteTable(
     summary: text("summary").notNull(),
     meal: text("meal").$type<Meal>().notNull(),
     postWorkout: integer("post_workout", { mode: "boolean" }).notNull(),
+    /** Gerada para a refeição pré-treino; null nas receitas anteriores à 0006 (fora da biblioteca) */
+    preWorkout: integer("pre_workout", { mode: "boolean" }),
+    /**
+     * Cópia reajustada de uma receita da biblioteca (migração 0006): o id da original. As cópias não
+     * voltam a ser candidatas; null = gerada pelo modelo ou pré-gerada.
+     */
+    sourceRecipeId: text("source_recipe_id"),
     servings: integer("servings").notNull(),
     /** "Gerar outra": 1 a 3 (entra na cache_key) */
     variant: integer("variant").notNull().default(1),
@@ -187,7 +194,10 @@ export const recipes = sqliteTable(
     outputTokens: integer("output_tokens"),
     createdAt: integer("created_at").notNull(),
   },
-  (t) => [index("recipes_created_idx").on(t.createdAt)],
+  (t) => [
+    index("recipes_created_idx").on(t.createdAt),
+    index("recipes_library_idx").on(t.locale, t.meal, t.foodDataVersion),
+  ],
 );
 
 export const recipeIngredients = sqliteTable(

@@ -10,6 +10,8 @@ export const OPS_METRICS = [
   "recipes.ok.new",
   // Receita servida da cache (o mesmo pedido já tinha sido gerado)
   "recipes.ok.cached",
+  // Receita da biblioteca: outra receita já gerada, reajustada à pessoa (sem chamar o modelo)
+  "recipes.ok.library",
   // Pedido de receita recusado ou falhado: um nome por código de erro do contrato da API
   ...RECIPE_ERROR_CODES.map((code) => `recipes.error.${code}` as const),
   // Houve uma segunda tentativa ao modelo (a primeira resposta não passou na validação)
@@ -57,9 +59,14 @@ export function once(metric: OpsMetric): OpsCounts {
 
 /** O contador do resultado de um pedido de receita. */
 export function recipeOutcomeMetric(
-  result: { ok: true; cached: boolean } | { ok: false; code: RecipeErrorCode },
+  result:
+    | { ok: true; cached: boolean; source?: "model" | "cache" | "library" }
+    | { ok: false; code: RecipeErrorCode },
 ): OpsMetric {
-  if (result.ok) return result.cached ? "recipes.ok.cached" : "recipes.ok.new";
+  if (result.ok) {
+    if (result.source === "library") return "recipes.ok.library";
+    return result.cached ? "recipes.ok.cached" : "recipes.ok.new";
+  }
   return `recipes.error.${result.code}`;
 }
 
