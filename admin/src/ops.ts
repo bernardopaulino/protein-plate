@@ -63,6 +63,7 @@ const REFUSED = [
 export const VALUE = {
   fresh: (m: Counters) => m["recipes.ok.new"] ?? 0,
   cached: (m: Counters) => m["recipes.ok.cached"] ?? 0,
+  library: (m: Counters) => m["recipes.ok.library"] ?? 0,
   failed: (m: Counters) => m[error("generation_failed")] ?? 0,
   retried: (m: Counters) => m["recipes.retry"] ?? 0,
   retrySkipped: (m: Counters) => m["recipes.retry_skipped"] ?? 0,
@@ -83,6 +84,11 @@ export const COLUMNS: { label: string; meaning: string; value: (m: Counters) => 
     label: "Da cache",
     meaning: "Pedidos servidos por uma receita já gerada (sem custo).",
     value: VALUE.cached,
+  },
+  {
+    label: "Da biblioteca",
+    meaning: "Pedidos servidos por outra receita já gerada, reajustada à pessoa (sem custo).",
+    value: VALUE.library,
   },
   {
     label: "Falharam",
@@ -116,7 +122,8 @@ export const COLUMNS: { label: string; meaning: string; value: (m: Counters) => 
   },
   {
     label: "Limite global",
-    meaning: "Pedidos acima do limite diário de receitas novas (AI_DAILY_LIMIT): só a cache serve.",
+    meaning:
+      "Pedidos acima do limite diário de receitas novas (AI_DAILY_LIMIT): só a cache e a biblioteca servem.",
     value: VALUE.globalLimit,
   },
   {
@@ -368,6 +375,9 @@ export function healthRow(loaded: Loaded<OpsMetrics>, now: number, filterHtml = 
   const tiles = healthTiles(m);
   const fresh = total(m.days.map((d) => VALUE.fresh(m.byDay[d] ?? {})));
   const cached = total(m.days.map((d) => VALUE.cached(m.byDay[d] ?? {})));
+  const library = total(m.days.map((d) => VALUE.library(m.byDay[d] ?? {})));
+  const served = fresh + cached + library;
+  const free = served > 0 ? ` (${pct((cached + library) / served)} sem custo)` : "";
   const attention = tiles.filter((t) => t.status === "attention");
   const summary =
     attention.length === 0
@@ -381,7 +391,7 @@ export function healthRow(loaded: Loaded<OpsMetrics>, now: number, filterHtml = 
   return row(
     "funcionamento",
     "Funcionamento",
-    `${num(fresh)} ${plural(fresh, "receita nova", "receitas novas")} e ${num(cached)} da cache, em UTC. A âmbar, os dias que pedem atenção.`,
+    `${num(fresh)} ${plural(fresh, "receita nova", "receitas novas")}, ${num(cached)} da cache e ${num(library)} da biblioteca${free}, em UTC. A âmbar, os dias que pedem atenção.`,
     `<div class="grid grid-health">${tiles.map((t) => tileHtml(t, m.days)).join("\n")}</div>
 ${opsTable(m, now)}`,
     `${summary}${filterHtml}`,

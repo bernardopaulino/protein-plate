@@ -177,6 +177,8 @@ export interface RecipeSeed {
   outputTokens?: number | null;
   createdAt?: number;
   ingredients?: { foodId: string; grams: number }[];
+  /** Cópia reajustada de uma receita da biblioteca (sem tokens). */
+  sourceRecipeId?: string | null;
 }
 
 export async function seedRecipe({
@@ -189,6 +191,7 @@ export async function seedRecipe({
   inputTokens = 1000,
   outputTokens = 400,
   createdAt = NOW - DAY,
+  sourceRecipeId = null,
   ingredients = [
     { foodId: "peito-frango", grams: 300 },
     { foodId: "arroz-branco", grams: 150 },
@@ -198,8 +201,8 @@ export async function seedRecipe({
     run(
       `insert into recipes (id, cache_key, locale, title, summary, meal, post_workout, servings,
         variant, prep_minutes, steps, protein_per_serving_g, meal_target_g, model, prompt_version,
-        food_data_version, input_tokens, output_tokens, created_at)
-      values (?, ?, 'pt', ?, ?, ?, 0, 2, 1, 20, ?, 35.5, 40, ?, 1, 3, ?, ?, ?)`,
+        food_data_version, input_tokens, output_tokens, created_at, source_recipe_id)
+      values (?, ?, 'pt', ?, ?, ?, 0, 2, 1, 20, ?, 35.5, 40, ?, 1, 3, ?, ?, ?, ?)`,
       id,
       `key-${id}`,
       title,
@@ -210,6 +213,7 @@ export async function seedRecipe({
       inputTokens,
       outputTokens,
       createdAt,
+      sourceRecipeId,
     ),
     ...ingredients.map((ing, position) =>
       run(

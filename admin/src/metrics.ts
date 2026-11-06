@@ -152,6 +152,12 @@ function tokenWindow(rows: readonly ModelUsage[]): TokenWindow {
   };
 }
 
+/**
+ * Só as receitas originais (do modelo ou pré-geradas): as cópias da biblioteca (migração 0006) não
+ * gastaram tokens e não são receitas novas.
+ */
+const ORIGINAL = "source_recipe_id is null";
+
 export async function recipesMetrics(
   db: AdminDb,
   now: number,
@@ -166,17 +172,17 @@ export async function recipesMetrics(
         sum(case when created_at >= ? then 1 else 0 end) as today,
         sum(case when created_at >= ? then 1 else 0 end) as d7,
         sum(case when created_at >= ? then 1 else 0 end) as d30
-      from recipes`,
+      from recipes where ${ORIGINAL}`,
       todayStart,
       now - 7 * DAY_MS,
       cut30,
     ),
     db.first<{ recent: number; previous: number }>(
-      `select ${windowColumns("created_at")} from recipes`,
+      `select ${windowColumns("created_at")} from recipes where ${ORIGINAL}`,
       ...windowParams(now),
     ),
     db.all<{ k: number; n: number }>(
-      `select ${weekOf("created_at")} as k, count(*) as n from recipes where created_at >= ? group by 1`,
+      `select ${weekOf("created_at")} as k, count(*) as n from recipes where ${ORIGINAL} and created_at >= ? group by 1`,
       (weeks[0] ?? 0) * DAY_MS,
     ),
     db.all<{
@@ -199,7 +205,7 @@ export async function recipesMetrics(
         coalesce(sum(case when created_at >= ? then output_tokens end), 0) as output30,
         sum(case when created_at >= ? and (input_tokens is null or output_tokens is null)
           then 1 else 0 end) as missing30
-      from recipes group by model`,
+      from recipes where ${ORIGINAL} group by model`,
       cut30,
       cut30,
       cut30,

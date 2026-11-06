@@ -36,7 +36,8 @@ Tudo o que é preciso criar fora do código. Pode ser feito em paralelo com as p
 
 ### Anthropic
 
-- [x] Chave de API para staging e outra para produção (expiram a 03/11/2027). Sem cartão na consola, o gasto fica limitado aos créditos (100 $ promocionais do plano Max, expiram a 28/11/2026); antes disso, comprar créditos ou as receitas param.
+- [x] Chave de API para staging e outra para produção (expiram a 03/11/2027). Sem cartão na consola, o gasto fica limitado aos créditos: o plano Max inclui 100 $/mês de créditos de API ("Promotional credits" em Billing), que renovam a cada ciclo de faturação e não acumulam. Se acabarem a meio do mês, a API recusa pedidos até ao ciclo seguinte (nunca é cobrado ao plano); a app continua a servir a cache e a biblioteca.
+- [ ] Workspace "Protein Plate" na consola (Settings → Workspaces) com limite de gastos de 5 $/mês; gerar lá a chave de produção (`wrangler secret put ANTHROPIC_API_KEY --env production`) e apagar a antiga. Todas as chaves da organização gastam do mesmo saldo; o limite do workspace impede que a app gaste o resto.
 
 ### GitHub
 
@@ -93,7 +94,7 @@ Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (escrever 
 
 ### Antes ou logo a seguir
 
-- [ ] Créditos da Anthropic: os 100 $ promocionais expiram a 28/11/2026 e não há cartão na consola.
+- [ ] Biblioteca de receitas: `npm run library:generate submit`, depois `fetch` e `npm run library:load:staging` / `:production` (depois de `db:migrate:*` com a 0006).
 - [ ] Beacon do Cloudflare Web Analytics bloqueado pelo CSP: desligar a injeção automática ou permiti-lo no CSP.
 - [ ] Email ao INSA sobre a reutilização da TCA (secção INSA acima).
 - [ ] Regra "required reviewer" no ambiente `production` do GitHub (criado na primeira corrida do workflow).

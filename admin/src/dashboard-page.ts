@@ -460,7 +460,7 @@ function priceNote(): string {
         `<code>${escapeHtml(model)}</code>: ${escapeHtml(usd(p.input))} por 1M de tokens de entrada e ${escapeHtml(usd(p.output))} por 1M de saída`,
     )
     .join("; ");
-  return `<p class="card-foot">Estimativa com os preços de <code>admin/src/pricing.ts</code> (${prices}). Cada receita gera-se uma vez: os pedidos servidos pela cache não gastam tokens e não aparecem aqui.</p>`;
+  return `<p class="card-foot">Estimativa com os preços de <code>admin/src/pricing.ts</code> (${prices}). Cada receita gera-se uma vez: os pedidos servidos pela cache ou pela biblioteca não gastam tokens e não aparecem aqui. As receitas pré-geradas pela Batch API custaram metade do que se mostra.</p>`;
 }
 
 function aiRow(loaded: Loaded<RecipesMetrics>): string {

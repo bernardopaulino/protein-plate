@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { PROVISIONAL_FOODS } from "../src/dashboard-page";
 import { adminDb } from "../src/db";
 import { isoDay, signedPct } from "../src/format";
+import { recipesMetrics } from "../src/metrics";
 import { healthTiles, opsMetrics } from "../src/ops";
 import { DEFAULT_RANGE, parseRange, rangeHref } from "../src/range";
 import { activeMetrics, cohortMetrics, funnelMetrics } from "../src/usage";
@@ -66,7 +67,11 @@ describe("funcionamento", () => {
   });
 
   it("os erros do servidor desde ontem e as receitas que falham pedem atenção", async () => {
-    await seedOps(daysAgo(5), { "recipes.ok.new": 40, "recipes.ok.cached": 10 });
+    await seedOps(daysAgo(5), {
+      "recipes.ok.new": 40,
+      "recipes.ok.cached": 10,
+      "recipes.ok.library": 40,
+    });
     await seedOps(today, {
       "recipes.ok.new": 10,
       "recipes.error.generation_failed": 5,
@@ -92,7 +97,8 @@ describe("funcionamento", () => {
     // "Precisa de ti" mostra os dois, com o link para o bloco
     expect(page).toMatch(/todo-attention.*?Erros do servidor/s);
     expect(page).toMatch(/todo-attention.*?Receitas que falharam/s);
-    expect(page).toContain("50 receitas novas e 10 da cache");
+    expect(page).toContain("50 receitas novas, 10 da cache e 40 da biblioteca (50% sem custo)");
+    expect(page).toContain("<dt>Da biblioteca</dt>");
     // A tabela completa explica cada coluna
     expect(page).toContain("<dt>Login 4xx</dt>");
     expect(page).toContain("hoje, em curso");
@@ -111,6 +117,23 @@ describe("funcionamento", () => {
     await seedOps(daysAgo(20), { "recipes.5xx": 4 });
     expect((await opsMetrics(db(), NOW, 14)).byDay[daysAgo(20)]).toBeUndefined();
     expect((await opsMetrics(db(), NOW, 30)).byDay[daysAgo(20)]).toEqual({ "recipes.5xx": 4 });
+  });
+});
+
+describe("receitas e custos", () => {
+  it("as cópias da biblioteca não contam como receitas novas nem no custo", async () => {
+    await seedRecipe({ id: "orig", createdAt: NOW - DAY });
+    await seedRecipe({
+      id: "copia",
+      sourceRecipeId: "orig",
+      inputTokens: 0,
+      outputTokens: 0,
+      createdAt: NOW - DAY,
+    });
+    const metrics = await recipesMetrics(db(), NOW);
+    expect(metrics.total).toBe(1);
+    expect(metrics.last30.recipes).toBe(1);
+    expect(metrics.allTime.input).toBe(1000);
   });
 });
 
