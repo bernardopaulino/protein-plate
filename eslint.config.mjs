@@ -36,6 +36,40 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // O three só chega pelo chunk lazy (src/features/plate-3d/lazy-plate.tsx): importá-lo noutro
+    // sítio metia-o no JavaScript da página (e nos prefetches dos links para ela)
+    files: ["src/**/*.{ts,tsx}"],
+    // (o domínio já tem a sua regra, mais restrita: uma segunda substituía-a)
+    ignores: [
+      "src/domain/**",
+      "src/features/plate-3d/plate-3d.tsx",
+      "src/features/plate-3d/scene/**",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["three", "three/*", "@react-three/*"],
+              message: "O three só se importa em src/features/plate-3d/plate-3d.tsx e scene/.",
+            },
+            {
+              group: [
+                "**/scene/plate-scene",
+                "**/scene/model-library",
+                "**/plate-3d/plate-3d",
+                "./plate-3d",
+              ],
+              message:
+                "Usa o LazyPlate3D (lazy-plate.tsx): o chunk do three só se pede quando deve.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores([
     ".next/**",
     ".claude/**",

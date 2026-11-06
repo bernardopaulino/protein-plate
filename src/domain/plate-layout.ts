@@ -11,7 +11,7 @@ export const PLATE = {
   /** Raio útil: as peças ficam por dentro do anel da borda. */
   usableRadius: 0.8,
   /** Raio da pegada de uma peça normal (escala 1). */
-  pieceRadius: 0.14,
+  pieceRadius: 0.16,
   /** Até onde duas peças se podem sobrepor (fração da soma dos raios). */
   maxOverlap: 0.25,
   /** Peças por item, no máximo; a partir daí uma peça maior. */
