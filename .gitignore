@@ -37,3 +37,6 @@ AGENTS.md
 
 # Sessões dos testes e2e
 tests/e2e/.auth/
+
+# biblioteca de receitas pré-gerada (batch e SQL)
+.library

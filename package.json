@@ -26,6 +26,10 @@
     "content:build": "tsx scripts/content-build.ts",
     "db:seed:local": "npm run content:build && wrangler d1 execute DB --local --file=.seed/foods.sql",
     "eval:recipes": "tsx --env-file-if-exists=.dev.vars scripts/eval-recipes.ts",
+    "library:generate": "tsx --env-file-if-exists=.dev.vars scripts/library-generate.ts",
+    "library:load:local": "wrangler d1 execute DB --local --file=.library/recipes.sql",
+    "library:load:staging": "wrangler d1 execute DB --remote --env staging --file=.library/recipes.sql",
+    "library:load:production": "wrangler d1 execute DB --remote --env production --file=.library/recipes.sql",
     "cf-typegen": "wrangler types cloudflare-env.d.ts --env-interface CloudflareEnv --env-file .dev.vars.example",
     "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env staging",
     "deploy:production": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env production",
@@ -61,6 +65,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "1.3.0",
     "@axe-core/playwright": "4.14.0",
     "@cloudflare/vitest-plugin": "1.4.11",
     "@lhci/cli": "0.15.1",
