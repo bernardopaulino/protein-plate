@@ -113,6 +113,12 @@ test.describe("com o plano feito", () => {
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
       .analyze();
     expect(axe.violations.map((v) => v.id)).toEqual([]);
+    // Nem com nomes compridos as sugestões passam da largura do ecrã
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      ),
+    ).toBeLessThanOrEqual(0);
 
     // Uma sugestão de um toque fecha a meta
     await close.getByRole("button").first().click();

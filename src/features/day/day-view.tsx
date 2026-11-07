@@ -201,7 +201,7 @@ export function DayView({
               ? t("closeLead", { grams: formatProtein(close.missing, lang) })
               : t("closePartial", { grams: formatProtein(close.missing, lang) })}
           </p>
-          <ul className="mt-3 grid gap-2 md:grid-cols-3 lg:grid-cols-1">
+          <ul className="mt-3 grid grid-cols-[minmax(0,1fr)] gap-2 md:grid-cols-3 lg:grid-cols-1">
             {close.suggestions.map((s) => {
               const food = FOOD_INDEX.get(s.foodId)!;
               const portion = findPortion(food, s.portionId)!;
