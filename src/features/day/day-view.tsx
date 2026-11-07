@@ -256,7 +256,11 @@ export function DayView({
           </Button>
         </div>
       ) : (
-        <Button variant="ghost" onClick={() => setConfirmReset(true)}>
+        <Button
+          variant="ghost"
+          onClick={() => setConfirmReset(true)}
+          className="h-auto min-h-11 max-w-full py-2 text-left whitespace-normal"
+        >
           <Shuffle aria-hidden />
           {t("resetExample")}
         </Button>
