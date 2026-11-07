@@ -51,6 +51,8 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
 
     // A receita vai para o dia, fica favorita e aparece no livro de receitas
     const title = (await page.getByRole("heading", { level: 1 }).innerText()).trim();
+    // O id (do endereço) identifica esta receita mesmo que a conta tenha outra com o mesmo título
+    const recipeId = new URL(page.url()).pathname.split("/").at(-1)!;
     await page.getByLabel("Em que refeição").selectOption({ label: "Jantar" });
     await page.getByRole("button", { name: "Pôr no meu dia" }).click();
     await expect(page.getByText("Feito: Jantar atualizado no teu dia.")).toBeVisible();
@@ -68,12 +70,17 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
       "true",
     );
     const panel = page.getByRole("tabpanel");
-    await expect(panel.getByRole("link", { name: new RegExp(title) })).toBeVisible();
+    const link = panel.locator(`a[href$="/receitas/${recipeId}"]`);
+    await expect(link).toBeVisible();
+    await expect(link).toContainText(title);
     await expect(
-      panel.getByRole("button", { name: `Tirar ${title} das favoritas` }),
+      panel
+        .getByRole("listitem")
+        .filter({ has: page.locator(`a[href$="/receitas/${recipeId}"]`) })
+        .getByRole("button", { name: `Tirar ${title} das favoritas` }),
     ).toHaveAttribute("aria-pressed", "true");
     await page.getByRole("tab", { name: /^Recentes/ }).click();
-    await expect(panel.getByRole("link", { name: new RegExp(title) })).toBeVisible();
+    await expect(panel.locator(`a[href$="/receitas/${recipeId}"]`)).toBeVisible();
 
     // Com um alimento escolhido pelos grupos
     await page.goto("/receitas/nova");

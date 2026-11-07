@@ -42,6 +42,8 @@ test("o dia vive na conta: as mudanças ficam depois de recarregar e noutro brow
   page,
   baseURL,
 }) => {
+  // Duas sessões novas (subprocessos) e o formulário inteiro: um fluxo longo, mais tempo
+  test.setTimeout(60_000);
   const email = "guardar@protein-plate.local";
   await signIn(context, baseURL!, email, { fresh: true });
   await completeOnboarding(page);
@@ -118,8 +120,12 @@ test.describe("com o plano feito", () => {
     await expect(toggle).toHaveAttribute("aria-checked", "false");
     await expect(dayKcal).toHaveCount(0);
 
+    const savedOn = page.waitForResponse(
+      (r) => r.request().method() === "POST" && new URL(r.url()).pathname === "/o-meu-dia",
+    );
     await toggle.click();
     await expect(toggle).toHaveAttribute("aria-checked", "true");
+    await savedOn;
     await expect(dayKcal).toBeVisible();
     await expect(
       page
@@ -135,8 +141,13 @@ test.describe("com o plano feito", () => {
     // Fica guardado na conta: depois de recarregar continua ligado; desliga-se para os outros testes
     await page.reload();
     await expect(toggle).toHaveAttribute("aria-checked", "true");
+    // O interruptor muda logo no ecrã; espera que a Server Action grave antes de recarregar
+    const saved = page.waitForResponse(
+      (r) => r.request().method() === "POST" && new URL(r.url()).pathname === "/o-meu-dia",
+    );
     await toggle.click();
     await expect(dayKcal).toHaveCount(0);
+    await saved;
     await page.reload();
     await expect(toggle).toHaveAttribute("aria-checked", "false");
   });
