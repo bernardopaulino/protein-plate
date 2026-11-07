@@ -7,8 +7,16 @@ import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import { ProteinNumber } from "./protein-number";
 
+export interface ProgressSegment {
+  key: string;
+  value: number;
+  /** A cor da fatia (ex.: "var(--meal-almoco)"). */
+  color: string;
+}
+
 /**
- * Barra de progresso grossa até à meta. Abaixo da meta é "Faltam X g" (nunca vermelho); a mensagem
+ * Barra de progresso grossa até à meta: a roda desenrolada, com um segmento por refeição na cor da
+ * sua fatia (sem segmentos, uma só cor). Abaixo da meta é "Faltam X g" (nunca vermelho); a mensagem
  * está numa região aria-live para os leitores de ecrã. Com `kcal`, uma linha discreta com as
  * calorias dos alimentos do dia (só informação, nunca uma meta).
  */
@@ -16,6 +24,7 @@ export function GoalProgress({
   total,
   target,
   kcal,
+  segments,
   sticky = false,
   className,
 }: {
@@ -23,6 +32,8 @@ export function GoalProgress({
   target: number;
   /** Calorias dos alimentos do dia (só com "Calorias" ligado) */
   kcal?: number;
+  /** A proteína de cada refeição, pela ordem do dia. */
+  segments?: readonly ProgressSegment[];
   sticky?: boolean;
   className?: string;
 }) {
@@ -32,6 +43,14 @@ export function GoalProgress({
   const missing = Math.max(0, target - total);
   const reached = roundForDisplay(missing) === 0;
   const over = total - target;
+  // Cada refeição ocupa a sua parte do que já há (escalado para caber na barra quando passa a meta)
+  const scale = target > 0 ? Math.min(1, total / target) / Math.max(total, 1e-9) : 0;
+  const parts =
+    segments && segments.length > 0
+      ? segments
+          .filter((s) => s.value > 0)
+          .map((s) => ({ key: s.key, color: s.color, width: s.value * scale * 100 }))
+      : [{ key: "total", color: "var(--primary)", width: ratio * 100 }];
 
   const message = !reached
     ? t("missing", { grams: formatProtein(missing, locale) })
@@ -43,7 +62,7 @@ export function GoalProgress({
     <section
       aria-label={t("progressLabel")}
       className={cn(
-        "rounded-card border border-border bg-surface p-4 shadow-sm",
+        "rounded-[1.75rem] border border-border bg-surface p-4 sm:p-5",
         sticky && "sticky top-[4.5rem] z-30",
         className,
       )}
@@ -70,15 +89,21 @@ export function GoalProgress({
         aria-valuemax={Math.round(target)}
         aria-valuenow={Math.round(Math.min(total, target))}
         aria-valuetext={`${formatProtein(total, locale)} g ${t("ofTarget", { target: formatProtein(target, locale) })}`}
-        className="mt-3 h-4 overflow-hidden rounded-full bg-track"
+        className={cn(
+          "mt-3 rounded-full p-[3px] transition-colors duration-300 ease-out",
+          // Ao chegar à meta, o --accent só como fundo: uma moldura à volta da barra cheia
+          reached ? "bg-accent" : "bg-track",
+        )}
       >
-        <div
-          className={cn(
-            "h-full rounded-full bg-primary transition-[width] duration-250 ease-out",
-            reached && "bg-[linear-gradient(90deg,var(--primary)_80%,var(--accent))]",
-          )}
-          style={{ width: `${ratio * 100}%` }}
-        />
+        <div className="flex h-4 w-full overflow-hidden rounded-full">
+          {parts.map((part) => (
+            <span
+              key={part.key}
+              className="h-full shrink-0 border-r-[3px] border-surface transition-[width] duration-250 ease-out last:border-r-0"
+              style={{ width: `${part.width}%`, backgroundColor: part.color }}
+            />
+          ))}
+        </div>
       </div>
       {kcal !== undefined ? (
         <p className="mt-2 text-sm text-muted tabular">

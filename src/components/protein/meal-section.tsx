@@ -16,6 +16,7 @@ export function MealSection({
   kcalLabel,
   children,
   footer,
+  glyph,
   className,
 }: {
   id?: string;
@@ -28,6 +29,8 @@ export function MealSection({
   kcalLabel?: string;
   children: ReactNode;
   footer?: ReactNode;
+  /** A fatia da refeição no dia (MealGlyph). */
+  glyph?: ReactNode;
   className?: string;
 }) {
   const headingId = id ? `${id}-titulo` : undefined;
@@ -35,19 +38,22 @@ export function MealSection({
     <section
       id={id}
       aria-labelledby={headingId}
-      className={cn("rounded-card border border-border bg-surface p-4 shadow-sm", className)}
+      className={cn("border-t-2 border-text pt-4", className)}
     >
       <header className="flex items-start justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <h2 id={headingId} className="text-lg font-bold">
-            {title}
-          </h2>
-          {postWorkoutLabel ? (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-bold text-[#1f1b16]">
-              <Zap aria-hidden className="size-3.5" />
-              {postWorkoutLabel}
-            </span>
-          ) : null}
+        <div className="flex min-w-0 items-center gap-2.5">
+          {glyph}
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+            <h2 id={headingId} className="text-xl leading-tight font-bold">
+              {title}
+            </h2>
+            {postWorkoutLabel ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-bold text-[#1f1b16]">
+                <Zap aria-hidden className="size-3.5" />
+                {postWorkoutLabel}
+              </span>
+            ) : null}
+          </div>
         </div>
         <div className="flex shrink-0 flex-col items-end">
           <p className="flex items-baseline gap-1.5 text-right">

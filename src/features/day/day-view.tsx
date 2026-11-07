@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SuggestionChip } from "@/components/protein/chips";
 import { GoalProgress } from "@/components/protein/goal-progress";
 import { MealSection } from "@/components/protein/meal-section";
+import { MealGlyph, mealColor } from "@/components/wheel/sector-glyph";
 import { PortionStepper } from "@/components/protein/portion-stepper";
 import { ProteinNumber } from "@/components/protein/protein-number";
 import { Button } from "@/components/ui/button";
@@ -300,6 +301,11 @@ export function DayView({
             total={total}
             target={target}
             kcal={kcalOn ? totalKcal(items, FOOD_INDEX) : undefined}
+            segments={meals.map((meal) => ({
+              key: meal,
+              value: mealProtein(items, meal, FOOD_INDEX),
+              color: mealColor(meal),
+            }))}
             sticky
             className="order-1 lg:static"
           />
@@ -335,6 +341,7 @@ export function DayView({
                 key={meal}
                 id={`refeicao-${meal}`}
                 title={tm(meal)}
+                glyph={<MealGlyph meals={meals} meal={meal} className="size-8" />}
                 postWorkoutLabel={
                   meal === post ? tm("postWorkout") : meal === pre ? tm("preWorkout") : undefined
                 }

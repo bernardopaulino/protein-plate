@@ -1,9 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Illustration } from "@/components/illustration";
-import { UI_IMAGES } from "@/content/food-images.generated";
 import { RecipeLibrary } from "@/features/recipes/recipe-library";
+import { SectorGlyph } from "@/components/wheel/sector-glyph";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { requireProfile } from "@/server/auth/guard";
@@ -41,7 +40,7 @@ export default async function RecipesPage({ params }: { params: Promise<{ locale
     {
       key: "single",
       href: "/receitas/nova",
-      image: UI_IMAGES["misc:target"],
+      parts: [0],
       title: t("start.single.title"),
       body: t("start.single.body"),
       cta: t("start.single.cta"),
@@ -49,7 +48,7 @@ export default async function RecipesPage({ params }: { params: Promise<{ locale
     {
       key: "day",
       href: "/receitas/dia",
-      image: UI_IMAGES["meal:almoco"],
+      parts: [0, 1, 2, 3],
       title: t("start.day.title"),
       body: t("start.day.body"),
       cta: t("start.day.cta"),
@@ -61,25 +60,32 @@ export default async function RecipesPage({ params }: { params: Promise<{ locale
       <h1 className="text-2xl font-extrabold lg:text-3xl">{t("title")}</h1>
       <p className="mt-2 max-w-2xl text-muted">{t("lead")}</p>
 
-      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+      <ul className="mt-8 flex flex-col">
         {starts.map((start) => (
           <li key={start.key}>
             <Link
               href={start.href}
-              className="group flex h-full items-start gap-4 rounded-card border-2 border-border bg-surface p-5 shadow-sm transition-colors duration-200 hover:border-primary"
+              className="group flex items-center gap-5 border-t border-border py-5 transition-colors duration-200 last:border-b hover:border-primary"
             >
-              <Illustration src={start.image} size={56} />
+              <SectorGlyph
+                parts={4}
+                filled={start.parts}
+                className="size-14 transition-transform duration-500 ease-out group-hover:rotate-90"
+              />
               <span className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="font-display text-xl font-bold">{start.title}</span>
-                <span className="text-muted">{start.body}</span>
-                <span className="mt-2 inline-flex items-center gap-1.5 font-semibold text-primary">
-                  {start.cta}
-                  <ArrowRight
-                    aria-hidden
-                    className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                  />
+                <span className="font-display text-2xl font-bold transition-colors duration-200 group-hover:text-primary">
+                  {start.title}
                 </span>
+                <span className="max-w-prose text-muted">{start.body}</span>
               </span>
+              <span className="hidden shrink-0 items-center gap-1.5 rounded-full bg-primary px-5 py-3 font-semibold text-on-primary transition-transform duration-200 ease-out group-hover:-translate-y-px sm:inline-flex">
+                {start.cta}
+                <ArrowRight aria-hidden className="size-4" />
+              </span>
+              <ArrowRight
+                aria-hidden
+                className="size-6 shrink-0 text-primary transition-transform duration-200 group-hover:translate-x-0.5 sm:hidden"
+              />
             </Link>
           </li>
         ))}

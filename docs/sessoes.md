@@ -132,3 +132,9 @@ Feito. O dia passa a viver só na D1 (sem localStorage; saveDayAction com deboun
 ```text
 Lê as secções 10, 11 ("3D") e 12 de docs/especificacao.md. O prato passa a existir em 3D (three + @react-three/fiber, sem drei nem descodificadores WebAssembly): enche até à meta com os alimentos do dia em modelos low-poly (Kenney Food Kit, CC0). Disposição pura e testada (src/domain/plate-layout.ts), modelos otimizados com gltf-transform e nomes com hash (cache longa), anel com os tokens (claro e escuro), frameloop="demand", queda curta das peças novas (nada com reduced motion), sem 3D sem WebGL, com saveData ou se o contexto se perder. Aparece na landing (md em diante, depois do LCP), no detalhe do alimento ("Ver em 3D", só depois do clique) e no "O meu dia". Testes e2e de rede, canvas, peças, reduced motion e axe.
 ```
+
+## 18. Redesign: a Roda dos Alimentos (6/11/2026)
+
+```text
+Lê PRODUCT.md e a secção 11 de docs/especificacao.md (direção "Roda dos Alimentos"). Redesign completo, páginas públicas e app, com as cores, a letra, o logótipo e o tom de sempre e velocidade primeiro (Lighthouse ≥ 90 em mobile): o dia é uma roda que se completa, cada refeição uma fatia. Roda em SVG (src/components/wheel) e fatias como marca em toda a app; página inicial como uma história em que o scroll gira a roda (o prato 3D no desktop, depois do LCP); barra de progresso como a roda desenrolada; catálogo, detalhe, entrar, receitas e formulário no mesmo mundo. Revisão final independente e DESIGN.md.
+```

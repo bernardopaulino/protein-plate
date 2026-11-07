@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { Meal } from "@/domain/meals";
 import { PLATE, type PlateItem } from "@/domain/plate-layout";
-import { formatCount } from "@/domain/protein";
+import { formatCount, formatProtein } from "@/domain/protein";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import { LazyPlate3D } from "./lazy-plate";
@@ -54,6 +54,8 @@ export function DayPlate({
   const desktop = useDesktop();
   const [supported, setSupported] = useState(false);
   const [open, setOpen] = useState(false);
+  const [ready, setReady] = useState(false);
+  const tt = useTranslations("today");
 
   useEffect(() => {
     // Só no browser, depois de hidratar. No desktop o prato aparece logo: o teste completo (com um
@@ -78,14 +80,33 @@ export function DayPlate({
 
   const plate = (
     <>
-      <LazyPlate3D
-        items={items}
-        meals={meals}
-        total={total}
-        target={target}
-        className="aspect-square w-full"
-        onUnavailable={() => setSupported(false)}
-      />
+      <div className="relative">
+        <LazyPlate3D
+          items={items}
+          meals={meals}
+          total={total}
+          target={target}
+          className="aspect-square w-full"
+          onReady={() => setReady(true)}
+          onUnavailable={() => setSupported(false)}
+        />
+        {/* O cubo da roda: o total do dia (o GoalProgress em HTML continua a ser a fonte de verdade) */}
+        {ready ? (
+          <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
+            <div className="grid aspect-square w-[30%] place-items-center rounded-full bg-surface text-center shadow-[0_12px_26px_-14px_rgb(31_27_22/0.5)]">
+              <div>
+                <p className="font-display text-[clamp(1.5rem,3.2vw,2.25rem)] leading-none font-extrabold tracking-[-0.03em] text-primary tabular">
+                  {formatProtein(total, lang)}
+                  <span className="ml-0.5 text-[0.5em] text-muted">g</span>
+                </p>
+                <p className="mt-0.5 text-xs text-muted tabular">
+                  {tt("ofTarget", { target: formatProtein(target, lang) })}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
       {legend.length > 0 ? (
         <p aria-hidden className="px-1 text-center text-sm text-muted">
           {legend.join(" · ")}
@@ -95,16 +116,7 @@ export function DayPlate({
   );
 
   if (placement === "sidebar") {
-    return (
-      <div
-        className={cn(
-          "flex flex-col gap-1 rounded-card border border-border bg-surface p-2",
-          className,
-        )}
-      >
-        {plate}
-      </div>
-    );
+    return <div className={cn("flex flex-col gap-1", className)}>{plate}</div>;
   }
 
   return (

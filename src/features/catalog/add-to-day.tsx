@@ -48,7 +48,7 @@ export function AddToDay({ foodId, food }: { foodId: string; food: Food }) {
     return <div aria-hidden className="h-40 animate-pulse rounded-card bg-track" />;
 
   const box = (children: React.ReactNode) => (
-    <div className="rounded-card border border-border bg-surface p-5">
+    <div className="border-t-2 border-text pt-4">
       <h2 className="text-lg font-bold">{t("addToDay")}</h2>
       {children}
     </div>
@@ -88,7 +88,7 @@ export function AddToDay({ foodId, food }: { foodId: string; food: Food }) {
 
   return (
     <form
-      className="rounded-card border border-border bg-surface p-5"
+      className="border-t-2 border-text pt-4"
       onSubmit={async (e) => {
         e.preventDefault();
         if (!chosenMeal || status === "saving") return;

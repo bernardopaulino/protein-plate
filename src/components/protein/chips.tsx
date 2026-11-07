@@ -87,7 +87,7 @@ export function SuggestionChip({
       type="button"
       onClick={onSelect}
       aria-label={ariaLabel}
-      className="group flex min-h-16 w-full items-center gap-3 rounded-card border border-border bg-surface p-3 text-left shadow-sm transition-[border-color,transform] duration-200 ease-out hover:border-primary active:scale-[0.99]"
+      className="group flex min-h-16 w-full items-center gap-3 rounded-card border border-border bg-surface p-3 text-left transition-[border-color,transform] duration-200 ease-out hover:border-primary active:scale-[0.99]"
     >
       <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-on-primary">
         <Plus aria-hidden className="size-5" />

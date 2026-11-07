@@ -11,7 +11,8 @@ import { portionUnits } from "@/content/food-models.generated";
 import { formatKcal, portionKcal, proteinPer100Kcal } from "@/domain/calories";
 import { TCA_REFERENCE, TODO } from "@/domain/contracts/food";
 import { defaultPortion } from "@/domain/food";
-import { foodSubgroup } from "@/domain/food-groups";
+import { foodSubgroup, subgroupSection } from "@/domain/food-groups";
+import { SectionGlyph } from "@/components/wheel/sector-glyph";
 import { formatProtein, portionProtein } from "@/domain/protein";
 import { AddToDay } from "@/features/catalog/add-to-day";
 import {
@@ -81,6 +82,7 @@ export default async function FoodPage({ params }: { params: Params }) {
   const ts = await getTranslations("seo");
   const tn = await getTranslations("nav");
   const related = relatedFoods(food.id);
+  const subgroup = foodSubgroup(food);
   const density = proteinPer100Kcal(food);
   const breadcrumb = {
     "@context": "https://schema.org",
@@ -110,12 +112,15 @@ export default async function FoodPage({ params }: { params: Params }) {
 
       <header className="mt-2 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold text-muted">
-            {tc(food.category)} · {te(String(food.ease) as "1" | "2" | "3")}
-          </p>
-          <h1 className="mt-1 text-2xl font-extrabold sm:text-[2.5rem] sm:leading-tight">
+          <h1 className="text-[2.5rem] leading-[0.95] font-extrabold tracking-[-0.03em] sm:text-[4rem]">
             {foodName(food, locale)}
           </h1>
+          <p className="mt-3 flex items-center gap-2 font-semibold text-muted">
+            {subgroup ? (
+              <SectionGlyph section={subgroupSection(subgroup)} className="size-5" />
+            ) : null}
+            {tc(food.category)} · {te(String(food.ease) as "1" | "2" | "3")}
+          </p>
           {food.processing === "ultra" ? (
             <p className="mt-2 inline-block rounded-full bg-accent px-3 py-1 text-sm font-bold text-[#1f1b16]">
               {common("whey")}
@@ -143,9 +148,9 @@ export default async function FoodPage({ params }: { params: Params }) {
             <h2 id="porcoes" className="text-lg font-bold">
               {t("portions")}
             </h2>
-            <ul className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">
+            <ul className="mt-3 divide-y divide-border border-y border-border">
               {food.portions.map((p) => (
-                <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                <li key={p.id} className="flex items-center justify-between gap-3 py-3">
                   <span>
                     <span className="font-semibold">{p.label[locale]}</span>
                     <span className="ml-2 text-sm text-muted tabular">
@@ -155,7 +160,7 @@ export default async function FoodPage({ params }: { params: Params }) {
                   <ProteinNumber value={portionProtein(food, p.id)} size="md" />
                 </li>
               ))}
-              <li className="flex items-center justify-between gap-3 px-4 py-3 text-muted">
+              <li className="flex items-center justify-between gap-3 py-3 text-muted">
                 <span>
                   {t("per100")} · {tw(food.weightBasis)}
                 </span>
@@ -224,12 +229,12 @@ export default async function FoodPage({ params }: { params: Params }) {
           <h2 id="parecidos" className="text-lg font-bold">
             {t("related")}
           </h2>
-          <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-3 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((other) => (
               <li key={other.id}>
                 <Link
                   href={`/alimentos/${other.id}`}
-                  className="flex min-h-16 items-center gap-3 rounded-card border border-border bg-surface p-3 transition-colors duration-200 hover:border-primary/50"
+                  className="flex min-h-16 items-center gap-3 border-t border-border py-3 transition-colors duration-200 hover:border-primary"
                 >
                   <Illustration src={foodImage(other.id)} size={40} />
                   <span className="flex min-w-0 flex-1 flex-col">

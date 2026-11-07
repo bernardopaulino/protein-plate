@@ -105,7 +105,6 @@
     "recipe": "AI-generated. Protein is calculated from the TCA. Check allergens and intolerances."
   },
   "landing": {
-    "eyebrow": "Real food, real portions",
     "title": "Protein without the diet.",
     "lead": "Reaching your protein goal is easier than it looks. With real food, in portions you recognize, without counting calories.",
     "cta": "Get started",
@@ -150,7 +149,9 @@
         "q": "What if I have allergies or don't eat meat?",
         "a": "Tell us at the start. Your day and your recipes never include those foods, and you can change that whenever you want."
       }
-    }
+    },
+    "closeTitle": "Your wheel fills up with what you already eat.",
+    "closeBody": "Tell us your goal and what you like: the app builds a full day that gets there, with your foods and in portions you recognize."
   },
   "today": {
     "title": "My day",

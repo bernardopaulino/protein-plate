@@ -105,7 +105,6 @@
     "recipe": "Gerada por IA. A proteína é calculada a partir da TCA. Confirma alergénios e intolerâncias."
   },
   "landing": {
-    "eyebrow": "Protein without the diet",
     "title": "Proteína sem dieta.",
     "lead": "Chegar à tua meta de proteína é mais fácil do que parece. Com comida de verdade, em porções que reconheces, sem contar calorias.",
     "cta": "Começar agora",
@@ -150,7 +149,9 @@
         "q": "E se tiver alergias ou não comer carne?",
         "a": "Diz-nos no início. O teu dia e as receitas nunca incluem esses alimentos, e podes mudar isso quando quiseres."
       }
-    }
+    },
+    "closeTitle": "A tua roda enche-se com o que já comes.",
+    "closeBody": "Diz-nos a tua meta e do que gostas: a app monta um dia inteiro que chega lá, com os teus alimentos e em porções que reconheces."
   },
   "today": {
     "title": "O meu dia",

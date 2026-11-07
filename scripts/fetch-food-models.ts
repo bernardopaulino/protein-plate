@@ -66,9 +66,7 @@ const BY_SUBGROUP: Record<FoodSubgroup, string> = {
 // Alimento → modelo próprio (quando o pacote tem um que lhe corresponde melhor).
 const BY_ID: Record<string, string> = {
   // aves e carne
-  "peito-frango": "meat-cooked",
-  "peito-peru": "meat-cooked",
-  "peito-pato": "meat-cooked",
+  // Aves: a coxa (o modelo do subgrupo) lê-se como frango; o bife cozinhado parecia piza
   "carne-picada-peru": "meat-patty",
   "carne-picada-vaca": "meat-patty",
   "perna-borrego": "whole-ham",
@@ -97,8 +95,9 @@ const BY_ID: Record<string, string> = {
   "pao-centeio": "bread",
   "pao-mistura": "loaf-round",
   "broa-milho": "loaf-round",
-  "massa-trigo": "chinese",
-  "massa-integral": "chinese",
+  // Massa: a tigela de noodles (a caixa de takeaway lia-se como comida de fora)
+  "massa-trigo": "bowl-broth",
+  "massa-integral": "bowl-broth",
   // fruta
   banana: "banana",
   pera: "pear",

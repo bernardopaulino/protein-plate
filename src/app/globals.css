@@ -17,6 +17,13 @@
   --danger: #b3261e; /* só erros técnicos, nunca ligado à nutrição */
   --border: #e3d9cb;
   --primary-soft: #e3efe2;
+  /* Fatias da Roda: uma cor por refeição, derivada do verde e do amarelo do anel (só fundo) */
+  --meal-pequeno-almoco: #f2b33d;
+  --meal-meio-da-manha: #f6d48c;
+  --meal-almoco: #2f6b3a;
+  --meal-lanche: #8fbf91;
+  --meal-jantar: #1e4a27;
+  --meal-ceia: #d6c9b4;
   color-scheme: light;
 }
 
@@ -33,6 +40,12 @@
     --danger: #f2b8b5;
     --border: #34302a;
     --primary-soft: #1f2e21;
+    --meal-pequeno-almoco: #f5c25e;
+    --meal-meio-da-manha: #b8913f;
+    --meal-almoco: #6fbf7a;
+    --meal-lanche: #3f7d49;
+    --meal-jantar: #a9ddb0;
+    --meal-ceia: #4a4339;
     color-scheme: dark;
   }
 }
@@ -49,6 +62,12 @@
   --danger: #f2b8b5;
   --border: #34302a;
   --primary-soft: #1f2e21;
+  --meal-pequeno-almoco: #f5c25e;
+  --meal-meio-da-manha: #b8913f;
+  --meal-almoco: #6fbf7a;
+  --meal-lanche: #3f7d49;
+  --meal-jantar: #a9ddb0;
+  --meal-ceia: #4a4339;
   color-scheme: dark;
 }
 
@@ -65,7 +84,23 @@
   --danger: #b3261e;
   --border: #e3d9cb;
   --primary-soft: #e3efe2;
+  /* Fatias da Roda: uma cor por refeição, derivada do verde e do amarelo do anel (só fundo) */
+  --meal-pequeno-almoco: #f2b33d;
+  --meal-meio-da-manha: #f6d48c;
+  --meal-almoco: #2f6b3a;
+  --meal-lanche: #8fbf91;
+  --meal-jantar: #1e4a27;
+  --meal-ceia: #d6c9b4;
   color-scheme: light;
+}
+
+/* Grupos de alimentos (as secções do catálogo): as mesmas fatias, por outra ordem */
+:root {
+  --group-protein: var(--meal-almoco);
+  --group-carb: var(--meal-pequeno-almoco);
+  --group-fruit: var(--meal-meio-da-manha);
+  --group-vegetable: var(--meal-lanche);
+  --group-nuts: var(--meal-ceia);
 }
 
 @theme inline {
@@ -99,6 +134,10 @@
   --text-2xl--line-height: 2.375rem;
   --text-hero: 3.5rem;
   --text-hero--line-height: 1;
+  /* Display do redesign: cresce com o ecrã até 6rem (o título da página inicial, os totais) */
+  --text-display: clamp(3.25rem, 1.6rem + 5.2vw, 6rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.035em;
 
   --radius-card: 1.25rem;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -132,13 +171,35 @@
     color: var(--text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    caret-color: var(--primary);
+    accent-color: var(--primary);
+  }
+
+  /* As partes do browser também são do mundo da Roda: seleção a marcador amarelo, scrollbar creme */
+  ::selection {
+    background-color: var(--accent);
+    color: #1f1b16;
+  }
+
+  html {
+    scrollbar-color: var(--track) var(--bg);
+  }
+
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: from-font;
+  }
+
+  input,
+  textarea {
+    font-variant-numeric: tabular-nums;
   }
 
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
 
@@ -193,4 +254,81 @@
   @media (width >= 96rem) {
     max-width: 90rem;
   }
+}
+
+/*
+ * A Roda (src/components/wheel): inclinação em CSS 3D, fatias que giram com a curva da app (os
+ * alimentos ficam de pé), esbater as fatias que não estão em foco e o aro que enche. Com
+ * prefers-reduced-motion as transições ficam a 0,01 ms (regra global): tudo aparece no sítio.
+ */
+.wheel-stage {
+  perspective: 1400px;
+  /* A caixa do SVG inclinado (os cantos do quadrado) passa da coluna, o círculo não: corta só o
+     lado, para não haver scroll horizontal; a sombra em baixo continua */
+  overflow-x: clip;
+}
+
+.wheel-svg {
+  transform: rotateX(var(--wheel-tilt, 0deg));
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 26px 28px rgb(31 27 22 / 0.16));
+  transition:
+    transform 900ms var(--ease-out),
+    opacity 700ms var(--ease-out);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .wheel-svg {
+    filter: drop-shadow(0 26px 30px rgb(0 0 0 / 0.55));
+  }
+}
+
+.wheel-sectors {
+  transform: rotate(var(--wheel-rotation, 0deg));
+  transition: transform 850ms var(--ease-out);
+}
+
+.wheel-food {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(calc(var(--wheel-rotation, 0deg) * -1));
+  transition: transform 850ms var(--ease-out);
+}
+
+.wheel-sector {
+  transition: opacity 450ms var(--ease-out);
+}
+
+.wheel-sector[data-dim] {
+  opacity: 0.26;
+}
+
+/* A camada só de legendas (por cima do prato 3D) não leva sombra: a sombra do texto era um borrão */
+.wheel-svg.wheel-labels-only {
+  filter: none;
+}
+
+/*
+ * A roda da página inicial é maior do que a coluna e sangra pela borda do ecrã: o corte é o do
+ * ecrã, não o da coluna (o body corta só o lado; o sticky continua a funcionar com clip)
+ */
+html:has(.landing-bleed) {
+  /* Com o html a ter overflow próprio, o do body não passa para o viewport: o body corta-se a si
+     mesmo e não há scroll horizontal (o sticky continua a funcionar com clip) */
+  overflow: auto;
+}
+
+body:has(.landing-bleed) {
+  overflow-x: clip;
+}
+
+.wheel-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  fill: var(--text);
+}
+
+.wheel-progress {
+  transition: stroke-dasharray 900ms var(--ease-out);
 }

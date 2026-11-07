@@ -1,0 +1,654 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T00:43:23.769Z",
+  "title": "Design System: Protein Plate",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Verde do Anel",
+        "canonical": "#2f6b3a",
+        "oklch": "oklch(47.5% 0.100 147.7)",
+        "dark": "#6fbf7a",
+        "cssVar": "--primary",
+        "tonalRamp": [
+          "#001002",
+          "#002d0c",
+          "#0c4d1e",
+          "#316d3b",
+          "#54905d",
+          "#79b681",
+          "#9edda6",
+          "#c9ffcf"
+        ]
+      },
+      "on-primary": {
+        "role": "primary",
+        "displayName": "Sobre o Verde",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "dark": "#12110f",
+        "cssVar": "--on-primary",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "primary-soft": {
+        "role": "primary",
+        "displayName": "Verde Broto",
+        "canonical": "#e3efe2",
+        "oklch": "oklch(94.0% 0.021 143.2)",
+        "dark": "#1f2e21",
+        "cssVar": "--primary-soft",
+        "tonalRamp": [
+          "#060d06",
+          "#1e271d",
+          "#394339",
+          "#576156",
+          "#798478",
+          "#9da89c",
+          "#c3cec2",
+          "#e6f2e5"
+        ]
+      },
+      "accent": {
+        "role": "secondary",
+        "displayName": "Amarelo Gema (só fundo)",
+        "canonical": "#f2b33d",
+        "oklch": "oklch(80.6% 0.147 79.0)",
+        "dark": "#f5c25e",
+        "cssVar": "--accent",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a00",
+          "#7b5602",
+          "#a77606",
+          "#d5980e",
+          "#febe4a",
+          "#feeccf"
+        ]
+      },
+      "ink-on-accent": {
+        "role": "secondary",
+        "displayName": "Tinta sobre o Amarelo",
+        "canonical": "#1f1b16",
+        "oklch": "oklch(22.5% 0.011 73.3)",
+        "dark": "#1f1b16",
+        "cssVar": null,
+        "tonalRamp": [
+          "#0e0a06",
+          "#27231e",
+          "#433f39",
+          "#625d57",
+          "#847f79",
+          "#a9a49d",
+          "#cfcac3",
+          "#f3ede6"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Creme do Logótipo",
+        "canonical": "#fbf8f3",
+        "oklch": "oklch(98.0% 0.007 80.7)",
+        "dark": "#12110f",
+        "cssVar": "--bg",
+        "tonalRamp": [
+          "#0d0b08",
+          "#262420",
+          "#423f3b",
+          "#605d59",
+          "#82807b",
+          "#a7a49f",
+          "#cdcac5",
+          "#f1eee9"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Prato",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "dark": "#1c1a17",
+        "cssVar": "--surface",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#404040",
+          "#5d5d5d",
+          "#808080",
+          "#a4a4a4",
+          "#cacaca",
+          "#eeeeee"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Tinta Quente",
+        "canonical": "#1f1b16",
+        "oklch": "oklch(22.5% 0.011 73.3)",
+        "dark": "#f3eee7",
+        "cssVar": "--text",
+        "tonalRamp": [
+          "#0e0a06",
+          "#27231e",
+          "#433f39",
+          "#625d57",
+          "#847f79",
+          "#a9a49d",
+          "#cfcac3",
+          "#f3ede6"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Tinta Apagada",
+        "canonical": "#6b6258",
+        "oklch": "oklch(50.2% 0.019 70.3)",
+        "dark": "#a99f93",
+        "cssVar": "--text-muted",
+        "tonalRamp": [
+          "#100a04",
+          "#2a231a",
+          "#463e35",
+          "#655c52",
+          "#887e74",
+          "#ada398",
+          "#d3c9bd",
+          "#f7ede1"
+        ]
+      },
+      "track": {
+        "role": "neutral",
+        "displayName": "Massa",
+        "canonical": "#eae3d8",
+        "oklch": "oklch(91.8% 0.017 79.3)",
+        "dark": "#2a2723",
+        "cssVar": "--track",
+        "tonalRamp": [
+          "#0f0a04",
+          "#28231b",
+          "#443f36",
+          "#635d53",
+          "#867f75",
+          "#aaa499",
+          "#d0cabf",
+          "#f5ede2"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Filete",
+        "canonical": "#e3d9cb",
+        "oklch": "oklch(88.9% 0.022 76.5)",
+        "dark": "#34302a",
+        "cssVar": "--border",
+        "tonalRamp": [
+          "#100a03",
+          "#2a2318",
+          "#463e33",
+          "#655c50",
+          "#887f72",
+          "#ada396",
+          "#d3c9bb",
+          "#f7eddf"
+        ]
+      },
+      "danger": {
+        "role": "neutral",
+        "displayName": "Erro Técnico (só erros técnicos)",
+        "canonical": "#b3261e",
+        "oklch": "oklch(50.1% 0.178 28.7)",
+        "dark": "#f2b8b5",
+        "cssVar": "--danger",
+        "tonalRamp": [
+          "#1f0000",
+          "#4b0001",
+          "#7c0203",
+          "#ac1d17",
+          "#d64a3d",
+          "#ff7363",
+          "#feb6ab",
+          "#ffe9e5"
+        ]
+      },
+      "meal-pequeno-almoco": {
+        "role": "tertiary",
+        "displayName": "Fatia Pequeno-almoço",
+        "canonical": "#f2b33d",
+        "oklch": "oklch(80.6% 0.147 79.0)",
+        "dark": "#f5c25e",
+        "cssVar": "--meal-pequeno-almoco",
+        "tonalRamp": [
+          "#120900",
+          "#322001",
+          "#553a00",
+          "#7b5602",
+          "#a77606",
+          "#d5980e",
+          "#febe4a",
+          "#feeccf"
+        ]
+      },
+      "meal-meio-da-manha": {
+        "role": "tertiary",
+        "displayName": "Fatia Meio da manhã",
+        "canonical": "#f6d48c",
+        "oklch": "oklch(88.3% 0.098 85.2)",
+        "dark": "#b8913f",
+        "cssVar": "--meal-meio-da-manha",
+        "tonalRamp": [
+          "#110a00",
+          "#2f2201",
+          "#523c00",
+          "#775801",
+          "#9b7b33",
+          "#c1a059",
+          "#e8c67e",
+          "#ffedc8"
+        ]
+      },
+      "meal-almoco": {
+        "role": "tertiary",
+        "displayName": "Fatia Almoço",
+        "canonical": "#2f6b3a",
+        "oklch": "oklch(47.5% 0.100 147.7)",
+        "dark": "#6fbf7a",
+        "cssVar": "--meal-almoco",
+        "tonalRamp": [
+          "#001002",
+          "#002d0c",
+          "#0c4d1e",
+          "#316d3b",
+          "#54905d",
+          "#79b681",
+          "#9edda6",
+          "#c9ffcf"
+        ]
+      },
+      "meal-lanche": {
+        "role": "tertiary",
+        "displayName": "Fatia Lanche",
+        "canonical": "#8fbf91",
+        "oklch": "oklch(75.8% 0.083 145.7)",
+        "dark": "#3f7d49",
+        "cssVar": "--meal-lanche",
+        "tonalRamp": [
+          "#001001",
+          "#012d08",
+          "#1e4b23",
+          "#3d6a40",
+          "#5f8e62",
+          "#83b385",
+          "#a9d9aa",
+          "#ccfece"
+        ]
+      },
+      "meal-jantar": {
+        "role": "tertiary",
+        "displayName": "Fatia Jantar",
+        "canonical": "#1e4a27",
+        "oklch": "oklch(36.8% 0.077 148.2)",
+        "dark": "#a9ddb0",
+        "cssVar": "--meal-jantar",
+        "tonalRamp": [
+          "#001003",
+          "#002d0d",
+          "#1f4b28",
+          "#3d6a45",
+          "#608d66",
+          "#84b28a",
+          "#a9d9af",
+          "#ccfed2"
+        ]
+      },
+      "meal-ceia": {
+        "role": "tertiary",
+        "displayName": "Fatia Ceia",
+        "canonical": "#d6c9b4",
+        "oklch": "oklch(84.1% 0.032 79.9)",
+        "dark": "#4a4339",
+        "cssVar": "--meal-ceia",
+        "tonalRamp": [
+          "#120900",
+          "#2c2211",
+          "#493e2c",
+          "#675c49",
+          "#8a7e6b",
+          "#afa38f",
+          "#d6c9b4",
+          "#faedd7"
+        ]
+      }
+    },
+    "groupAliases": {
+      "--group-protein": "meal-almoco",
+      "--group-carb": "meal-pequeno-almoco",
+      "--group-fruit": "meal-meio-da-manha",
+      "--group-vegetable": "meal-lanche",
+      "--group-nuts": "meal-ceia"
+    },
+    "darkMode": {
+      "strategy": "prefers-color-scheme; a classe .dark força o escuro e .light força o claro",
+      "note": "Valores escuros em colorMeta.<token>.dark; ink-on-accent (#1f1b16) é igual nos dois modos."
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título da página inicial e total do dia exemplo; 3,25rem em telemóvel."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Títulos de secção: 2rem, 2,75rem a partir de lg; faixa de fecho até 3,5rem."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Refeições, passos, receitas e títulos de página da app (1,25–1,5rem)."
+      },
+      "number": {
+        "displayName": "ProteinNumber",
+        "purpose": "Assinatura: a proteína sempre em Bricolage bold tabular. sm 1rem, md 1,25rem, lg 1,5rem, xl 2,75rem, hero 3,5rem, cubo até 5,25rem; 'g' a 0,55em em muted."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrido, max-w-prose."
+      },
+      "body-lead": {
+        "displayName": "Lead",
+        "purpose": "Lead do hero e legendas de secção, em muted."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chips, porções, botões pequenos, navegação; nunca em maiúsculas."
+      }
+    },
+    "typeScale": [
+      "0.75rem",
+      "0.875rem",
+      "1rem",
+      "1.25rem",
+      "1.5rem",
+      "2rem",
+      "3.5rem",
+      "clamp(3.25rem, 1.6rem + 5.2vw, 6rem)"
+    ],
+    "shadows": [
+      {
+        "name": "pousado",
+        "value": "0 8px 18px -10px rgb(31 27 22 / 0.55)",
+        "hover": "0 12px 22px -10px rgb(31 27 22 / 0.55)",
+        "purpose": "Botão primário."
+      },
+      {
+        "name": "cubo",
+        "value": "0 18px 36px -16px rgb(31 27 22 / 0.5)",
+        "purpose": "Cubo com o número no centro da roda (no prato do dia: 0 12px 26px -14px)."
+      },
+      {
+        "name": "roda",
+        "value": "drop-shadow(0 26px 28px rgb(31 27 22 / 0.16))",
+        "dark": "drop-shadow(0 26px 30px rgb(0 0 0 / 0.55))",
+        "purpose": "A roda inclinada (filter, não box-shadow); a camada só de legendas não leva sombra."
+      },
+      {
+        "name": "cartao-entrada",
+        "value": "0 24px 44px -26px rgb(31 27 22 / 0.45)",
+        "purpose": "O cartão de 'Entrar'."
+      }
+    ],
+    "focus": {
+      "value": "outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 0.5rem",
+      "purpose": "Foco de teclado global."
+    },
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "A única curva da app."
+      },
+      {
+        "name": "wheel-rotate",
+        "value": "850ms",
+        "purpose": "Fatias da roda a girar até à refeição em foco; os alimentos ficam de pé."
+      },
+      {
+        "name": "wheel-tilt",
+        "value": "900ms",
+        "purpose": "Inclinação 3D da roda e enchimento do aro."
+      },
+      {
+        "name": "sector-dim",
+        "value": "450ms",
+        "purpose": "Esbater as fatias fora de foco a opacity 0.26."
+      },
+      {
+        "name": "bar-fill",
+        "value": "250ms",
+        "purpose": "Segmentos do GoalProgress e aro do prato 3D."
+      },
+      {
+        "name": "piece-drop",
+        "value": "300ms",
+        "purpose": "Peça nova a cair no prato 3D."
+      },
+      {
+        "name": "state",
+        "value": "150–200ms",
+        "purpose": "Hover, active e cor de botões, chips e linhas."
+      },
+      {
+        "name": "float",
+        "value": "float 4s ease-in-out infinite (translate 0 → -8px)",
+        "purpose": "Alimentos decorativos em 'Entrar'."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation/transition-duration: 0.01ms !important",
+        "purpose": "Com prefers-reduced-motion tudo aparece no sítio."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px",
+        "purpose": "Navegação passa de baixo para cima."
+      },
+      {
+        "name": "lg",
+        "value": "1024px",
+        "purpose": "Duas colunas; roda fixa e prato 3D na página inicial."
+      },
+      {
+        "name": "xl",
+        "value": "1280px",
+        "purpose": "Refeições do O meu dia em duas colunas."
+      },
+      {
+        "name": "container-wide",
+        "value": "1536px",
+        "purpose": "Contentor passa de 80rem a 90rem."
+      }
+    ],
+    "container": {
+      "maxWidth": "80rem (90rem a partir de 1536px)",
+      "paddingInline": "16px; 24px a partir de 640px; 32px a partir de 1024px"
+    },
+    "wheel": {
+      "viewBox": "-124 -124 248 248",
+      "ring": {
+        "radius": 96,
+        "width": 9,
+        "reachedExtraWidth": 5
+      },
+      "sector": {
+        "inner": 25,
+        "outer": 85
+      },
+      "spokes": "5px var(--surface), linecap round",
+      "foodSize": 25,
+      "maxFoodsPerSector": 3,
+      "label": {
+        "font": "Bricolage Grotesque 700",
+        "size": 9.5,
+        "letterSpacing": "0.01em",
+        "radiusTop": 108,
+        "radiusBottom": 116
+      },
+      "perspective": "1400px",
+      "dimOpacity": 0.26
+    },
+    "browserSurfaces": {
+      "selection": "background var(--accent), color #1f1b16",
+      "caretAndAccentColor": "var(--primary)",
+      "scrollbar": "var(--track) sobre var(--bg)",
+      "links": "underline-offset 0.22em, thickness from-font"
+    }
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "button-primary-lg",
+      "description": "O próximo passo ('Começar agora'): pílula verde pousada com seta.",
+      "html": "<button class=\"ds-btn-primary\">Começar agora <svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:9999px;font-family:var(--font-figtree,Figtree,sans-serif);font-size:1rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background-color 200ms cubic-bezier(0.2,0.8,0.2,1),transform 200ms cubic-bezier(0.2,0.8,0.2,1),box-shadow 200ms cubic-bezier(0.2,0.8,0.2,1);min-height:52px;padding:0 28px;font-size:1.25rem;border:none;background:var(--primary,#2f6b3a);color:var(--on-primary,#fff);box-shadow:0 8px 18px -10px rgb(31 27 22/0.55);}.ds-btn-primary:hover{transform:translateY(-1px);filter:brightness(1.1);box-shadow:0 12px 22px -10px rgb(31 27 22/0.55);}.ds-btn-primary:active{transform:scale(0.98);}.ds-btn-primary:focus-visible{outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação alternativa ('Ver os alimentos'): pílula branca com filete.",
+      "html": "<button class=\"ds-btn-secondary\">Ver os alimentos</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:9999px;font-family:var(--font-figtree,Figtree,sans-serif);font-size:1rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background-color 200ms cubic-bezier(0.2,0.8,0.2,1),transform 200ms cubic-bezier(0.2,0.8,0.2,1),box-shadow 200ms cubic-bezier(0.2,0.8,0.2,1);border:1px solid var(--border,#e3d9cb);background:var(--surface,#fff);color:var(--text,#1f1b16);}.ds-btn-secondary:hover{border-color:color-mix(in srgb,var(--primary,#2f6b3a) 40%,transparent);background:var(--primary-soft,#e3efe2);}.ds-btn-secondary:active{transform:scale(0.98);}.ds-btn-secondary:focus-visible{outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}"
+    },
+    {
+      "name": "Botão suave",
+      "kind": "button",
+      "refersTo": "button-soft",
+      "description": "Ação recorrente dentro de uma refeição ('Adicionar alimento').",
+      "html": "<button class=\"ds-btn-soft\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg> Adicionar alimento</button>",
+      "css": ".ds-btn-soft{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;border-radius:9999px;font-family:var(--font-figtree,Figtree,sans-serif);font-size:1rem;font-weight:600;white-space:nowrap;cursor:pointer;transition:background-color 200ms cubic-bezier(0.2,0.8,0.2,1),transform 200ms cubic-bezier(0.2,0.8,0.2,1),box-shadow 200ms cubic-bezier(0.2,0.8,0.2,1);border:none;background:var(--primary-soft,#e3efe2);color:var(--text,#1f1b16);}.ds-btn-soft:hover{filter:brightness(0.95);}.ds-btn-soft:active{transform:scale(0.98);}.ds-btn-soft:focus-visible{outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}"
+    },
+    {
+      "name": "Chips de filtro",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Escolhas em pílula; a selecionada fica verde cheia.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip\" aria-pressed=\"true\">Sem lactose</button><button class=\"ds-chip\" aria-pressed=\"false\">Vegetariano</button></div>",
+      "css": ".ds-chips{display:flex;gap:8px;flex-wrap:wrap;}.ds-chip{min-height:44px;padding:0 16px;border-radius:9999px;border:1px solid var(--border,#e3d9cb);background:var(--surface,#fff);color:var(--text,#1f1b16);font-family:var(--font-figtree,Figtree,sans-serif);font-size:0.875rem;font-weight:600;cursor:pointer;transition:border-color 150ms,background-color 150ms;}.ds-chip:hover{border-color:color-mix(in srgb,var(--primary,#2f6b3a) 60%,transparent);}.ds-chip[aria-pressed=\"true\"]{border-color:var(--primary,#2f6b3a);background:var(--primary,#2f6b3a);color:var(--on-primary,#fff);}.ds-chip:focus-visible{outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}"
+    },
+    {
+      "name": "Pesquisa",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Campo de pesquisa do catálogo: pílula de 52 px com filete.",
+      "html": "<label class=\"ds-search\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input type=\"search\" placeholder=\"Procurar alimentos\"></label>",
+      "css": ".ds-search{position:relative;display:flex;align-items:center;color:var(--text-muted,#6b6258);}.ds-search svg{position:absolute;left:16px;}.ds-search input{height:52px;width:100%;padding:0 48px;border-radius:9999px;border:1px solid var(--border,#e3d9cb);background:var(--surface,#fff);color:var(--text,#1f1b16);font:400 1rem var(--font-figtree,Figtree,sans-serif);caret-color:var(--primary,#2f6b3a);}.ds-search input:focus-visible{border-color:var(--primary,#2f6b3a);outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}"
+    },
+    {
+      "name": "Navegação",
+      "kind": "nav",
+      "refersTo": null,
+      "description": "Quatro secções = quatro fatias de uma roda; a ativa acende a sua.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\"><svg viewBox=\"-12 -12 24 24\" width=\"16\" height=\"16\" aria-hidden=\"true\"><path d=\"M0 0L0 -11.5A11.5 11.5 0 0 1 11.5 0Z\" fill=\"var(--primary,#2f6b3a)\"/><path d=\"M0 0L11.5 0A11.5 11.5 0 0 1 0 11.5Z\" fill=\"var(--track,#eae3d8)\"/><path d=\"M0 0L0 11.5A11.5 11.5 0 0 1 -11.5 0Z\" fill=\"var(--track,#eae3d8)\"/><path d=\"M0 0L-11.5 0A11.5 11.5 0 0 1 0 -11.5Z\" fill=\"var(--track,#eae3d8)\"/><path d=\"M0 0V-12M0 0H12M0 0V12M0 0H-12\" stroke=\"var(--bg,#fbf8f3)\" stroke-width=\"1.6\"/></svg>Hoje</a><a href=\"#\">Alimentos</a><a href=\"#\">Receitas</a><a href=\"#\">Conta</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;align-items:center;}.ds-nav a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:9999px;font:600 1rem var(--font-figtree,Figtree,sans-serif);color:var(--text-muted,#6b6258);text-decoration:none;transition:color 200ms;}.ds-nav a:hover,.ds-nav a[aria-current=\"page\"]{color:var(--text,#1f1b16);}.ds-nav a:focus-visible{outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}"
+    },
+    {
+      "name": "Linha de alimento",
+      "kind": "card",
+      "refersTo": null,
+      "description": "Lista com filete: ilustração num disco creme, nome, porção e o número de proteína à direita.",
+      "html": "<a class=\"ds-food\" href=\"#\"><span class=\"ds-food-img\" aria-hidden=\"true\"><svg width=\"28\" height=\"28\" viewBox=\"0 0 24 24\"><ellipse cx=\"12\" cy=\"13\" rx=\"7\" ry=\"9\" fill=\"#d9a066\"/></svg></span><span class=\"ds-food-txt\"><b>Ovo</b><small>2 × 1 ovo médio</small></span><span class=\"ds-num\">13<span>g</span></span></a>",
+      "css": ".ds-food{display:flex;align-items:center;gap:12px;min-height:64px;padding:12px 0;border-top:1px solid var(--border,#e3d9cb);color:var(--text,#1f1b16);text-decoration:none;transition:border-color 200ms;}.ds-food:hover{border-color:var(--primary,#2f6b3a);}.ds-food:focus-visible{outline:3px solid var(--primary,#2f6b3a);outline-offset:2px;}.ds-food-img{display:grid;place-items:center;width:48px;height:48px;border-radius:9999px;background:var(--bg,#fbf8f3);}.ds-food-txt{flex:1;display:flex;flex-direction:column;font-family:var(--font-figtree,Figtree,sans-serif);}.ds-food-txt b{font-weight:600;}.ds-food-txt small{font-size:0.875rem;color:var(--text-muted,#6b6258);}.ds-num{font:700 1.5rem var(--font-bricolage,'Bricolage Grotesque',sans-serif);letter-spacing:-0.025em;font-variant-numeric:tabular-nums;}.ds-num span{margin-left:2px;font-size:0.55em;font-weight:600;color:var(--text-muted,#6b6258);}"
+    },
+    {
+      "name": "GoalProgress",
+      "kind": "custom",
+      "refersTo": "goal-progress",
+      "description": "A roda desenrolada: número, 'de 160 g', mensagem e barra com um segmento por refeição; moldura amarela ao chegar.",
+      "html": "<section class=\"ds-goal\"><div class=\"ds-goal-head\"><p><span class=\"ds-goal-num\">164<span>g</span></span> <span class=\"ds-goal-of\">de 160 g</span></p><p class=\"ds-goal-msg\">Meta atingida, com 3,6 g a mais.</p></div><div class=\"ds-goal-track\" role=\"progressbar\" aria-valuenow=\"160\" aria-valuemin=\"0\" aria-valuemax=\"160\"><div class=\"ds-goal-bar\"><span style=\"width:11%;background:var(--meal-pequeno-almoco,#f2b33d)\"></span><span style=\"width:46%;background:var(--meal-almoco,#2f6b3a)\"></span><span style=\"width:13%;background:var(--meal-lanche,#8fbf91)\"></span><span style=\"width:30%;background:var(--meal-jantar,#1e4a27)\"></span></div></div></section>",
+      "css": ".ds-goal{border:1px solid var(--border,#e3d9cb);border-radius:1.75rem;background:var(--surface,#fff);padding:20px;color:var(--text,#1f1b16);font-family:var(--font-figtree,Figtree,sans-serif);}.ds-goal-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:4px 12px;}.ds-goal-head p{margin:0;}.ds-goal-num{font:700 2.75rem/1 var(--font-bricolage,'Bricolage Grotesque',sans-serif);letter-spacing:-0.025em;font-variant-numeric:tabular-nums;}.ds-goal-num span{font-size:0.55em;font-weight:600;color:var(--text-muted,#6b6258);}.ds-goal-of{color:var(--text-muted,#6b6258);}.ds-goal-msg{font-weight:600;color:var(--primary,#2f6b3a);}.ds-goal-track{margin-top:12px;padding:3px;border-radius:9999px;background:var(--accent,#f2b33d);transition:background-color 300ms cubic-bezier(0.2,0.8,0.2,1);}.ds-goal-bar{display:flex;height:16px;overflow:hidden;border-radius:9999px;}.ds-goal-bar span{height:100%;border-right:3px solid var(--surface,#fff);transition:width 250ms cubic-bezier(0.2,0.8,0.2,1);}.ds-goal-bar span:last-child{border-right:0;}"
+    },
+    {
+      "name": "Badge Meta atingida",
+      "kind": "chip",
+      "refersTo": "badge-accent",
+      "description": "O amarelo só como fundo, com a tinta fixa por cima.",
+      "html": "<span class=\"ds-badge\">Meta atingida.</span>",
+      "css": ".ds-badge{display:inline-flex;border-radius:9999px;background:var(--accent,#f2b33d);color:#1f1b16;padding:6px 16px;font:700 1.125rem var(--font-figtree,Figtree,sans-serif);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Roda dos Alimentos",
+    "overview": "O dia é uma roda que se completa. Cada refeição é um setor da Roda dos Alimentos que se aprende na escola, pela ordem do dia a começar no topo; a meta de proteína é o aro cheio; o anel do logótipo (verde com um quarto amarelo) já é essa roda. Tudo o resto deriva daí: a cor de cada refeição é uma fatia, a barra de progresso é a roda desenrolada, a navegação e os passos marcam-se com uma fatia pequena acesa.\n\nO mundo é \"cozinha, não ginásio\": fundo creme quente, verdes e amarelos tirados do anel, comida ilustrada em 3D dentro dos setores e um número de proteína gigante e tabular como assinatura. A densidade é calma: listas com filetes em vez de caixas, uma só borda fina, pílulas para tudo o que se carrega. As páginas públicas (início, alimentos, detalhe, entrar) mostram o mundo em grande, com a roda inclinada a sangrar pela borda do ecrã; a app (O meu dia, receitas, formulário, conta) usa o mesmo sistema mais contido, em modo de trabalho.\n\nO movimento tem uma só gramática: rotação em torno de um centro, varrimento dos setores e do aro, números que contam, sempre com a mesma curva. O HTML é a fonte de verdade; a roda, o prato 3D e o movimento ilustram e são decorativos. Rejeitado: o hero dividido com um telemóvel e a fila de cartões de funcionalidades.",
+    "keyCharacteristics": [
+      "O dia como roda: uma fatia por refeição, a meta como aro.",
+      "Número de proteína enorme em Bricolage Grotesque, tabular, com o \"g\" a 55 % e em tom apagado.",
+      "Fundo creme, verdes e amarelos do anel; o amarelo só como fundo.",
+      "Listas com filetes, pílulas, uma só borda fina; painéis só onde a informação flutua.",
+      "Zero culpa visual: nunca vermelho ligado à nutrição."
+    ],
+    "rules": [
+      {
+        "name": "The Só Fundo Rule",
+        "body": "O amarelo (accent) e todas as fatias (`--meal-*`, `--group-*`) são só fundo: nunca cor de texto, nunca texto em cima de uma fatia. Texto sobre o amarelo usa a tinta fixa.",
+        "section": "colors"
+      },
+      {
+        "name": "The Zero Culpa Rule",
+        "body": "Nada ligado à nutrição fica vermelho. Abaixo da meta é \"Faltam X g\" em tinta normal; ao chegar, verde e uma moldura amarela. `danger` existe só para erros técnicos.",
+        "section": "colors"
+      },
+      {
+        "name": "The Uma Fatia, Uma Refeição Rule",
+        "body": "A cor de uma refeição é a mesma na roda, na barra, no prato 3D e no glyph. Não se inventa cor nova para uma refeição ou grupo.",
+        "section": "colors"
+      },
+      {
+        "name": "The Número É a Assinatura Rule",
+        "body": "A proteína aparece sempre pelo `ProteinNumber`: Bricolage, bold, tabular, unidade mais pequena e apagada. Números em inputs também tabulares.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sem Eyebrows Rule",
+        "body": "Nenhum título leva um rótulo pequeno em maiúsculas por cima. A refeição de uma receita identifica-se com a sua fatia e o nome por baixo do título.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sombra Assenta Rule",
+        "body": "Uma sombra só existe para pousar um objeto (botão, cubo, roda, cartão de entrada). Listas, painéis e chips são planos, com filete.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do pintar cada refeição com a sua `--meal-*` em todo o lado (roda, barra, prato 3D, glyph).",
+      "Do mostrar proteína só pelo `ProteinNumber`, tabular, com o \"g\" a 0,55em em muted.",
+      "Do usar listas com filetes (1 px `border`; 2 px `text` por cima de refeições e receitas) em vez de caixas quando a informação é uma sequência.",
+      "Do fazer tudo o que se carrega em pílula com pelo menos 44 px.",
+      "Do marcar refeições, grupos, passos e a navegação ativa com o `SectorGlyph`.",
+      "Do usar o amarelo só como fundo de celebração (\"Meta atingida\", moldura da barra, faixa do aro), com a tinta fixa por cima.",
+      "Do mover só com rotação, varrimento e contagem, na curva `--ease-out`, parando tudo com `prefers-reduced-motion`.",
+      "Do manter a roda e o 3D decorativos: o HTML ao lado diz sempre o mesmo."
+    ],
+    "donts": [
+      "Don't usar vermelho, `danger` ou \"falhaste\" ligados à nutrição; abaixo da meta é \"Faltam X g\".",
+      "Don't pôr texto sobre uma fatia nem usar `accent` ou `--meal-*` como cor de texto.",
+      "Don't pôr eyebrows ou rótulos em maiúsculas com tracking largo por cima de títulos.",
+      "Don't pôr sombras em listas, chips ou painéis; a sombra só pousa botão, cubo, roda e o cartão de entrada.",
+      "Don't fazer o hero dividido com um telemóvel nem a fila de cartões de funcionalidades.",
+      "Don't inventar cores fora da paleta do anel nem fontes além de Bricolage Grotesque e Figtree."
+    ]
+  }
+}

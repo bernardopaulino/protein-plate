@@ -108,6 +108,18 @@ describe("disposição no prato", () => {
     }
   });
 
+  it("com mais de uma refeição, o cubo fica livre (sem peças)", () => {
+    fc.assert(
+      fc.property(dayArb, (items) => {
+        const { pieces } = plateLayout(items, ["pequeno-almoco", "jantar"]);
+        for (const p of pieces) {
+          expect(Math.hypot(p.x, p.z) - p.radius).toBeGreaterThanOrEqual(PLATE.hubRadius - EPS);
+        }
+      }),
+      { numRuns: 60 },
+    );
+  });
+
   it("é determinística", () => {
     fc.assert(
       fc.property(dayArb, (items) => {

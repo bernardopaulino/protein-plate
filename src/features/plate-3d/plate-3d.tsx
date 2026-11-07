@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { foodModelUrl } from "@/content/food-models.generated";
 import type { Meal } from "@/domain/meals";
-import { plateLayout, type PlateItem } from "@/domain/plate-layout";
+import { plateLayout, plateSectors, type PlateItem } from "@/domain/plate-layout";
 import { roundForDisplay } from "@/domain/protein";
 import { cn } from "@/lib/cn";
 import { ModelLibrary } from "./scene/model-library";
@@ -21,12 +21,18 @@ export interface Plate3DProps {
   dropInitial?: boolean;
   showRing?: boolean;
   view?: PlateView;
+  /** A vista gira com a curva da app (a roda da página inicial). */
+  smoothView?: boolean;
+  /** A fatia em foco (índice pela ordem das refeições); as outras esbatem-se. */
+  activeSector?: number | null;
   /** Raio a enquadrar; "content" enquadra só as peças (o visualizador do detalhe). */
   frame?: number | "content";
   elevation?: number;
   className?: string;
   /** Contexto WebGL perdido: quem usa o prato deixa de o mostrar. */
   onUnavailable?: () => void;
+  /** Os modelos chegaram e o prato já desenhou (para trocar uma versão sem 3D por esta). */
+  onReady?: () => void;
 }
 
 /**
@@ -43,10 +49,13 @@ export default function Plate3D({
   dropInitial,
   showRing,
   view,
+  smoothView,
+  activeSector,
   frame,
   elevation,
   className,
   onUnavailable,
+  onReady: onReadyProp,
 }: Plate3DProps) {
   const wrapper = useRef<HTMLDivElement>(null);
   const theme = usePlateTheme(wrapper);
@@ -55,6 +64,11 @@ export default function Plate3D({
   useEffect(() => () => library.dispose(), [library]);
 
   const layout = useMemo(() => plateLayout(items, meals), [items, meals]);
+  const sectorMeals = useMemo(() => plateSectors(items, meals), [items, meals]);
+  const sectorColors = useMemo(
+    () => (theme ? sectorMeals.map((meal) => theme.meals[meal]) : []),
+    [theme, sectorMeals],
+  );
   const frameRadius = useMemo(() => {
     if (frame !== "content") return frame;
     const reach = Math.max(0, ...layout.pieces.map((p) => Math.hypot(p.x, p.z) + p.radius));
@@ -68,7 +82,14 @@ export default function Plate3D({
     unavailable.current = onUnavailable;
   }, [onUnavailable]);
 
-  const onReady = useCallback(() => setReady(true), []);
+  const readyProp = useRef(onReadyProp);
+  useEffect(() => {
+    readyProp.current = onReadyProp;
+  }, [onReadyProp]);
+  const onReady = useCallback(() => {
+    setReady(true);
+    readyProp.current?.();
+  }, []);
   const progress = target > 0 ? total / target : 0;
   // A mesma regra do GoalProgress: atingida quando o que falta, arredondado, é 0
   const reached = target > 0 && roundForDisplay(Math.max(0, target - total)) === 0;
@@ -114,7 +135,10 @@ export default function Plate3D({
             motion={!reducedMotion}
             dropInitial={dropInitial}
             showRing={showRing}
+            sectorColors={sectorColors}
+            activeSector={activeSector}
             view={view}
+            smoothView={smoothView}
             frame={frameRadius}
             elevation={elevation}
             onReady={onReady}

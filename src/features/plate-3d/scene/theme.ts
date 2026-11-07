@@ -1,4 +1,5 @@
 import { useEffect, useState, type RefObject } from "react";
+import { MEALS, type Meal } from "@/domain/meals";
 import { EASE_OUT, cubicBezier, parseCubicBezier, type Easing } from "@/lib/easing";
 
 /** As cores do prato, do anel e da luz, lidas dos tokens CSS (claro ou escuro). */
@@ -13,6 +14,8 @@ export interface PlateColors {
 
 export interface PlateTheme {
   colors: PlateColors;
+  /** A cor da fatia de cada refeição (--meal-*). */
+  meals: Record<Meal, string>;
   ease: Easing;
 }
 
@@ -35,6 +38,9 @@ export function readPlateTheme(element: Element): PlateTheme {
       accent: token("--accent", FALLBACK.accent),
       ground: token("--bg", FALLBACK.ground),
     },
+    meals: Object.fromEntries(
+      MEALS.map((meal) => [meal, token(`--meal-${meal}`, FALLBACK.primary)]),
+    ) as Record<Meal, string>,
     ease: cubicBezier(parseCubicBezier(token("--ease-out", "")) ?? EASE_OUT),
   };
 }

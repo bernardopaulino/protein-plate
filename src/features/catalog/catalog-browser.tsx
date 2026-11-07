@@ -115,7 +115,7 @@ function FoodGrid({
   const lang = HTML_LANG[useLocale() as Locale];
   return (
     <ul
-      className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+      className="grid grid-cols-1 gap-x-10 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
       aria-label={typeof children === "string" ? children : undefined}
     >
       {items.map((item) => (
@@ -346,7 +346,7 @@ export function CatalogBrowser({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("searchPlaceholder")}
           autoComplete="off"
-          className="h-13 w-full rounded-full border border-border bg-surface pr-12 pl-12 text-base shadow-sm focus:border-primary"
+          className="h-13 w-full rounded-full border border-border bg-surface pr-12 pl-12 text-base focus:border-primary"
         />
         {query ? (
           <button
@@ -373,7 +373,7 @@ export function CatalogBrowser({
         <p id={tilesId} className="sr-only">
           {t("sections")}
         </p>
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-6">
+        <div className="flex flex-wrap gap-2">
           {sections.map((s) => {
             const on = section === s && !searching;
             return (
@@ -385,27 +385,19 @@ export function CatalogBrowser({
                 tabIndex={searching ? -1 : undefined}
                 onClick={() => setSection(s)}
                 className={cn(
-                  "relative flex min-h-24 min-w-0 flex-col items-center justify-center gap-1.5 rounded-card border px-2 py-3 text-center transition-[border-color,box-shadow] duration-200 sm:min-h-28",
+                  "relative inline-flex min-h-12 items-center gap-2 rounded-full border py-1.5 pr-4 pl-1.5 text-left transition-[border-color,background-color] duration-200 ease-out",
                   on
-                    ? "border-primary shadow-[0_8px_24px_-16px_var(--primary)]"
-                    : "border-border bg-surface hover:border-primary/50",
+                    ? "border-primary bg-primary text-on-primary"
+                    : "border-border bg-surface hover:border-primary/60",
                 )}
               >
-                {on ? (
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 animate-in rounded-card bg-primary-soft duration-200 fade-in-0 zoom-in-95"
-                  />
-                ) : null}
-                <Illustration
-                  src={sectionInfo(s).image}
-                  size={40}
-                  className="relative size-9 sm:size-10"
-                />
-                <span className="relative text-sm leading-tight font-semibold text-balance">
-                  {sectionInfo(s).title}
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-bg">
+                  <Illustration src={sectionInfo(s).image} size={26} />
                 </span>
-                <span className="relative text-xs text-muted tabular">{counts.get(s) ?? 0}</span>
+                <span className="font-semibold">{sectionInfo(s).title}</span>
+                <span className={cn("text-sm tabular", on ? "opacity-85" : "text-muted")}>
+                  {counts.get(s) ?? 0}
+                </span>
               </button>
             );
           })}

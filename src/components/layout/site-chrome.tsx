@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitch } from "./language-switch";
 import { BottomNav, TopNav } from "./main-nav";
@@ -19,7 +19,7 @@ export function Logo() {
 export function SiteHeader() {
   const t = useTranslations("nav");
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-bg/90 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-bg">
       <div className="app-container flex h-16 items-center justify-between">
         <Link href="/" aria-label={t("home")} className="rounded-lg">
           <Logo />
@@ -35,13 +35,18 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   const t = useTranslations("footer");
+  const locale = useLocale();
   return (
-    <footer className="app-container pt-12 pb-28 text-sm text-muted md:pb-12">
-      <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          <span className="font-semibold text-text">Protein Plate.</span> {t("tagline")}{" "}
-          {t("source")}
-        </p>
+    <footer className="app-container pt-16 pb-28 text-sm text-muted md:pb-12">
+      <div className="flex flex-col gap-6 border-t border-border pt-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3">
+          <Logo />
+          <p className="font-display text-lg font-bold text-text">
+            {t("tagline")}{" "}
+            {locale === "pt" ? <span lang="en">Protein without the diet.</span> : null}
+          </p>
+          <p className="max-w-md">{t("source")}</p>
+        </div>
         <ul className="flex gap-4">
           <li>
             <Link

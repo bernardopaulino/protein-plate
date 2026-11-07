@@ -10,6 +10,7 @@ import { MEALS, isMeal, type Meal } from "@/domain/meals";
 import { formatProtein } from "@/domain/protein";
 import { FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { ApplyDay } from "@/features/recipes/apply-day";
+import { MealGlyph } from "@/components/wheel/sector-glyph";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { requireProfile } from "@/server/auth/guard";
@@ -135,14 +136,17 @@ export default async function DayRecipesViewPage({
               <li key={meal}>
                 <Link
                   href={`/receitas/${recipe.id}`}
-                  className="group flex gap-4 rounded-card border border-border bg-surface p-4 shadow-sm transition-colors duration-200 hover:border-primary/50 sm:p-5"
+                  className="group flex gap-4 border-t-2 border-text pt-4 pb-2 transition-colors duration-200 hover:border-primary"
                 >
                   <Illustration src={UI_IMAGES[`meal:${meal}`]} size={44} className="self-start" />
                   <span className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="text-xs font-semibold tracking-wide text-muted uppercase">
+                    <span className="font-display text-xl font-bold transition-colors duration-200 group-hover:text-primary">
+                      {recipe.title}
+                    </span>
+                    <span className="flex items-center gap-2 text-sm font-semibold text-muted">
+                      <MealGlyph meals={MEALS} meal={meal} className="size-5" />
                       {tm(meal)}
                     </span>
-                    <span className="font-display text-lg font-bold">{recipe.title}</span>
                     <span className="line-clamp-2 text-sm text-muted">{foods.join(" · ")}</span>
                     <span className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
                       <span className="flex items-baseline gap-1.5">

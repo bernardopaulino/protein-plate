@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { FilterChips } from "@/components/protein/chips";
 import { RecipeCard } from "@/components/protein/recipe-card";
+import { MealGlyph } from "@/components/wheel/sector-glyph";
 import { MEALS, type Meal } from "@/domain/meals";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
@@ -28,7 +29,12 @@ function Card({ recipe, className }: { recipe: LibraryRecipe; className?: string
   const tm = useTranslations("meals");
   return (
     <RecipeCard
-      eyebrow={tm(recipe.meal)}
+      meal={
+        <>
+          <MealGlyph meals={MEALS} meal={recipe.meal} className="size-5" />
+          {tm(recipe.meal)}
+        </>
+      }
       title={recipe.title}
       summary={recipe.summary}
       proteinPerServing={recipe.proteinPerServingG}
@@ -45,7 +51,7 @@ function Card({ recipe, className }: { recipe: LibraryRecipe; className?: string
   );
 }
 
-const GRID = "grid gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4";
+const GRID = "grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4";
 
 /**
  * O livro de receitas (/receitas): dois separadores, as guardadas (favoritas primeiro, com a estrela

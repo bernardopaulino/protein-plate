@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { FOOD_INDEX } from "@/features/catalog/catalog";
 import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
+import { SectorGlyph } from "@/components/wheel/sector-glyph";
 import { savePreferencesAction } from "@/server/actions/account";
 import {
   STEPS,
@@ -242,7 +243,12 @@ function ProgressHeader({
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-muted">
+        <p className="flex items-center gap-2.5 text-sm font-semibold text-muted">
+          <SectorGlyph
+            parts={STEPS.length}
+            filled={STEPS.slice(0, index + 1).map((_, i) => i)}
+            className="size-6"
+          />
           {title} · {t("stepOf", { step: index + 1, total: STEPS.length })}
         </p>
         {onBack ? (

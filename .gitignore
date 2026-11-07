@@ -40,3 +40,13 @@ tests/e2e/.auth/
 
 # biblioteca de receitas pré-gerada (batch e SQL)
 .library
+
+# Impeccable: capturas da revisão, página de decisão e estado local (o brief e o DESIGN.md ficam)
+.impeccable/review/
+.impeccable/decision/
+.impeccable/questions/
+.impeccable/config.local.json
+
+# Scripts temporários de capturas
+.tmp-*.mjs
+.impeccable/hook.cache.json

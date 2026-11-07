@@ -1,6 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
+  BoxGeometry,
   Color,
   DoubleSide,
   LatheGeometry,
@@ -44,7 +45,13 @@ export interface PlateSceneProps {
   /** As peças do primeiro desenho também caem (página inicial); senão só as novas. */
   dropInitial?: boolean;
   showRing?: boolean;
+  /** Cores das fatias (uma por refeição, pela ordem dos setores da disposição). */
+  sectorColors?: readonly string[];
+  /** A fatia em foco (as outras esbatem-se); null = todas acesas. */
+  activeSector?: number | null;
   view?: PlateView;
+  /** A vista muda com a curva da app (a página inicial gira a roda); senão, logo (arrastar). */
+  smoothView?: boolean;
   /** Raio (em unidades do prato) que a câmara enquadra. */
   frame?: number;
   /** Inclinação da câmara: 0 = de lado, π/2 = de cima. */
@@ -64,7 +71,10 @@ export function PlateScene({
   motion,
   dropInitial = false,
   showRing = true,
+  sectorColors = [],
+  activeSector = null,
   view = DEFAULT_VIEW,
+  smoothView = false,
   frame = 1.02,
   elevation = 0.95,
   onReady,
@@ -137,8 +147,11 @@ export function PlateScene({
       <CameraRig frame={frame} elevation={elevation + view.pitch} />
       <hemisphereLight args={[light, colors.ground, 1.9]} />
       <directionalLight position={[-2.5, 5, 3]} intensity={2.2} color={light} />
-      <group rotation-y={view.yaw}>
+      <SpinGroup yaw={view.yaw} smooth={smoothView && motion} ease={ease}>
         <Plate color={colors.plate} />
+        {sectorColors.length > 1 ? (
+          <SectorTints colors={sectorColors} plate={colors.plate} active={activeSector} />
+        ) : null}
         {showRing ? (
           <GoalRing
             progress={progress}
@@ -164,8 +177,135 @@ export function PlateScene({
               ) : null;
             })
           : null}
-      </group>
+      </SpinGroup>
     </>
+  );
+}
+
+const SPIN_MS = 850;
+
+/** Gira o prato até à rotação pedida, pelo caminho mais curto e com a curva da app. */
+function SpinGroup({
+  yaw,
+  smooth,
+  ease,
+  children,
+}: {
+  yaw: number;
+  smooth: boolean;
+  ease: Easing;
+  children: ReactNode;
+}) {
+  const invalidate = useThree((s) => s.invalidate);
+  const group = useRef<Group>(null);
+  const tween = useRef<{ from: number; to: number; start: number | null } | null>(null);
+
+  useLayoutEffect(() => {
+    const node = group.current;
+    if (!node) return;
+    if (!smooth) {
+      tween.current = null;
+      node.rotation.y = yaw;
+    } else {
+      const from = node.rotation.y;
+      // O caminho mais curto até ao mesmo ângulo (a roda não dá voltas inteiras)
+      const turn = Math.PI * 2;
+      const to = from + ((((yaw - from) % turn) + turn * 1.5) % turn) - turn / 2;
+      tween.current = { from, to, start: null };
+    }
+    invalidate();
+  }, [yaw, smooth, invalidate]);
+
+  useFrame(() => {
+    const t = tween.current;
+    const node = group.current;
+    if (!t || !node) return;
+    const now = performance.now();
+    t.start ??= now;
+    const k = Math.min(1, (now - t.start) / SPIN_MS);
+    node.rotation.y = t.from + (t.to - t.from) * ease(k);
+    if (k < 1) invalidate();
+    else tween.current = null;
+  });
+
+  return <group ref={group}>{children}</group>;
+}
+
+/** Raio interior (o cubo, sem tinta) e exterior das fatias, dentro do fundo do prato. */
+const SECTOR_INNER = 0.14;
+const SECTOR_OUTER = 0.8;
+
+/**
+ * As fatias da Roda no fundo do prato: cada setor da disposição tingido com a cor da sua refeição
+ * (misturada com a do prato, para a comida continuar a ler-se) e raios da cor do prato entre eles.
+ * Os setores seguem src/domain/plate-layout.ts: o primeiro começa no topo (−z) e seguem no sentido
+ * dos ponteiros do relógio vistos de cima.
+ */
+function SectorTints({
+  colors,
+  plate,
+  active,
+}: {
+  colors: readonly string[];
+  plate: string;
+  active: number | null;
+}) {
+  const span = (Math.PI * 2) / colors.length;
+  const geometries = useMemo(
+    () =>
+      colors.map((_, i) => {
+        const start = -Math.PI / 2 + i * span;
+        // O plano XY deitado (rotação −π/2 em x) troca o sentido dos ângulos: θ local = −φ no prato
+        return new RingGeometry(SECTOR_INNER, SECTOR_OUTER, 40, 1, -(start + span), span);
+      }),
+    [colors, span],
+  );
+  // Isolar e esbater: a fatia em foco ganha a cor da refeição, as outras ficam quase da cor do prato
+  const parts = useMemo(() => {
+    const base = new Color(plate);
+    return geometries.map((geometry, i) => {
+      const amount = active === null ? 0.92 : i === active ? 1 : 0.22;
+      return {
+        geometry,
+        color: "#" + base.clone().lerp(new Color(colors[i]!), amount).getHexString(),
+      };
+    });
+  }, [geometries, colors, plate, active]);
+  const spoke = useMemo(
+    () => new BoxGeometry(SECTOR_OUTER - SECTOR_INNER + 0.02, 0.008, 0.075),
+    [],
+  );
+  useEffect(
+    () => () => {
+      for (const geometry of geometries) geometry.dispose();
+    },
+    [geometries],
+  );
+  useEffect(() => () => spoke.dispose(), [spoke]);
+  const middle = (SECTOR_INNER + SECTOR_OUTER) / 2;
+
+  return (
+    <group position-y={PLATE_TOP + 0.002}>
+      {parts.map((part, i) => (
+        <mesh key={i} geometry={part.geometry} rotation-x={-Math.PI / 2}>
+          {/* Sem luz, como o anel: a cor fica a do token (a luz acinzentava-a) */}
+          <meshBasicMaterial color={part.color} />
+        </mesh>
+      ))}
+      {colors.map((_, i) => {
+        const angle = -Math.PI / 2 + i * span;
+        return (
+          <mesh
+            key={`spoke-${i}`}
+            geometry={spoke}
+            position={[Math.cos(angle) * middle, 0.002, Math.sin(angle) * middle]}
+            rotation-y={-angle}
+          >
+            <meshBasicMaterial color={plate} />
+          </mesh>
+        );
+      })}
+    </group>
   );
 }
 

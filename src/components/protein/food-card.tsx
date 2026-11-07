@@ -39,7 +39,7 @@ export function FoodCard({
   const body = (
     <>
       {image ? (
-        <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary-soft">
+        <span className="grid size-12 shrink-0 place-items-center rounded-full bg-bg">
           <Illustration src={image} size={32} />
         </span>
       ) : null}
@@ -54,16 +54,19 @@ export function FoodCard({
   );
 
   const base =
-    "flex min-h-16 items-center gap-3 rounded-card border border-border bg-surface p-3 pl-4 shadow-sm transition-colors duration-200";
+    "flex min-h-16 items-center gap-3 border-t border-border py-3 transition-colors duration-200";
 
   if (href && renderLink) {
     return renderLink({
       href,
-      className: cn(base, "hover:border-primary/50 hover:bg-primary-soft/40", className),
+      className: cn(base, "group/food hover:border-primary", className),
       children: (
         <>
           {body}
-          <ChevronRight aria-hidden className="size-5 shrink-0 text-muted" />
+          <ChevronRight
+            aria-hidden
+            className="size-5 shrink-0 text-muted transition-transform duration-200 ease-out group-hover/food:translate-x-0.5 group-hover/food:text-primary"
+          />
         </>
       ),
     });

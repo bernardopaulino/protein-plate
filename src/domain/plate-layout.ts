@@ -10,6 +10,8 @@ import { MEALS, type Meal } from "./meals";
 export const PLATE = {
   /** Raio útil: as peças ficam por dentro do anel da borda. */
   usableRadius: 0.8,
+  /** O cubo da roda (com o número por cima, em HTML): sem peças, quando há mais de uma refeição. */
+  hubRadius: 0.36,
   /** Raio da pegada de uma peça normal (escala 1). */
   pieceRadius: 0.16,
   /** Até onde duas peças se podem sobrepor (fração da soma dos raios). */
@@ -130,6 +132,7 @@ function angleInSector(x: number, z: number, start: number): number {
 function fitsSector(x: number, z: number, radius: number, sector: Sector, total: number): boolean {
   if (Math.hypot(x, z) + radius > PLATE.usableRadius + 1e-9) return false;
   if (total === 1) return true;
+  if (Math.hypot(x, z) - radius < PLATE.hubRadius - 1e-9) return false;
   if (angleInSector(x, z, sector.start) > sector.span) return false;
   return (
     distanceToRay(x, z, sector.start) >= radius - 1e-9 &&

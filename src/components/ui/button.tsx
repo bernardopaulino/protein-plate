@@ -9,8 +9,10 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary text-on-primary shadow-sm hover:brightness-110",
-        secondary: "border border-border bg-surface text-text hover:bg-primary-soft",
+        primary:
+          "bg-primary text-on-primary shadow-[0_8px_18px_-10px_rgb(31_27_22/0.55)] hover:-translate-y-px hover:brightness-110 hover:shadow-[0_12px_22px_-10px_rgb(31_27_22/0.55)]",
+        secondary:
+          "border border-border bg-surface text-text hover:border-primary/40 hover:bg-primary-soft",
         soft: "bg-primary-soft text-text hover:brightness-95 dark:hover:brightness-125",
         ghost: "text-text hover:bg-primary-soft",
         link: "min-h-0 rounded-md px-0 text-primary underline underline-offset-4 hover:no-underline",
