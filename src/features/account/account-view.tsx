@@ -99,16 +99,18 @@ export function AccountView({
         {name ? t("hello", { name: name.split(" ")[0] ?? name }) : t("helloAnon")}
       </h1>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:items-stretch xl:grid-cols-3">
+      <div className="flex max-w-3xl flex-col border-t-2 border-text">
         <Link
           href="/conta/preferencias"
-          className="group flex items-center gap-4 rounded-card border border-border bg-surface p-5 transition-colors hover:border-primary/60 md:col-span-2 xl:col-span-1"
+          className="group flex items-center gap-4 border-b border-border py-5 transition-colors"
         >
           <span className="flex size-12 items-center justify-center rounded-full bg-primary-soft text-primary">
             <SlidersHorizontal aria-hidden className="size-6" />
           </span>
           <span className="flex-1">
-            <span className="block text-lg font-bold">{t("preferences")}</span>
+            <span className="block font-display text-xl font-bold transition-colors group-hover:text-primary">
+              {t("preferences")}
+            </span>
             <span className="block text-muted">
               {t("goalValue", { grams: formatProtein(goal.grams, lang), count: goal.meals })}
             </span>
@@ -120,8 +122,8 @@ export function AccountView({
           />
         </Link>
 
-        <section className="rounded-card border border-border bg-surface p-5">
-          <h2 className="text-lg font-bold">{t("export")}</h2>
+        <section className="border-b border-border py-5">
+          <h2 className="text-xl font-bold">{t("export")}</h2>
           <p className="mt-1 text-muted">{t("exportHint")}</p>
           <Button variant="secondary" className="mt-3" onClick={exportData} disabled={busy}>
             <Download aria-hidden />
@@ -129,8 +131,8 @@ export function AccountView({
           </Button>
         </section>
 
-        <section className="rounded-card border border-border bg-surface p-5">
-          <h2 className="text-lg font-bold">{t("delete.title")}</h2>
+        <section className="border-b border-border py-5">
+          <h2 className="text-xl font-bold">{t("delete.title")}</h2>
           <p className="mt-1 text-muted">{t("delete.body")}</p>
           {!deleting ? (
             <Button variant="secondary" className="mt-3" onClick={() => setDeleting(true)}>

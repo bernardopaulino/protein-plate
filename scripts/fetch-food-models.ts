@@ -74,19 +74,21 @@ const BY_ID: Record<string, string> = {
   // peixe e conservas
   "salmao-fumado": "fish",
   // ovos e laticínios
-  "iogurte-grego-natural": "bowl",
-  "iogurte-natural": "bowl",
-  "skyr-natural": "bowl",
-  "quark-natural": "bowl",
+  // Iogurtes: o pacote pequeno de lacticínio (a tigela branca vazia não se lia como iogurte)
+  "iogurte-grego-natural": "carton-small",
+  "iogurte-natural": "carton-small",
+  "skyr-natural": "carton-small",
+  // Queijos frescos e quark: o montinho branco
+  "quark-natural": "whipped-cream",
   "leite-magro": "carton",
   "leite-meio-gordo": "carton",
   "whey-sem-sabor": "frappe",
   "queijo-flamengo": "cheese-cut",
   "queijo-cabra-curado": "cheese-cut",
   "queijo-sao-jorge": "cheese-cut",
-  "queijo-cottage": "bowl",
-  ricota: "bowl",
-  requeijao: "bowl",
+  "queijo-cottage": "whipped-cream",
+  ricota: "whipped-cream",
+  requeijao: "whipped-cream",
   // leguminosas
   "feijao-lata": "can-open",
   "grao-bico-lata": "can-open",

@@ -181,11 +181,11 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         <h2 id="faq" className="text-[2rem] leading-tight font-extrabold lg:text-[2.75rem]">
           {t("faqTitle")}
         </h2>
-        <div className="mt-8 grid gap-x-12 lg:grid-cols-2">
+        <div className="mt-8 gap-x-12 lg:columns-2">
           {faq.map((key) => (
             <details
               key={key}
-              className="group border-t border-border py-2 [&_summary::-webkit-details-marker]:hidden"
+              className="group break-inside-avoid border-t border-border py-2 [&_summary::-webkit-details-marker]:hidden"
             >
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold">
                 {t(`faq.${key}.q`)}
@@ -222,7 +222,7 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
         </div>
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-20 -bottom-44 hidden w-[32rem] xl:block"
+          className="light pointer-events-none absolute -right-20 -bottom-44 hidden w-[32rem] xl:block"
         >
           <Wheel
             sectors={meals.map((m) => ({

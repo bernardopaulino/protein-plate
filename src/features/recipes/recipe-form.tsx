@@ -168,7 +168,7 @@ export function RecipeForm({
           aria-busy={status === "loading"}
         >
           <div className="flex min-w-0 flex-col gap-5">
-            <fieldset className="min-w-0 rounded-card border border-border bg-surface p-5">
+            <fieldset className="min-w-0 border-t-2 border-text pt-4 [&>legend]:float-left [&>legend]:mb-3 [&>legend]:w-full [&>legend]:px-0 [&>legend~*]:clear-both">
               <legend className="px-1 font-display text-lg font-bold">{t("meal")}</legend>
               <FilterChips
                 className="mt-2"
@@ -191,7 +191,7 @@ export function RecipeForm({
               </p>
             </fieldset>
 
-            <fieldset className="min-w-0 rounded-card border border-border bg-surface p-5">
+            <fieldset className="min-w-0 border-t-2 border-text pt-4 [&>legend]:float-left [&>legend]:mb-3 [&>legend]:w-full [&>legend]:px-0 [&>legend~*]:clear-both">
               <legend className="px-1 font-display text-lg font-bold">{t("protein")}</legend>
               <div
                 role="radiogroup"
@@ -295,7 +295,7 @@ export function RecipeForm({
               ) : null}
             </fieldset>
 
-            <fieldset className="min-w-0 rounded-card border border-border bg-surface p-5">
+            <fieldset className="min-w-0 border-t-2 border-text pt-4 [&>legend]:float-left [&>legend]:mb-3 [&>legend]:w-full [&>legend]:px-0 [&>legend~*]:clear-both">
               <legend className="px-1 font-display text-lg font-bold">{t("equipment")}</legend>
               <p className="mt-1 text-sm text-muted">{t("equipmentHint")}</p>
               <EquipmentPicker
@@ -306,10 +306,7 @@ export function RecipeForm({
               />
             </fieldset>
 
-            <section
-              aria-labelledby={`${optionsId}-foods`}
-              className="rounded-card border border-border bg-surface p-5"
-            >
+            <section aria-labelledby={`${optionsId}-foods`} className="border-t-2 border-text pt-4">
               <h2 id={`${optionsId}-foods`} className="font-display text-lg font-bold">
                 {t("foods")}
               </h2>
@@ -379,13 +376,13 @@ export function RecipeForm({
               )}
             </section>
 
-            <div className="rounded-card border border-border bg-surface">
+            <div className="border-y border-border">
               <button
                 type="button"
                 aria-expanded={moreOpen}
                 aria-controls={`${optionsId}-more`}
                 onClick={() => setMoreOpen((o) => !o)}
-                className="flex min-h-14 w-full items-center justify-between gap-3 px-5 text-left"
+                className="flex min-h-14 w-full items-center justify-between gap-3 text-left"
               >
                 <span>
                   <span className="font-display text-lg font-bold">{t("more")}</span>
@@ -404,7 +401,7 @@ export function RecipeForm({
               <div
                 id={`${optionsId}-more`}
                 hidden={!moreOpen}
-                className="grid gap-5 border-t border-border p-5 sm:grid-cols-2"
+                className="grid gap-5 border-t border-border py-5 sm:grid-cols-2"
               >
                 <fieldset className="min-w-0">
                   <legend className="font-semibold">{t("time")}</legend>

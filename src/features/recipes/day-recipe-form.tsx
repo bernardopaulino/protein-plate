@@ -113,10 +113,7 @@ export function DayRecipeForm({
           aria-busy={status === "loading"}
         >
           <div className="flex min-w-0 flex-col gap-5">
-            <section
-              aria-labelledby="refeicoes-dia"
-              className="rounded-card border border-border bg-surface p-5"
-            >
+            <section aria-labelledby="refeicoes-dia" className="border-t-2 border-text pt-4">
               <h2 id="refeicoes-dia" className="font-display text-lg font-bold">
                 {t("meals")}
               </h2>
@@ -149,7 +146,7 @@ export function DayRecipeForm({
 
             <section
               aria-labelledby="opcoes-dia"
-              className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5"
+              className="flex flex-col gap-5 border-t-2 border-text pt-4"
             >
               <h2 id="opcoes-dia" className="font-display text-lg font-bold">
                 {t("options")}

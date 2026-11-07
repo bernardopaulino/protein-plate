@@ -93,7 +93,7 @@ export function DayPlate({
         {/* O cubo da roda: o total do dia (o GoalProgress em HTML continua a ser a fonte de verdade) */}
         {ready ? (
           <div aria-hidden className="pointer-events-none absolute inset-0 grid place-items-center">
-            <div className="grid aspect-square w-[30%] place-items-center rounded-full bg-surface text-center shadow-[0_12px_26px_-14px_rgb(31_27_22/0.5)]">
+            <div className="grid aspect-[1/0.8] w-[27%] place-items-center rounded-[50%] bg-surface text-center shadow-[0_12px_26px_-14px_rgb(31_27_22/0.5)]">
               <div>
                 <p className="font-display text-[clamp(1.5rem,3.2vw,2.25rem)] leading-none font-extrabold tracking-[-0.03em] text-primary tabular">
                   {formatProtein(total, lang)}

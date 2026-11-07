@@ -10,6 +10,8 @@ import { EQUIPMENT } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
 import { FOOD_INDEX, foodName } from "@/features/catalog/catalog";
 import { RecipeActions } from "@/features/recipes/recipe-actions";
+import { MealGlyph } from "@/components/wheel/sector-glyph";
+import { MEALS } from "@/domain/meals";
 import { Link } from "@/i18n/navigation";
 import { HTML_LANG, type Locale } from "@/i18n/routing";
 import { getDb } from "@/server/db/client";
@@ -102,7 +104,11 @@ export default async function RecipePage({ params }: { params: Params }) {
 
   return (
     <article className="mx-auto max-w-5xl pb-8">
-      <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted">
+      <h1 className="text-[2.25rem] leading-[1.02] font-extrabold tracking-[-0.03em] sm:text-[3.25rem]">
+        {recipe.title}
+      </h1>
+      <p className="mt-3 flex flex-wrap items-center gap-2 font-semibold text-muted">
+        <MealGlyph meals={MEALS} meal={recipe.meal} className="size-5" />
         <span>{tm(recipe.meal)}</span>
         {recipe.postWorkout ? (
           <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-xs font-bold text-[#1f1b16]">
@@ -111,12 +117,9 @@ export default async function RecipePage({ params }: { params: Params }) {
           </span>
         ) : null}
       </p>
-      <h1 className="mt-2 text-2xl font-extrabold sm:text-[2.5rem] sm:leading-tight">
-        {recipe.title}
-      </h1>
-      <p className="mt-2 text-lg text-muted">{recipe.summary}</p>
+      <p className="mt-3 max-w-prose text-lg text-muted">{recipe.summary}</p>
 
-      <section className="mt-6 grid gap-4 rounded-card border border-border bg-surface p-5 sm:grid-cols-[auto_1fr] sm:items-center">
+      <section className="mt-8 grid gap-4 border-y border-border py-5 sm:grid-cols-[auto_1fr] sm:items-center">
         <p className="flex items-baseline gap-2">
           <ProteinNumber value={recipe.proteinPerServingG} size="hero" className="text-primary" />
           <span className="text-muted">{t("perServing")}</span>
@@ -164,11 +167,11 @@ export default async function RecipePage({ params }: { params: Params }) {
           <h2 id="ingredientes" className="text-lg font-bold">
             {t("ingredients")}
           </h2>
-          <ul className="mt-3 divide-y divide-border rounded-card border border-border bg-surface">
+          <ul className="mt-3 divide-y divide-border border-y border-border">
             {recipe.ingredients.map((i) => {
               const food = FOOD_INDEX.get(i.foodId);
               return (
-                <li key={i.foodId} className="flex items-center justify-between gap-3 px-4 py-3">
+                <li key={i.foodId} className="flex items-center justify-between gap-3 py-3">
                   {food && food.role !== "pantry" ? (
                     <Link href={`/alimentos/${food.id}`} className="font-semibold hover:underline">
                       {foodName(food, locale)}

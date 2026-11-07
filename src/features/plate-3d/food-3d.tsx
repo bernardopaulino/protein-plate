@@ -12,7 +12,7 @@ import { canUse3D, mightUse3D } from "./support";
 
 const YAW_STEP = Math.PI / 12;
 const PITCH_STEP = 0.1;
-const PITCH = { min: -0.55, max: 0.5 } as const;
+const PITCH = { min: -0.3, max: 0.5 } as const;
 const DRAG_SPEED = 0.01;
 
 const clampPitch = (pitch: number) => Math.min(PITCH.max, Math.max(PITCH.min, pitch));
