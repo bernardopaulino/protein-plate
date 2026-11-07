@@ -108,12 +108,30 @@ test.describe("responsive", () => {
       for (const path of ["/", "/alimentos", "/o-meu-dia", "/receitas", "/receitas/nova"]) {
         await page.goto(path);
         await page.waitForLoadState("load");
-        const { overflow, main, width } = await page.evaluate(() => ({
-          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-          main: document.querySelector("main")!.getBoundingClientRect().width,
-          width: document.documentElement.clientWidth,
-        }));
-        expect(overflow, `${path} a ${viewport.width}px`).toBeLessThanOrEqual(0);
+        const { overflow, main, width, culprits } = await page.evaluate(() => {
+          const limit = document.documentElement.clientWidth;
+          // Os elementos que passam da margem direita (para a mensagem de erro dizer qual é)
+          const culprits = [...document.querySelectorAll("body *")]
+            .filter((el) => {
+              const r = el.getBoundingClientRect();
+              return r.width > 0 && r.right > limit + 0.5;
+            })
+            .slice(0, 5)
+            .map(
+              (el) =>
+                `<${el.tagName.toLowerCase()} class="${String(el.getAttribute("class")).slice(0, 60)}"> right=${Math.round(el.getBoundingClientRect().right)} "${(el.textContent ?? "").trim().slice(0, 40)}"`,
+            );
+          return {
+            overflow: document.documentElement.scrollWidth - limit,
+            main: document.querySelector("main")!.getBoundingClientRect().width,
+            width: limit,
+            culprits,
+          };
+        });
+        expect(
+          overflow,
+          [`${path} a ${viewport.width}px`, ...culprits].join("\n"),
+        ).toBeLessThanOrEqual(0);
         // Até 1280 px o conteúdo ocupa a largura toda; acima, a coluna cresce até 1440 px
         expect(main, `${path} a ${viewport.width}px`).toBeGreaterThanOrEqual(
           Math.min(width, 1280) - 1,

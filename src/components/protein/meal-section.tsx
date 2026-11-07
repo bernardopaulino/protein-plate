@@ -55,8 +55,9 @@ export function MealSection({
             ) : null}
           </div>
         </div>
-        <div className="flex shrink-0 flex-col items-end">
-          <p className="flex items-baseline gap-1.5 text-right">
+        {/* Em ecrãs estreitos o alvo passa para baixo da proteína, em vez de empurrar a página */}
+        <div className="flex flex-col items-end">
+          <p className="flex flex-wrap items-baseline justify-end gap-x-1.5 text-right">
             <ProteinNumber value={total} size="md" />
             <span className="text-sm whitespace-nowrap text-muted tabular">{targetLabel}</span>
           </p>
