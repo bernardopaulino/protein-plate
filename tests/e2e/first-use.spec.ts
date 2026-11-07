@@ -108,6 +108,12 @@ test.describe("com o plano feito", () => {
     }
     await expect(missing).toBeVisible();
 
+    // Com as sugestões à vista, o axe também passa (o nome de cada uma começa pelo texto visível)
+    const axe = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(axe.violations.map((v) => v.id)).toEqual([]);
+
     // Uma sugestão de um toque fecha a meta
     await close.getByRole("button").first().click();
     await expect(page.getByText(/Meta atingida/).first()).toBeVisible();

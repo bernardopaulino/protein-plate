@@ -170,7 +170,6 @@
     "closeLead": "{grams} g to go. Any one of these does it:",
     "closePartial": "{grams} g to go. These help a lot:",
     "closeDone": "Goal reached. The rest of the day is up to you.",
-    "suggestion": "{count} × {portion} of {food}: +{grams} g for {meal}",
     "otherOptions": "Other options",
     "otherOptionsHint": "Swap the foods in the example day.",
     "resetExample": "Start over with an example day",
@@ -190,7 +189,8 @@
     "saving": "Saving…",
     "fromRecipe": "Recipe: {title}",
     "kcalToggle": "Calories",
-    "kcalDay": "≈ {kcal} kcal with these foods"
+    "kcalDay": "≈ {kcal} kcal with these foods",
+    "suggestionAction": "Add"
   },
   "drawer": {
     "title": "Add to {meal}",

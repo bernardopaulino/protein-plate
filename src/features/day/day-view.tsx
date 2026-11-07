@@ -213,13 +213,7 @@ export function DayView({
                     protein={s.protein}
                     title={name}
                     detail={detail}
-                    ariaLabel={t("suggestion", {
-                      count: formatCount(s.count, lang),
-                      portion: portion.label[locale].toLowerCase(),
-                      food: name,
-                      grams: formatProtein(s.protein, lang),
-                      meal: tm(s.meal),
-                    })}
+                    actionLabel={t("suggestionAction")}
                     onSelect={() =>
                       add({
                         meal: s.meal,

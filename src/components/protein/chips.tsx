@@ -68,31 +68,36 @@ export function FilterChips<T extends string>({
   );
 }
 
-/** Sugestão de um toque ("Para fechar a meta"): +X g e o que é. */
+/**
+ * Sugestão de um toque ("Para fechar a meta"): +X g e o que é. O nome acessível é o próprio texto
+ * visível, com a ação antes só para leitores de ecrã ("Adicionar: Skyr natural, 1 × 1 iogurte ·
+ * Lanche, +17 g"), para quem usa voz poder dizer o que vê (WCAG 2.5.3).
+ */
 export function SuggestionChip({
   protein,
   title,
   detail,
   onSelect,
-  ariaLabel,
+  actionLabel,
 }: {
   protein: number;
   title: string;
   detail: string;
   onSelect: () => void;
-  ariaLabel: string;
+  /** "Adicionar" (só para leitores de ecrã, antes do texto visível). */
+  actionLabel: string;
 }) {
   return (
     <button
       type="button"
       onClick={onSelect}
-      aria-label={ariaLabel}
       className="group flex min-h-16 w-full items-center gap-3 rounded-card border border-border bg-surface p-3 text-left transition-[border-color,transform] duration-200 ease-out hover:border-primary active:scale-[0.99]"
     >
       <span className="grid size-11 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition-colors duration-200 group-hover:bg-primary group-hover:text-on-primary">
         <Plus aria-hidden className="size-5" />
       </span>
       <span className="min-w-0 flex-1">
+        <span className="sr-only">{actionLabel}: </span>
         <span className="block truncate font-semibold">{title}</span>
         <span className="block truncate text-sm text-muted">{detail}</span>
       </span>

@@ -51,7 +51,7 @@ export function UiShowcase() {
         title="Skyr natural"
         detail="1 × 1 iogurte · Lanche"
         onSelect={() => {}}
-        ariaLabel="Adicionar skyr"
+        actionLabel="Adicionar"
       />
       <FilterChips
         label="Refeição"

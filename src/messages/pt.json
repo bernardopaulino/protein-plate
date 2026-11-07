@@ -170,7 +170,6 @@
     "closeLead": "Faltam {grams} g. Uma destas resolve:",
     "closePartial": "Faltam {grams} g. Estas ajudam muito:",
     "closeDone": "Meta atingida. O resto do dia é contigo.",
-    "suggestion": "{count} × {portion} de {food}: +{grams} g em {meal}",
     "otherOptions": "Outras opções",
     "otherOptionsHint": "Troca os alimentos do dia exemplo.",
     "resetExample": "Recomeçar com um dia exemplo",
@@ -190,7 +189,8 @@
     "saving": "A guardar…",
     "fromRecipe": "Receita: {title}",
     "kcalToggle": "Calorias",
-    "kcalDay": "≈ {kcal} kcal com estes alimentos"
+    "kcalDay": "≈ {kcal} kcal com estes alimentos",
+    "suggestionAction": "Adicionar"
   },
   "drawer": {
     "title": "Adicionar a {meal}",
