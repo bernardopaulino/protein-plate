@@ -6,8 +6,8 @@
 
 ![Protein Plate home page on desktop: "Protein without the diet." next to the day as a food wheel](docs/screenshots/home-desktop.png)
 
-| My day | AI recipe | Dark mode |
-| --- | --- | --- |
+| My day                                                                                                            | AI recipe                                                                                                     | Dark mode                                                                             |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | ![My day on a phone: the goal bar as an unrolled wheel and the meals of the day](docs/screenshots/day-mobile.png) | ![A generated recipe on a phone: protein per serving computed by the app](docs/screenshots/recipe-mobile.png) | ![The food catalog on a phone in dark mode](docs/screenshots/catalog-mobile-dark.png) |
 
 ## What it does
@@ -54,12 +54,12 @@ Decisions worth knowing:
 
 ## Quality
 
-| | |
-| --- | --- |
-| Lighthouse mobile (production, median of 5 runs) | performance 90–92, accessibility 100, SEO 100 on indexable pages; TBT 40 ms, CLS 0 |
-| Recipe evals (`eval:recipes`, 27 fixed cases, real model) | 27/27 valid on the first try; p50 2.5 s, p95 3.2 s |
-| Tests | unit and property-based tests for `src/domain`, integration tests on a real local D1 with two users per action, Playwright end-to-end on mobile and desktop, axe-core in light and dark mode |
-| CI | format, lint, types, content checks, unit and integration tests, OpenNext build, e2e, then deploy to staging; production is a manual workflow that refuses commits without a green CI |
+|                                                           |                                                                                                                                                                                              |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lighthouse mobile (production, median of 5 runs)          | performance 90–92, accessibility 100, SEO 100 on indexable pages; TBT 40 ms, CLS 0                                                                                                           |
+| Recipe evals (`eval:recipes`, 27 fixed cases, real model) | 27/27 valid on the first try; p50 2.5 s, p95 3.2 s                                                                                                                                           |
+| Tests                                                     | unit and property-based tests for `src/domain`, integration tests on a real local D1 with two users per action, Playwright end-to-end on mobile and desktop, axe-core in light and dark mode |
+| CI                                                        | format, lint, types, content checks, unit and integration tests, OpenNext build, e2e, then deploy to staging; production is a manual workflow that refuses commits without a green CI        |
 
 ## Run locally
 
