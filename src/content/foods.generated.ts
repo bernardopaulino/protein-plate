@@ -1713,7 +1713,6 @@ export const FOODS: readonly Food[] = [
       }
     ],
     "moments": [
-      "pequeno-almoco",
       "almoco",
       "jantar"
     ],

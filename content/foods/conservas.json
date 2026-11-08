@@ -102,7 +102,7 @@
         "default": true
       }
     ],
-    "moments": ["pequeno-almoco", "almoco", "jantar"],
+    "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 40,
     "allergens": ["fish"],

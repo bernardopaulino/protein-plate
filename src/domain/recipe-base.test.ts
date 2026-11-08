@@ -223,8 +223,8 @@ describe("base da receita", () => {
 });
 
 describe("refeições leves: o catálogo", () => {
-  it("as conservas de peixe são só de almoço e jantar (o salmão fumado também é de pequeno-almoço)", () => {
-    const canned = FOODS.filter((f) => f.category === "conservas" && f.id !== "salmao-fumado");
+  it("as conservas de peixe (também o salmão fumado) são só de almoço e jantar", () => {
+    const canned = FOODS.filter((f) => f.category === "conservas");
     expect(canned.length).toBeGreaterThan(0);
     for (const f of canned) expect(servesLightMeal(f), f.id).toBe(false);
   });
