@@ -1,5 +1,7 @@
 # Case study: Protein Plate
 
+> English version: [case-study.en.md](case-study.en.md)
+
 > **Protein without the diet.** Uma web app que mostra que atingir a meta diária de proteína é fácil com comida de verdade.
 >
 > Next.js 16 · TypeScript strict · Cloudflare Workers + D1 · Better Auth · AI SDK · Vitest + fast-check · Playwright
@@ -43,7 +45,7 @@ O peso e as alergias são dados de saúde (RGPD, art. 9.º): só se guardam com 
 
 ### 4. Domínio puro, testado por propriedades
 
-As regras (meta, refeições, dia exemplo, "fechar a meta") estão em `src/domain`, sem I/O, com 100% de cobertura. A regra mais delicada é o **dia exemplo determinístico**: para qualquer meta de 80 a 250 g e qualquer uma das 57 combinações de refeições, o total tem de ficar entre 100% e 110%. Em vez de escolher casos à mão, um teste **property-based** (fast-check) percorre o espaço todo.
+As regras (meta, refeições, dia exemplo, "fechar a meta") estão em `src/domain`, sem I/O, com ~99% das linhas cobertas por testes. A regra mais delicada é o **dia exemplo determinístico**: para qualquer meta de 80 a 250 g e qualquer uma das 57 combinações de refeições, o total tem de ficar entre 100% e 110%. Em vez de escolher casos à mão, um teste **property-based** (fast-check) percorre o espaço todo.
 
 ### 5. Next.js 16 em Cloudflare Workers
 
@@ -64,7 +66,7 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 
 | Área | Como |
 | --- | --- |
-| Domínio | Vitest com 100% de cobertura em `src/domain`; fast-check para o dia exemplo |
+| Domínio | Vitest com ~99% das linhas de `src/domain` cobertas; fast-check para o dia exemplo |
 | Integração | Server Actions e `/api/recipes` contra uma D1 local, com dois utilizadores |
 | E2E | Playwright em mobile e desktop: primeira utilização, ajustar o dia, gerar receita (modelo simulado) |
 | Acessibilidade | axe-core nas páginas principais em claro e escuro; anúncios `aria-live` no "Faltam X g"; `prefers-reduced-motion` |

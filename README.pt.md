@@ -1,5 +1,7 @@
 # Protein Plate
 
+> [English](README.md) · No ar em [protein-plate.app](https://protein-plate.app)
+
 **Protein without the diet.** Uma web app que mostra que atingir a meta diária de proteína é fácil com comida de verdade: entras com o Google ou a Apple, respondes a um formulário de dois minutos (meta, refeições e treino, o que não comes, o que gostas, a tua cozinha), vês um dia completo com os teus alimentos que já chega à meta e geras receitas por IA feitas para ti. Sem dieta, sem contar calorias.
 
 > Projeto de portefólio. A especificação está em [`docs/especificacao.md`](docs/especificacao.md) e a ordem de construção em [`docs/sessoes.md`](docs/sessoes.md).
@@ -10,12 +12,12 @@
 - **Dia exemplo personalizado e determinístico** (`/o-meu-dia`): só com o que podes comer e os teus favoritos primeiro; para todas as metas de 80 a 250 g e todas as 57 combinações de refeições, o total fica entre 100% e 110% (testes property-based, também com dietas e alergias aleatórias).
 - **Ajustar o dia**: stepper de meia porção, painel inferior para adicionar alimentos, "Faltam 23 g" em região `aria-live` e 3 sugestões de um toque para fechar a meta.
 - **Catálogo** (`/alimentos`): páginas estáticas geradas do JSON, filtros por refeição, facilidade e categoria ("snack sem preparação com mais proteína" em 2 toques).
-- **Receitas por IA** (`POST /api/recipes`): só campos fechados; a meta da refeição, o treino, o equipamento e a dieta vêm do perfil; os alimentos com alergénios nunca chegam ao modelo; rate limiting; quotas diárias por conta (HMAC diário); cache por `cache_key`; schema do modelo construído por pedido; validação depois do modelo com uma nova tentativa; **a proteína é sempre calculada pela app**.
+- **Receitas por IA** (`POST /api/recipes`): só campos fechados; a meta da refeição, o treino, o equipamento e a dieta vêm do perfil; os alimentos com alergénios nunca chegam ao modelo; rate limiting; quotas diárias por conta (HMAC diário); cache por `cache_key`, depois a biblioteca de receitas pré-geradas reajustadas às doses, e só depois o modelo, com um schema fixo; validação depois do modelo com uma nova tentativa; **a proteína é sempre calculada pela app**.
 - **Conta** (Google e Apple, Better Auth): consentimento versionado, "As minhas preferências", sincronização do dia, exportar dados (JSON) e apagar conta com login recente.
 - **Design "Roda dos Alimentos"**: o dia como a roda das escolas, cada refeição uma fatia (as cores do logótipo). A página inicial é uma história em que o scroll gira a roda até à refeição que estás a ler; a barra de progresso é a roda desenrolada, um segmento por refeição; as fatias marcam refeições, grupos de alimentos e passos em toda a app. Sistema registado em `DESIGN.md`.
 - **Prato 3D** (three + React Three Fiber, modelos low-poly do Kenney Food Kit): o prato enche até à meta com os alimentos do dia, com o anel na borda a fazer de barra de progresso. Na página inicial (por trás do dia exemplo, só no desktop e depois do LCP), no detalhe de cada alimento ("Ver em 3D", roda com o rato ou as setas) e no "O meu dia". Disposição pura e testada com property-based testing, modelos otimizados com gltf-transform, `frameloop="demand"`, sem 3D sem WebGL ou com poupança de dados, e o chunk do three nunca chega a quem não o vê.
 - **Backoffice** (`admin/`, Cloudflare Access): painel, utilizadores, receitas e alimentos, sem dados de saúde por pessoa.
-- **Base**: CSP e cabeçalhos de segurança, cron de limpeza horário, PWA, páginas legais, PT (estrutura EN pronta).
+- **Base**: CSP e cabeçalhos de segurança, cron de limpeza horário, PWA, páginas legais, português e inglês (`/en`).
 
 ## Stack
 
@@ -63,7 +65,7 @@ npm run preview                  # build OpenNext + Worker local, igual a produ�
 ## Qualidade
 
 ```bash
-npm run lint && npm run typecheck && npm test   # unitários (100% de src/domain) + integração na D1 local
+npm run lint && npm run typecheck && npm test   # unitários + integração na D1 local
 npm run content:check -- --allow-todo
 npm run test:e2e                                 # Playwright: primeira utilização, ajustar o dia, receita, axe claro/escuro
 npm run test:lighthouse                          # com o Worker local a correr
