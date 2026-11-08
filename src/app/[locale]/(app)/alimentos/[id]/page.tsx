@@ -229,7 +229,8 @@ export default async function FoodPage({ params }: { params: Params }) {
           <h2 id="parecidos" className="text-lg font-bold">
             {t("related")}
           </h2>
-          <ul className="mt-3 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+          {/* grid-cols-1 (minmax(0, 1fr)): sem ele, a coluna implícita cresce até ao nome inteiro e o truncate não corta */}
+          <ul className="mt-3 grid grid-cols-1 gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((other) => (
               <li key={other.id}>
                 <Link

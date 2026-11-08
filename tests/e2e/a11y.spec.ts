@@ -105,7 +105,15 @@ test.describe("responsive", () => {
     test.skip(testInfo.project.name !== "desktop", "os tamanhos são definidos aqui");
     for (const viewport of VIEWPORTS) {
       await page.setViewportSize(viewport);
-      for (const path of ["/", "/alimentos", "/o-meu-dia", "/receitas", "/receitas/nova"]) {
+      // lombo-porco: nomes compridos nos "Alimentos parecidos" (chegaram a passar 52 px a 320 px)
+      for (const path of [
+        "/",
+        "/alimentos",
+        "/alimentos/lombo-porco",
+        "/o-meu-dia",
+        "/receitas",
+        "/receitas/nova",
+      ]) {
         await page.goto(path);
         await page.waitForLoadState("load");
         const { overflow, main, width, culprits } = await page.evaluate(() => {
