@@ -7,6 +7,10 @@ export const RECIPE_MAX_CHOSEN = 6;
 /** O alimento faz sentido em alguma refeição leve (pequeno-almoço, meio da manhã, lanche, ceia). */
 export const servesLightMeal = (f: Pick<Food, "moments">) => f.moments.some(isLightMeal);
 
+const SNACKS: ReadonlySet<Meal> = new Set(["meio-da-manha", "lanche", "ceia"]);
+/** O alimento faz sentido num snack (meio da manhã, lanche, ceia). */
+const servesSnack = (f: Pick<Food, "moments">) => f.moments.some((m) => SNACKS.has(m));
+
 /** Hidratos "de prato" (cereais, pão, batata), não fruta. */
 const isStarch = (f: Food) => f.role === "carb" && f.category !== "fruta";
 /** Antes do treino: proteína fácil de digerir (pouca gordura, sem muita preparação). */
@@ -57,7 +61,7 @@ export interface RecipeBaseInput {
  *
  * O que a app junta serve sempre para a refeição: primeiro os alimentos dessa refeição (`moments`)
  * com qualquer dos filtros, só depois os de outra refeição leve e, só no almoço e no jantar,
- * qualquer um. Numa refeição leve, a app nunca junta um alimento só de prato (frango ao
+ * qualquer um (os snacks antes do pequeno-almoço). Numa refeição leve, a app nunca junta um alimento só de prato (frango ao
  * pequeno-almoço): se nenhum chega sozinho à meta, junta dois da refeição. O que a pessoa escolheu
  * fica sempre, mesmo que não seja da refeição (decisão de 8/11/2026).
  */
@@ -66,9 +70,11 @@ export function recipeBase(input: RecipeBaseInput): Food[] {
   const main = MAIN_MEALS.has(input.meal);
   let turn = 0;
 
+  // A própria refeição; depois os snacks (meio da manhã, lanche, ceia); depois o pequeno-almoço;
+  // só o almoço e o jantar aceitam qualquer alimento
   const tiers: ((f: Food) => boolean)[] = [
     (f) => f.moments.includes(input.meal),
-    ...(isLightMeal(input.meal) ? [servesLightMeal] : [() => true]),
+    ...(isLightMeal(input.meal) ? [servesSnack, servesLightMeal] : [() => true]),
   ];
 
   const pick = (...filters: ((f: Food) => boolean)[]) => {

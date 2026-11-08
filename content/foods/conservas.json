@@ -67,7 +67,7 @@
         "default": true
       }
     ],
-    "moments": ["almoco", "lanche", "jantar"],
+    "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 60,
     "allergens": ["fish"],
@@ -102,7 +102,7 @@
         "default": true
       }
     ],
-    "moments": ["pequeno-almoco", "almoco", "lanche", "jantar"],
+    "moments": ["pequeno-almoco", "almoco", "jantar"],
     "ease": 1,
     "exampleRank": 40,
     "allergens": ["fish"],
@@ -137,7 +137,7 @@
         "default": true
       }
     ],
-    "moments": ["almoco", "lanche", "jantar"],
+    "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 70,
     "allergens": ["fish"],
@@ -172,7 +172,7 @@
         "default": true
       }
     ],
-    "moments": ["almoco", "lanche", "jantar"],
+    "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 45,
     "allergens": ["fish"],
@@ -207,7 +207,7 @@
         "default": true
       }
     ],
-    "moments": ["almoco", "lanche", "jantar"],
+    "moments": ["almoco", "jantar"],
     "ease": 1,
     "exampleRank": 30,
     "allergens": ["shellfish"],

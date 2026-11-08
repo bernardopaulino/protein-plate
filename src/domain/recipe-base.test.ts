@@ -221,3 +221,29 @@ describe("base da receita", () => {
     );
   });
 });
+
+describe("refeições leves: o catálogo", () => {
+  it("as conservas de peixe são só de almoço e jantar (o salmão fumado também é de pequeno-almoço)", () => {
+    const canned = FOODS.filter((f) => f.category === "conservas" && f.id !== "salmao-fumado");
+    expect(canned.length).toBeGreaterThan(0);
+    for (const f of canned) expect(servesLightMeal(f), f.id).toBe(false);
+  });
+
+  it("sem lácteos, a ceia nunca leva conservas de peixe", () => {
+    const foods = allowedFoods(FOODS, { diet: "omnivore", allergies: ["milk"] }).filter(
+      (f) => f.role !== "pantry",
+    );
+    for (let seed = 0; seed < 30; seed++) {
+      const base = recipeBase({
+        meal: "ceia",
+        chosen: [],
+        foods,
+        preferred: new Set(),
+        preWorkout: false,
+        seed,
+        targetG: 20,
+      });
+      expect(base.filter((f) => f.category === "conservas").map((f) => f.id)).toEqual([]);
+    }
+  });
+});

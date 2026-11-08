@@ -1528,7 +1528,6 @@ export const FOODS: readonly Food[] = [
     ],
     "moments": [
       "almoco",
-      "lanche",
       "jantar"
     ],
     "ease": 1,
@@ -1627,7 +1626,6 @@ export const FOODS: readonly Food[] = [
     ],
     "moments": [
       "almoco",
-      "lanche",
       "jantar"
     ],
     "ease": 1,
@@ -1672,7 +1670,6 @@ export const FOODS: readonly Food[] = [
     ],
     "moments": [
       "almoco",
-      "lanche",
       "jantar"
     ],
     "ease": 1,
@@ -1718,7 +1715,6 @@ export const FOODS: readonly Food[] = [
     "moments": [
       "pequeno-almoco",
       "almoco",
-      "lanche",
       "jantar"
     ],
     "ease": 1,
@@ -1765,7 +1761,6 @@ export const FOODS: readonly Food[] = [
     ],
     "moments": [
       "almoco",
-      "lanche",
       "jantar"
     ],
     "ease": 1,
