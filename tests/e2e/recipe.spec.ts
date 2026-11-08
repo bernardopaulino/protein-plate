@@ -85,6 +85,14 @@ test.describe("conta própria (o limite é de 5 receitas por minuto por conta)",
     // Com um alimento escolhido pelos grupos
     await page.goto("/receitas/nova");
     await page.getByRole("button", { name: "Quero usar alimentos que tenho" }).click();
+    // Abre no pequeno-almoço (refeição leve): o seletor só mostra alimentos de refeições leves
+    await expect(page.getByText(/Como é uma refeição leve/)).toBeVisible();
+    // Brócolos são de prato: ao jantar
+    await page
+      .getByRole("group", { name: "Refeição" })
+      .getByRole("button", { name: /^Jantar/ })
+      .click();
+    await expect(page.getByText(/Como é uma refeição leve/)).toBeHidden();
     await page.getByRole("radio", { name: /^Legumes/ }).click();
     await page.getByRole("button", { name: /^Brócolos e couves/ }).click();
     await page
