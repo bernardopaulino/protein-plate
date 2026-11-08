@@ -24,14 +24,22 @@
         "default": true
       }
     ],
-    "moments": ["almoco", "jantar"],
+    "moments": ["pequeno-almoco", "almoco", "jantar"],
     "ease": 2,
     "exampleRank": 45,
     "allergens": ["soy"],
     "tcaCode": "REF",
     "ideas": {
-      "pt": ["Em cubos, salteado com soja e alho", "No forno com legumes"],
-      "en": ["Cubed, stir-fried with soy and garlic", "Baked with vegetables"]
+      "pt": [
+        "Em cubos, salteado com soja e alho",
+        "No forno com legumes",
+        "Mexido ao pequeno-almoço, como uns ovos mexidos"
+      ],
+      "en": [
+        "Cubed, stir-fried with soy and garlic",
+        "Baked with vegetables",
+        "Scrambled for breakfast, like scrambled eggs"
+      ]
     }
   },
   {

@@ -1,10 +1,11 @@
 import { defaultPortion, type Food } from "./food";
-import type { Meal } from "./meals";
+import { MAIN_MEALS, isLightMeal, type Meal } from "./meals";
 
 /** Máximo de alimentos que a pessoa escolhe para uma receita (o resto completa a app). */
 export const RECIPE_MAX_CHOSEN = 6;
 
-const MAIN_MEALS: ReadonlySet<Meal> = new Set(["almoco", "jantar"]);
+/** O alimento faz sentido em alguma refeição leve (pequeno-almoço, meio da manhã, lanche, ceia). */
+export const servesLightMeal = (f: Pick<Food, "moments">) => f.moments.some(isLightMeal);
 
 /** Hidratos "de prato" (cereais, pão, batata), não fruta. */
 const isStarch = (f: Food) => f.role === "carb" && f.category !== "fruta";
@@ -53,35 +54,47 @@ export interface RecipeBaseInput {
  * A base de uma receita: o que a pessoa escolheu, completado pela app com o que falta para ser uma
  * refeição (uma fonte de proteína; hidratos; legumes no almoço e no jantar). Escolhe primeiro entre
  * os alimentos de que a pessoa gosta e que servem para a refeição; a seed varia a escolha.
+ *
+ * O que a app junta serve sempre para a refeição: primeiro os alimentos dessa refeição (`moments`)
+ * com qualquer dos filtros, só depois os de outra refeição leve e, só no almoço e no jantar,
+ * qualquer um. Numa refeição leve, a app nunca junta um alimento só de prato (frango ao
+ * pequeno-almoço): se nenhum chega sozinho à meta, junta dois da refeição. O que a pessoa escolheu
+ * fica sempre, mesmo que não seja da refeição (decisão de 8/11/2026).
  */
 export function recipeBase(input: RecipeBaseInput): Food[] {
   const base = [...input.chosen];
   const main = MAIN_MEALS.has(input.meal);
   let turn = 0;
 
+  const tiers: ((f: Food) => boolean)[] = [
+    (f) => f.moments.includes(input.meal),
+    ...(isLightMeal(input.meal) ? [servesLightMeal] : [() => true]),
+  ];
+
   const pick = (...filters: ((f: Food) => boolean)[]) => {
     const taken = new Set(base.map((f) => f.id));
-    for (const filter of filters) {
-      const all = input.foods.filter(
-        (f) =>
-          !taken.has(f.id) &&
-          filter(f) &&
-          (!input.noCooking || f.ease === 1) &&
-          (input.canBoil !== false || !needsBoiling(f)),
-      );
-      const fresh = all.filter((f) => !input.avoid?.has(f.id));
-      const pool = fresh.length > 0 ? fresh : all;
-      const forMeal = pool.filter((f) => f.moments.includes(input.meal));
-      const fitting = forMeal.length > 0 ? forMeal : pool;
-      const liked = fitting.filter((f) => input.preferred.has(f.id));
-      const options = (liked.length > 0 ? liked : fitting).sort(
-        (a, b) => b.exampleRank - a.exampleRank || a.id.localeCompare(b.id),
-      );
-      if (options.length > 0) {
-        const food = options[(input.seed + turn * 7) % options.length]!;
-        turn += 1;
-        base.push(food);
-        return;
+    for (const tier of tiers) {
+      for (const filter of filters) {
+        const all = input.foods.filter(
+          (f) =>
+            !taken.has(f.id) &&
+            tier(f) &&
+            filter(f) &&
+            (!input.noCooking || f.ease === 1) &&
+            (input.canBoil !== false || !needsBoiling(f)),
+        );
+        const fresh = all.filter((f) => !input.avoid?.has(f.id));
+        const pool = fresh.length > 0 ? fresh : all;
+        const liked = pool.filter((f) => input.preferred.has(f.id));
+        const options = (liked.length > 0 ? liked : pool).sort(
+          (a, b) => b.exampleRank - a.exampleRank || a.id.localeCompare(b.id),
+        );
+        if (options.length > 0) {
+          const food = options[(input.seed + turn * 7) % options.length]!;
+          turn += 1;
+          base.push(food);
+          return;
+        }
       }
     }
   };

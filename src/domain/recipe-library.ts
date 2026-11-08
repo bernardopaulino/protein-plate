@@ -1,7 +1,8 @@
 import { RECIPE_LIMITS } from "./contracts/recipe";
 import { defaultPortion, type FoodIndex } from "./food";
-import type { Meal } from "./meals";
+import { isLightMeal, type Meal } from "./meals";
 import { isAllowed, type Equipment, type Restrictions } from "./preferences";
+import { servesLightMeal } from "./recipe-base";
 import { fitProtein, proteinPerServingOf, type Ingredient } from "./recipe-fit";
 import { RECIPE_TARGET_ACCEPT } from "./recipe-options";
 
@@ -86,9 +87,15 @@ export function libraryRecipeFits(recipe: LibraryRecipe, need: LibraryNeed): boo
   if (recipe.equipment.some((e) => !need.equipment.includes(e))) return false;
   const ids = new Set(recipe.ingredients.map((i) => i.foodId));
   if (need.chosenIds.some((id) => !ids.has(id))) return false;
+  const light = isLightMeal(need.meal);
   return recipe.ingredients.every((i) => {
     const food = need.foods.get(i.foodId);
-    return food !== undefined && isAllowed(food, need.restrictions);
+    if (food === undefined || !isAllowed(food, need.restrictions)) return false;
+    // Numa refeição leve, nada de proteína só de prato (lentilhas ao pequeno-almoço), a não ser
+    // que tenha sido a pessoa a escolhê-la (as receitas antigas da biblioteca ainda as podem ter)
+    return (
+      !light || food.role !== "protein" || servesLightMeal(food) || need.chosenIds.includes(food.id)
+    );
   });
 }
 

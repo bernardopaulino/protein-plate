@@ -2905,6 +2905,7 @@ export const FOODS: readonly Food[] = [
       }
     ],
     "moments": [
+      "pequeno-almoco",
       "almoco",
       "jantar"
     ],
@@ -2917,11 +2918,13 @@ export const FOODS: readonly Food[] = [
     "ideas": {
       "pt": [
         "Em cubos, salteado com soja e alho",
-        "No forno com legumes"
+        "No forno com legumes",
+        "Mexido ao pequeno-almoço, como uns ovos mexidos"
       ],
       "en": [
         "Cubed, stir-fried with soy and garlic",
-        "Baked with vegetables"
+        "Baked with vegetables",
+        "Scrambled for breakfast, like scrambled eggs"
       ]
     }
   },

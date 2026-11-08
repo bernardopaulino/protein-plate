@@ -268,6 +268,7 @@
       "autoFoods": "From the foods you like, we pick a base that reaches this meal's goal. Each new recipe brings a different combination.",
       "pickFoods": "I want to use foods I have",
       "pickHint": "Pick up to {max}. We fill in whatever's missing (a protein source, a side) with foods you like.",
+      "pickHintLight": "Since it's a light meal, we only show foods that fit it.",
       "chosen": "Chosen foods",
       "removeFood": "Remove {food}",
       "autoInstead": "I'd rather you pick for me",

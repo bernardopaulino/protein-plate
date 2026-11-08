@@ -99,6 +99,27 @@ describe("biblioteca de receitas: o que serve a pessoa", () => {
     expect(libraryRecipeFits(frango, need({ chosenIds: ["peito-frango", "ovo"] }))).toBe(false);
   });
 
+  it("numa refeição leve, uma proteína só de prato só serve se a pessoa a escolheu", () => {
+    const lentilhas: LibraryRecipe = {
+      ...grao,
+      id: "lentilhas-pa",
+      meal: "pequeno-almoco",
+      ingredients: [
+        { foodId: "lentilhas-castanhas", grams: 160 },
+        { foodId: "aveia-flocos", grams: 80 },
+      ],
+    };
+    const breakfast = need({ meal: "pequeno-almoco", equipment: ["stove"], maxMinutes: 45 });
+    expect(libraryRecipeFits(lentilhas, breakfast)).toBe(false);
+    expect(libraryRecipeFits(lentilhas, { ...breakfast, chosenIds: ["lentilhas-castanhas"] })).toBe(
+      true,
+    );
+    // Ao almoço, a mesma receita serve
+    expect(
+      libraryRecipeFits({ ...lentilhas, meal: "almoco" }, { ...breakfast, meal: "almoco" }),
+    ).toBe(true);
+  });
+
   it("nunca repete uma receita que a pessoa já viu", () => {
     expect(pickLibraryRecipe([frango], need({ seen: new Set(["frango1"]) }))).toBeNull();
   });

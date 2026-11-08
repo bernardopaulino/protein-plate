@@ -2,9 +2,10 @@ import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { FOODS } from "@/content/foods.generated";
 import { fixtureFood } from "./__fixtures__/foods";
-import { MEALS } from "./meals";
+import { ALLERGENS, type Food } from "./food";
+import { MEALS, isLightMeal, type Meal } from "./meals";
 import { allowedFoods, DIETS } from "./preferences";
-import { RECIPE_MAX_CHOSEN, recipeBase } from "./recipe-base";
+import { RECIPE_MAX_CHOSEN, recipeBase, servesLightMeal } from "./recipe-base";
 
 const ALLOWED = allowedFoods(FOODS, { diet: "omnivore", allergies: [] }).filter(
   (f) => f.role !== "pantry",
@@ -100,20 +101,16 @@ describe("base da receita", () => {
     ).toEqual(["pesada"]);
   });
 
-  it("sem alimentos para o momento, usa os outros; sem nenhum, não junta nada", () => {
+  it("sem alimentos para o momento: uma leve usa os de outra leve, nunca os de prato; o almoço usa qualquer um", () => {
     const dinnerOnly = fixtureFood({ id: "so-jantar", moments: ["jantar"] });
-    expect(
+    const snack = fixtureFood({ id: "lanche", moments: ["lanche"] });
+    const base = (meal: Meal, foods: Food[]) =>
       ids(
-        recipeBase({
-          meal: "ceia",
-          chosen: [],
-          foods: [dinnerOnly],
-          preferred: new Set(),
-          preWorkout: false,
-          seed: 0,
-        }),
-      ),
-    ).toEqual(["so-jantar"]);
+        recipeBase({ meal, chosen: [], foods, preferred: new Set(), preWorkout: false, seed: 0 }),
+      );
+    expect(base("ceia", [dinnerOnly])).toEqual([]);
+    expect(base("ceia", [dinnerOnly, snack])).toEqual(["lanche"]);
+    expect(base("almoco", [snack])).toEqual(["lanche"]);
     expect(
       recipeBase({
         meal: "almoco",
@@ -124,6 +121,63 @@ describe("base da receita", () => {
         seed: 0,
       }),
     ).toEqual([]);
+  });
+
+  it("sem lácteos, o pequeno-almoço junta duas proteínas de pequeno-almoço em vez de ir buscar frango", () => {
+    const foods = allowedFoods(FOODS, { diet: "omnivore", allergies: ["milk"] }).filter(
+      (f) => f.role !== "pantry",
+    );
+    for (let seed = 0; seed < 30; seed++) {
+      const base = recipeBase({
+        meal: "pequeno-almoco",
+        chosen: [],
+        foods,
+        preferred: new Set(),
+        preWorkout: false,
+        seed,
+        targetG: 46,
+      });
+      expect(base.every((f) => f.moments.includes("pequeno-almoco"))).toBe(true);
+    }
+  });
+
+  it("o que a pessoa escolheu fica, mesmo que não seja da refeição", () => {
+    const base = recipeBase({
+      meal: "pequeno-almoco",
+      chosen: [food("peito-frango")],
+      foods: ALLOWED,
+      preferred: new Set(),
+      preWorkout: false,
+      seed: 0,
+    });
+    expect(ids(base)[0]).toBe("peito-frango");
+    expect(base.slice(1).every((f) => f.moments.includes("pequeno-almoco"))).toBe(true);
+  });
+
+  it("propriedade: numa refeição leve, a app nunca junta um alimento só de prato", () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom(...DIETS),
+        fc.subarray([...ALLERGENS]),
+        fc.constantFrom(...MEALS.filter(isLightMeal)),
+        fc.nat(10_000),
+        fc.boolean(),
+        fc.integer({ min: 5, max: 80 }),
+        (diet, allergies, meal, seed, preWorkout, targetG) => {
+          const foods = allowedFoods(FOODS, { diet, allergies }).filter((f) => f.role !== "pantry");
+          const base = recipeBase({
+            meal,
+            chosen: [],
+            foods,
+            preferred: new Set(),
+            preWorkout,
+            seed,
+            targetG,
+          });
+          expect(base.every(servesLightMeal)).toBe(true);
+        },
+      ),
+    );
   });
 
   it("a seed varia a escolha", () => {

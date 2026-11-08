@@ -8,10 +8,10 @@ import { FilterChips } from "@/components/protein/chips";
 import { Button } from "@/components/ui/button";
 import type { RecipeResponse } from "@/domain/contracts/recipe";
 import type { Allergen } from "@/domain/food";
-import { isMeal, mealTargets, type Meal } from "@/domain/meals";
+import { isLightMeal, isMeal, mealTargets, type Meal } from "@/domain/meals";
 import { allowedFoods, type Diet, type Equipment } from "@/domain/preferences";
 import { formatProtein } from "@/domain/protein";
-import { RECIPE_MAX_CHOSEN } from "@/domain/recipe-base";
+import { RECIPE_MAX_CHOSEN, servesLightMeal } from "@/domain/recipe-base";
 import {
   MAX_MINUTES_OPTIONS,
   RECIPE_TARGET,
@@ -102,6 +102,11 @@ export function RecipeForm({
   const [moreOpen, setMoreOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading">("idle");
   const [error, setError] = useState<RecipeErrorCode | null>(null);
+
+  // Numa refeição leve, o seletor só mostra alimentos de refeições leves (nada de frango ao
+  // pequeno-almoço); o que já vinha escolhido (do "O meu dia") fica, porque foi a pessoa a pô-lo
+  const light = isLightMeal(meal);
+  const pickable = useMemo(() => (light ? foods.filter(servesLightMeal) : foods), [foods, light]);
 
   const post = profile.postWorkoutMeal;
   const pre = profile.preWorkoutMeal;
@@ -327,7 +332,10 @@ export function RecipeForm({
                 </div>
               ) : (
                 <div className="mt-2">
-                  <p className="text-sm text-muted">{t("pickHint", { max: RECIPE_MAX_CHOSEN })}</p>
+                  <p className="text-sm text-muted">
+                    {t("pickHint", { max: RECIPE_MAX_CHOSEN })}
+                    {light ? ` ${t("pickHintLight")}` : null}
+                  </p>
                   {selected.length > 0 ? (
                     <ul className="mt-3 flex flex-wrap gap-2" aria-label={t("chosen")}>
                       {selected.map((id) => (
@@ -349,7 +357,7 @@ export function RecipeForm({
                   ) : null}
                   <div className="mt-4">
                     <FoodPicker
-                      foods={foods}
+                      foods={pickable}
                       selected={selected}
                       onChange={(next) => setSelected(next.slice(0, RECIPE_MAX_CHOSEN))}
                       max={RECIPE_MAX_CHOSEN}

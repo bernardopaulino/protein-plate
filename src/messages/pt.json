@@ -268,6 +268,7 @@
       "autoFoods": "Escolhemos nós, entre os alimentos de que gostas, uma base que chega à meta desta refeição. Cada receita nova traz uma combinação diferente.",
       "pickFoods": "Quero usar alimentos que tenho",
       "pickHint": "Escolhe até {max}. O que faltar (uma fonte de proteína, acompanhamento) completamos nós com o que gostas.",
+      "pickHintLight": "Como é uma refeição leve, mostramos só os alimentos que fazem sentido nela.",
       "chosen": "Alimentos escolhidos",
       "removeFood": "Tirar {food}",
       "autoInstead": "Prefiro que escolham por mim",
