@@ -11,6 +11,8 @@ const MIN_COUNT = 0.5;
 /** Quantos dos mais fáceis entram na rotação de "Outras opções". */
 const ROTATION = 3;
 const MAX_ITERATIONS = 60;
+/** Uma fonte "chega" à meta da refeição se der pelo menos isto dela. */
+const REACH_MIN = 0.85;
 
 export interface ExampleDayInput {
   target: number;
@@ -39,6 +41,8 @@ interface Entry {
 }
 
 interface Move {
+  /** A refeição onde o movimento mexe (para crescer primeiro onde mais falta). */
+  meal: Meal;
   /** 0 = mudar uma porção existente, 1 = acrescentar um alimento */
   rank: 0 | 1;
   /** 0 = alimento escolhido pela pessoa (ou mudança de porção), 1 = outro */
@@ -91,6 +95,7 @@ function pickProteinSource(
   ctx: Context,
   used: ReadonlySet<string>,
   seed: number,
+  need: number,
 ): Food | undefined {
   let candidates = preferredFirst(
     foods
@@ -101,6 +106,11 @@ function pickProteinSource(
   // Pós-treino: opções rápidas (sem preparação) primeiro; pré-treino: rápidas e leves
   if (meal === ctx.post) candidates = narrow(candidates, (f) => f.ease === 1);
   if (meal === ctx.pre) candidates = narrow(candidates, (f) => f.ease <= 2 && f.fatPer100g <= 10);
+  // Fontes que chegam à meta da refeição com as porções do dia exemplo (2 ovos não fazem um jantar)
+  candidates = narrow(
+    candidates,
+    (f) => portionProtein(f, defaultPortion(f).id, MAX_COUNT) >= need * REACH_MIN,
+  );
   const unused = candidates.filter((f) => !used.has(f.id));
   return rotate(unused.length > 0 ? unused : candidates, seed);
 }
@@ -158,12 +168,12 @@ function initialEntries(input: {
       sideProtein = proteinOf(entry);
       entries.push(entry);
     }
-    const source = pickProteinSource(foods, meal, ctx, usedSources, seed);
+    const need = Math.max(0, mealTarget - sideProtein);
+    const source = pickProteinSource(foods, meal, ctx, usedSources, seed, need);
     if (!source) continue;
     usedSources.add(source.id);
     const portion = defaultPortion(source);
     const perPortion = portionProtein(source, portion.id, 1);
-    const need = Math.max(0, mealTarget - sideProtein);
     const count = clamp(roundToHalf(need / perPortion), MIN_COUNT, MAX_COUNT);
     entries.push({ meal, food: source, portion, count, kind: "source" });
   }
@@ -186,6 +196,7 @@ function increaseMoves(
     if (e.food.role === "protein" && e.count < MAX_COUNT) {
       const step = portionProtein(e.food, e.portion.id, 0.5);
       moves.push({
+        meal: e.meal,
         rank: 0,
         pref: 0,
         light: light(e.meal),
@@ -206,6 +217,7 @@ function increaseMoves(
       for (const count of [1, 0.5]) {
         const entry: Entry = { meal, food, portion, count, kind: "extra" };
         moves.push({
+          meal,
           rank: 1,
           pref: pref(food),
           light: light(meal),
@@ -225,6 +237,7 @@ function decreaseMoves(entries: readonly Entry[]): Move[] {
     if (e.count > MIN_COUNT) {
       const step = portionProtein(e.food, e.portion.id, 0.5);
       moves.push({
+        meal: e.meal,
         rank: 0,
         pref: 0,
         light: 0,
@@ -250,11 +263,18 @@ function adjust(
   ctx: Pick<Context, "preferred" | "pre">,
   low: number,
   high: number,
+  targets: ReadonlyMap<Meal, number>,
 ): Entry[] {
   const { preferred, pre } = ctx;
   let current = entries;
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const total = totalOf(current);
+    // O que falta (positivo) ou sobra (negativo) em cada refeição face à sua meta
+    const gap = (meal: Meal) =>
+      (targets.get(meal) ?? 0) - totalOf(current.filter((e) => e.meal === meal));
+    // Ordem estável: cresce primeiro onde mais falta; reduz primeiro onde mais sobra
+    const byNeed = (a: Move, b: Move) => gap(b.meal) - gap(a.meal);
+    const bySurplus = (a: Move, b: Move) => gap(a.meal) - gap(b.meal);
     if (total >= low - 1e-9 && total <= high + 1e-9) return current;
     const inBand = (t: number) => t >= low - 1e-9 && t <= high + 1e-9;
 
@@ -265,7 +285,9 @@ function adjust(
       // refeição pré-treino só cresce quando nenhuma outra pode
       const tier = (rank: 0 | 1, pref: 0 | 1) => {
         for (const light of [0, 1]) {
-          const moves = ups.filter((m) => m.rank === rank && m.pref === pref && m.light === light);
+          const moves = ups
+            .filter((m) => m.rank === rank && m.pref === pref && m.light === light)
+            .sort(byNeed);
           const move =
             moves.find((m) => inBand(total + m.delta)) ?? moves.find((m) => total + m.delta < low);
           if (move) return move;
@@ -284,7 +306,7 @@ function adjust(
       if (!smallest) return current;
       current = smallest.apply(current);
     } else {
-      const downs = decreaseMoves(current).sort(preferBig);
+      const downs = decreaseMoves(current).sort(preferBig).sort(bySurplus);
       // "Acima de 110%, reduz o maior passo"
       const landing = downs.find((m) => inBand(total + m.delta));
       if (landing) return landing.apply(current);
@@ -338,7 +360,8 @@ export function buildExampleDay(input: ExampleDayInput): PlanItem[] {
   const initial = initialEntries({ target: input.target, meals, foods: input.foods, seed, ctx });
   const low = input.target * EXAMPLE_DAY_BAND.min;
   const high = input.target * EXAMPLE_DAY_BAND.max;
-  const adjusted = adjust(initial, input.foods, ctx, low, high);
+  const targets = mealTargets(input.target, meals, post);
+  const adjusted = adjust(initial, input.foods, ctx, low, high, targets);
 
   const kindOrder: Record<Kind, number> = { source: 0, extra: 1, side: 2 };
   return adjusted

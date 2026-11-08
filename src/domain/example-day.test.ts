@@ -5,7 +5,7 @@ import { FIXTURE_FOODS, fixtureFood } from "./__fixtures__/foods";
 import { EXAMPLE_DAY_BAND, buildExampleDay } from "./example-day";
 import { ALLERGENS, indexFoods, type Food } from "./food";
 import { DIETS, MIN_LIKED_PROTEINS, allowedFoods, type Restrictions } from "./preferences";
-import { DEFAULT_COMBINATIONS, MEALS, sortMeals, type Meal } from "./meals";
+import { DEFAULT_COMBINATIONS, MEALS, mealTargets, sortMeals, type Meal } from "./meals";
 import { isValidPortionCount, totalProtein } from "./protein";
 
 /** Todas as combinações de 2 a 6 refeições (57). */
@@ -341,5 +341,28 @@ describe("refeição pré-treino leve", () => {
     );
     // Meta do lanche: 160 × 1/7 ≈ 23 g
     expect(snack).toBeLessThan(23 * 1.6);
+  });
+});
+
+describe("dia exemplo: cada refeição perto da sua meta", () => {
+  it("com o catálogo real, nenhuma refeição de prato fica abaixo de 70% nem acima de 160% da sua meta", () => {
+    const foods = allowedFoods(FOODS, { diet: "omnivore", allergies: [] });
+    const index = indexFoods(FOODS);
+    for (let target = 80; target <= 250; target += 10) {
+      for (const n of [3, 4, 5] as const) {
+        const meals = DEFAULT_COMBINATIONS[n];
+        const targets = mealTargets(target, meals);
+        const items = buildExampleDay({ target, meals, foods });
+        for (const meal of ["almoco", "jantar"] as const) {
+          const got = totalProtein(
+            items.filter((i) => i.meal === meal),
+            index,
+          );
+          const want = targets.get(meal)!;
+          expect(got, `${target} g, ${n} refeições, ${meal}`).toBeGreaterThanOrEqual(want * 0.7);
+          expect(got, `${target} g, ${n} refeições, ${meal}`).toBeLessThanOrEqual(want * 1.6);
+        }
+      }
+    }
   });
 });

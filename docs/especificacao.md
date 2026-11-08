@@ -124,11 +124,11 @@ Cada alimento tem `weightBasis`: `raw` (cru, para o que se cozinha), `cooked` ou
 0. Só entram os alimentos que a pessoa pode comer; entre eles, os de que gosta vêm primeiro (os outros só quando faltam opções para uma refeição).
 1. Calcula a meta de cada refeição escolhida.
 2. Em cada refeição, escolhe a fonte de proteína mais fácil para esse momento (maior `exampleRank`, compatível com `moments`) e um acompanhamento (`carb` ou `vegetable`).
-3. Ajusta a fonte de proteína em passos de meia porção (1; 1,5; 2) até ao alvo da refeição.
-4. Total abaixo da meta → acrescenta o snack com mais proteína por porção; acima de 110% → reduz o maior passo.
+3. Ajusta a fonte de proteína em passos de meia porção (1; 1,5; 2) até ao alvo da refeição. A fonte escolhida é, se houver, uma que chega a 85% do alvo da refeição com 2 porções (2 ovos não fazem um jantar de 60 g).
+4. Total abaixo da meta → acrescenta proteína primeiro na refeição a que mais falta para o seu alvo; acima de 110% → reduz primeiro na refeição que mais passa do seu (8/11/2026: antes o almoço podia ficar com o dobro e o jantar com um terço, com o total certo).
 5. "Outras opções" troca as fontes com uma `seed`, mantendo o determinismo.
 
-Teste property-based: para todas as metas de 80 a 250 g (passos de 5) e todas as combinações de refeições, total entre 100% e 110%; e, por amostra, o mesmo com dietas, alergias, alimentos escolhidos e refeições de treino aleatórios.
+Teste property-based: para todas as metas de 80 a 250 g (passos de 5) e todas as combinações de refeições, total entre 100% e 110%; o almoço e o jantar das combinações pré-selecionadas ficam entre 70% e 160% do seu alvo; e, por amostra, o mesmo com dietas, alergias, alimentos escolhidos e refeições de treino aleatórios.
 
 ### Fechar a meta
 
