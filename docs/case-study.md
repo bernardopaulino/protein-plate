@@ -88,7 +88,7 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 | Métrica | Meta | Resultado |
 | --- | --- | --- |
 | Tempo até um dia que atinge a meta, depois de entrar | < 2 min | verificado em cada push pelo e2e (`tests/e2e/first-use.spec.ts`) |
-| Lighthouse mobile (produção, mediana de 5 corridas, 8/11/2026) | ≥ 90 | performance 90–92, acessibilidade 100, SEO 100 nas páginas indexáveis; boas práticas 93 (o script de analytics injetado pela Cloudflare é bloqueado pelo CSP) |
+| Lighthouse mobile (produção, mediana de 5 corridas, 8/11/2026) | ≥ 90 | performance 90–92, acessibilidade 100, boas práticas 100, SEO 100 nas páginas indexáveis |
 | Receitas válidas no `eval:recipes` (27 casos, Haiku 5.5, prompt 5) | ≥ 90% | 27/27, todas à primeira |
 | Latência de uma receita nova | p95 < 15 s | mediana 2,5 s, p95 3,2 s (eram 6,9 s e 25,7 s com o prompt 1, antes do schema fixo e sem thinking) |
 

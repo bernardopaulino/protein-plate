@@ -88,7 +88,7 @@ Deployment uses `@opennextjs/cloudflare` on top of D1 in the EU jurisdiction. So
 | Metric | Target | Result |
 | --- | --- | --- |
 | Time to a day that reaches the goal, after signing in | < 2 min | verified on every push by the e2e test (`tests/e2e/first-use.spec.ts`) |
-| Lighthouse mobile (production, median of 5 runs, Nov 8, 2026) | ≥ 90 | performance 90–92, accessibility 100, SEO 100 on indexable pages; best practices 93 (the analytics script Cloudflare injects is blocked by the CSP) |
+| Lighthouse mobile (production, median of 5 runs, Nov 8, 2026) | ≥ 90 | performance 90–92, accessibility 100, best practices 100, SEO 100 on indexable pages |
 | Valid recipes in `eval:recipes` (27 cases, Haiku 5.5, prompt 5) | ≥ 90% | 27/27, all on the first try |
 | Latency of a new recipe | p95 < 15 s | median 2.5 s, p95 3.2 s (down from 6.9 s and 25.7 s with prompt 1, before the fixed schema and before turning thinking off) |
 
