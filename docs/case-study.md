@@ -69,7 +69,7 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 | E2E | Playwright em mobile e desktop: primeira utilização, ajustar o dia, gerar receita (modelo simulado) |
 | Acessibilidade | axe-core nas páginas principais em claro e escuro; anúncios `aria-live` no "Faltam X g"; `prefers-reduced-motion` |
 | IA | `eval:recipes`: 20 combinações fixas contra o modelo real (validade, ingredientes fora da lista, proteína plausível, latência) |
-| Performance | Lighthouse CI em mobile |
+| Performance | Lighthouse CI em mobile (semanal contra o staging e à mão contra a produção; falha abaixo de 90) |
 | Segurança | CSP restrita, allowlist dos endpoints do Better Auth, login obrigatório, rate limiting e quotas por conta, dados de saúde só com consentimento |
 
 ## O que aprendi
@@ -81,16 +81,16 @@ O deploy é feito com `@opennextjs/cloudflare` sobre D1 na jurisdição UE. Algu
 
 ## Resultados
 
-<!-- TODO(lançamento): preencher com os números de produção -->
+<!-- Por acrescentar: pessoas e receitas geradas em produção (Painel do backoffice) -->
 
 | Métrica | Meta | Resultado |
 | --- | --- | --- |
-| Tempo até um dia que atinge a meta, sem conta | < 2 min | *por medir* |
-| Lighthouse mobile (4 categorias, staging) | ≥ 90 | Performance 90–91 (89 em `/o-meu-dia`), acessibilidade 100, boas práticas 100, SEO 100 nas páginas indexáveis |
-| Receitas válidas no `eval:recipes` (20 casos, Haiku 5.5) | ≥ 18/20 | 20/20 (19 à primeira; 1 precisou da segunda tentativa) |
-| Latência de uma receita nova | < 15 s | mediana 6,9 s; a única com segunda tentativa levou 25,7 s |
+| Tempo até um dia que atinge a meta, depois de entrar | < 2 min | verificado em cada push pelo e2e (`tests/e2e/first-use.spec.ts`) |
+| Lighthouse mobile (produção, mediana de 5 corridas, 8/11/2026) | ≥ 90 | performance 90–92, acessibilidade 100, SEO 100 nas páginas indexáveis; boas práticas 93 (o script de analytics injetado pela Cloudflare é bloqueado pelo CSP) |
+| Receitas válidas no `eval:recipes` (27 casos, Haiku 5.5, prompt 5) | ≥ 90% | 27/27, todas à primeira |
+| Latência de uma receita nova | p95 < 15 s | mediana 2,5 s, p95 3,2 s (eram 6,9 s e 25,7 s com o prompt 1, antes do schema fixo e sem thinking) |
 
 ## Próximos passos
 
-- v1.1: inglês (`/en`, a estrutura já existe), preferências alimentares e vários "dias tipo".
+- v1.1: vários "dias tipo" (por exemplo, dia de treino e dia de descanso). O inglês (`/en`) e as preferências alimentares já estão feitos.
 - v2: app Expo sobre o mesmo backend (`/api/recipes` já é um contrato público), lista de compras e custo por grama de proteína.
