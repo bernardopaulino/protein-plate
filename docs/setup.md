@@ -84,7 +84,7 @@ O env é validado com Zod (`src/lib/env.ts`): `BETTER_AUTH_SECRET` e `IP_HASH_SE
 
 ## Lançamento em produção
 
-Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (escrever `produção` para confirmar); aplica as migrações, carrega o seed e publica o Worker.
+Estado a 5/11/2026. O deploy é o workflow manual "Deploy produção" (Actions → Deploy produção → Run workflow, ou `gh workflow run deploy-production.yml`); só avança se o CI desse commit de `main` estiver verde, aplica as migrações, carrega o seed e publica o Worker.
 
 ### Bloqueia o lançamento
 

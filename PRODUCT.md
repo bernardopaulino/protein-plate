@@ -25,7 +25,7 @@ Mostrar que atingir a meta diária de proteína é fácil com comida de verdade.
 - Páginas públicas: início (o dia exemplo de 160 g e o prato 3D), catálogo `/alimentos` com 147 alimentos e o detalhe de cada um (porções, proteína, "Ver em 3D"), `/entrar`, privacidade e termos.
 - App (com login): formulário de boas-vindas em 6 passos, "O meu dia" (refeições pela ordem do dia, stepper de meia porção, "Para fechar a meta", prato 3D), receitas por IA (uma receita ou o dia todo, livro de receitas guardadas), conta (preferências, exportar, apagar).
 - Usada sobretudo no telemóvel; no desktop ocupa o ecrã todo (colunas, painéis laterais fixos).
-- Next.js 16 em Cloudflare Workers; páginas públicas estáticas; Lighthouse CI bloqueia abaixo de 90 em mobile no staging.
+- Next.js 16 em Cloudflare Workers; páginas públicas estáticas; Lighthouse CI (semanal contra o staging, ou à mão) falha abaixo de 90 em mobile.
 
 ## Capabilities and Constraints
 

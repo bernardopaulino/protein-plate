@@ -1,20 +1,19 @@
 name: Deploy produção
-# Manual, depois da checklist de lançamento (docs/sessoes.md, sessão 13)
+# Manual: lançar o workflow é a confirmação. Só publica um commit de main com o CI verde
+# (check, e2e e deploy de staging), por isso não repete os testes.
 on:
   workflow_dispatch:
-    inputs:
-      confirm:
-        description: 'Escreve "produção" para confirmar'
-        required: true
 permissions:
   contents: read
+  # Para ler o resultado do CI deste commit
+  actions: read
 concurrency:
   group: deploy-production
   cancel-in-progress: false
 
 jobs:
   deploy:
-    if: github.ref == 'refs/heads/main' && inputs.confirm == 'produção'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: production
@@ -22,6 +21,15 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
+      - name: CI verde neste commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ok=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow ci.yml --commit "$GITHUB_SHA" --status success --json databaseId --jq length)
+          if [ "$ok" = "0" ]; then
+            echo "::error::O CI do commit ${GITHUB_SHA::7} ainda não está verde (a correr, falhou ou foi cancelado). Espera que passe e lança outra vez."
+            exit 1
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -32,7 +40,6 @@ jobs:
       - run: npm ci
       # Em produção não há valores por confirmar: o content:check corre sem --allow-todo
       - run: npm run content:check
-      - run: npm test
       - run: npm run db:migrate:production
       - run: npm run content:build && npx wrangler d1 execute DB --remote --env production --file=.seed/foods.sql
       - run: npm run deploy:production
