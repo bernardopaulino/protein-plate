@@ -4,6 +4,7 @@ import {
   DEFAULT_COMBINATIONS,
   MEALS,
   MEAL_COUNTS,
+  isLightMeal,
   isMeal,
   mealTarget,
   mealTargets,
@@ -43,11 +44,29 @@ describe("isMeal", () => {
 });
 
 describe("pesos", () => {
-  it("principais valem 2, intermédias 1, pós-treino 2", () => {
-    expect(mealWeight("almoco")).toBe(2);
+  it("almoço e jantar valem 3, pequeno-almoço 2, as leves 1", () => {
+    expect(mealWeight("almoco")).toBe(3);
+    expect(mealWeight("jantar")).toBe(3);
+    expect(mealWeight("pequeno-almoco")).toBe(2);
+    expect(mealWeight("meio-da-manha")).toBe(1);
     expect(mealWeight("lanche")).toBe(1);
+    expect(mealWeight("ceia")).toBe(1);
+  });
+
+  it("a pós-treino vale pelo menos 2 e nunca desce", () => {
     expect(mealWeight("lanche", "lanche")).toBe(2);
-    expect(mealWeight("jantar", "lanche")).toBe(2);
+    expect(mealWeight("pequeno-almoco", "pequeno-almoco")).toBe(2);
+    expect(mealWeight("jantar", "jantar")).toBe(3);
+    expect(mealWeight("jantar", "lanche")).toBe(3);
+  });
+
+  it("almoço e jantar são as refeições de prato; as outras são leves", () => {
+    expect(MEALS.filter(isLightMeal)).toEqual([
+      "pequeno-almoco",
+      "meio-da-manha",
+      "lanche",
+      "ceia",
+    ]);
   });
 
   it("a pós-treino só conta se for uma das refeições escolhidas", () => {
@@ -58,14 +77,21 @@ describe("pesos", () => {
 });
 
 describe("mealTargets", () => {
-  it("160 g em 4 refeições sem pós-treino ≈ 46/46/23/46", () => {
+  it("160 g em 4 refeições sem pós-treino ≈ 36/53/18/53", () => {
     const t = mealTargets(160, DEFAULT_COMBINATIONS[4]);
-    expect([...t.values()].map(Math.round)).toEqual([46, 46, 23, 46]);
+    expect([...t.values()].map(Math.round)).toEqual([36, 53, 18, 53]);
   });
 
-  it("160 g em 4 refeições com lanche pós-treino = 40 cada", () => {
+  it("160 g em 4 refeições com lanche pós-treino = 32/48/32/48", () => {
     const t = mealTargets(160, DEFAULT_COMBINATIONS[4], "lanche");
-    expect([...t.values()]).toEqual([40, 40, 40, 40]);
+    expect([...t.values()]).toEqual([32, 48, 32, 48]);
+  });
+
+  it("o almoço e o jantar têm sempre mais do que o pequeno-almoço, e este mais do que um lanche", () => {
+    const t = mealTargets(120, DEFAULT_COMBINATIONS[6]);
+    expect(t.get("almoco")!).toBeGreaterThan(t.get("pequeno-almoco")!);
+    expect(t.get("pequeno-almoco")!).toBeGreaterThan(t.get("lanche")!);
+    expect(t.get("ceia")).toBe(t.get("lanche"));
   });
 
   it("ignora uma pós-treino que não está nas refeições", () => {

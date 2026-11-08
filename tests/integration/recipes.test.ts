@@ -184,7 +184,11 @@ describe("POST /api/recipes: pipeline com o modelo simulado", () => {
 
   it("sem alimentos escolhidos: a app escolhe a base entre os de que a pessoa gosta", async () => {
     const userId = await createUser(t.db);
-    const me = person(userId, { likedFoods: ["salmao", "batata-doce", "brocolos"] });
+    // Meta fixa (almoço ≈ 40 g): o salmão chega lá sozinho
+    const me = person(userId, {
+      dailyTargetG: 120,
+      likedFoods: ["salmao", "batata-doce", "brocolos"],
+    });
     const result = await generateRecipe(request({ foodIds: [] }), me, deps({ random: () => 0 }));
     expect(result.ok).toBe(true);
     if (!result.ok) return;

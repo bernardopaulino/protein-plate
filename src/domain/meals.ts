@@ -9,8 +9,27 @@ export const MEALS = [
 ] as const;
 export type Meal = (typeof MEALS)[number];
 
-/** Principais (peso 2): pequeno-almoço, almoço, jantar. As restantes pesam 1. */
-export const MAIN_MEALS: ReadonlySet<Meal> = new Set(["pequeno-almoco", "almoco", "jantar"]);
+/** As refeições de prato (almoço e jantar): as que pesam mais. As outras são refeições leves. */
+export const MAIN_MEALS: ReadonlySet<Meal> = new Set(["almoco", "jantar"]);
+
+/** Refeição leve (pequeno-almoço, meio da manhã, lanche, ceia): nada de "prato" de almoço. */
+export const isLightMeal = (meal: Meal) => !MAIN_MEALS.has(meal);
+
+/**
+ * Peso de cada refeição na meta do dia: almoço e jantar 3, pequeno-almoço 2, meio da manhã,
+ * lanche e ceia 1 (decisão de 8/11/2026: as refeições de prato levam mais proteína, as leves menos).
+ */
+export const MEAL_WEIGHTS: Readonly<Record<Meal, 1 | 2 | 3>> = {
+  "pequeno-almoco": 2,
+  "meio-da-manha": 1,
+  almoco: 3,
+  lanche: 1,
+  jantar: 3,
+  ceia: 1,
+};
+
+/** A refeição pós-treino vale pelo menos isto (um lanche pós-treino fica como o pequeno-almoço). */
+export const POST_WORKOUT_MIN_WEIGHT = 2;
 
 export const MEAL_COUNTS = [2, 3, 4, 5, 6] as const;
 export type MealCount = (typeof MEAL_COUNTS)[number];
@@ -56,9 +75,12 @@ export function normalizeTraining(
   return { preWorkoutMeal: pre !== null && pre !== post ? pre : null, postWorkoutMeal: post };
 }
 
-/** Peso de uma refeição: principal = 2, intermédia = 1; a pós-treino passa a valer 2. */
-export function mealWeight(meal: Meal, postWorkoutMeal: Meal | null = null): 1 | 2 {
-  return MAIN_MEALS.has(meal) || meal === postWorkoutMeal ? 2 : 1;
+/** Peso de uma refeição (`MEAL_WEIGHTS`); a pós-treino vale pelo menos 2. */
+export function mealWeight(meal: Meal, postWorkoutMeal: Meal | null = null): 1 | 2 | 3 {
+  const weight = MEAL_WEIGHTS[meal];
+  return meal === postWorkoutMeal && weight < POST_WORKOUT_MIN_WEIGHT
+    ? POST_WORKOUT_MIN_WEIGHT
+    : weight;
 }
 
 /**
